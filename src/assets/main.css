@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+@font-face {
+    font-family: "NunitoSans";
+    src: url("/NunitoSans.ttf") format("ttf");
+    font-style: normal;
+    font-display: swap;
+}
+
+@theme {
+    --font-family-sans: NunitoSans, sans-serif;
+}
