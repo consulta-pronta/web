@@ -18,15 +18,30 @@
 			</div>
 
 			<div class="w-1/2 box-border items-center justify-center flex flex-col">
-				<div class="text-[36px] text-surface font-bold mb-1">
-					Crie uma Conta
+
+				<div class="w-full pb-8 px-30">
+					<RouterLink to="/CadastroWebPaciente" class="text-[24px] text-surface font-bold">
+						Voltar
+					</RouterLink>
 				</div>
-				<div class="text-[16px] text-surface">
-					Preencha seus dados para começar.
+
+				<div class="flex-1 flex flex-col items-center justify-center">
+					<div class="text-[36px] text-surface font-bold mb-1">
+						Crie uma Conta
+					</div>
+					<div class="text-[16px] text-surface border-b border-surface">
+						Envie seu CRM/E-CRM para confirmar sua identidade
+					</div>
+
+					<div class="w-129.5 h-75.75 border border-dashed border-surface my-4 gap-2 flex flex-col items-center justify-center text-textlight">
+						<img src="/img/IconAdicionar.png">
+						<p class="text-accent">Tirar foto ou enviar documento</p>
+						<p class="text-bold">(Arquivo deve ser .jpg .jpeg .png .pdf)</p>
+					</div>
 				</div>
+
 
 			</div>
-
 		</div>
 	</body>
 </template>
