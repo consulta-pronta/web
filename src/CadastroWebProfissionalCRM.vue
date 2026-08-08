@@ -20,7 +20,7 @@
 			<div class="w-1/2 box-border items-center justify-center flex flex-col">
 
 				<div class="w-full pb-8 px-30">
-					<RouterLink to="/CadastroWebPaciente" class="text-[24px] text-surface font-bold">
+					<RouterLink to="/CadastroWebProfissional" class="text-[24px] text-surface font-bold">
 						Voltar
 					</RouterLink>
 				</div>
