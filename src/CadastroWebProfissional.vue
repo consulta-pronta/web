@@ -34,11 +34,11 @@ import ButtonAccent from '@/components/ButtonAccent.vue'
 					</div>
 
 					<div class="flex flex-row bg-primarydark p-1 rounded-lg">
-						<RouterLink to="/CadastroWebPaciente" class="bg-accent w-42.25 h-8.5 rounded-lg text-primarydark flex items-center justify-center">
+						<RouterLink to="/CadastroWebPaciente" class="bg-primarydark w-42.25 h-8.5 rounded-lg text-accent flex items-center justify-center">
 							Paciente
 						</RouterLink>
 
-						<RouterLink to="/CadastroWebProfissional" class="bg-primarydark w-42.25 h-8.5 rounded-lg text-accent flex items-center justify-center">
+						<RouterLink to="/CadastroWebProfissional" class="bg-accent w-42.25 h-8.5 rounded-lg text-primarydark flex items-center justify-center">
 							Profissional
 						</RouterLink>
 					</div>

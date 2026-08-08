@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import buttonAccent from '@/components/ButtonAccent.vue'
+import ButtonAccent from '@/components/ButtonAccent.vue'
+import { RouterLink } from 'vue-router';
 </script>
 <!--@click="$router.push(to)-->
 <template>
@@ -34,8 +35,13 @@ import buttonAccent from '@/components/ButtonAccent.vue'
 					</div>
 
 					<div class="flex flex-row bg-primarydark p-1 rounded-lg">
-						<button class="bg-accent w-42.25 h-8.5 rounded-lg"><a href="" class=" text-primarydark">Paciente</a></button>
-						<button class="bg-primarydark w-42.25 h-8.5 rounded-lg"><a href="" class=" text-accent">Profissional</a></button>
+						<RouterLink to="/CadastroWebPaciente" class="bg-primarydark w-42.25 h-8.5 rounded-lg text-accent flex items-center justify-center">
+							Paciente
+						</RouterLink>
+
+						<RouterLink to="/CadastroWebProfissional" class="bg-accent w-42.25 h-8.5 rounded-lg text-primarydark flex items-center justify-center">
+							Profissional
+						</RouterLink>
 					</div>
 
 					<!--input reservado para o cadastro do nome-->
