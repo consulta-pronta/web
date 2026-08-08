@@ -12,6 +12,11 @@ const router = createRouter({
             path: '/CadastroWebProfissional',
             name: 'cadastroProfissional',
             component: () => import('../CadastroWebProfissional.vue')
+        },
+		{
+            path: '/CadastroWebProfissionalCRM',
+            name: 'cadastroProfissionalCRM',
+            component: () => import('../CadastroWebProfissionalCRM.vue')
         }
 	],
 })

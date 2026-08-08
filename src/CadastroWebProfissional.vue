@@ -65,7 +65,7 @@ import ButtonAccent from '@/components/ButtonAccent.vue'
 					</div>
 
 					<!--div reservado para o envio do CRM-->
-					<RouterLink to="/CadastroWebPaciente" class= "px-5 rounded-md w-125.75 h-11.75 flex items-center justify-center text-accent">
+					<RouterLink to="/CadastroWebProfissionalCRM" class= "px-5 rounded-md w-125.75 h-11.75 flex items-center justify-center text-accent">
 						<img src="/img/IconStart.png" class="mx-2">
 						<p>Enviar CRM ou E-CRM</p>
 					</RouterLink>
