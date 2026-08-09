@@ -33,11 +33,13 @@
 						Envie seu CRM/E-CRM para confirmar sua identidade
 					</div>
 
-					<div class="w-129.5 h-75.75 border border-dashed border-surface my-4 gap-2 flex flex-col items-center justify-center text-textlight">
+					<label for="arquivo" class="w-129.5 h-75.75 border border-dashed border-surface my-4 gap-2 flex flex-col items-center justify-center cursor-pointer">
 						<img src="/img/IconAdicionar.png">
 						<p class="text-accent">Tirar foto ou enviar documento</p>
-						<p class="text-bold">(Arquivo deve ser .jpg .jpeg .png .pdf)</p>
-					</div>
+						<p class="text-textlight text-bold">(Arquivo deve ser .jpg .jpeg .png .pdf)</p>
+					</label>
+
+					<input id="arquivo" type="file" accept=".jpg,.jpeg,.png,.pdf" class="text-transparent file:hidden ">
 				</div>
 
 

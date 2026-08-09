@@ -29,9 +29,7 @@ import ButtonAccent from '@/components/ButtonAccent.vue'
 				<!--form-->
 				<form action="" method="POST" class="space-y-2 items-center justify-center flex flex-col">
 
-					<div>
-						<img src="/img/PerfilFoto.png">
-					</div>
+					<input type="file" accept=".jpg,.jpeg,.png" class="w-20.75 h-20.75 bg-primaryBlue rounded-full border-2 border-accent text-transparent file:hidden cursor-pointer" />
 
 					<div class="flex flex-row bg-primarydark p-1 rounded-lg">
 						<RouterLink to="/CadastroWebPaciente" class="bg-accent w-42.25 h-8.5 rounded-lg text-primarydark flex items-center justify-center">
