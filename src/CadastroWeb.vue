@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import ButtonAccent from '@/components/ButtonAccent.vue'
+import BaseButton from '@/components/BaseButton.vue'
 
 import { ref } from 'vue';
 
@@ -89,7 +89,7 @@ const toggleStatus = (newStatus: string) => {
 						<p class="text-textlight">Já possuiconta? <a href="" class="text-accent">Fazer Login</a></p>
 					</div>
 
-					<buttonAccent text="Prosseguir"/>
+					<BaseButton type="submit" text="Prosseguir" bg-color="accent"/>
 
 				</form>
 			</div>
