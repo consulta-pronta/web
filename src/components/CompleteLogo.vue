@@ -1,5 +1,5 @@
 <template>
-    <div class="w-1/2 box-border p-16">
+    <div class="w-1/2 box-border p-16 select-none">
             <div class="mb-4">
                 <img src="/img/LogoTemporaria.png">
             </div>
