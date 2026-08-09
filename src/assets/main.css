@@ -9,4 +9,15 @@
 
 @theme {
     --font-family-sans: NunitoSans, sans-serif;
+	--color-surface: #F4EFE6;
+	--color-backgroundRoxo: #231C44;
+	--color-primarydark: #2B254D;
+	--color-accent: #E5D5B8;
+	--color-primaryBlue: #4D4A73;
+	--color-textlight: #FFFFFF;
+	--color-textDark: #2B254D;
+}
+
+.material-symbols-rounded {
+	font-variation-settings: 'FILL' 1;
 }
