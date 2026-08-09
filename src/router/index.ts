@@ -4,19 +4,14 @@ const router = createRouter({
 	history: createWebHistory(import.meta.env.BASE_URL),
 	routes: [
 		{
-            path: '/CadastroWebPaciente',
-            name: 'cadastroPaciente',
-            component: () => import('../CadastroWebPaciente.vue')
-        },
-        {
-            path: '/CadastroWebProfissional',
-            name: 'cadastroProfissional',
-            component: () => import('../CadastroWebProfissional.vue')
+            path: '/CadastroWeb',
+            name: 'cadastroWeb',
+            component: () => import('../CadastroWeb.vue')
         },
 		{
-            path: '/CadastroWebProfissionalCRM',
-            name: 'cadastroProfissionalCRM',
-            component: () => import('../CadastroWebProfissionalCRM.vue')
+            path: '/CadastroWebCRM',
+            name: 'cadastroCRM',
+            component: () => import('../CadastroWebCRM.vue')
         }
 	],
 })

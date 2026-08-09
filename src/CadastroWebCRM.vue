@@ -1,6 +1,5 @@
 <script setup lang="ts">
 </script>
-<!--@click="$router.push(to)-->
 <template>
 	<body class="w-screen min-h-screen bg-[url(/img/BackgroundImg.jpg)] bg-cover bg-center bg-no-repeat">
 		<div class="absolute inset-0 bg-linear-to-r from-transparent from-30% to-backgroundRoxo to-55% flex flex-row ">
@@ -20,7 +19,7 @@
 			<div class="w-1/2 box-border items-center justify-center flex flex-col">
 
 				<div class="w-full pb-8 px-30">
-					<RouterLink to="/CadastroWebProfissional" class="text-[24px] text-surface font-bold">
+					<RouterLink to="/CadastroWeb" class="text-[24px] text-surface font-bold">
 						Voltar
 					</RouterLink>
 				</div>
