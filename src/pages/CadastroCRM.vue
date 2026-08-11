@@ -1,11 +1,9 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import AuthBackground from '@/components/AuthBackground.vue';
+
+</script>
 <template>
-	<body
-		class="w-screen min-h-screen bg-[url(/img/BackgroundImg.jpg)] bg-cover bg-center bg-no-repeat"
-	>
-		<div
-			class="absolute inset-0 bg-linear-to-r from-transparent from-30% to-backgroundRoxo to-55% flex flex-row"
-		>
+	<AuthBackground>
 			<div class="w-1/2 box-border p-16">
 				<div class="mb-4">
 					<img src="/img/LogoTemporaria.png" />
@@ -53,6 +51,5 @@
 					/>
 				</div>
 			</div>
-		</div>
-	</body>
+	</AuthBackground>
 </template>
