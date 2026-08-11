@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.3.3",
+    "axios": "^1.19.0",
     "material-symbols": "^0.45.10",
     "pinia": "^4.0.2",
     "tailwindcss": "^4.3.3",

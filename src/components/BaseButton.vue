@@ -1,42 +1,45 @@
 <script setup lang="ts">
-import { useRouter, useRoute } from 'vue-router'
+import { useRouter, useRoute } from "vue-router"
 
 const router = useRouter()
 const route = useRoute()
 
 interface Props {
-    type?: "button" | "submit" | "reset" 
-    text: string
-    bgColor: string
-    border?: boolean
-    borderColor?: string
-    textColor?: string
-    path?: string
+	type?: "button" | "submit" | "reset"
+	bgColor: string
+	border?: boolean
+	borderColor?: string
+	textColor?: string
+	path?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
-    textColor: "textDark",
-    type: "button",
-    path: "self"
+	textColor: "textDark",
+	type: "button",
+	path: "self",
 })
 
 const redirect = () => {
-    if (props.type === "button") {
-        if (props.path === "self") {
-            router.push(route.path)
-        } else {
-            router.push(`${props.path}`)
-        }
-    }
+	if (props.type === "button") {
+		if (props.path === "self") {
+			router.push(route.path)
+		} else {
+			router.push(`${props.path}`)
+		}
+	}
 }
 </script>
 
 <template>
-    <button :type="props.type" @click="redirect" :class="[
-        `bg-${props.bgColor} text-${props.textColor}`,
-        props.border ? `border-2 border-${props.borderColor}` : 'border-0',
-        'px-5 rounded-md w-125.75 h-11 flex items-center justify-center cursor-pointer'
-        ]">
-        {{ props.text }}
-    </button>
+	<button
+		:type="props.type"
+		@click="redirect"
+		:class="[
+			`bg-${props.bgColor} text-${props.textColor}`,
+			props.border ? `border-2 border-${props.borderColor}` : 'border-0',
+			'px-5 rounded-md w-125.75 h-11 flex items-center justify-center cursor-pointer',
+		]"
+	>
+		<slot></slot>
+	</button>
 </template>
