@@ -89,7 +89,7 @@ const toggleStatus = (newStatus: string) => {
 						<p class="text-textlight">Já possuiconta? <a href="" class="text-accent">Fazer Login</a></p>
 					</div>
 
-					<BaseButton type="submit" text="Prosseguir" bg-color="accent"/>
+					<BaseButton type="submit" bg-color="accent">Prosseguir</BaseButton>
 
 				</form>
 			</div>

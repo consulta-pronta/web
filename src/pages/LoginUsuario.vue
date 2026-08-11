@@ -27,7 +27,7 @@ const status = ref("paciente")
 
                 <BaseInput type="text" placeholder="Nome" icon="person" />
                 <BaseInput type="password" placeholder="Senha" icon="lock" class="mb-5" />
-                <BaseButton type="submit" text="Entrar" bg-color="accent" />
+                <BaseButton type="submit" bg-color="accent">Entrar</BaseButton>
 
                 <RouterLink to="">
                     <p class="text-textlight">Esqueceu a senha?</p>
@@ -35,7 +35,9 @@ const status = ref("paciente")
 
                 <hr class="border-t-2 border-surface w-full m-4" />
 
-                <BaseButton text="Cadastrar nova conta" bg-color="primarydark" border border-color="accent" text-color="accent" path="cadastroWeb" class="mt-2" />
+                <BaseButton bg-color="primarydark" border border-color="accent" text-color="accent" path="cadastroWeb" class="mt-2">
+					Cadastrar nova conta
+				</BaseButton>
             </form>
         </div>
 	</AuthBackground>
