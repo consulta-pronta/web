@@ -5,26 +5,33 @@ import BaseInput from "@/components/BaseInput.vue"
 import ToggleUser from "@/components/ToggleUser.vue"
 //import { preview } from "vite"
 
-import { ref } from "vue"
+
+import { ref, onBeforeUnmount } from "vue"
 
 const status = ref("paciente")
 
-const files = ref<File[]>([]);
+const selectedFile = ref<File | null>(null)
+const previewUrl = ref<string | null>(null)
 
+function handleFileSelect(event: Event) {
+	const input = event.target as HTMLInputElement
+	const file = input.files?.[0]
 
-//function handleFileSelect(e: Event) {
-//	const input = e.target as HTMLInputElement;
-//	const filesAsArrary = Array.from(input?.files || []); //FileList
-//
-//const newFiles = filesAsArrary.map((file) => ({
-//		file,
-//		name: file.name,
-//		preview: URL.createObjectURL(file),
-//	}));
+	if (!file) return
 
-//	files.value = files.value.concat(newFiles);
-//}
+	if (previewUrl.value) {
+		URL.revokeObjectURL(previewUrl.value)
+	}
 
+	selectedFile.value = file
+	previewUrl.value = URL.createObjectURL(file)
+}
+
+onBeforeUnmount(() => {
+	if (previewUrl.value) {
+		URL.revokeObjectURL(previewUrl.value)
+	}
+})
 </script>
 <template>
 	<AuthBackground>
@@ -52,18 +59,16 @@ const files = ref<File[]>([]);
 				@submit.prevent
 				class="space-y-2 items-center justify-center flex flex-col"
 			>
-				<label class="w-20.75 h-20.75 bg-primaryBlue rounded-full border-2 border-accent cursor-pointer">
-					<input
-						type="file"
-						accept=".jpg,.jpeg,.png"
-					/>
-					<!---<div v-for="(file, index) in files" :key="index" class="preview">
-      					<img :src="file.preview" :alt="file.name" style="max-width: 200px; max-height: 200px;" />
-    				</div>-->
+				<label class="w-20.75 h-20.75 bg-primaryBlue rounded-full border-2 border-accent cursor-pointer overflow-hidden flex items-center justify-center">
+					
+					<input type="file" accept=".jpg,.jpeg,.png" class="hidden" @change="handleFileSelect" />
+
+					<img v-if="previewUrl" :src="previewUrl" :alt="selectedFile?.name || 'Foto de perfil'" class="w-full h-full object-cover" />
+
+					<span v-else>
+						<img src="/img/IconeUsuarioPadrao.jpg">
+					</span>
 				</label>
-				<p v-for="file in files" :key="file.name" class="text-red-500">
-					{{ file.name }}
-				</p>
 
 				<ToggleUser v-model="status" class="mb-4" />
 
@@ -84,9 +89,9 @@ const files = ref<File[]>([]);
 				<BaseInput type="text" placeholder="Senha" icon="lock"/>
 				<!--input reservado para a confirmação da senha-->
 
-				<label>
+				<label class="w-100">
 					<BaseInput type="text" placeholder="Confirmar senha" icon="lock" w="116.75"/>
-					<label icon="info"></label>
+					<label icon="info" class="w-6 h-100"></label>
 				</label>
 
 				<div>
