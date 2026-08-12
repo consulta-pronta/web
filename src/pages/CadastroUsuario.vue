@@ -3,10 +3,28 @@ import AuthBackground from "@/components/AuthBackground.vue"
 import BaseButton from "@/components/BaseButton.vue"
 import BaseInput from "@/components/BaseInput.vue"
 import ToggleUser from "@/components/ToggleUser.vue"
+//import { preview } from "vite"
 
 import { ref } from "vue"
 
 const status = ref("paciente")
+
+const files = ref<File[]>([]);
+
+
+//function handleFileSelect(e: Event) {
+//	const input = e.target as HTMLInputElement;
+//	const filesAsArrary = Array.from(input?.files || []); //FileList
+//
+//const newFiles = filesAsArrary.map((file) => ({
+//		file,
+//		name: file.name,
+//		preview: URL.createObjectURL(file),
+//	}));
+
+//	files.value = files.value.concat(newFiles);
+//}
+
 </script>
 <template>
 	<AuthBackground>
@@ -34,11 +52,18 @@ const status = ref("paciente")
 				@submit.prevent
 				class="space-y-2 items-center justify-center flex flex-col"
 			>
-				<input
-					type="file"
-					accept=".jpg,.jpeg,.png"
-					class="w-20.75 h-20.75 bg-primaryBlue rounded-full border-2 border-accent text-transparent file:hidden cursor-pointer"
-				/>
+				<label class="w-20.75 h-20.75 bg-primaryBlue rounded-full border-2 border-accent cursor-pointer">
+					<input
+						type="file"
+						accept=".jpg,.jpeg,.png"
+					/>
+					<!---<div v-for="(file, index) in files" :key="index" class="preview">
+      					<img :src="file.preview" :alt="file.name" style="max-width: 200px; max-height: 200px;" />
+    				</div>-->
+				</label>
+				<p v-for="file in files" :key="file.name" class="text-red-500">
+					{{ file.name }}
+				</p>
 
 				<ToggleUser v-model="status" class="mb-4" />
 
@@ -53,22 +78,16 @@ const status = ref("paciente")
 
 				<!--input reservado para o cadastro do telefone-->
 
-				<BaseInput type="number" placeholder="Telefone" icon="phone"/>
+				<BaseInput type="tel" placeholder="Telefone" icon="phone"/>
 				<!--div reservado para o cadastro da senha-->
 
 				<BaseInput type="text" placeholder="Senha" icon="lock"/>
 				<!--input reservado para a confirmação da senha-->
 
-				<BaseInput type="text" placeholder="Confirmar senha" icon="lock"/>
-
-				<RouterLink
-					v-if="status === 'profissional'"
-					to="/CadastroWebCRM"
-					class="px-5 rounded-md w-125.75 h-11.75 flex items-center justify-center text-accent"
-				>
-					<img src="/img/IconStart.png" class="mx-2" />
-					<p>Enviar CRM ou E-CRM</p>
-				</RouterLink>
+				<label>
+					<BaseInput type="text" placeholder="Confirmar senha" icon="lock" w="116.75"/>
+					<label icon="info"></label>
+				</label>
 
 				<div>
 					<p class="text-textlight">
@@ -76,11 +95,11 @@ const status = ref("paciente")
 						<a href="" class="text-accent">Política de Privacidade</a>
 					</p>
 				</div>
-				<div>
+				<RouterLink to="/LoginUsuario">
 					<p class="text-textlight">
 						Já possui conta? <a href="" class="text-accent">Fazer Login</a>
 					</p>
-				</div>
+				</RouterLink>
 
 				<BaseButton type="submit" bg-color="accent">Prosseguir</BaseButton>
 			</form>

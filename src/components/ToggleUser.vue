@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref } from "vue"
 
 const status = defineModel<string>()
 
@@ -16,7 +15,7 @@ const toggleStatus = (newStatus: string) => {
 			:class="
 				status === 'paciente' ? 'bg-accent text-primarydark' : 'bg-primarydark text-accent'
 			"
-			class="w-42.25 h-8.5 rounded-lg flex items-center justify-center"
+			class="w-42.25 h-8.5 rounded-lg flex items-center justify-center cursor-pointer"
 		>
 			Paciente
 		</button>
