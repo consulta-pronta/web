@@ -11,16 +11,13 @@ interface Props {
 	borderColor?: string
 	textColor?: string
 	path?: string
-	w?: string
-	h?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
 	textColor: "textDark",
 	type: "button",
 	path: "self",
-	w: "125.75px",
-	h: "11px",
+
 })
 
 const redirect = () => {
@@ -41,7 +38,7 @@ const redirect = () => {
 		:class="[
 			`bg-${props.bgColor} text-${props.textColor}`,
 			props.border ? `border-2 border-${props.borderColor}` : 'border-0',
-			`px-5 rounded-md w-${props.w} h-${props.h} flex items-center justify-center cursor-pointer`,
+			`px-5 rounded-md w-125.75 h-11 flex items-center justify-center cursor-pointer`,
 		]"
 	>
 		<slot></slot>
