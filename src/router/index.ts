@@ -4,8 +4,8 @@ const router = createRouter({
 	history: createWebHistory(import.meta.env.BASE_URL),
 	routes: [
 		{
-			path: "/CadastroUsuario",
-			name: "cadastroUsuario",
+			path: "/Cadastro",
+			name: "cadastro",
 			component: () => import("../pages/CadastroUsuario.vue"),
 		},
 		{
@@ -14,8 +14,8 @@ const router = createRouter({
 			component: () => import("../pages/CadastroCRM.vue"),
 		},
 		{
-			path: "/LoginUsuario",
-			name: "loginUsuario",
+			path: "/Login",
+			name: "login",
 			component: () => import("../pages/LoginUsuario.vue"),
 		},
 	],

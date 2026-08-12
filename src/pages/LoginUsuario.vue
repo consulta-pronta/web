@@ -21,7 +21,6 @@ const status = ref("paciente")
 				para acessar os seus dados.
 			</div>
 
-			<!--form-->
 			<form
 				@submit.prevent
 				class="space-y-2 items-center justify-center flex flex-col"
@@ -43,7 +42,7 @@ const status = ref("paciente")
 					border
 					border-color="accent"
 					text-color="accent"
-					path="cadastroWeb"
+					path="cadastro"
 					class="mt-2"
 				>
 					Cadastrar nova conta
