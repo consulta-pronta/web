@@ -1,11 +1,13 @@
 <script setup lang="ts">
 interface Props {
-	type: string
+	type?: "text" | "password" | "email" | "number" | "tel"
 	placeholder: string
 	icon: string
 }
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+	type: "text",
+})
 </script>
 
 <template>
