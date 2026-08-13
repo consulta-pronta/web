@@ -5,7 +5,7 @@ const router = useRouter()
 const route = useRoute()
 
 interface Props {
-	type?: "button" | "submit" | "reset"
+	type?: "button" | "submit" | "reset" | "nav"
 	bgColor: string
 	border?: boolean
 	borderColor?: string
@@ -13,6 +13,7 @@ interface Props {
 	path?: string
 	icon?: string
 	iconColor?: string
+	justify?: "center" | "start" | "end"
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -20,6 +21,7 @@ const props = withDefaults(defineProps<Props>(), {
 	type: "button",
 	path: "self",
 	iconColor: "textlight",
+	justify: "center",
 })
 
 const redirect = () => {
@@ -36,16 +38,17 @@ const redirect = () => {
 <template>
 
 	<button
-		:type="props.type"
+		:type="props.type === 'nav' ? 'button' : props.type"
 		@click="redirect()"
 		:class="[
 			`bg-${props.bgColor} text-${props.textColor}`,
 			props.border ? `border-2 border-${props.borderColor}` : 'border-0',
-			'px-5 rounded-md w-125.75 h-11 flex items-center justify-center cursor-pointer',
+			`px-5 rounded-md w-full h-11 flex items-center justify-${props.justify} cursor-pointer`,
+			props.type === 'nav' ? 'mb-2' : '',
 		]"
 	>
 		<span
-			class="material-symbols-rounded text-xl select-none"
+			class="material-symbols-rounded text-4xl! select-none"
 			:class="`text-${iconColor}`"
 			>{{ icon }}</span
 		>
