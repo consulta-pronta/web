@@ -103,7 +103,7 @@ onBeforeUnmount(() => {
 							type="text"
 							placeholder="Confirmar senha"
 							icon="lock"
-							w="116.75"
+							w="116.25"
 						/>
 
 						<div class="relative flex items-center justify-center mx-1.5 group">

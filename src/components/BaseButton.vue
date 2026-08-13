@@ -17,7 +17,6 @@ const props = withDefaults(defineProps<Props>(), {
 	textColor: "textDark",
 	type: "button",
 	path: "self",
-
 })
 
 const redirect = () => {
