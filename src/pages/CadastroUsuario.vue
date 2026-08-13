@@ -3,35 +3,14 @@ import AuthBackground from "@/components/AuthBackground.vue"
 import BaseButton from "@/components/BaseButton.vue"
 import BaseInput from "@/components/BaseInput.vue"
 import ToggleUser from "@/components/ToggleUser.vue"
+import UserPhoto from "@/components/UserPhoto.vue"
 //import { preview } from "vite"
 
 
-import { ref, onBeforeUnmount } from "vue"
+import { ref } from "vue"
 
 const status = ref("paciente")
 
-const selectedFile = ref<File | null>(null)
-const previewUrl = ref<string | null>(null)
-
-function handleFileSelect(event: Event) {
-	const input = event.target as HTMLInputElement
-	const file = input.files?.[0]
-
-	if (!file) return
-
-	if (previewUrl.value) {
-		URL.revokeObjectURL(previewUrl.value)
-	}
-
-	selectedFile.value = file
-	previewUrl.value = URL.createObjectURL(file)
-}
-
-onBeforeUnmount(() => {
-	if (previewUrl.value) {
-		URL.revokeObjectURL(previewUrl.value)
-	}
-})
 </script>
 <template>
 	<AuthBackground>
@@ -60,25 +39,8 @@ onBeforeUnmount(() => {
 				class="space-y-2 items-center justify-center flex flex-col"
 			>
 
-			<article class="flex flex-row relative inline-block">
-				<label class="w-19.75 h-19.75 bg-primaryBlue rounded-full border-2 border-accent cursor-pointer overflow-hidden flex items-center justify-center">
+				<UserPhoto />
 
-					<input type="file" accept=".jpg,.jpeg,.png" class="hidden" @change="handleFileSelect" />
-
-					<img v-if="previewUrl" :src="previewUrl" :alt="selectedFile?.name || 'Foto de perfil'" class="w-full h-full object-cover" />
-
-					<span v-else>
-						<img src="/img/IconeUsuarioPadrao.jpg">
-					</span>
-				</label>
-
-				<div class="absolute-right w-6.75 h-6.75 rounded-full bg-accent absolute bottom-0 right-0 flex items-center justify-center">
-					<section class="material-symbols-rounded">
-						photo_camera
-					</section>
-				</div>
-
-			</article>
 				<ToggleUser v-model="status" class="mb-2" />
 
 				<BaseInput type="text" placeholder="Nome" icon="person" />
