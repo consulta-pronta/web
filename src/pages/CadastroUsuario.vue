@@ -52,15 +52,17 @@ onBeforeUnmount(() => {
 
 		<div class="w-1/2 box-border items-center justify-center flex flex-col">
 			<div class="text-[36px] text-surface font-bold mb-1">Crie uma Conta</div>
-			<div class="text-[16px] text-surface mb-4" >Preencha seus dados para começar.</div>
+			<div class="text-[16px] text-surface mb-3" >Preencha seus dados para começar.</div>
 
 			<!--form-->
 			<form
 				@submit.prevent
 				class="space-y-2 items-center justify-center flex flex-col"
 			>
-				<label class="w-20.75 h-20.75 bg-primaryBlue rounded-full border-2 border-accent cursor-pointer overflow-hidden flex items-center justify-center">
-					
+
+			<article class="flex flex-row relative inline-block">
+				<label class="w-19.75 h-19.75 bg-primaryBlue rounded-full border-2 border-accent cursor-pointer overflow-hidden flex items-center justify-center">
+
 					<input type="file" accept=".jpg,.jpeg,.png" class="hidden" @change="handleFileSelect" />
 
 					<img v-if="previewUrl" :src="previewUrl" :alt="selectedFile?.name || 'Foto de perfil'" class="w-full h-full object-cover" />
@@ -70,7 +72,14 @@ onBeforeUnmount(() => {
 					</span>
 				</label>
 
-				<ToggleUser v-model="status" class="mb-4" />
+				<div class="absolute-right w-6.75 h-6.75 rounded-full bg-accent absolute bottom-0 right-0 flex items-center justify-center">
+					<section class="material-symbols-rounded">
+						photo_camera
+					</section>
+				</div>
+
+			</article>
+				<ToggleUser v-model="status" class="mb-2" />
 
 				<BaseInput type="text" placeholder="Nome" icon="person" />
 
@@ -89,10 +98,49 @@ onBeforeUnmount(() => {
 				<BaseInput type="text" placeholder="Senha" icon="lock"/>
 				<!--input reservado para a confirmação da senha-->
 
-				<label class="w-100">
-					<BaseInput type="text" placeholder="Confirmar senha" icon="lock" w="116.75"/>
-					<label icon="info" class="w-6 h-100"></label>
-				</label>
+				<section class="relative flex flex-row">
+						<BaseInput
+							type="text"
+							placeholder="Confirmar senha"
+							icon="lock"
+							w="116.75"
+						/>
+
+						<div class="relative flex items-center justify-center mx-1.5 group">
+							<span
+								class="material-symbols-rounded text-textlight text-[24px] cursor-help"
+							>
+								info
+							</span>
+
+							<!-- Overlay -->
+							<div
+								class="absolute right-0 bottom-full mb-2 w-64 p-3
+								bg-textlight text-primarydark text-xs rounded-lg
+								shadow-lg border
+								opacity-0 invisible
+								group-hover:opacity-100 group-hover:visible
+								transition-opacity duration-200
+								z-50"
+							>
+								<p class="leading-relaxed font-bold">
+									A senha deve ter no mínimo 8 caracteres, contendo:<br>
+									- Uma letra maiúscula <br>
+									- Uma letra minúscula <br>
+									- Um número <br>
+								</p>
+							</div>
+						</div>
+				</section>
+
+				<RouterLink
+					v-if="status === 'profissional'"
+					to="/CadastroWebCRM"
+					class="px-5 rounded-md w-125.75 h-7 flex items-center justify-center text-accent"
+				>
+					<img src="/img/IconStart.png" class="mx-2" />
+					<p>Enviar CRM ou E-CRM</p>
+				</RouterLink>
 
 				<div>
 					<p class="text-textlight">
