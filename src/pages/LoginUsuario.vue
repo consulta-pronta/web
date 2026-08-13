@@ -43,7 +43,7 @@ const status = ref("paciente")
 					border
 					border-color="accent"
 					text-color="accent"
-					path="cadastroWeb"
+					path="cadastroUsuario"
 					class="mt-2"
 				>
 					Cadastrar nova conta

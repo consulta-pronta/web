@@ -3,9 +3,12 @@ interface Props {
 	type: string
 	placeholder: string
 	icon: string
+	w?: string
+	pl?: string
 }
-
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+	w: "125.75",
+})
 </script>
 
 <template>
@@ -17,7 +20,9 @@ const props = defineProps<Props>()
 		<input
 			:type="props.type"
 			:placeholder="props.placeholder"
-			class="bg-primaryBlue px-5 rounded-md w-125.75 h-11.75 flex items-center text-textlight placeholder:text-textlight outline-none pl-10"
+			:class="[`bg-primaryBlue px-5 rounded-md`,
+			`w-${props.w}`,
+			`h-11 flex items-center text-textlight placeholder:text-textlight outline-none pl-10`]"
 		/>
 	</div>
 </template>
