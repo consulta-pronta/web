@@ -15,7 +15,7 @@ const toggleStatus = (newStatus: string) => {
 			:class="
 				status === 'paciente' ? 'bg-accent text-primarydark' : 'bg-primarydark text-accent'
 			"
-			class="w-42.25 h-8.5 rounded-lg flex items-center justify-center cursor-pointer"
+			class="w-42.25 h-8.5 rounded-lg flex items-center justify-center cursor-pointer transition-all duration-600"
 		>
 			Paciente
 		</button>
@@ -28,7 +28,7 @@ const toggleStatus = (newStatus: string) => {
 					? 'bg-accent text-primarydark'
 					: 'bg-primarydark text-accent'
 			"
-			class="w-42.25 h-8.5 rounded-lg flex items-center justify-center"
+			class="w-42.25 h-8.5 rounded-lg flex items-center justify-center transition-all duration-600"
 		>
 			Profissional
 		</button>
