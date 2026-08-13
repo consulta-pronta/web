@@ -103,7 +103,7 @@ onBeforeUnmount(() => {
 							type="text"
 							placeholder="Confirmar senha"
 							icon="lock"
-							w="116.25"
+							class="w-116.25"
 						/>
 
 						<div class="relative flex items-center justify-center mx-1.5 group">
@@ -135,7 +135,7 @@ onBeforeUnmount(() => {
 
 				<RouterLink
 					v-if="status === 'profissional'"
-					to="/CadastroWebCRM"
+					to="/CadastroCRM"
 					class="px-5 rounded-md w-125.75 h-7 flex items-center justify-center text-accent"
 				>
 					<img src="/img/IconStart.png" class="mx-2" />
