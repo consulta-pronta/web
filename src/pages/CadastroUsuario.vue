@@ -1,107 +1,73 @@
 <script setup lang="ts">
 import AuthBackground from "@/components/AuthBackground.vue"
 import BaseButton from "@/components/BaseButton.vue"
+import BaseLogo from "@/components/BaseLogo.vue"
 import BaseInput from "@/components/BaseInput.vue"
 import ToggleUser from "@/components/ToggleUser.vue"
 import UserPhoto from "@/components/UserPhoto.vue"
 //import { preview } from "vite"
 
-
 import { ref } from "vue"
 
 const status = ref("paciente")
-
 </script>
 <template>
 	<AuthBackground>
-		<div class="w-1/2 box-border p-16">
-			<div class="mb-4">
-				<img src="/img/LogoTemporaria.png" />
-			</div>
-			<div>
-				<p
-					class="text-3xl text-surface font-bold drop-shadow-[3px_3px_3px_rgba(0,0,0,1)]"
-				>
-					Organize seus sintomas.<br />
-					Agilize sua consulta.
-				</p>
-			</div>
-		</div>
+		<BaseLogo text complete />
 
 		<div class="w-1/2 box-border items-center justify-center flex flex-col">
 			<div class="text-[36px] text-surface font-bold mb-1">Crie uma Conta</div>
-			<div class="text-[16px] text-surface mb-3" >Preencha seus dados para começar.</div>
+			<div class="text-[16px] text-surface mb-3">Preencha seus dados para começar.</div>
 
 			<!--form-->
 			<form
 				@submit.prevent
-				class="space-y-2 items-center justify-center flex flex-col"
+				class="space-y-2 items-center justify-center flex flex-col w-116.25"
 			>
-
 				<UserPhoto />
 
-				<ToggleUser v-model="status" class="mb-2" />
+				<ToggleUser v-model="status" class="mb-4" />
 
 				<BaseInput type="text" placeholder="Nome" icon="person" />
-
-
-				<!--INPUT reservado para o cadastro do CPF-->
 				<BaseInput type="text" placeholder="CPF" icon="article" />
+				<BaseInput type="text" placeholder="E-Mail" icon="email" />
+				<BaseInput type="tel" placeholder="Telefone" icon="phone" />
+				<BaseInput type="password" placeholder="Senha" icon="lock" />
 
-				<!--div reservado para o cadastro do email-->
-				<BaseInput type="text" placeholder="E-Mail" icon="email"/>
+				<section class="relative flex flex-row w-116.25">
+					<BaseInput type="password" placeholder="Confirmar senha" icon="lock" />
 
-				<!--input reservado para o cadastro do telefone-->
+					<div class="relative flex items-center justify-center mx-1.5 group">
+						<span
+							class="material-symbols-rounded text-textlight text-[24px] cursor-help"
+						>
+							info
+						</span>
 
-				<BaseInput type="tel" placeholder="Telefone" icon="phone"/>
-				<!--div reservado para o cadastro da senha-->
-
-				<BaseInput type="text" placeholder="Senha" icon="lock"/>
-				<!--input reservado para a confirmação da senha-->
-
-				<section class="relative flex flex-row">
-						<BaseInput
-							type="text"
-							placeholder="Confirmar senha"
-							icon="lock"
-							class="w-116.25"
-						/>
-
-						<div class="relative flex items-center justify-center mx-1.5 group">
-							<span
-								class="material-symbols-rounded text-textlight text-[24px] cursor-help"
-							>
-								info
-							</span>
-
-							<!-- Overlay -->
-							<div
-								class="absolute right-0 bottom-full mb-2 w-64 p-3
-								bg-textlight text-primarydark text-xs rounded-lg
-								shadow-lg border
-								opacity-0 invisible
-								group-hover:opacity-100 group-hover:visible
-								transition-opacity duration-200
-								z-50"
-							>
-								<p class="leading-relaxed font-bold">
-									A senha deve ter no mínimo 8 caracteres, contendo:<br>
-									- Uma letra maiúscula <br>
-									- Uma letra minúscula <br>
-									- Um número <br>
-								</p>
-							</div>
+						<!-- Overlay -->
+						<div
+							class="absolute right-0 bottom-full mb-2 w-64 p-3 bg-textlight text-primarydark text-xs rounded-lg shadow-lg border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-200 z-50"
+						>
+							<p class="leading-relaxed font-bold">
+								A senha deve ter no mínimo 8 caracteres, contendo:<br />
+								- Uma letra maiúscula <br />
+								- Uma letra minúscula <br />
+								- Um número <br />
+							</p>
 						</div>
+					</div>
 				</section>
 
-				<RouterLink
+				<BaseButton
 					v-if="status === 'profissional'"
-					to="/CadastroCRM"
-					class="px-5 rounded-md w-125.75 h-7 flex items-center justify-center text-accent"
+					type="button"
+					text-color="accent"
+					icon-color="accent"
+					icon="article"
+					path="cadastroCRM"
 				>
-					<img src="/img/IconStart.png" class="mx-2" />
-					<p>Enviar CRM ou E-CRM</p>
-				</RouterLink>
+					Enviar CRM ou E-CRM
+				</BaseButton>
 
 				<div>
 					<p class="text-textlight">
@@ -109,7 +75,7 @@ const status = ref("paciente")
 						<a href="" class="text-accent">Política de Privacidade</a>
 					</p>
 				</div>
-				<RouterLink to="/LoginUsuario">
+				<RouterLink to="login">
 					<p class="text-textlight">
 						Já possui conta? <a href="" class="text-accent">Fazer Login</a>
 					</p>

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 import { ref, onBeforeUnmount } from "vue"
 
 const selectedFile = ref<File | null>(null)
@@ -28,21 +27,27 @@ onBeforeUnmount(() => {
 
 <template>
 	<article class="flex flex-row relative inline-block">
-		<label class="w-19.75 h-19.75 bg-primaryBlue rounded-full border-2 border-accent cursor-pointer overflow-hidden flex items-center justify-center">
-
+		<label
+			class="w-19.75 h-19.75 bg-primaryBlue rounded-full border-2 border-accent cursor-pointer overflow-hidden flex items-center justify-center"
+		>
 			<input type="file" accept=".jpg,.jpeg,.png" class="hidden" @change="handleFileSelect" />
 
-			<img v-if="previewUrl" :src="previewUrl" :alt="selectedFile?.name || 'Foto de perfil'" class="w-full h-full object-cover" />
+			<img
+				v-if="previewUrl"
+				:src="previewUrl"
+				:alt="selectedFile?.name || 'Foto de perfil'"
+				class="w-full h-full object-cover"
+			/>
 
 			<span v-else>
-				<img src="/img/IconeUsuarioPadrao.jpg">
+				<img src="/img/IconeUsuarioPadrao.jpg" />
 			</span>
 		</label>
 
-		<div class="absolute-right w-5.75 h-5.75 rounded-full bg-accent absolute bottom-0 right-0 flex items-center justify-center">
-			<section class="material-symbols-rounded text-xl/10!">
-				photo_camera
-			</section>
+		<div
+			class="absolute-right w-5.75 h-5.75 rounded-full bg-accent absolute bottom-0 right-0 flex items-center justify-center"
+		>
+			<section class="material-symbols-rounded text-xl/10!">photo_camera</section>
 		</div>
 	</article>
 </template>

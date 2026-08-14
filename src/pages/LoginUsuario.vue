@@ -22,13 +22,13 @@ const login = () => {
 		<BaseLogo text complete />
 		<div class="w-1/2 box-border items-center justify-center flex flex-col">
 			<div class="text-[36px] text-surface font-bold mb-1">Bem-Vindo</div>
-			<div class="text-[16px] text-surface mb-4">
+			<div class="text-[16px] text-surface mb-3">
 				Faça o login para acessar os seus dados.
 			</div>
 
 			<form
 				@submit.prevent="login()"
-				class="space-y-2 items-center justify-center flex flex-col"
+				class="space-y-2 items-center justify-center flex flex-col w-116.25"
 			>
 				<ToggleUser v-model="status" class="mb-4" />
 
