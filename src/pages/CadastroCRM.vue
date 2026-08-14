@@ -1,11 +1,9 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import AuthBackground from '@/components/AuthBackground.vue';
+
+</script>
 <template>
-	<body
-		class="w-screen min-h-screen bg-[url(/img/BackgroundImg.jpg)] bg-cover bg-center bg-no-repeat"
-	>
-		<div
-			class="absolute inset-0 bg-linear-to-r from-transparent from-30% to-backgroundRoxo to-55% flex flex-row"
-		>
+	<AuthBackground>
 			<div class="w-1/2 box-border p-16">
 				<div class="mb-4">
 					<img src="/img/LogoTemporaria.png" />
@@ -23,7 +21,7 @@
 
 			<div class="w-1/2 box-border items-center justify-center flex flex-col">
 				<div class="w-full pb-8 px-30">
-					<RouterLink to="/CadastroWeb" class="text-[24px] text-surface font-bold">
+					<RouterLink to="/CadastroUsuario" class="text-[24px] text-surface font-bold">
 						Voltar
 					</RouterLink>
 				</div>
@@ -53,6 +51,5 @@
 					/>
 				</div>
 			</div>
-		</div>
-	</body>
+	</AuthBackground>
 </template>
