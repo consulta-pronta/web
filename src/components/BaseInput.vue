@@ -1,13 +1,13 @@
 <script setup lang="ts">
 interface Props {
-	type: string
+	type?: "text" | "password" | "email" | "number" | "tel"
 	placeholder: string
 	icon: string
 	w?: string
-	pl?: string
 }
+
 const props = withDefaults(defineProps<Props>(), {
-	w: "125.75",
+	type: "text",
 })
 </script>
 

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 const status = defineModel<string>()
 
 const toggleStatus = (newStatus: string) => {
