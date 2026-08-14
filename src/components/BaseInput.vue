@@ -3,7 +3,6 @@ interface Props {
 	type?: "text" | "password" | "email" | "number" | "tel"
 	placeholder: string
 	icon: string
-	w?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -12,7 +11,7 @@ const props = withDefaults(defineProps<Props>(), {
 </script>
 
 <template>
-	<div class="relative flex items-center">
+	<div class="relative flex items-center w-full">
 		<span
 			class="material-symbols-rounded text-textlight absolute left-3 text-xl pointer-events-none"
 			>{{ icon }}</span
@@ -20,9 +19,9 @@ const props = withDefaults(defineProps<Props>(), {
 		<input
 			:type="props.type"
 			:placeholder="props.placeholder"
-			:class="[`bg-primaryBlue px-5 rounded-md`,
-			`w-${props.w}`,
-			`h-11 flex items-center text-textlight placeholder:text-textlight outline-none pl-10`]"
+			:class="[
+				'bg-primaryBlue px-5 rounded-md w-full h-11 flex items-center text-textlight placeholder:text-textlight outline-none pl-10',
+			]"
 		/>
 	</div>
 </template>

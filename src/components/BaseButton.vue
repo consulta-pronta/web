@@ -36,7 +36,6 @@ const redirect = () => {
 </script>
 
 <template>
-
 	<button
 		:type="props.type === 'nav' ? 'button' : props.type"
 		@click="redirect()"
@@ -47,11 +46,9 @@ const redirect = () => {
 			props.type === 'nav' ? 'mb-2' : '',
 		]"
 	>
-		<span
-			class="material-symbols-rounded text-4xl! select-none"
-			:class="`text-${iconColor}`"
-			>{{ icon }}</span
-		>
+		<span class="material-symbols-rounded text-4xl! select-none" :class="`text-${iconColor}`">{{
+			icon
+		}}</span>
 		<slot></slot>
 	</button>
 </template>
