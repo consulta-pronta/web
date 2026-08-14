@@ -3,13 +3,14 @@ import AuthBackground from "@/components/AuthBackground.vue"
 import BaseButton from "@/components/BaseButton.vue"
 import BaseInput from "@/components/BaseInput.vue"
 import ToggleUser from "@/components/ToggleUser.vue"
+import { useSignUpStore } from "@/stores/signUpStore"
 //import { preview } from "vite"
 
 
 import { ref, onBeforeUnmount } from "vue"
 
 const status = ref("paciente")
-
+const signUpStore = useSignUpStore()
 const selectedFile = ref<File | null>(null)
 const previewUrl = ref<string | null>(null)
 
@@ -56,7 +57,7 @@ onBeforeUnmount(() => {
 
 			<!--form-->
 			<form
-				@submit.prevent
+				@submit.prevent="signUpStore.submitForm"
 				class="space-y-2 items-center justify-center flex flex-col"
 			>
 
@@ -88,14 +89,14 @@ onBeforeUnmount(() => {
 				<BaseInput type="text" placeholder="CPF" icon="article" />
 
 				<!--div reservado para o cadastro do email-->
-				<BaseInput type="text" placeholder="E-Mail" icon="email"/>
+				<BaseInput type="text" placeholder="E-Mail" icon="email" v-model="signUpStore.email" />
 
 				<!--input reservado para o cadastro do telefone-->
 
 				<BaseInput type="tel" placeholder="Telefone" icon="phone"/>
 				<!--div reservado para o cadastro da senha-->
 
-				<BaseInput type="text" placeholder="Senha" icon="lock"/>
+				<BaseInput type="text" placeholder="Senha" icon="lock" v-model="signUpStore.password" />
 				<!--input reservado para a confirmação da senha-->
 
 				<section class="relative flex flex-row">
@@ -104,6 +105,7 @@ onBeforeUnmount(() => {
 							placeholder="Confirmar senha"
 							icon="lock"
 							class="w-116.25"
+							v-model="signUpStore.confirmPassword"
 						/>
 
 						<div class="relative flex items-center justify-center mx-1.5 group">
