@@ -1,14 +1,16 @@
 <script setup lang="ts">
+import { ref } from "vue"
+
 import AuthBackground from "@/components/AuthBackground.vue"
 import BaseButton from "@/components/BaseButton.vue"
 import BaseLogo from "@/components/BaseLogo.vue"
 import BaseInput from "@/components/BaseInput.vue"
 import ToggleUser from "@/components/ToggleUser.vue"
 import UserPhoto from "@/components/UserPhoto.vue"
-//import { preview } from "vite"
 
-import { ref } from "vue"
+import { useSignUpStore } from "@/stores/signUpStore"
 
+const signUpStore = useSignUpStore()
 const status = ref("paciente")
 </script>
 <template>
@@ -21,7 +23,7 @@ const status = ref("paciente")
 
 			<!--form-->
 			<form
-				@submit.prevent
+				@submit.prevent="signUpStore.submitForm"
 				class="space-y-2 items-center justify-center flex flex-col w-116.25"
 			>
 				<UserPhoto />
@@ -30,12 +32,12 @@ const status = ref("paciente")
 
 				<BaseInput type="text" placeholder="Nome" icon="person" />
 				<BaseInput type="text" placeholder="CPF" icon="article" />
-				<BaseInput type="text" placeholder="E-Mail" icon="email" />
+				<BaseInput type="text" placeholder="E-Mail" icon="email" v-model="signUpStore.email" />
 				<BaseInput type="tel" placeholder="Telefone" icon="phone" />
-				<BaseInput type="password" placeholder="Senha" icon="lock" />
+				<BaseInput type="password" placeholder="Senha" icon="lock" v-model="signUpStore.password" />
 
 				<section class="relative flex flex-row w-116.25">
-					<BaseInput type="password" placeholder="Confirmar senha" icon="lock" />
+					<BaseInput type="password" placeholder="Confirmar senha" icon="lock" v-model="signUpStore.confirmPassword" />
 
 					<div class="relative flex items-center justify-center mx-1.5 group">
 						<span

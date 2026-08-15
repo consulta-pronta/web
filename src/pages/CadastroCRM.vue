@@ -5,7 +5,7 @@ import AuthBackground from "@/components/AuthBackground.vue"
 	<AuthBackground>
 		<div class="w-1/2 box-border p-16">
 			<div class="mb-4">
-				<img src="/img/LogoTemporaria.png" />
+				<img src="/img/LogoCompleta.png" />
 			</div>
 			<div>
 				<p

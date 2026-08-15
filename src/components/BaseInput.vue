@@ -8,6 +8,8 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
 	type: "text",
 })
+
+const value = defineModel()
 </script>
 
 <template>
@@ -17,6 +19,7 @@ const props = withDefaults(defineProps<Props>(), {
 			>{{ icon }}</span
 		>
 		<input
+			v-model="value"
 			:type="props.type"
 			:placeholder="props.placeholder"
 			:class="[
