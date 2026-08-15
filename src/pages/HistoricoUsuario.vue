@@ -33,16 +33,16 @@ import NavBar from '@/components/NavBar.vue';
 
 				<section class="flex h-[82.5%]">
 					<div class="w-[40%] h-full flex flex-col gap-2 overflow-y-auto scrollbar-hide">
-						<aside class="shrink-0 h-[23%] bg-surface rounded-[10px] m-1">
+						<aside class="shrink-0 h-[28%] bg-surface rounded-[10px] m-1">
 							a
 						</aside>
-						<aside class="shrink-0 h-[23%] bg-surface rounded-[10px] m-1">
+						<aside class="shrink-0 h-[28%] bg-surface rounded-[10px] m-1">
 							a
 						</aside>
-						<aside class="shrink-0 h-[23%] bg-surface rounded-[10px] m-1">
+						<aside class="shrink-0 h-[28%] bg-surface rounded-[10px] m-1">
 							a
 						</aside>
-						<aside class="shrink-0 h-[23%] bg-surface rounded-[10px] m-1">
+						<aside class="shrink-0 h-[28%] bg-surface rounded-[10px] m-1">
 							a
 						</aside>
 					</div>
