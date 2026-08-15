@@ -29,10 +29,27 @@ import NavBar from '@/components/NavBar.vue';
 				<!--Sliders-->
 				<FilterOrd class="mb-3"/>
 				<!--Blocos de historico-->
-				<p class="text-textlight text-[24px] text-semibold">4 sintomas registrados</p>
+				<p class="text-textlight text-[24px]">4 sintomas registrados</p>
 
-				<section>
+				<section class="flex h-[82.5%]">
+					<div class="w-[40%] h-full flex flex-col gap-2 overflow-y-auto scrollbar-hide">
+						<aside class="shrink-0 h-[23%] bg-surface rounded-[10px] m-1">
+							a
+						</aside>
+						<aside class="shrink-0 h-[23%] bg-surface rounded-[10px] m-1">
+							a
+						</aside>
+						<aside class="shrink-0 h-[23%] bg-surface rounded-[10px] m-1">
+							a
+						</aside>
+						<aside class="shrink-0 h-[23%] bg-surface rounded-[10px] m-1">
+							a
+						</aside>
+					</div>
 
+					<div class="w-[60%]">
+						a
+					</div>
 				</section>
 
 			</div>
