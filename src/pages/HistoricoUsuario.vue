@@ -32,19 +32,50 @@ import NavBar from '@/components/NavBar.vue';
 				<p class="text-textlight text-[24px]">4 sintomas registrados</p>
 
 				<section class="flex h-[82.5%]">
-					<div class="w-[40%] h-full flex flex-col gap-2 overflow-y-auto scrollbar-hide">
-						<aside class="shrink-0 h-[28%] bg-surface rounded-[10px] m-1">
-							a
+					<div class="w-[40%] h-full flex flex-col gap-y-2 overflow-y-auto scrollbar-hide ">
+						<aside class="shrink-0 h-[28%] bg-surface rounded-[10px] m-1 p-[2.5%]">
+							<section class="flex w-fit justify-center items-center mb-[1.5%]">
+								<p class="text-[12px] text-error mr-4">Sintoma persistente</p>
+								<p class="text-[12px] flex justify-center place-items-center text-warning">
+									<span class="material-symbols-rounded text-warning text-[16px]!">
+										monitor_heart
+									</span>
+									Intensidade: 6/10
+								</p>
+							</section>
+
+							<p class="text-[14px] font-bold text-primarydark mb-[2%]">Dor persistente ao levantar</p>
+
+							<section class="flex place-items-center text-primaryBlue mb-[2.5%]">
+								<span class="material-symbols-rounded text-[16px]! mr-1">
+									calendar_month
+								</span>
+								<p class="text-[12px] mr-6">
+									28/08/2008
+								</p>
+								<span class="material-symbols-rounded text-[16px]! mr-6">
+									notes
+								</span>
+								<span class="material-symbols-rounded text-[16px]!">
+									attach_file
+								</span>
+								<p class="text-[12px] mr-6">
+									2
+								</p>
+							</section>
+
+							<section>
+								<div class="flex place-items-center text-primarydark bg-accent rounded-md w-fit p-1">
+									<span class="material-symbols-rounded text-[12px]! mr-1">
+										location_on
+									</span>
+									<p class="text-[12px]">
+										Costas
+									</p>
+								</div>
+							</section>
 						</aside>
-						<aside class="shrink-0 h-[28%] bg-surface rounded-[10px] m-1">
-							a
-						</aside>
-						<aside class="shrink-0 h-[28%] bg-surface rounded-[10px] m-1">
-							a
-						</aside>
-						<aside class="shrink-0 h-[28%] bg-surface rounded-[10px] m-1">
-							a
-						</aside>
+
 					</div>
 
 					<div class="w-[60%]">
