@@ -2,10 +2,6 @@
 import BaseButton from '@/components/BaseButton.vue';
 import FilterOrd from '@/components/FilterOrd.vue';
 import NavBar from '@/components/NavBar.vue';
-
-const showFilters = ref(false)
-const showOrd = ref(false)
-
 </script>
 
 <template class="justify-end">
@@ -31,23 +27,10 @@ const showOrd = ref(false)
 
 
 				<!--Sliders-->
-				<FilterOrd />
-
-				<div v-if="showFilters === true" class="h-[4.88%] flex">
-					<BaseButton text="Todos" bg-color="backgroundRoxo" text-color="textlight" w="fit" rounded="full" class="mr-1"/>
-					<BaseButton text="Abodômen" bg-color="backgroundRoxo" text-color="textlight" w="fit" rounded="full" class="mr-1"/>
-					<BaseButton text="Barriga" bg-color="backgroundRoxo" text-color="textlight" w="fit" rounded="full" class="mr-1"/>
-					<BaseButton text="Cabeça" bg-color="backgroundRoxo" text-color="textlight" w="fit" rounded="full" class="mr-1"/>
-					<BaseButton text="Costas" bg-color="backgroundRoxo" text-color="textlight" w="fit" rounded="full" class="mr-1"/>
-				</div>
-
-				<div v-if="showOrd === true" class="h-[4.88%] flex">
-					<BaseButton icon="arrow_downward" iconColor="accent" w="fit" class="mr-1"/>
-					<BaseButton text="Data de início" bg-color="Transparent" text-color="textlight" w="fit" rounded="full" class="mr-1"/>
-					<BaseButton text="Intensidade" bg-color="Transparent" text-color="textlight" w="fit" rounded="full" class="mr-1"/>
-				</div>
-
+				<FilterOrd class="mb-3"/>
 				<!--Blocos de historico-->
+				<p class="text-textlight text-[24px] text-semibold">4 sintomas registrados</p>
+
 				<section>
 
 				</section>
