@@ -20,10 +20,14 @@ const props = withDefaults(defineProps<Props>(), {
 	ano: '2000',
 	localizacao: 'Costas',
 })
+
+const emit = defineEmits<{
+	(e: 'toggle'): void
+}>()
 </script>
 
 <template>
-	<button type="button" class="shrink-0 w-full h-[28%] bg-surface rounded-[10px] m-1 p-[2.5%] cursor-pointer">
+	<button type="button" @click="emit('toggle')" class="shrink-0 w-full h-[28%] bg-surface rounded-[10px] m-1 p-[2.5%] cursor-pointer">
 		<section class="flex w-fit justify-center items-center mb-[1.5%]">
 			<p
 				v-if="props.sintomaPersistente"

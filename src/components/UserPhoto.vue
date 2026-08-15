@@ -4,18 +4,21 @@ import { ref, onBeforeUnmount } from "vue"
 const selectedFile = ref<File | null>(null)
 const previewUrl = ref<string | null>(null)
 
+const borderColors = {
+	accent: 'border-accent',
+	primarydark: 'border-primarydark',
+	surface: 'border-surface',
+	textlight: 'border-textlight',
+}
+
 
 interface Props {
-	w?: string
-	h?: string
 	rounded?: string | number
 	circle?: boolean
 	borderColor?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
-	w: "19.75",
-	h: "19.75",
 	rounded: "full",
 	circle: true,
 	borderColor: "accent",
@@ -43,8 +46,8 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-	<article class="flex flex-row relative inline-block">
-		<label :class="[`w-${props.w} h-${props.h} bg-primaryBlue rounded-${props.rounded} border-2 border-${props.borderColor} cursor-pointer overflow-hidden flex items-center justify-center`]">
+	<article class="flex flex-row relative">
+		<label :class="[`w-19.75 h-19.75 bg-primaryBlue rounded-${props.rounded} border-2`, borderColors[props.borderColor as keyof typeof borderColors], `cursor-pointer overflow-hidden flex items-center justify-center`]">
 			<input type="file" accept=".jpg,.jpeg,.png" class="hidden" @change="handleFileSelect" />
 
 			<img
