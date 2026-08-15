@@ -4,7 +4,7 @@ import BaseButton from "@/components/BaseButton.vue"
 </script>
 
 <template>
-	<aside class="absolute w-1/8 h-full bg-primaryBlue flex flex-col items-center">
+	<aside class="absolute w-[16%] h-full bg-primaryBlue flex flex-col items-center">
 		<section class="w-full flex flex-col items-center">
 			<BaseLogo />
 			<nav>
