@@ -6,7 +6,7 @@ const route = useRoute()
 
 interface Props {
 	type?: "button" | "submit" | "reset" | "nav"
-	bgColor: string
+	bgColor?: string
 	border?: boolean
 	borderColor?: string
 	textColor?: string

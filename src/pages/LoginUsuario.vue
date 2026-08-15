@@ -8,11 +8,16 @@ import BaseInput from "@/components/BaseInput.vue"
 import BaseLogo from "@/components/BaseLogo.vue"
 import ToggleUser from "@/components/ToggleUser.vue"
 
+import { useSignInStore } from "@/stores/signInStore"
+
+
 const status = ref("paciente")
 
+const signInStore = useSignInStore()
 const router = useRouter()
 
-const login = () => {
+const login = async () => {
+	await signInStore.signIn()
 	router.push("dashboard")
 }
 </script>
@@ -32,8 +37,8 @@ const login = () => {
 			>
 				<ToggleUser v-model="status" class="mb-4" />
 
-				<BaseInput type="text" placeholder="Nome" icon="person" />
-				<BaseInput type="password" placeholder="Senha" icon="lock" class="mb-5" />
+				<BaseInput type="text" placeholder="Nome" icon="person" v-model="signInStore.email" />
+				<BaseInput type="password" placeholder="Senha" icon="lock" class="mb-5" v-model="signInStore.password" />
 				<BaseButton type="submit" bg-color="accent">Entrar</BaseButton>
 
 				<RouterLink to="">
