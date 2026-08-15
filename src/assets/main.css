@@ -16,6 +16,9 @@
 	--color-primaryBlue: #4d4a73;
 	--color-textlight: #ffffff;
 	--color-textDark: #2b254d;
+	--color-error: #E64248;
+	--color-warning: #E4B521;
+	--color-sucess: #41C460;
 }
 
 .material-symbols-rounded {
