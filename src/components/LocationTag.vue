@@ -1,15 +1,19 @@
 <script setup lang="ts">
 interface Props {
 	localizacao?: string
+	bgcolor?: string
+	textcolor?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
 	localizacao: 'Costas',
+	bgcolor: 'accent',
+	textcolor: 'primarydark',
 })
 </script>
 
 <template>
-    <div class="flex items-center text-primarydark bg-accent rounded-md w-fit p-1">
+    <div :class="[`flex items-center text-${props.textcolor} bg-${props.bgcolor} rounded-md w-fit p-1`]">
         <span class="material-symbols-rounded text-[12px]! mr-1">
             location_on
         </span>
