@@ -6,8 +6,10 @@ import BaseButton from "@/components/BaseButton.vue"
 import BaseInput from "@/components/BaseInput.vue"
 import CompleteLogo from "@/components/CompleteLogo.vue"
 import ToggleUser from "@/components/ToggleUser.vue"
+import { useSignInStore } from "@/stores/signInStore"
 
 const status = ref("paciente")
+const signInStore = useSignInStore()
 </script>
 
 <template>
@@ -23,13 +25,13 @@ const status = ref("paciente")
 
 			<!--form-->
 			<form
-				@submit.prevent
+				@submit.prevent="signInStore.signIn"
 				class="space-y-2 items-center justify-center flex flex-col"
 			>
 				<ToggleUser v-model="status" class="mb-4" />
 
-				<BaseInput type="text" placeholder="Nome" icon="person" />
-				<BaseInput type="password" placeholder="Senha" icon="lock" class="mb-5" />
+				<BaseInput type="text" placeholder="Nome" icon="person" v-model="signInStore.email" />
+				<BaseInput type="password" placeholder="Senha" icon="lock" class="mb-5" v-model="signInStore.password" />
 				<BaseButton type="submit" bg-color="accent">Entrar</BaseButton>
 
 				<RouterLink to="">
