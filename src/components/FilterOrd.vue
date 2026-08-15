@@ -55,7 +55,7 @@ function toggleOrd() {
 		</div>
 	</section>
 
-	<div v-if="showFilters === true" class="h-[4.88%] flex">
+	<div v-if="showFilters === true" class="h-[4.88%] flex mb-3">
 		<BaseButton text="Todos" bg-color="backgroundRoxo" text-color="textlight" w="fit" rounded="full" class="mr-1"/>
 		<BaseButton text="Abodômen" bg-color="backgroundRoxo" text-color="textlight" w="fit" rounded="full" class="mr-1"/>
 		<BaseButton text="Barriga" bg-color="backgroundRoxo" text-color="textlight" w="fit" rounded="full" class="mr-1"/>
@@ -63,7 +63,7 @@ function toggleOrd() {
 		<BaseButton text="Costas" bg-color="backgroundRoxo" text-color="textlight" w="fit" rounded="full" class="mr-1"/>
 	</div>
 
-	<div v-if="showOrd === true" class="h-[4.88%] flex">
+	<div v-if="showOrd === true" class="h-[4.88%] flex mb-3">
 		<BaseButton icon="arrow_downward" iconColor="accent" w="fit" class="mr-1"/>
 		<BaseButton text="Data de início" bg-color="Transparent" text-color="textlight" w="fit" rounded="full" class="mr-1"/>
 		<BaseButton text="Intensidade" bg-color="Transparent" text-color="textlight" w="fit" rounded="full" class="mr-1"/>
