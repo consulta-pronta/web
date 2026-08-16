@@ -30,10 +30,10 @@ const status = ref("paciente")
 
 				<ToggleUser v-model="status" class="mb-4" />
 
-				<BaseInput type="text" placeholder="Nome" icon="person" />
-				<BaseInput type="text" placeholder="CPF" icon="article" />
+				<BaseInput type="text" placeholder="Nome" icon="person" v-model="signUpStore.name" />
+				<BaseInput type="text" placeholder="CPF" icon="article" v-model="signUpStore.cpf" />
 				<BaseInput type="text" placeholder="E-Mail" icon="email" v-model="signUpStore.email" />
-				<BaseInput type="tel" placeholder="Telefone" icon="phone" />
+				<BaseInput type="tel" placeholder="Telefone" icon="phone" v-model="signUpStore.phone" />
 				<BaseInput type="password" placeholder="Senha" icon="lock" v-model="signUpStore.password" />
 
 				<section class="relative flex flex-row w-116.25">

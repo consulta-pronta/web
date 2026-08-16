@@ -2,12 +2,16 @@ import { defineStore } from "pinia"
 import { ref } from "vue"
 import { createUserWithEmailAndPassword, sendEmailVerification, validatePassword } from "firebase/auth"
 import { auth } from "@/config/firebase"
+import { createUser } from "@/services/user.service"
 
 
 export const useSignUpStore = defineStore("sign_up", () => {
+	const name = ref("")
 	const email = ref("")
 	const password = ref("")
 	const confirmPassword = ref("")
+	const phone = ref("")
+	const cpf = ref("")
 	const violations = {
 		minPassword: false,
 		maxPassword: false,
@@ -63,11 +67,19 @@ export const useSignUpStore = defineStore("sign_up", () => {
 			email.value, password.value
 		)
 		const user = userCredential.user
+
+		await createUser(user.uid, {
+			name: name.value,
+			email: email.value,
+			phone: phone.value,
+			cpf: cpf.value,
+		})
+
 		console.log(`Successfuly created user of id ${user.uid}`)
 
 		await sendEmailVerification(user)
 	}
 
 
-	return { email, password, confirmPassword, resetForm, submitForm }
+	return { name, email, password, confirmPassword, cpf, phone, resetForm, submitForm }
 })
