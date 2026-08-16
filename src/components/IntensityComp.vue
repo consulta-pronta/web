@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { computed } from 'vue'
+
 interface Props {
 	Cor?: string
 	intensidade?: string
@@ -7,10 +9,23 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
 	Cor: 'warning',
 })
+
+const intensidadeClass = computed(() => {
+	switch (props.Cor) {
+		case 'sucess':
+			return 'text-sucess'
+		case 'error':
+			return 'text-error'
+		case 'warning':
+			return 'text-warning'
+		default:
+			return 'text-textlight'
+	}
+})
 </script>
 
 <template>
-	<aside :class="[`flex w-fit justify-center items-center`, `text-${props.Cor}`]">
+	<aside :class="[ 'flex w-fit justify-center items-center', intensidadeClass]">
 		<p class="text-[12px] flex justify-center items-center">
 			<span
 				class="material-symbols-rounded text-[16px]! mr-1">
