@@ -33,7 +33,8 @@ const props = withDefaults(defineProps<Props>(), {
 			:placeholder="props.placeholder"
 			:class="[
 				`bg-${props.bgColor}`,
-				`px-5 rounded-md`,
+				`px-5`,
+				`rounded-md`,
 				`w-${props.w}`,
 				`h-${props.h}`,
 				`flex items-center`,
