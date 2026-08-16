@@ -14,6 +14,9 @@ interface Props {
 	icon?: string
 	iconColor?: string
 	justify?: "center" | "start" | "end"
+	text?: string
+	rounded?: string | number
+	w?: string | number
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -22,6 +25,7 @@ const props = withDefaults(defineProps<Props>(), {
 	path: "self",
 	iconColor: "textlight",
 	justify: "center",
+	rounded: "md",
 })
 
 const redirect = () => {
@@ -42,10 +46,12 @@ const redirect = () => {
 		:class="[
 			`bg-${props.bgColor} text-${props.textColor}`,
 			props.border ? `border-2 border-${props.borderColor}` : 'border-0',
-			`px-5 rounded-md w-full h-11 flex items-center justify-${props.justify} cursor-pointer`,
+			`px-5 rounded-${props.rounded} w-${props.w} h-11 flex items-center justify-${props.justify} cursor-pointer`,
 			props.type === 'nav' ? 'mb-2' : '',
 		]"
 	>
+		{{ props.text }}
+
 		<span class="material-symbols-rounded text-4xl! select-none" :class="`text-${iconColor}`">{{
 			icon
 		}}</span>

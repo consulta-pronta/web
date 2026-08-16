@@ -26,7 +26,7 @@ const status = ref("paciente")
 				@submit.prevent="signUpStore.submitForm"
 				class="space-y-2 items-center justify-center flex flex-col w-116.25"
 			>
-				<UserPhoto />
+				<UserPhoto borderColor="accent"/>
 
 				<ToggleUser v-model="status" class="mb-4" />
 

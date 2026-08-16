@@ -23,6 +23,11 @@ const router = createRouter({
 			name: "dashboard",
 			component: () => import("../pages/DashboardUsuario.vue"),
 		},
+		{
+			path: "/HistoricoUsuario",
+			name: "Historico",
+			component: () => import("../pages/HistoricoUsuario.vue"),
+		}
 	],
 })
 
