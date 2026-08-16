@@ -8,6 +8,7 @@ interface Props {
 	textColor?: string
 	placeholderColor?: string
 	h?: string | number
+	px?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -17,6 +18,7 @@ const props = withDefaults(defineProps<Props>(), {
 	h: "11",
 	textColor: "textlight",
 	placeholderColor: "textlight",
+	px: "5"
 })
 </script>
 
@@ -33,7 +35,7 @@ const props = withDefaults(defineProps<Props>(), {
 			:placeholder="props.placeholder"
 			:class="[
 				`bg-${props.bgColor}`,
-				`px-5`,
+				`px-${props.px}`,
 				`rounded-md`,
 				`w-${props.w}`,
 				`h-${props.h}`,
