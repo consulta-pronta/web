@@ -48,7 +48,6 @@ const redirect = () => {
 			props.border ? `border-2 border-${props.borderColor}` : 'border-0',
 			`px-5 rounded-${props.rounded} w-${props.w} h-11 flex items-center justify-${props.justify} cursor-pointer`,
 			props.type === 'nav' ? 'mb-2' : '',
-			`text-textlight`,
 		]"
 	>
 		{{ props.text }}
