@@ -1,18 +1,20 @@
 <script setup lang="ts">
 interface Props {
-	type?: "text" | "password" | "email" | "number" | "tel"
-	placeholder: string
-	icon: string
+	type?: "text" | "password" | "email" | "number" | "tel" | "date" | "time"
+	placeholder?: string
+	icon?: string
 	bgColor?: string
 	w?: string | number
 	textColor?: string
 	placeholderColor?: string
+	h?: string | number
 }
 
 const props = withDefaults(defineProps<Props>(), {
 	type: "text",
 	bgColor: "primaryBlue",
 	w: "full",
+	h: "11",
 	textColor: "textlight",
 	placeholderColor: "textlight",
 })
@@ -33,7 +35,8 @@ const props = withDefaults(defineProps<Props>(), {
 				`bg-${props.bgColor}`,
 				`px-5 rounded-md`,
 				`w-${props.w}`,
-				`h-11 flex items-center`,
+				`h-${props.h}`,
+				`flex items-center`,
 				`text-${props.textColor}`,
 				`placeholder:text-${props.placeholderColor}`,
 				'outline-none pl-10',
