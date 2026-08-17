@@ -81,5 +81,10 @@ export const useSignUpStore = defineStore("sign_up", () => {
 	}
 
 
-	return { name, email, password, confirmPassword, cpf, phone, resetForm, submitForm }
+	return {
+		email, password, confirmPassword,
+		name, cpf, phone,
+		violations, isPasswordValid,
+		resetForm, submitForm
+	}
 })

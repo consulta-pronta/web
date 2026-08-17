@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ref } from "vue"
+import { ref, type Ref } from "vue"
 import { useRouter } from "vue-router"
 
 import AuthBackground from "@/components/AuthBackground.vue"
-import BaseButton from "@/components/BaseButton.vue"
+import BaseButton, { type ButtonState } from "@/components/BaseButton.vue"
 import BaseInput from "@/components/BaseInput.vue"
 import BaseLogo from "@/components/BaseLogo.vue"
 import ToggleUser from "@/components/ToggleUser.vue"
@@ -14,11 +14,20 @@ import { useSignInStore } from "@/stores/signInStore"
 const status = ref("paciente")
 
 const signInStore = useSignInStore()
+const buttonState: Ref<ButtonState> = ref("enabled")
 const router = useRouter()
 
 const login = async () => {
-	await signInStore.signIn()
-	router.push("dashboard")
+	buttonState.value = "sync"
+
+	try {
+		await signInStore.signIn()
+		router.push("dashboard")
+	} catch (error) {
+		console.error(error)
+	} finally {
+		buttonState.value = "enabled"
+	}
 }
 </script>
 
@@ -37,9 +46,11 @@ const login = async () => {
 			>
 				<ToggleUser v-model="status" class="mb-4" />
 
-				<BaseInput type="text" placeholder="Nome" icon="person" v-model="signInStore.email" />
-				<BaseInput type="password" placeholder="Senha" icon="lock" class="mb-5" v-model="signInStore.password" />
-				<BaseButton type="submit" bg-color="accent">Entrar</BaseButton>
+				<BaseInput type="email" placeholder="Email" icon="email" v-model="signInStore.email" required />
+				<BaseInput type="password" placeholder="Senha" icon="lock" class="mb-5" v-model="signInStore.password" required />
+				<BaseButton type="submit" bg-color="accent" class="w-40" v-model:state="buttonState">
+					Entrar
+				</BaseButton>
 
 				<RouterLink to="">
 					<p class="text-accent">Esqueceu a senha?</p>

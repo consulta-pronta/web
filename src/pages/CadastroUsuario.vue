@@ -1,17 +1,33 @@
 <script setup lang="ts">
-import { ref } from "vue"
+import { ref, type Ref } from "vue"
 
 import AuthBackground from "@/components/AuthBackground.vue"
-import BaseButton from "@/components/BaseButton.vue"
+import BaseButton, { type ButtonState } from "@/components/BaseButton.vue"
 import BaseLogo from "@/components/BaseLogo.vue"
 import BaseInput from "@/components/BaseInput.vue"
 import ToggleUser from "@/components/ToggleUser.vue"
 import UserPhoto from "@/components/UserPhoto.vue"
 
 import { useSignUpStore } from "@/stores/signUpStore"
+import router from "@/router"
 
 const signUpStore = useSignUpStore()
+const buttonState: Ref<ButtonState> = ref("enabled")
 const status = ref("paciente")
+
+const submitForm = async () => {
+	buttonState.value = "sync"
+ 
+	try {
+		// const isPasswordValid = await signUpStore.isPasswordValid()
+		await signUpStore.submitForm()
+		router.push("dashboard")
+	} catch (error) {
+		console.error(error)
+	} finally {
+		buttonState.value = "enabled"
+	}
+}
 </script>
 <template>
 	<AuthBackground>
@@ -23,21 +39,21 @@ const status = ref("paciente")
 
 			<!--form-->
 			<form
-				@submit.prevent="signUpStore.submitForm"
+				@submit.prevent="submitForm"
 				class="space-y-2 items-center justify-center flex flex-col w-116.25"
 			>
 				<UserPhoto borderColor="accent"/>
 
 				<ToggleUser v-model="status" class="mb-4" />
 
-				<BaseInput type="text" placeholder="Nome" icon="person" v-model="signUpStore.name" />
-				<BaseInput type="text" placeholder="CPF" icon="article" v-model="signUpStore.cpf" />
-				<BaseInput type="text" placeholder="E-Mail" icon="email" v-model="signUpStore.email" />
-				<BaseInput type="tel" placeholder="Telefone" icon="phone" v-model="signUpStore.phone" />
-				<BaseInput type="password" placeholder="Senha" icon="lock" v-model="signUpStore.password" />
+				<BaseInput type="text" placeholder="Nome" icon="person" v-model="signUpStore.name" required />
+				<BaseInput type="text" placeholder="CPF" icon="article" v-model="signUpStore.cpf" required />
+				<BaseInput type="text" placeholder="E-Mail" icon="email" v-model="signUpStore.email" required />
+				<BaseInput type="tel" placeholder="Telefone" icon="phone" v-model="signUpStore.phone" required />
+				<BaseInput type="password" placeholder="Senha" icon="lock" v-model="signUpStore.password" required />
 
 				<section class="relative flex flex-row w-116.25">
-					<BaseInput type="password" placeholder="Confirmar senha" icon="lock" v-model="signUpStore.confirmPassword" />
+					<BaseInput type="password" placeholder="Confirmar senha" icon="lock" v-model="signUpStore.confirmPassword" required />
 
 					<div class="relative flex items-center justify-center mx-1.5 group">
 						<span
@@ -83,7 +99,13 @@ const status = ref("paciente")
 					</p>
 				</RouterLink>
 
-				<BaseButton type="submit" bg-color="accent">Prosseguir</BaseButton>
+				<BaseButton
+					type="submit" bg-color="accent"
+					class="w-40"
+					v-model:state="buttonState"
+				>
+					Cadastrar
+				</BaseButton>
 			</form>
 		</div>
 	</AuthBackground>

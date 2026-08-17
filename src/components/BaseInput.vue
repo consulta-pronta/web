@@ -8,7 +8,8 @@ interface Props {
 	textColor?: string
 	placeholderColor?: string
 	h?: string | number
-	px?: string
+	px?: string,
+	required?: boolean,
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -47,6 +48,7 @@ const value = defineModel()
 				`placeholder:text-${props.placeholderColor}`,
 				'outline-none pl-10',
 			]"
+			:required="required"
 		/>
 	</div>
 </template>
