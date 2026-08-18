@@ -26,9 +26,9 @@ const intensidadeClass = computed(() => {
 
 <template>
 	<aside :class="[ 'flex w-fit justify-center items-center', intensidadeClass]">
-		<p class="text-[12px] flex justify-center items-center">
+		<p class="text-xs flex justify-center items-center">
 			<span
-				class="material-symbols-rounded text-[16px]! mr-1">
+				class="material-symbols-rounded text-base! mr-1">
 				monitor_heart
 			</span>
 			Intensidade:
