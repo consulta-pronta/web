@@ -1,8 +1,11 @@
 import { defineStore } from "pinia"
-import { ref } from "vue"
+import { computed, ref } from "vue"
 import { createUserWithEmailAndPassword, sendEmailVerification, validatePassword } from "firebase/auth"
 import { auth } from "@/config/firebase"
 import { createUser } from "@/services/user.service"
+
+export const minPasswordLength = 8
+export const maxPasswordLength = 4096
 
 
 export const useSignUpStore = defineStore("sign_up", () => {
@@ -12,54 +15,25 @@ export const useSignUpStore = defineStore("sign_up", () => {
 	const confirmPassword = ref("")
 	const phone = ref("")
 	const cpf = ref("")
-	const violations = {
-		minPassword: false,
-		maxPassword: false,
-		numeric: false,
-		lowercase: false,
-		uppercase: false,
-		special: false,
-		passwordMatch: false,
-    	}
 
 
-	function resetForm() {
-		email.value = ""
-		password.value = ""
-		confirmPassword.value = ""
-	}
+	const rules = computed(() => ({
+		minLength: password.value.length >= minPasswordLength,
+		hasNumber: /\d/.test(password.value),
+		hasLowercase: /[a-z]/.test(password.value),
+		hasUppercase: /[A-Z]/.test(password.value),
+		match: password.value === confirmPassword.value
+			&& password.value.length > 0
+	}))
 
-	async function isPasswordValid() {
-		const status = await validatePassword(auth, password.value)
-		const rules = status.passwordPolicy.customStrengthOptions
-
-		violations.minPassword = !status.meetsMinPasswordLength
-		violations.maxPassword = !status.meetsMaxPasswordLength
-		violations.numeric = !!(
-			rules.containsNumericCharacter
-			&& !status.containsNumericCharacter
-		)
-		violations.lowercase = !!(
-			rules.containsLowercaseLetter
-			&& !status.containsLowercaseLetter
-		)
-		violations.uppercase = !!(
-			rules.containsUppercaseLetter
-			&& !status.containsUppercaseLetter
-		)
-		violations.special = !!(
-			rules.containsNonAlphanumericCharacter
-			&& !status.containsNonAlphanumericCharacter
-		)
-		violations.passwordMatch = password.value !== confirmPassword.value
-		
-		return !Object.values(violations).includes(true)
-	}
+	const isPasswordValid = computed(() => {
+		return Object.values(rules.value).includes(false)
+	})
 
 	async function submitForm() {
-		if (!(await isPasswordValid())) {
-			console.error(violations)
-			return
+		const passwordStatus = await validatePassword(auth, password.value)
+		if (!passwordStatus.isValid) {
+			throw Error("Invalid password.")
 		}
 
 		const userCredential = await createUserWithEmailAndPassword(
@@ -71,8 +45,8 @@ export const useSignUpStore = defineStore("sign_up", () => {
 		await createUser(user.uid, {
 			name: name.value,
 			email: email.value,
-			phone: phone.value,
-			cpf: cpf.value,
+			phone: phone.value.replace(/[\(\)\-\s]/g, ""),
+			cpf: cpf.value.replace(/[.\-\s]/g, ""),
 		})
 
 		console.log(`Successfuly created user of id ${user.uid}`)
@@ -81,5 +55,10 @@ export const useSignUpStore = defineStore("sign_up", () => {
 	}
 
 
-	return { name, email, password, confirmPassword, cpf, phone, resetForm, submitForm }
+	return {
+		email, password, confirmPassword,
+		name, cpf, phone,
+		rules, isValid: isPasswordValid,
+		submitForm
+	}
 })

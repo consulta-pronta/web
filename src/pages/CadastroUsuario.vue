@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { ref } from "vue"
+import { ref, type Ref } from "vue"
+import { useRouter } from "vue-router"
 
 import AuthBackground from "@/components/AuthBackground.vue"
-import BaseButton from "@/components/BaseButton.vue"
+import BaseButton, { type ButtonState } from "@/components/BaseButton.vue"
 import BaseLogo from "@/components/BaseLogo.vue"
 import BaseInput from "@/components/BaseInput.vue"
 import ToggleUser from "@/components/ToggleUser.vue"
@@ -10,8 +11,28 @@ import UserPhoto from "@/components/UserPhoto.vue"
 
 import { useSignUpStore } from "@/stores/signUpStore"
 
+
+const router = useRouter()
 const signUpStore = useSignUpStore()
+
+const buttonState: Ref<ButtonState> = ref("enabled")
 const status = ref("paciente")
+const showPasswordRules = ref(false)
+
+
+const submitForm = async () => {
+	buttonState.value = "sync"
+ 
+	try {
+		// const isPasswordValid = await signUpStore.isPasswordValid()
+		await signUpStore.submitForm()
+		router.push("dashboard")
+	} catch (error) {
+		console.error(error)
+	} finally {
+		buttonState.value = "enabled"
+	}
+}
 </script>
 <template>
 	<AuthBackground>
@@ -23,42 +44,50 @@ const status = ref("paciente")
 
 			<!--form-->
 			<form
-				@submit.prevent="signUpStore.submitForm"
+				@submit.prevent="submitForm"
 				class="space-y-2 items-center justify-center flex flex-col w-116.25"
 			>
 				<UserPhoto borderColor="accent"/>
 
 				<ToggleUser v-model="status" class="mb-4" />
 
-				<BaseInput type="text" placeholder="Nome" icon="person" v-model="signUpStore.name" />
-				<BaseInput type="text" placeholder="CPF" icon="article" v-model="signUpStore.cpf" />
-				<BaseInput type="text" placeholder="E-Mail" icon="email" v-model="signUpStore.email" />
-				<BaseInput type="tel" placeholder="Telefone" icon="phone" v-model="signUpStore.phone" />
-				<BaseInput type="password" placeholder="Senha" icon="lock" v-model="signUpStore.password" />
-
-				<section class="relative flex flex-row w-116.25">
-					<BaseInput type="password" placeholder="Confirmar senha" icon="lock" v-model="signUpStore.confirmPassword" />
-
-					<div class="relative flex items-center justify-center mx-1.5 group">
-						<span
-							class="material-symbols-rounded text-textlight text-[24px] cursor-help"
+				<BaseInput type="text" placeholder="Nome" icon="person" v-model="signUpStore.name" required />
+				<BaseInput type="cpf" placeholder="CPF" icon="article" v-model="signUpStore.cpf" required />
+				<BaseInput type="email" placeholder="E-Mail" icon="email" v-model="signUpStore.email" required />
+				<BaseInput type="tel" placeholder="Telefone" icon="phone" v-model="signUpStore.phone" required />
+				<div class="relative w-full">
+					<BaseInput
+						type="password" placeholder="Senha" icon="lock"
+						v-model="signUpStore.password" required
+						@focusin="showPasswordRules = true" @focusout="showPasswordRules = false"
+					/>
+					<div
+						v-if="showPasswordRules"
+						class="absolute left-0 right-0 bottom-[130%] mx-auto w-64 bg-surface p-3 "
+					>
+						<p
+							v-for="(value, key) in signUpStore.rules"
+							:key="key"
+							:class="value ? 'text-textDark' : 'text-error'"
+							class="flex items-center gap-2 text-sm py-0.5"
 						>
-							info
-						</span>
-
-						<!-- Overlay -->
-						<div
-							class="absolute right-0 bottom-full mb-2 w-64 p-3 bg-textlight text-primarydark text-xs rounded-lg shadow-lg border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-200 z-50"
-						>
-							<p class="leading-relaxed font-bold">
-								A senha deve ter no mínimo 8 caracteres, contendo:<br />
-								- Uma letra maiúscula <br />
-								- Uma letra minúscula <br />
-								- Um número <br />
-							</p>
-						</div>
+							<span class="material-symbols-rounded">
+								{{ value ? 'check_circle' : 'cancel' }}
+							</span>
+							{{
+								key === "minLength" ? "Mínimo 8 caracteres" :
+								key === "hasNumber" ? "Pelo menos 1 número" :
+								key === "hasLowercase" ? "Pelo menos 1 letra minúscula" :
+								key === "hasUppercase" ? "Pelo menos 1 letra maiúscula" :
+								key === "match" ? "Senhas coincidem" :
+								key
+							}}
+						</p>
+						<span class="w-4 h-4 bg-surface absolute -bottom-2 left-0 right-0 mx-auto rotate-45"></span>
 					</div>
-				</section>
+				</div>
+
+				<BaseInput type="password" placeholder="Confirmar senha" icon="lock" v-model="signUpStore.confirmPassword" required />
 
 				<BaseButton
 					v-if="status === 'profissional'"
@@ -83,7 +112,13 @@ const status = ref("paciente")
 					</p>
 				</RouterLink>
 
-				<BaseButton type="submit" bg-color="accent">Prosseguir</BaseButton>
+				<BaseButton
+					type="submit" bg-color="accent"
+					class="w-40"
+					v-model:state="buttonState"
+				>
+					Cadastrar
+				</BaseButton>
 			</form>
 		</div>
 	</AuthBackground>
