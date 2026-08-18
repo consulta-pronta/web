@@ -27,8 +27,8 @@ const emit = defineEmits<{
 </script>
 
 <template>
-	<button type="button" @click="emit('toggle')" class="shrink-0 w-full h-[28%] bg-surface rounded-[10px] m-1 p-[2.5%] cursor-pointer">
-		<section class="flex w-fit justify-center items-center mb-[1.5%]">
+	<button type="button" @click="emit('toggle')" class="shrink-0 w-full h-[28%] bg-surface rounded-[10px] p-[2.5%] cursor-pointer">
+		<section class="flex w-fit justify-center items-center mb-[2.5%]">
 			<p
 				v-if="props.sintomaPersistente"
 				class="text-xs text-error mr-4"
@@ -50,11 +50,11 @@ const emit = defineEmits<{
 
 		</section>
 
-		<p class="text-sm font-bold text-primarydark mb-[2%] text-left">
+		<p class="text-sm font-bold text-primarydark my-[2%] text-left">
 			{{ props.titulo }}
 		</p>
 
-		<section class="flex items-center text-primaryBlue mb-[2.5%]">
+		<section class="flex items-center text-primaryBlue mt-[4%]">
 			<span class="material-symbols-rounded text-base! mr-1">
 				calendar_month
 			</span>
@@ -76,7 +76,7 @@ const emit = defineEmits<{
 			</p>
 		</section>
 
-		<section>
+		<section class="mt-[2%]">
 			<div
 				class="flex items-center text-primarydark bg-accent rounded-md w-fit p-1"
 			>
@@ -84,7 +84,7 @@ const emit = defineEmits<{
 					location_on
 				</span>
 
-				<p class="text-xs">
+				<p class="text-">
 					{{ props.localizacao }}
 				</p>
 			</div>

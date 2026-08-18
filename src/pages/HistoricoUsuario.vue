@@ -363,7 +363,7 @@ function registrarSintoma(event: Event) {
 					<!--Especificado-->
 					<div class="w-[60%] h-full flex flex-col min-h-0" v-if="sintomaSelecionado !== null">
 						<section class="flex justify-center items-center w-full h-[9%] relative mb-3 shrink-0">
-							<span class="material-symbols-rounded absolute left-0 text-4xl! text-textlight">
+							<span class="material-symbols-rounded absolute left-0 text-4xl text-textlight">
 								arrow_back
 							</span>
 							<button @click="toggleEditar" type="button" class="flex justify-center w-[88%] h-full bg-surface place-items-center rounded-md cursor-pointer">
