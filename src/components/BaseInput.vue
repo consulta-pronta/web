@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { maxPasswordLength } from "@/stores/signUpStore"
 import { formatToCPF, formatToPhone } from "brazilian-values"
 import { onMounted, ref } from "vue"
 
@@ -25,16 +26,16 @@ const props = withDefaults(defineProps<Props>(), {
 	px: "5"
 })
 
-const inputTag = ref(null)
+const inputTag = ref<HTMLInputElement>()
 const value = defineModel<string>()
 
 const formatValue = () => {
 	switch (props.type) {
 		case "cpf":
-			value.value = formatToCPF(value.value)
+			value.value = formatToCPF(value.value as string)
 			break
 		case "tel":
-			value.value = formatToPhone(value.value)
+			value.value = formatToPhone(value.value as string)
 			break
 	}
 }
@@ -42,10 +43,13 @@ const formatValue = () => {
 onMounted(() => {
 	switch (props.type) {
 		case "cpf":
-			inputTag.value.maxLength = 14
+			inputTag.value!.maxLength = 14
 			break
 		case "tel":
-			inputTag.value.maxLength = 15
+			inputTag.value!.maxLength = 15
+			break
+		case "password":
+			inputTag.value!.maxLength = maxPasswordLength
 			break
 	}
 })
