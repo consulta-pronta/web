@@ -1,6 +1,9 @@
 <script setup lang="ts">
+import { formatToCPF, formatToPhone } from "brazilian-values"
+import { onMounted, ref } from "vue"
+
 interface Props {
-	type?: "text" | "password" | "email" | "number" | "tel" | "date" | "time"
+	type?: "text" | "password" | "email" | "number" | "tel" | "date" | "time" | "cpf"
 	placeholder?: string
 	icon?: string
 	bgColor?: string
@@ -22,7 +25,30 @@ const props = withDefaults(defineProps<Props>(), {
 	px: "5"
 })
 
-const value = defineModel()
+const inputTag = ref(null)
+const value = defineModel<string>()
+
+const formatValue = () => {
+	switch (props.type) {
+		case "cpf":
+			value.value = formatToCPF(value.value)
+			break
+		case "tel":
+			value.value = formatToPhone(value.value)
+			break
+	}
+}
+
+onMounted(() => {
+	switch (props.type) {
+		case "cpf":
+			inputTag.value.maxLength = 14
+			break
+		case "tel":
+			inputTag.value.maxLength = 15
+			break
+	}
+})
 </script>
 
 <template>
@@ -35,6 +61,8 @@ const value = defineModel()
 
 		<input
 			v-model="value"
+			ref="inputTag"
+
 			:type="props.type"
 			:placeholder="props.placeholder"
 			:class="[
@@ -49,6 +77,7 @@ const value = defineModel()
 				'outline-none pl-10',
 			]"
 			:required="required"
+			@input="formatValue"
 		/>
 	</div>
 </template>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, type Ref } from "vue"
+import { useRouter } from "vue-router"
 
 import AuthBackground from "@/components/AuthBackground.vue"
 import BaseButton, { type ButtonState } from "@/components/BaseButton.vue"
@@ -9,8 +10,8 @@ import ToggleUser from "@/components/ToggleUser.vue"
 import UserPhoto from "@/components/UserPhoto.vue"
 
 import { useSignUpStore } from "@/stores/signUpStore"
-import router from "@/router"
 
+const router = useRouter()
 const signUpStore = useSignUpStore()
 const buttonState: Ref<ButtonState> = ref("enabled")
 const status = ref("paciente")
@@ -47,8 +48,8 @@ const submitForm = async () => {
 				<ToggleUser v-model="status" class="mb-4" />
 
 				<BaseInput type="text" placeholder="Nome" icon="person" v-model="signUpStore.name" required />
-				<BaseInput type="text" placeholder="CPF" icon="article" v-model="signUpStore.cpf" required />
-				<BaseInput type="text" placeholder="E-Mail" icon="email" v-model="signUpStore.email" required />
+				<BaseInput type="cpf" placeholder="CPF" icon="article" v-model="signUpStore.cpf" required />
+				<BaseInput type="email" placeholder="E-Mail" icon="email" v-model="signUpStore.email" required />
 				<BaseInput type="tel" placeholder="Telefone" icon="phone" v-model="signUpStore.phone" required />
 				<BaseInput type="password" placeholder="Senha" icon="lock" v-model="signUpStore.password" required />
 

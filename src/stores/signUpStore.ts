@@ -71,8 +71,8 @@ export const useSignUpStore = defineStore("sign_up", () => {
 		await createUser(user.uid, {
 			name: name.value,
 			email: email.value,
-			phone: phone.value,
-			cpf: cpf.value,
+			phone: phone.value.replace(/[\(\)\-\s]/g, ""),
+			cpf: cpf.value.replace(/[.\-\s]/g, ""),
 		})
 
 		console.log(`Successfuly created user of id ${user.uid}`)
