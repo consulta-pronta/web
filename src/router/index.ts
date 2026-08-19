@@ -4,29 +4,29 @@ const router = createRouter({
 	history: createWebHistory(import.meta.env.BASE_URL),
 	routes: [
 		{
-			path: "/Cadastro",
+			path: "/",
+			name: "root",
+			component: () => import("@/App.vue")
+		},
+		{
+			path: "/cadastro",
 			name: "cadastro",
-			component: () => import("../pages/CadastroUsuario.vue"),
+			component: () => import("@/pages/CadastroUsuario.vue"),
 		},
 		{
-			path: "/CadastroCRM",
-			name: "cadastroCRM",
-			component: () => import("../pages/CadastroCRM.vue"),
-		},
-		{
-			path: "/Login",
+			path: "/login",
 			name: "login",
-			component: () => import("../pages/LoginUsuario.vue"),
+			component: () => import("@/pages/LoginUsuario.vue"),
 		},
 		{
-			path: "/Dashboard",
+			path: "/dashboard",
 			name: "dashboard",
-			component: () => import("../pages/DashboardUsuario.vue"),
+			component: () => import("@/pages/DashboardUsuario.vue"),
 		},
 		{
-			path: "/HistoricoUsuario",
-			name: "Historico",
-			component: () => import("../pages/HistoricoUsuario.vue"),
+			path: "/historico-sintomas",
+			name: "historico-sintomas",
+			component: () => import("@/pages/HistoricoUsuario.vue"),
 		}
 	],
 })
