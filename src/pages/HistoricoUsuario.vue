@@ -135,37 +135,37 @@ function registrarSintoma(event: Event) {
 			<div class="w-[88%] h-[85%] bg-primaryBlue rounded-3xl py-[1.5%] px-[2.5%] flex flex-col min-h-0">
 				<!--Barra de pesquisa-->
 				<section class="flex justify-center place-items-center relative mb-3">
-					<div class="relative flex items-center w-[56%] h-11 bg-surface rounded-[15px]">
-						<span class="material-symbols-rounded text-primarydark absolute left-3 text-[2%] pointer-events-none">
+					<div class="relative flex items-center w-[56%] h-11 bg-surface rounded-[15px]"> <!--Não existe um padrão para 15px-->
+						<span class="material-symbols-rounded text-primarydark absolute left-3 pointer-events-none">
 							search
 						</span>
 						<input type="text" placeholder="Pesquisar" class="text-primaryDark placeholder-primarydark w-full h-full outline-none pl-10">
 					</div>
 					<!--Botão de registrar sintoma-->
 					<div class="absolute right-0 w-[20%]">
-						<BaseButton type="button" text="Registrar Sintoma" icon="add" :border="true" borderColor="textlight" rounded="full" @click="toggleSobre"/>
+						<BaseButton type="button" text="Registrar Sintoma" icon="add" :border="true" borderColor="textlight" rounded="full" @click="toggleSobre" textColor="textlight"/>
 					</div>
 				</section>
 
 				<div v-if="sobre === true" class="absolute inset-0 z-50 bg-black/50 w-full h-full flex justify-center place-items-center">
-					<form class="bg-backgroundRoxo w-[35%] h-[95%] rounded-[25px] px-15 py-5 flex flex-col place-items-center relative" @submit.prevent="registrarSintoma">
+					<form class="bg-backgroundRoxo w-[35%] h-[95%] rounded-3xl px-15 py-5 flex flex-col place-items-center relative" @submit.prevent="registrarSintoma">
 						<button type="button" @click="toggleSobre">
-							<span class="material-symbols-rounded absolute left-0 text-[38px]! text-textlight ml-4 cursor-pointer">
+							<span class="material-symbols-rounded absolute left-0 text-4xl! text-textlight ml-4 cursor-pointer">
 								arrow_back
 							</span>
 						</button>
-						<p class="text-textlight text-[24px] text-semibold mb-2">
+						<p class="text-textlight text-2xl text-semibold mb-2">
 							Registrar Sintoma
 						</p>
-						<p class="text-textlight text-[14px] text-medium mb-1">
+						<p class="text-textlight text-sm text-medium mb-1">
 							O que você está sentindo?
 						</p>
 						<BaseInput type="text" name="resumo" placeholder="Resuma seus sintomas" bgColor="textlight" textColor="primarydark" />
-						<p class="text-textlight text-[14px] text-medium mb-1">
+						<p class="text-textlight text-sm text-medium mb-1">
 							Explique com mais detalhes
 						</p>
 						<BaseInput type="text" name="descricao" placeholder="Descreva seus sintomas com mais detalhes" bgColor="textlight" textColor="primarydark" />
-						<p class="text-textlight text-[14px] text-medium mb-1">
+						<p class="text-textlight text-sm text-medium mb-1">
 							Quando começou?
 						</p>
 						<section class="flex w-full mb-1">
@@ -176,7 +176,7 @@ function registrarSintoma(event: Event) {
 								<BaseInput type="time" name="horario" bgColor="textlight" textColor="primarydark" px="0" />
 							</span>
 						</section>
-						<p class="text-textlight text-[14px] text-medium mb-1">
+						<p class="text-textlight text-sm text-medium mb-1">
 							Em qual parte do corpo?
 						</p>
 						<div class="relative w-full mb-1">
@@ -197,7 +197,7 @@ function registrarSintoma(event: Event) {
 								expand_more
 							</span>
 						</div>
-						<p class="text-textlight text-[14px] text-medium mb-1">
+						<p class="text-textlight text-sm text-medium mb-1">
 							Qual a intensidade do sintoma?
 						</p>
 						<div class="relative w-full mb-1">
@@ -221,7 +221,7 @@ function registrarSintoma(event: Event) {
 								<option value="10">10</option>
 							</select>
 						</div>
-						<p class="text-textlight text-[14px] text-medium">
+						<p class="text-textlight text-2xl text-medium">
 							Foto
 						</p>
 						<div class="flex flex-col items-center justify-center w-full h-full">
@@ -229,7 +229,7 @@ function registrarSintoma(event: Event) {
 								<span class="material-symbols-rounded text-textlight">
 									photo_camera
 								</span>
-								<p class="text-textlight text-[14px] text-medium">
+								<p class="text-textlight text-sm text-medium">
 									Tirar foto ou enviar anexo
 								</p>
 							</label>
@@ -249,18 +249,18 @@ function registrarSintoma(event: Event) {
 								arrow_back
 							</span>
 						</button>
-						<p class="text-textlight text-[24px] text-semibold mb-2">
-							Registrar Sintoma
+						<p class="text-textlight text-2xl text-semibold mb-2">
+							Editar Sintoma
 						</p>
-						<p class="text-textlight text-[14px] text-medium mb-1">
+						<p class="text-textlight text-sm text-medium mb-1">
 							O que você está sentindo?
 						</p>
 						<BaseInput type="text" name="resumo" placeholder="Resuma seus sintomas" bgColor="textlight" textColor="primarydark" />
-						<p class="text-textlight text-[14px] text-medium mb-1">
+						<p class="text-textlight text-sm text-medium mb-1">
 							Explique com mais detalhes
 						</p>
 						<BaseInput type="text" name="descricao" placeholder="Descreva seus sintomas com mais detalhes" bgColor="textlight" textColor="primarydark" />
-						<p class="text-textlight text-[14px] text-medium mb-1">
+						<p class="text-textlight text-sm text-medium mb-1">
 							Quando começou?
 						</p>
 						<section class="flex w-full mb-1">
@@ -271,7 +271,7 @@ function registrarSintoma(event: Event) {
 								<BaseInput type="time" name="horario" bgColor="textlight" textColor="primarydark" px="0" />
 							</span>
 						</section>
-						<p class="text-textlight text-[14px] text-medium mb-1">
+						<p class="text-textlight text-sm text-medium mb-1">
 							Em qual parte do corpo?
 						</p>
 						<div class="relative w-full mb-1">
@@ -292,7 +292,7 @@ function registrarSintoma(event: Event) {
 								expand_more
 							</span>
 						</div>
-						<p class="text-textlight text-[14px] text-medium mb-1">
+						<p class="text-textlight text-sm text-medium mb-1">
 							Qual a intensidade do sintoma?
 						</p>
 						<div class="relative w-full mb-1">
@@ -316,7 +316,7 @@ function registrarSintoma(event: Event) {
 								<option value="10">10</option>
 							</select>
 						</div>
-						<p class="text-textlight text-[14px] text-medium">
+						<p class="text-textlight text-sm text-medium">
 							Foto
 						</p>
 						<div class="flex flex-col items-center justify-center w-full h-full">
@@ -324,7 +324,7 @@ function registrarSintoma(event: Event) {
 								<span class="material-symbols-rounded text-textlight">
 									photo_camera
 								</span>
-								<p class="text-textlight text-[14px] text-medium">
+								<p class="text-textlight text-sm text-medium">
 									Tirar foto ou enviar anexo
 								</p>
 							</label>
@@ -339,12 +339,15 @@ function registrarSintoma(event: Event) {
 				<!--Sliders-->
 				<FilterOrd class="mb-3"/>
 
-				<!--Blocos de historicos-->
-				<p class="text-textlight text-[24px]">4 sintomas registrados</p>
+			<!--Blocos de historicos-->
 
-				<!--Card de sintoma-->
-				<section class="flex h-[82.5%]">
-					<div class="w-[40%] h-full flex flex-col gap-y-2 overflow-y-auto scrollbar-hide">
+				<!--Texto-->
+				<p class="text-textlight text-2xl">4 sintomas registrados</p>
+
+				<!--Área inferior-->
+				<section class="flex h-[82.5%] gap-x-4">
+					<!--Card Sintoma-->
+					<div class="w-[38%] h-full flex flex-col gap-y-2 overflow-y-auto scrollbar-hide">
 						<SymptomBlock
 							v-for="sintoma in sintomas"
 							:key="sintoma.id"
@@ -360,17 +363,19 @@ function registrarSintoma(event: Event) {
 						/>
 					</div>
 
-					<!--Especificado-->
+					<!--Card Especificado-->
 					<div class="w-[60%] h-full flex flex-col min-h-0" v-if="sintomaSelecionado !== null">
-						<section class="flex justify-center items-center w-full h-[9%] relative mb-3 shrink-0">
-							<span class="material-symbols-rounded absolute left-0 text-[38px]! text-textlight">
-								arrow_back
-							</span>
-							<button @click="toggleEditar" type="button" class="flex justify-center w-[88%] h-full bg-surface place-items-center rounded-md cursor-pointer">
+						<section class="flex justify-center items-center w-[96%] h-[9%] relative mb-3 shrink-0">
+							<button button @click="sintomaSelecionado = null" class="cursor-pointer absolute left-0 ">
+								<span class="material-symbols-rounded text-4xl! text-textlight">
+									arrow_back
+								</span>
+							</button>
+							<button @click="toggleEditar" type="button" class="flex justify-center w-[25%] h-11 bg-surface place-items-center rounded-2xl cursor-pointer absolute right-1">
 								<span class="material-symbols-rounded text-primarydark pointer-events-none mr-1">
 									edit
 								</span>
-								<p class="text-[18px] text-primarydark text-semibold">Editar sintomas</p>
+								<p class="text-lg text-primarydark text-semibold">Editar sintomas</p>
 							</button>
 						</section>
 
