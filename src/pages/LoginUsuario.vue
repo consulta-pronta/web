@@ -48,26 +48,20 @@ const login = async () => {
 
 				<BaseInput type="email" placeholder="Email" icon="email" v-model="signInStore.email" required />
 				<BaseInput type="password" placeholder="Senha" icon="lock" class="mb-5" v-model="signInStore.password" required />
-				<BaseButton type="submit" bg-color="accent" class="w-40" v-model:state="buttonState">
+				<BaseButton type="submit" theme="light" class="justify-center w-full" v-model:state="buttonState">
 					Entrar
 				</BaseButton>
+
+				<RouterLink to="cadastro">
+					<p class="text-textlight">
+						Nâo possui conta?
+						<a href="" class="text-accent">Criar conta</a>
+					</p>
+				</RouterLink>
 
 				<RouterLink to="">
 					<p class="text-accent">Esqueceu a senha?</p>
 				</RouterLink>
-
-				<hr class="border-t-2 border-surface w-full m-4" />
-
-				<BaseButton
-					bg-color="primarydark"
-					border
-					border-color="accent"
-					text-color="accent"
-					path="cadastro"
-					class="mt-2"
-				>
-					Cadastrar nova conta
-				</BaseButton>
 			</form>
 		</div>
 	</AuthBackground>
