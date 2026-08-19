@@ -136,7 +136,7 @@ function registrarSintoma(event: Event) {
 				<!--Barra de pesquisa-->
 				<section class="flex justify-center place-items-center relative mb-3">
 					<div class="relative flex items-center w-[56%] h-11 bg-surface rounded-[15px]"> <!--Não existe um padrão para 15px-->
-						<span class="material-symbols-rounded text-primarydark absolute left-3 text-[2%]! pointer-events-none">
+						<span class="material-symbols-rounded text-primarydark absolute left-3 pointer-events-none">
 							search
 						</span>
 						<input type="text" placeholder="Pesquisar" class="text-primaryDark placeholder-primarydark w-full h-full outline-none pl-10">
@@ -250,7 +250,7 @@ function registrarSintoma(event: Event) {
 							</span>
 						</button>
 						<p class="text-textlight text-2xl text-semibold mb-2">
-							Registrar Sintoma
+							Editar Sintoma
 						</p>
 						<p class="text-textlight text-sm text-medium mb-1">
 							O que você está sentindo?
@@ -339,12 +339,15 @@ function registrarSintoma(event: Event) {
 				<!--Sliders-->
 				<FilterOrd class="mb-3"/>
 
-				<!--Blocos de historicos-->
+			<!--Blocos de historicos-->
+
+				<!--Texto-->
 				<p class="text-textlight text-2xl">4 sintomas registrados</p>
 
-				<!--Card de sintoma-->
-				<section class="flex h-[82.5%]">
-					<div class="w-[40%] h-full flex flex-col gap-y-2 overflow-y-auto scrollbar-hide">
+				<!--Área inferior-->
+				<section class="flex h-[82.5%] gap-x-4">
+					<!--Card Sintoma-->
+					<div class="w-[38%] h-full flex flex-col gap-y-2 overflow-y-auto scrollbar-hide">
 						<SymptomBlock
 							v-for="sintoma in sintomas"
 							:key="sintoma.id"
@@ -360,13 +363,15 @@ function registrarSintoma(event: Event) {
 						/>
 					</div>
 
-					<!--Especificado-->
+					<!--Card Especificado-->
 					<div class="w-[60%] h-full flex flex-col min-h-0" v-if="sintomaSelecionado !== null">
-						<section class="flex justify-center items-center w-full h-[9%] relative mb-3 shrink-0">
-							<span class="material-symbols-rounded absolute left-0 text-4xl text-textlight">
-								arrow_back
-							</span>
-							<button @click="toggleEditar" type="button" class="flex justify-center w-[88%] h-full bg-surface place-items-center rounded-md cursor-pointer">
+						<section class="flex justify-center items-center w-[96%] h-[9%] relative mb-3 shrink-0">
+							<button button @click="sintomaSelecionado = null" class="cursor-pointer absolute left-0 ">
+								<span class="material-symbols-rounded text-4xl! text-textlight">
+									arrow_back
+								</span>
+							</button>
+							<button @click="toggleEditar" type="button" class="flex justify-center w-[25%] h-11 bg-surface place-items-center rounded-2xl cursor-pointer absolute right-1">
 								<span class="material-symbols-rounded text-primarydark pointer-events-none mr-1">
 									edit
 								</span>

@@ -38,7 +38,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 <template>
 	<section>
-		<div class="w-full h-fit bg-surface rounded-[15px] p-2 m-1">
+		<div class="w-[95%] h-fit bg-surface rounded-[15px] p-2 m-1">
 
 			<section class="flex justify-between">
 				<article class="text-primarydark flex justify-center">
