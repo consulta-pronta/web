@@ -125,11 +125,10 @@ function registrarSintoma(event: Event) {
 
 </script>
 
-<template class="justify-end">
+<template>
+	<main class="flex h-screen overflow-hidden">
+		<NavBar />
 
-	<NavBar />
-
-	<article class="w-[84%] h-screen ml-auto overflow-hidden">
 		<div class="bg-backgroundRoxo w-full h-full flex justify-center items-center overflow-hidden">
 
 			<div class="w-[88%] h-[85%] bg-primaryBlue rounded-3xl py-[1.5%] px-[2.5%] flex flex-col min-h-0">
@@ -396,5 +395,5 @@ function registrarSintoma(event: Event) {
 				</section>
 			</div>
 		</div>
-	</article>
+	</main>
 </template>

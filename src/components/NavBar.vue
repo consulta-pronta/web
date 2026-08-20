@@ -1,22 +1,22 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { useNavbarStore } from "@/stores/navbarStore"
 
 import BaseLogo from "@/components/BaseLogo.vue"
 import BaseButton from "@/components/BaseButton.vue"
 
-const malfermita = ref(true)
-const malfermi = () => {
-	malfermita.value = !malfermita.value
-}
+const navbarStore = useNavbarStore()
 </script>
 
 <template>
 	<aside :class="[
-		'absolute h-full bg-primaryBlue flex flex-col items-center transition-all',
-		malfermita ? 'w-67' : 'w-20'
+		'h-screen bg-primaryBlue flex flex-col items-center justify-between transition-all duration-500 shrink-0',
+		navbarStore.malfermita ? 'w-67' : 'w-20'
 	]">
-		<section class="w-full flex flex-col">
-			<BaseLogo />
+		<section class="w-full flex flex-col overflow-hidden">
+			<BaseLogo :class="[
+				'mx-auto my-10 transition-all object-cover duration-500',
+				navbarStore.malfermita ? 'w-50' : 'w-10',
+				]" />
 			<nav>
 				<BaseButton
 					type="nav"
@@ -25,7 +25,7 @@ const malfermi = () => {
 					mode="transparent"
 					path="dashboard"
 				>
-					<p v-if="malfermita" class="text-xl ml-8">Início</p>
+					<p class="text-xl ml-8">Início</p>
 				</BaseButton>
 				<BaseButton
 					type="nav"
@@ -34,7 +34,7 @@ const malfermi = () => {
 					mode="transparent"
 					path="historico-sintomas"
 				>
-					<p v-if="malfermita" class="text-xl ml-8">Histórico</p>
+					<p class="text-xl ml-8">Histórico</p>
 				</BaseButton>
 				<BaseButton
 					type="nav"
@@ -42,7 +42,7 @@ const malfermi = () => {
 					theme="dark"
 					mode="transparent"
 				>
-					<p v-if="malfermita" class="text-xl ml-8">Hospitais</p>
+					<p class="text-xl ml-8">Hospitais</p>
 				</BaseButton>
 				<BaseButton
 					type="nav"
@@ -50,7 +50,7 @@ const malfermi = () => {
 					theme="dark"
 					mode="transparent"
 				>
-					<p v-if="malfermita" class="text-xl ml-8">Configurações</p>
+					<p class="text-xl ml-8">Configurações</p>
 				</BaseButton>
 			</nav>
 
@@ -63,7 +63,7 @@ const malfermi = () => {
 					theme="dark"
 					mode="transparent"
 				>
-					<p v-if="malfermita" class="text-xl ml-8">Exames</p>
+					<p class="text-xl ml-8">Exames</p>
 				</BaseButton>
 				<BaseButton
 					type="nav"
@@ -71,7 +71,7 @@ const malfermi = () => {
 					theme="dark"
 					mode="transparent"
 				>
-					<p v-if="malfermita" class="text-xl ml-8">Medicamentos</p>
+					<p class="text-xl ml-8">Medicamentos</p>
 				</BaseButton>
 				<BaseButton
 					type="nav"
@@ -79,7 +79,7 @@ const malfermi = () => {
 					theme="dark"
 					mode="transparent"
 				>
-					<p v-if="malfermita" class="text-xl ml-8">Consultas</p>
+					<p class="text-xl ml-8">Consultas</p>
 				</BaseButton>
 				<BaseButton
 					type="nav"
@@ -87,21 +87,30 @@ const malfermi = () => {
 					theme="dark"
 					mode="transparent"
 				>
-					<p v-if="malfermita" class="text-xl ml-8">Relatórios</p>
+					<p class="text-xl ml-8">Relatórios</p>
 				</BaseButton>
 			</nav>
 		</section>
 
-		<section class="absolute bottom-0 w-full">
-			<div @click="malfermi()" class="w-10 h-10 bg-primarydark absolute -top-10 -right-5"></div>
-			<BaseButton
-				type="nav"
-				icon="notifications"
-				theme="dark"
-				mode="transparent"
-			>
-				<p v-if="malfermita" class="text-xl ml-8">Notificações</p>
-			</BaseButton>
+		<section class="w-full flex flex-col bottom-0 relative">
+			<button @click="navbarStore.malfermi()" type="button" class="w-10 h-10 bg-primarydark absolute rounded-3xl flex items-center justify-center cursor-pointer -right-5 bottom-20">
+				<span class="material-symbols-rounded text-textlight text-3xl!">
+					<p v-if="navbarStore.malfermita">arrow_back</p>
+					<p v-else>arrow_forward</p>
+
+				</span>
+			</button>
+
+			<div class="overflow-hidden">
+				<BaseButton
+					type="nav"
+					icon="notifications"
+					theme="dark"
+					mode="transparent"
+				>
+					<p class="text-xl ml-8">Notificações</p>
+				</BaseButton>
+			</div>
 		</section>
 	</aside>
 </template>
