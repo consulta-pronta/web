@@ -11,7 +11,7 @@ const props = defineProps<Props>()
 	<div
 		:class="[
 			'box-border select-none',
-			!props.complete ? 'flex justify-center items-center p-10' : 'w-1/2 p-16',
+			!props.complete ? 'flex justify-center items-center' : 'w-1/2 p-16',
 		]"
 	>
 		<img v-if="props.complete" src="/img/LogoCompleta.png" />

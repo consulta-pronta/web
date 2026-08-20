@@ -29,13 +29,13 @@ const props = withDefaults(defineProps<Props>(), {
 const inputTag = ref<HTMLInputElement>()
 const value = defineModel<string>()
 
-const formatValue = () => {
+const formatValue = (event) => {
 	switch (props.type) {
 		case "cpf":
-			value.value = formatToCPF(value.value as string)
+			value.value = formatToCPF(event.target.value)
 			break
 		case "tel":
-			value.value = formatToPhone(value.value as string)
+			value.value = formatToPhone(event.target.value)
 			break
 	}
 }

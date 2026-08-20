@@ -8,39 +8,60 @@ export type ButtonState = "enabled" | "disabled" | "sync"
 
 interface Props {
 	type?: "button" | "submit" | "reset" | "nav"
-	bgColor?: string
-	border?: boolean
-	borderColor?: string
-	textColor?: string
+	theme?: "dark" | "light"
+	mode?: "outline" | "fill" | "transparent"
 	path?: string
 	icon?: string
-	iconColor?: string
-	justify?: "center" | "start" | "end"
 	text?: string
-	rounded?: string | number
-	w?: string | number
 }
 
 const props = withDefaults(defineProps<Props>(), {
-	textColor: "textDark",
 	type: "button",
 	path: "self",
-	iconColor: "textlight",
-	justify: "center",
-	rounded: "md",
+	theme: "light",
+	mode: "fill",
 })
 
 const redirect = () => {
-	if (props.type === "button") {
+	if (props.type === "button" || props.type === "nav") {
 		if (props.path === "self") {
 			router.push(route.path)
 		} else {
-			router.push(`${props.path}`)
+			router.push(props.path)
 		}
 	}
 }
 
 const stateModel = defineModel<ButtonState>("state", { default:"enabled" })
+
+const colors = {
+	background: props.theme === "light" ? "accent" : "primarydark",
+	text: props.theme === "light" ? "textDark" : "accent",
+	border: props.theme === "light" ? "textDark" : "accent",
+}
+
+if (props.type === 'nav') {
+	if (props.path === route.path || props.path === route.name) {
+		colors.text = 'accent'
+	} else {
+		colors.text = 'textlight'
+	}
+}
+
+let broski: string = ""
+switch (props.mode) {
+	case "outline":
+		broski = `bg-${colors.background} text-${colors.text} border-${border} border-2`
+		break
+
+	case "fill":
+		broski = `bg-${colors.background} text-${colors.text} border-0`
+		break
+
+	default:
+		broski = `text-${colors.text} bg-transparent`
+		break
+}
 </script>
 
 <template>
@@ -48,9 +69,9 @@ const stateModel = defineModel<ButtonState>("state", { default:"enabled" })
 		:type="props.type === 'nav' ? 'button' : props.type"
 		@click="redirect()"
 		:class="[
-			`bg-${props.bgColor} text-${props.textColor}`,
-			props.border ? `border-2 border-${props.borderColor}` : 'border-0',
-			`px-5 rounded-${props.rounded} w-${props.w} h-11 flex items-center justify-${props.justify}`,
+			'px-5 rounded-md h-11 flex items-center',
+			props.type === 'nav' ? 'justify-start' : 'justify-center',
+			`${broski}`,
 			props.type === 'nav' ? 'mb-2' : '',
 			stateModel.valueOf() !== 'enabled' ? 'contrast-50' : 'cursor-pointer',
 		]"
@@ -59,7 +80,7 @@ const stateModel = defineModel<ButtonState>("state", { default:"enabled" })
 		<span v-if="stateModel === 'sync'" class="material-symbols-rounded animate-spin">loop</span>
 		<template v-else>{{ props.text }}</template>
 
-		<span class="material-symbols-rounded text-4xl! select-none" :class="`text-${iconColor}`">
+		<span class="material-symbols-rounded text-4xl! select-none">
 			{{icon}}
 		</span>
 		<slot></slot>
