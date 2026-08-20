@@ -23,11 +23,11 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const redirect = () => {
-	if (props.type === "button") {
+	if (props.type === "button" || props.type === "nav") {
 		if (props.path === "self") {
 			router.push(route.path)
 		} else {
-			router.push(`${props.path}`)
+			router.push(props.path)
 		}
 	}
 }
@@ -39,7 +39,16 @@ const colors = {
 	text: props.theme === "light" ? "textDark" : "accent",
 	border: props.theme === "light" ? "textDark" : "accent",
 }
-let broski = ""
+
+if (props.type === 'nav') {
+	if (props.path === route.path || props.path === route.name) {
+		colors.text = 'accent'
+	} else {
+		colors.text = 'textlight'
+	}
+}
+
+let broski: string = ""
 switch (props.mode) {
 	case "outline":
 		broski = `bg-${colors.background} text-${colors.text} border-${border} border-2`
@@ -61,6 +70,7 @@ switch (props.mode) {
 		@click="redirect()"
 		:class="[
 			'px-5 rounded-md h-11 flex items-center',
+			props.type === 'nav' ? 'justify-start' : 'justify-center',
 			`${broski}`,
 			props.type === 'nav' ? 'mb-2' : '',
 			stateModel.valueOf() !== 'enabled' ? 'contrast-50' : 'cursor-pointer',
