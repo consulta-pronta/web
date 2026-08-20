@@ -6,7 +6,7 @@ const router = createRouter({
 		{
 			path: "/",
 			name: "root",
-			component: () => import("@/App.vue")
+			component: () => import("@/pages/LandingPage.vue")
 		},
 		{
 			path: "/cadastro",
@@ -26,6 +26,7 @@ const router = createRouter({
 		{
 			path: "/historico-sintomas",
 			name: "historico-sintomas",
+			alias: ["/historico", "/sintomas"],
 			component: () => import("@/pages/HistoricoUsuario.vue"),
 		}
 	],
