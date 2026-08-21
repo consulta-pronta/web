@@ -102,7 +102,7 @@ const submitForm = async () => {
 				</BaseButton>
 
 				<div>
-					<p class="text-textlight">
+					<p class="text-textLight">
 						Li e aceito os <a href="" class="text-accent">Termos de Uso</a> e a
 						<a href="" class="text-accent">Política de Privacidade</a>
 					</p>
@@ -118,7 +118,7 @@ const submitForm = async () => {
 				</BaseButton>
 
 				<RouterLink to="login">
-					<p class="text-textlight">
+					<p class="text-textLight">
 						Já possui conta? <a href="" class="text-accent">Fazer login</a>
 					</p>
 				</RouterLink>

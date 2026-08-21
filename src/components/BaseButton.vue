@@ -35,7 +35,7 @@ const redirect = () => {
 const stateModel = defineModel<ButtonState>("state", { default:"enabled" })
 
 const colors = {
-	background: props.theme === "light" ? "accent" : "primarydark",
+	background: props.theme === "light" ? "accent" : "primaryDark",
 	text: props.theme === "light" ? "textDark" : "accent",
 	border: props.theme === "light" ? "textDark" : "accent",
 }
@@ -44,14 +44,14 @@ if (props.type === 'nav') {
 	if (props.path === route.path || props.path === route.name) {
 		colors.text = 'accent'
 	} else {
-		colors.text = 'textlight'
+		colors.text = 'textLight'
 	}
 }
 
 let broski: string = ""
 switch (props.mode) {
 	case "outline":
-		broski = `bg-${colors.background} text-${colors.text} border-${border} border-2`
+		broski = `bg-${colors.background} text-${colors.text} border-${colors.border} border-2`
 		break
 
 	case "fill":

@@ -9,7 +9,7 @@ const navbarStore = useNavbarStore()
 
 <template>
 	<aside :class="[
-		'h-screen bg-primaryBlue flex flex-col items-center justify-between transition-all duration-500 shrink-0',
+		'h-screen bg-primary flex flex-col items-center justify-between transition-all duration-500 shrink-0',
 		navbarStore.malfermita ? 'w-67' : 'w-20'
 	]">
 		<section class="w-full flex flex-col overflow-hidden">
@@ -54,7 +54,7 @@ const navbarStore = useNavbarStore()
 				</BaseButton>
 			</nav>
 
-			<hr class="border-t-3 border-primarydark w-1/4 my-4 rounded-full opacity-70 mx-auto" />
+			<hr class="border-t-3 border-primaryDark w-1/4 my-4 rounded-full opacity-70 mx-auto" />
 
 			<nav class="opacity-75">
 				<BaseButton
@@ -93,8 +93,8 @@ const navbarStore = useNavbarStore()
 		</section>
 
 		<section class="w-full flex flex-col bottom-0 relative">
-			<button @click="navbarStore.malfermi()" type="button" class="w-10 h-10 bg-primarydark absolute rounded-3xl flex items-center justify-center cursor-pointer -right-5 bottom-20">
-				<span class="material-symbols-rounded text-textlight text-3xl!">
+			<button @click="navbarStore.malfermi()" type="button" class="w-10 h-10 bg-primaryDark absolute rounded-3xl flex items-center justify-center cursor-pointer -right-5 bottom-20">
+				<span class="material-symbols-rounded text-textLight text-3xl!">
 					<p v-if="navbarStore.malfermita">arrow_back</p>
 					<p v-else>arrow_forward</p>
 
@@ -109,6 +109,15 @@ const navbarStore = useNavbarStore()
 					mode="transparent"
 				>
 					<p class="text-xl ml-8">Notificações</p>
+				</BaseButton>
+
+				<BaseButton
+					type="nav"
+					icon="person"
+					theme="dark"
+					mode="transparent"
+				>
+					<p class="text-xl ml-8">Perfil</p>
 				</BaseButton>
 			</div>
 		</section>

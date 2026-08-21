@@ -11,7 +11,7 @@ onAuthStateChanged(auth, (user) => {
 </script>
 
 <template>
-	<main class="h-screen flex items-center justify-center bg-backgroundRoxo">
-		<p class="text-textlight material-symbols-rounded animate-spin">loop</p>
+	<main class="h-screen flex items-center justify-center bg-background">
+		<p class="text-textLight material-symbols-rounded animate-spin">loop</p>
 	</main>
 </template>

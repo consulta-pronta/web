@@ -47,7 +47,7 @@ onBeforeUnmount(() => {
 
 <template>
 	<article class="flex flex-row relative">
-		<label :class="[`w-19.75 h-19.75 bg-primaryBlue rounded-${props.rounded} border-2`, borderColors[props.borderColor as keyof typeof borderColors], `cursor-pointer overflow-hidden flex items-center justify-center`]">
+		<label :class="[`w-19.75 h-19.75 bg-primary rounded-${props.rounded} border-2`, borderColors[props.borderColor as keyof typeof borderColors], `cursor-pointer overflow-hidden flex items-center justify-center`]">
 			<input type="file" accept=".jpg,.jpeg,.png" class="hidden" @change="handleFileSelect" />
 
 			<img

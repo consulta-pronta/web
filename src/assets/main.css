@@ -9,16 +9,18 @@
 
 @theme {
 	--font-family-sans: NunitoSans, sans-serif;
+	--color-background: #231c44;
+	--color-primary: #4d4a73;
+	--color-primaryLight: #d0cee5;
+	--color-primaryDark: #2b254d;
 	--color-surface: #f4efe6;
-	--color-backgroundRoxo: #231c44;
-	--color-primarydark: #2b254d;
 	--color-accent: #e5d5b8;
-	--color-primaryBlue: #4d4a73;
-	--color-textlight: #ffffff;
+	--color-textLight: #ffffff;
 	--color-textDark: #2b254d;
-	--color-error: #E64248;
-	--color-warning: #E4B521;
-	--color-sucess: #41C460;
+	--color-sucess: #41c460;
+	--color-warning: #e4b521;
+	--color-error: #e64248;
+	--color-neutral: #2279ca;
 }
 
 .material-symbols-rounded {

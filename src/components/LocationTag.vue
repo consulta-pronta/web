@@ -8,7 +8,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
 	localizacao: 'Costas',
 	bgColor: 'accent',
-	textcolor: 'primarydark',
+	textcolor: 'primaryDark',
 })
 </script>
 
