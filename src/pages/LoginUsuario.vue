@@ -53,7 +53,7 @@ const login = async () => {
 				</BaseButton>
 
 				<RouterLink to="cadastro">
-					<p class="text-textlight">
+					<p class="text-textLight">
 						Nâo possui conta?
 						<a href="" class="text-accent">Criar conta</a>
 					</p>
