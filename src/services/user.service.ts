@@ -1,3 +1,4 @@
+import type { UserType } from "@/components/ToggleUser.vue"
 import { db } from "@/config/firebase"
 import { deleteDoc, doc, getDoc, serverTimestamp, setDoc, updateDoc } from "firebase/firestore"
 import type {FieldValue, Timestamp} from "firebase/firestore"
@@ -8,6 +9,7 @@ export type User = {
 	email: string
 	phone: string
 	cpf: string
+	user_type: UserType
 	photo_url: string | null
 	created_at: Timestamp
 }
@@ -17,6 +19,7 @@ export type UserData = {
 	email?: string
 	phone?: string
 	cpf?: string
+	user_type?: UserType
 	photo_url?: string | null,
 	created_at?: FieldValue
 }

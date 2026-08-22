@@ -16,7 +16,6 @@ const router = useRouter()
 const signUpStore = useSignUpStore()
 
 const buttonState: Ref<ButtonState> = ref("enabled")
-const status = ref("paciente")
 const showPasswordRules = ref(false)
 
 
@@ -49,7 +48,7 @@ const submitForm = async () => {
 			>
 				<!-- <UserPhoto borderColor="accent"/> -->
 
-				<ToggleUser v-model="status" class="mb-4" />
+				<ToggleUser v-model="signUpStore.userType" class="mb-4" />
 
 				<BaseInput type="text" placeholder="Nome" icon="person" v-model="signUpStore.name" required />
 				<BaseInput type="cpf" placeholder="CPF" icon="article" v-model="signUpStore.cpf" required />
