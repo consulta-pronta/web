@@ -80,7 +80,7 @@ switch (props.mode) {
 		<span v-if="stateModel === 'sync'" class="material-symbols-rounded animate-spin">loop</span>
 		<template v-else>{{ props.text }}</template>
 
-		<span class="material-symbols-rounded text-4xl! select-none">
+		<span class="material-symbols-rounded text-3xl! select-none">
 			{{icon}}
 		</span>
 		<slot></slot>
