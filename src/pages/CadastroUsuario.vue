@@ -89,7 +89,7 @@ const submitForm = async () => {
 				<BaseInput type="password" placeholder="Confirmar senha" icon="lock" v-model="signUpStore.confirmPassword" required />
 
 				<BaseButton
-					v-if="status === 'profissional'"
+					v-if="signUpStore.userType === 'profissional'"
 					type="button"
 					theme="dark"
 					mode="transparent"

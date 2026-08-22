@@ -1,9 +1,14 @@
 <script setup lang="ts">
 import NavBar from "@/components/NavBar.vue"
 import BaseButton from "@/components/BaseButton.vue"
-import SymptomBlock from "@/components/SymptomBlock.vue";
+import SymptomBlock from "@/components/SymptomBlock.vue"
+import { useAuthStore } from "@/stores/authStore";
 
-// Integrar com o banco de dados
+const authStore = useAuthStore()
+const userData = authStore.userData
+if (userData) {
+	console.log(userData.user_type)
+}
 </script>
 
 <template>
