@@ -1,5 +1,44 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import NavBar from '@/components/NavBar.vue';
+import ExamsTable from '@/components/ExamsTable.vue';
+
+interface Exame {
+	nome: string
+	local: string
+	data: string
+	resultado: string
+	icone: string
+	iconeResultado: string
+}
+
+const exames = ref<Exame[]>([
+	{
+		nome: 'Hemograma Completo',
+		local: 'Hospital Meridional',
+		data: '10/05/2026',
+		resultado: 'Exame Concluído',
+		icone: 'bloodtype',
+		iconeResultado: 'check_circle'
+	},
+	{
+		nome: 'Raio-X',
+		local: 'Hospital Meridional',
+		data: '12/05/2026',
+		resultado: 'Exame em andamento',
+		icone: 'radiology',
+		iconeResultado: 'schedule'
+	},
+	{
+		nome: 'Exame de Urina',
+		local: 'Hospital Meridional',
+		data: '01/05/1967',
+		resultado: 'Exame em andamento',
+		icone: 'colorize',
+		iconeResultado: 'schedule'
+	}
+])
+
 </script>
 
 <template class="justify-end">
@@ -34,197 +73,7 @@ import NavBar from '@/components/NavBar.vue';
 							</div>
 						</section>
 
-						<section class="w-full flex justify-center place-items-center text-center min-h-0">
-							<div class="w-[80%] max-h-[55vh] overflow-y-auto rounded-[20px] scrollbar-hide">
-								<table class="bg-surface w-full">
-									<thead class="text-lg text-primarydark font-bold sticky top-0 bg-surface z-10">
-										<tr>
-											<th class="px-4 py-3">Exame</th>
-											<th class="px-4 py-3">Local</th>
-											<th class="px-4 py-3">Data</th>
-											<th class="px-4 py-3">Resultado</th>
-										</tr>
-									</thead>
-
-									<tbody class="text-sm text-primarydark font-light">
-
-										<tr class="border-t border-primarydark">
-											<td class="px-4 py-3 font-bold flex justify-center items-center relative m-1.5">
-												<span class="material-symbols-rounded text-primarydark absolute left-3">
-													bloodtype
-												</span>
-												Hemograma Completo
-											</td>
-											<td class="px-4 py-3">Hospital Meridional Vitória</td>
-											<td class="px-4 py-3">01/04/2026</td>
-											<td class="px-4 py-3">
-												<div class="justify-center items-center relative">
-													<span class="material-symbols-rounded text-primarydark absolute right-2">
-													schedule
-												</span>
-												Exame em andamento
-												</div>
-											</td>
-										</tr>
-
-										<tr class="border-t border-primarydark">
-											<td class="px-4 py-3 font-bold flex justify-center items-center relative m-1.5">
-												<span class="material-symbols-rounded text-primarydark absolute left-3">
-													bloodtype
-												</span>
-												Hemograma Completo
-											</td>
-											<td class="px-4 py-3">Hospital Meridional Vitória</td>
-											<td class="px-4 py-3">01/04/2026</td>
-											<td class="px-4 py-3">
-												<div class="justify-center items-center relative">
-													<span class="material-symbols-rounded text-primarydark absolute right-2">
-													schedule
-												</span>
-												Exame em andamento
-												</div>
-											</td>
-										</tr>
-
-										<tr class="border-t border-primarydark">
-											<td class="px-4 py-3 font-bold flex justify-center items-center relative m-1.5">
-												<span class="material-symbols-rounded text-primarydark absolute left-3">
-													bloodtype
-												</span>
-												Hemograma Completo
-											</td>
-											<td class="px-4 py-3">Hospital Meridional Vitória</td>
-											<td class="px-4 py-3">01/04/2026</td>
-											<td class="px-4 py-3">
-												<div class="justify-center items-center relative">
-													<span class="material-symbols-rounded text-primarydark absolute right-2">
-													schedule
-												</span>
-												Exame em andamento
-												</div>
-
-											</td>
-										</tr>
-										<tr class="border-t border-primarydark">
-											<td class="px-4 py-3 font-bold flex justify-center items-center relative m-1.5">
-												<span class="material-symbols-rounded text-primarydark absolute left-3">
-													bloodtype
-												</span>
-												Hemograma Completo
-											</td>
-											<td class="px-4 py-3">Hospital Meridional Vitória</td>
-											<td class="px-4 py-3">01/04/2026</td>
-											<td class="px-4 py-3">
-												<div class="justify-center items-center relative">
-													<span class="material-symbols-rounded text-primarydark absolute right-2">
-													schedule
-												</span>
-												Exame em andamento
-												</div>
-
-											</td>
-										</tr>
-										<tr class="border-t border-primarydark">
-											<td class="px-4 py-3 font-bold flex justify-center items-center relative m-1.5">
-												<span class="material-symbols-rounded text-primarydark absolute left-3">
-													bloodtype
-												</span>
-												Hemograma Completo
-											</td>
-											<td class="px-4 py-3">Hospital Meridional Vitória</td>
-											<td class="px-4 py-3">01/04/2026</td>
-											<td class="px-4 py-3">
-												<div class="justify-center items-center relative">
-													<span class="material-symbols-rounded text-primarydark absolute right-2">
-													schedule
-												</span>
-												Exame em andamento
-												</div>
-
-											</td>
-										</tr>
-										<tr class="border-t border-primarydark">
-											<td class="px-4 py-3 font-bold flex justify-center items-center relative m-1.5">
-												<span class="material-symbols-rounded text-primarydark absolute left-3">
-													bloodtype
-												</span>
-												Hemograma Completo
-											</td>
-											<td class="px-4 py-3">Hospital Meridional Vitória</td>
-											<td class="px-4 py-3">01/04/2026</td>
-											<td class="px-4 py-3">
-												<div class="justify-center items-center relative">
-													<span class="material-symbols-rounded text-primarydark absolute right-2">
-													schedule
-												</span>
-												Exame em andamento
-												</div>
-
-											</td>
-										</tr>
-
-										<tr class="border-t border-primarydark">
-											<td class="px-4 py-3 font-bold flex justify-center items-center relative m-1.5">
-												<span class="material-symbols-rounded text-primarydark absolute left-3">
-													bloodtype
-												</span>
-												Hemograma Completo
-											</td>
-											<td class="px-4 py-3">Hospital Meridional Vitória</td>
-											<td class="px-4 py-3">01/04/2026</td>
-											<td class="px-4 py-3">
-												<div class="justify-center items-center relative">
-													<span class="material-symbols-rounded text-primarydark absolute right-2">
-													schedule
-												</span>
-												Exame em andamento
-												</div>
-
-											</td>
-										</tr>
-										<tr class="border-t border-primarydark">
-											<td class="px-4 py-3 font-bold flex justify-center items-center relative m-1.5">
-												<span class="material-symbols-rounded text-primarydark absolute left-3">
-													bloodtype
-												</span>
-												Hemograma Completo
-											</td>
-											<td class="px-4 py-3">Hospital Meridional Vitória</td>
-											<td class="px-4 py-3">01/04/2026</td>
-											<td class="px-4 py-3">
-												<div class="justify-center items-center relative">
-													<span class="material-symbols-rounded text-primarydark absolute right-2">
-													schedule
-												</span>
-												Exame em andamento
-												</div>
-
-											</td>
-										</tr>
-										<tr class="border-t border-primarydark">
-											<td class="px-4 py-3 font-bold flex justify-center items-center relative m-1.5">
-												<span class="material-symbols-rounded text-primarydark absolute left-3">
-													bloodtype
-												</span>
-												Hemograma Completo
-											</td>
-											<td class="px-4 py-3">Hospital Meridional Vitória</td>
-											<td class="px-4 py-3">01/04/2026</td>
-											<td class="px-4 py-3">
-												<div class="justify-center items-center relative">
-													<span class="material-symbols-rounded text-primarydark absolute right-2">
-													schedule
-												</span>
-												Exame em andamento
-												</div>
-
-											</td>
-										</tr>
-
-									</tbody>
-								</table>
-							</div>
-						</section>
+						<ExamsTable :exames="exames"/>
 
 					</div>
 
