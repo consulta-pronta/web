@@ -24,6 +24,14 @@ const router = createRouter({
 			component: () => import("@/pages/DashboardUsuario.vue"),
 		},
 		{
+			path: "/HistoricoUsuario",
+			name: "Historico",
+			component: () => import("../pages/HistoricoUsuario.vue"),
+		},
+		{
+			path: "/ExamesUsuario",
+			name: "Exame",
+			component: () => import("../pages/ExamesUsuario.vue"),
 			path: "/historico-sintomas",
 			name: "historico-sintomas",
 			alias: ["/historico", "/sintomas"],

@@ -341,7 +341,7 @@ function registrarSintoma(event: Event) {
 			<!--Blocos de historicos-->
 
 				<!--Texto-->
-				<p class="text-textLight text-2xl">4 sintomas registrados</p>
+				<p class="text-textlight text-2xl">{{ sintomas.length }} sintomas registrados</p>
 
 				<!--Área inferior-->
 				<section class="flex h-[82.5%] gap-x-4">
