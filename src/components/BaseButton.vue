@@ -10,6 +10,7 @@ interface Props {
 	type?: "button" | "submit" | "reset" | "nav"
 	theme?: "dark" | "light"
 	mode?: "outline" | "fill" | "transparent"
+	exit?: boolean
 	path?: string
 	icon?: string
 	text?: string
@@ -48,6 +49,10 @@ if (props.type === 'nav') {
 	}
 }
 
+if (props.exit) {
+	colors.text = 'error'
+}
+
 let broski: string = ""
 switch (props.mode) {
 	case "outline":
@@ -80,7 +85,7 @@ switch (props.mode) {
 		<span v-if="stateModel === 'sync'" class="material-symbols-rounded animate-spin">loop</span>
 		<template v-else>{{ props.text }}</template>
 
-		<span class="material-symbols-rounded text-4xl! select-none">
+		<span class="material-symbols-rounded text-3xl! select-none">
 			{{icon}}
 		</span>
 		<slot></slot>
