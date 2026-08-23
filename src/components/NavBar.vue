@@ -11,7 +11,7 @@ const navbarStore = useNavbarStore()
 	<aside :class="[
 		'h-screen bg-primary flex flex-col items-center justify-between transition-all duration-500 shrink-0',
 		navbarStore.malfermita ? 'w-67' : 'w-20'
-	]">
+	]"> <!--"w-[20%]" : "w-[5%]"-->
 		<section class="w-full flex flex-col overflow-hidden">
 			<BaseLogo :class="[
 				'mx-auto my-10 transition-all object-cover duration-500',
@@ -62,6 +62,7 @@ const navbarStore = useNavbarStore()
 					icon="stethoscope"
 					theme="dark"
 					mode="transparent"
+					path="examesUsuario"
 				>
 					<p class="text-xl ml-8">Exames</p>
 				</BaseButton>

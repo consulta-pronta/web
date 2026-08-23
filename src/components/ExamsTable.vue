@@ -7,23 +7,29 @@ interface Exame {
 	resultado: string
 	icone: string
 	iconeResultado: string
+	paciente?: string
 }
 
 interface Props {
 	exames: Exame[]
+	paciente?: boolean
 }
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+	paciente: false,
+})
+
 
 </script>
 
 <template>
 	<section class="w-full flex justify-center place-items-center text-center min-h-0">
-		<div class="w-[80%] max-h-[55vh] overflow-y-auto rounded-[20px] scrollbar-hide">
+		<div class="w-[95%] max-h-[55vh] overflow-y-auto rounded-[20px] scrollbar-hide">
 			<table class="bg-surface w-full">
 				<thead class="text-lg text-primarydark font-bold sticky top-0 bg-surface z-10">
 					<tr>
 						<th class="px-4 py-3">Exame</th>
+						<th class="px-4 py-3" v-if="props.paciente === true">Paciente</th>
 						<th class="px-4 py-3">Local</th>
 						<th class="px-4 py-3">Data</th>
 						<th class="px-4 py-3">Resultado</th>
@@ -39,6 +45,8 @@ const props = defineProps<Props>()
 							</span>
 							{{ exame.nome }}
 						</td>
+
+						<td class="px-4 py-3 font-bold" v-if="props.paciente === true"> {{ exame.paciente }}</td>
 
 						<td class="px-4 py-3">{{ exame.local }}</td>
 

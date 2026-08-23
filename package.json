@@ -19,7 +19,7 @@
     "@tailwindcss/vite": "^4.3.3",
     "axios": "^1.19.0",
     "brazilian-values": "^0.14.0",
-    "firebase": "^12.16.0",
+    "firebase": "^12.18.0",
     "material-symbols": "^0.45.10",
     "pinia": "^4.0.3",
     "tailwindcss": "^4.3.3",

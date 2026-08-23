@@ -6,6 +6,18 @@ import { ref } from 'vue'
 const showFilters = ref(false)
 const showOrd = ref(false)
 
+interface Props {
+	filter?: boolean,
+	order?: boolean,
+	status?: 'location' | 'typing',
+}
+
+const props = withDefaults(defineProps<Props>(), {
+	filter: true,
+	order: true,
+	status: "location",
+})
+
 function toggleFilter() {
 	showFilters.value = !showFilters.value
 
@@ -26,7 +38,7 @@ function toggleOrd() {
 
 <template>
 	<section class="flex justify-start items-center relative w-fit">
-		<div>
+		<div v-if="props.filter">
 			<article class="flex items-center">
 				<span class="material-symbols-rounded text-[24px] text-accent mr-1">
 					filter_alt
@@ -40,7 +52,7 @@ function toggleOrd() {
 			</article>
 		</div>
 
-		<div>
+		<div v-if="props.order">
 			<article class="flex items-center">
 				<span class="material-symbols-rounded text-[24px] text-accent mr-1">
 					bar_chart
@@ -55,15 +67,25 @@ function toggleOrd() {
 		</div>
 	</section>
 
-	<div v-if="showFilters === true" class="h-[4.88%] flex mb-5">
-		<BaseButton text="Todos" bg-color="background" text-color="textLight" w="fit" rounded="full" class="mr-1"/>
-		<BaseButton text="Abdômen" bg-color="background" text-color="textLight" w="fit" rounded="full" class="mr-1"/> <!-- Abodômen -->
-		<BaseButton text="Barriga" bg-color="background" text-color="textLight" w="fit" rounded="full" class="mr-1"/>
-		<BaseButton text="Cabeça" bg-color="background" text-color="textLight" w="fit" rounded="full" class="mr-1"/>
-		<BaseButton text="Costas" bg-color="background" text-color="textLight" w="fit" rounded="full" class="mr-1"/>
+	<div v-if="props.filter && showFilters" class="h-[4.88%] flex mb-5">
+		<article v-if="props.status === 'location' " class="flex">
+			<BaseButton text="Todos" bg-color="background" text-color="textLight" w="fit" rounded="full" class="mr-1"/>
+			<BaseButton text="Abdômen" bg-color="background" text-color="textLight" w="fit" rounded="full" class="mr-1"/>
+			<BaseButton text="Barriga" bg-color="background" text-color="textLight" w="fit" rounded="full" class="mr-1"/>
+			<BaseButton text="Cabeça" bg-color="background" text-color="textLight" w="fit" rounded="full" class="mr-1"/>
+			<BaseButton text="Costas" bg-color="background" text-color="textLight" w="fit" rounded="full" class="mr-1"/>
+		</article>
+
+		<article v-if="props.status === 'typing' " class="flex">
+			<BaseButton text="Todos" bg-color="background" text-color="textLight" w="fit" rounded="full" class="mr-1"/>
+			<BaseButton text="laboratariais" bg-color="background" text-color="textLight" w="fit" rounded="full" class="mr-1"/>
+			<BaseButton text="imagem" bg-color="background" text-color="textLight" w="fit" rounded="full" class="mr-1"/>
+			<BaseButton text="clínico" bg-color="background" text-color="textLight" w="fit" rounded="full" class="mr-1"/>
+		</article>
+
 	</div>
 
-	<div v-if="showOrd === true" class="h-[4.88%] flex mb-5">
+	<div v-if="props.order && showOrd" class="h-[4.88%] flex mb-5">
 		<BaseButton icon="arrow_downward" iconColor="accent" w="fit" class="mr-1"/>
 		<BaseButton text="Data de início" bg-color="Transparent" text-color="textLight" w="fit" rounded="full" class="mr-1"/>
 		<BaseButton text="Intensidade" bg-color="Transparent" text-color="textLight" w="fit" rounded="full" class="mr-1"/>
