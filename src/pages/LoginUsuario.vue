@@ -6,12 +6,12 @@ import AuthBackground from "@/components/AuthBackground.vue"
 import BaseButton, { type ButtonState } from "@/components/BaseButton.vue"
 import BaseInput from "@/components/BaseInput.vue"
 import BaseLogo from "@/components/BaseLogo.vue"
-import ToggleUser from "@/components/ToggleUser.vue"
+import ToggleUser, { type UserType } from "@/components/ToggleUser.vue"
 
 import { useSignInStore } from "@/stores/signInStore"
 
 
-const status = ref("paciente")
+const status = ref<UserType>("paciente")
 
 const signInStore = useSignInStore()
 const buttonState: Ref<ButtonState> = ref("enabled")
@@ -44,10 +44,20 @@ const login = async () => {
 				@submit.prevent="login()"
 				class="space-y-2 items-center justify-center flex flex-col w-116.25"
 			>
-				<ToggleUser v-model="status" class="mb-4" />
+				<ToggleUser v-model="status" />
+				<br>
 
-				<BaseInput type="email" placeholder="Email" icon="email" v-model="signInStore.email" required />
-				<BaseInput type="password" placeholder="Senha" icon="lock" class="mb-5" v-model="signInStore.password" required />
+				<BaseInput
+					type="email" placeholder="Email" icon="email" theme="dark"
+					class="w-full"
+					v-model="signInStore.email" required
+				/>
+				<BaseInput
+					type="password" placeholder="Senha" icon="lock" theme="dark"
+					class="w-full"
+					v-model="signInStore.password" required
+				/>
+				<br>
 				<BaseButton type="submit" theme="light" class="justify-center w-full" v-model:state="buttonState">
 					Entrar
 				</BaseButton>

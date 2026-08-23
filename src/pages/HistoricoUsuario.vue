@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import BaseButton from '@/components/BaseButton.vue';
-import FilterOrd from '@/components/FilterOrd.vue';
-import NavBar from '@/components/NavBar.vue';
-import SymptomBlock from '@/components/SymptomBlock.vue';
-import DescBlock from '@/components/DescBlock.vue';
+import BaseButton from '@/components/BaseButton.vue'
+import FilterOrd from '@/components/FilterOrd.vue'
+import NavBar from '@/components/NavBar.vue'
+import SymptomBlock from '@/components/SymptomBlock.vue'
+import DescBlock from '@/components/DescBlock.vue'
 import { computed, ref } from 'vue'
-import BaseInput from '@/components/BaseInput.vue';
+import BaseInput from '@/components/BaseInput.vue'
 
 const sintomaSelecionado = ref<number | null>(null)
 const sobre = ref(false)
@@ -126,20 +126,17 @@ function registrarSintoma(event: Event) {
 </script>
 
 <template>
-	<main class="flex h-screen overflow-hidden">
+	<!-- Screen -->
+	<div class="flex h-screen overflow-hidden">
 		<NavBar />
 
-		<div class="bg-background w-full h-full flex justify-center items-center overflow-hidden">
-
+		<main class="bg-background w-full h-full flex justify-center items-center overflow-hidden">
+			<!-- Fernando Wrapper -->
 			<div class="w-[88%] h-[85%] bg-primary rounded-3xl py-[1.5%] px-[2.5%] flex flex-col min-h-0">
 				<!--Barra de pesquisa-->
 				<section class="flex justify-center place-items-center relative mb-3">
-					<div class="relative flex items-center w-[56%] h-11 bg-surface rounded-[15px]"> <!--Não existe um padrão para 15px-->
-						<span class="material-symbols-rounded text-primaryDark absolute left-3 pointer-events-none">
-							search
-						</span>
-						<input type="text" placeholder="Pesquisar" class="text-primaryDark placeholder-primaryDark w-full h-full outline-none pl-10">
-					</div>
+					<BaseInput placeholder="Pesquisar" icon="search" theme="light" class="w-120"></BaseInput>
+					
 					<!--Botão de registrar sintoma-->
 					<div class="absolute right-0 w-[20%]">
 						<BaseButton type="button" text="Registrar Sintoma" icon="add" :border="true" borderColor="textLight" rounded="full" @click="toggleSobre" textColor="textLight"/>
@@ -394,6 +391,6 @@ function registrarSintoma(event: Event) {
 					</div>
 				</section>
 			</div>
-		</div>
-	</main>
+		</main>
+	</div>
 </template>
