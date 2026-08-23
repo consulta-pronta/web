@@ -70,10 +70,10 @@ onMounted(() => {
 	<label
 		class="flex items-center rounded-md px-4 gap-2 cursor-text"
 		:class="broski"
-		for="input"
 	>
 		<span
 			class="material-symbols-rounded pointer-events-none select-none"
+			v-if="icon"
 		>
 			{{ icon }}
 		</span>
