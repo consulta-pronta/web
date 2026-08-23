@@ -1,16 +1,11 @@
 <script setup lang="ts">
-import { onMounted } from "vue"
+export type UserType = "paciente" | "profissional"
 
-export type UserType = "paciente" |"profissional"
-
-
-const status = defineModel<UserType>("paciente")
+const status = defineModel<UserType>({ default: "paciente" })
 
 const toggleStatus = (newStatus: UserType) => {
 	status.value = newStatus
 }
-
-onMounted(() => { toggleStatus("paciente") })
 </script>
 
 <template>
@@ -19,7 +14,7 @@ onMounted(() => { toggleStatus("paciente") })
 			class="boogieman absolute bg-accent z-0"
 			:class="status === 'paciente'
 				? 'left-1'
-				: 'left-[calc(100%-0.25rem-10rem)]'"
+				: 'left-[calc(100%-0.25rem-10rem)]'">
 		</div>
 
 		<button
@@ -44,7 +39,7 @@ onMounted(() => { toggleStatus("paciente") })
 	@reference "@/assets/main.css";
 
 	button {
-		@apply cursor-pointer z-1 text-accent	
+		@apply cursor-pointer z-1 text-accent
 	}
 
 	.boogieman {

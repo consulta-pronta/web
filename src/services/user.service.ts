@@ -6,6 +6,7 @@ import type {FieldValue, Timestamp} from "firebase/firestore"
  // TODO: setup Cloud Storage for storing photo url
 export type User = {
 	readonly uid: string
+	name: string
 	email: string
 	phone: string
 	cpf: string
