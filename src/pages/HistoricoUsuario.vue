@@ -143,7 +143,7 @@ function toggleEditar() {
 				<!-- Content -->
 				<section class="flex h-[82.5%] gap-x-4">
 					<!-- List -->
-					<section class="w-[38%] h-full flex flex-col gap-y-2 overflow-y-auto scrollbar-hide">
+					<section class="w-[38%] h-fit flex flex-col gap-y-2 overflow-y-auto scrollbar-hide">
 						<SymptomBlock
 						v-for="sintoma in sintomas"
 						:key="sintoma.id"

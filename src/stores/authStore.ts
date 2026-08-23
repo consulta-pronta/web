@@ -1,5 +1,5 @@
 import type { User as AuthUser } from "firebase/auth"
-import { getUser, type User as AppUser } from "@/services/user.service"
+import { getUser, type User as AppUser } from "@/services/userService"
 import { defineStore } from "pinia"
 import { ref, watch } from "vue"
 import { until } from "@vueuse/core"

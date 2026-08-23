@@ -2,21 +2,18 @@
 import BaseInput from "@/components/BaseInput.vue"
 import BaseButton from "@/components/BaseButton.vue"
 import BaseSelect from "../BaseSelect.vue"
+import { useSymptomStore } from "@/stores/symptomStore.ts"
+import { useAuthStore } from "@/stores/authStore.ts"
 
 
 const locais = ["Abdomen", "Barriga", "Cabeça", "Costas", "Olhos", "Pés", "Pescoço"]
+const symptomStore = useSymptomStore()
+const authStore = useAuthStore()
 
-function registrarSintoma(event: Event) {
-	const form = event.target as HTMLFormElement
-	const dados = new FormData(form)
-
-	console.log(dados.get('resumo'))
-	console.log(dados.get('descricao'))
-	console.log(dados.get('data'))
-	console.log(dados.get('horario'))
-	console.log(dados.get('localizacao'))
-	console.log(dados.get('intensidade'))
-	console.log(dados.get('arquivo'))
+const registrarSintoma = async () => {
+	if (authStore.user) {
+		await symptomStore.submitForm(authStore.user.uid)
+	}
 }
 </script>
 
@@ -25,26 +22,25 @@ function registrarSintoma(event: Event) {
 		<label>
 			<!-- <span class="text-red-400">*</span> -->
 			<p>O que você está sentindo?</p>
-			<BaseInput name="resumo" type="text" placeholder="Resuma seus sintomas" theme="light" required/>
+			<BaseInput v-model="symptomStore.title" type="text" placeholder="Resuma seus sintomas" theme="light" required/>
 		</label>
 
 		<label>
 			<p>Explique com mais detalhes</p>
-			<BaseInput type="text" name="descricao" placeholder="Descreva seus sintomas com mais detalhes" bgColor="textLight" textColor="primaryDark" />
+			<BaseInput v-model="symptomStore.description" name="descricao" placeholder="Descreva seus sintomas com mais detalhes" bgColor="textLight" textColor="primaryDark" />
 		</label>
 
 		<label>
 			<p>Quando começou?</p>
 			<fieldset class="flex gap-4 w-full">
-				<BaseInput type="date" theme="light" class="grow" />
-				<BaseInput type="time" theme="light" class="grow" />
+				<BaseInput v-model="symptomStore.date_time" type="datetime-local" theme="light" class="grow" />
 			</fieldset>
 		</label>
 
 		<label>
 			<p>Em qual parte do corpo?</p>
 			
-			<BaseSelect icon="location_on" theme="light" defaultValue="Localização">
+			<BaseSelect v-model="symptomStore.place" icon="location_on" theme="light" defaultValue="Localização">
 				<template v-for="value in locais" :key="value">
 					<option :value="value">{{value}}</option>
 				</template>
@@ -54,7 +50,7 @@ function registrarSintoma(event: Event) {
 		<label>
 			<p>Qual a intensidade do sintoma?</p>
 			<div class="flex flex-row gap-4 text-textLight w-full">
-				1 <input type="range" min="1" max="10" step="1" class="accent-accent grow"> 10
+				1 <input v-model="symptomStore.intensity" type="range" min="1" max="10" step="1" class="accent-accent grow"> 10
 			</div>
 		</label>
 		

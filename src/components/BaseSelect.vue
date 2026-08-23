@@ -32,6 +32,8 @@ switch (props.mode) {
 		broski = `bg-transparent text-${colors.text} border-0`
 		break
 }
+
+const value = defineModel<string>()
 </script>
 
 <template>
@@ -57,6 +59,7 @@ switch (props.mode) {
 				cursor-pointer appearance-none
 			"
 			:required="required"
+			v-model="value"
 		>
 			<option v-if="defaultValue" value="" selected hidden>
 				{{ defaultValue }}

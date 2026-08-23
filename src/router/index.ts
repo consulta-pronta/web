@@ -43,14 +43,14 @@ const router = createRouter({
 			},
 		},
 		{
-			path: "/HistoricoUsuario",
-			name: "Historico",
-			component: () => import("../pages/HistoricoUsuario.vue"),
+			path: "/exames",
+			name: "exames",
+			component: () => import("../pages/ExamesUsuario.vue"),
+			meta: {
+				roles: ["paciente"],
+			},
 		},
 		{
-			path: "/ExamesUsuario",
-			name: "Exame",
-			component: () => import("../pages/ExamesUsuario.vue"),
 			path: "/historico-sintomas",
 			name: "historico-sintomas",
 			alias: ["/historico", "/sintomas"],

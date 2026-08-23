@@ -2,7 +2,7 @@ import { defineStore } from "pinia"
 import { computed, ref } from "vue"
 import { createUserWithEmailAndPassword, sendEmailVerification, validatePassword } from "firebase/auth"
 import { auth } from "@/config/firebase"
-import { createUser } from "@/services/user.service"
+import { createUser } from "@/services/userService"
 import type { UserType } from "@/components/ToggleUser.vue"
 
 export const minPasswordLength = 8

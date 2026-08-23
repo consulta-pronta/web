@@ -4,7 +4,7 @@ import { formatToCPF, formatToPhone } from "brazilian-values"
 import { onMounted, ref } from "vue"
 
 interface Props {
-	type?: "text" | "password" | "email" | "number" | "tel" | "date" | "time" | "cpf"
+	type?: "text" | "password" | "email" | "number" | "tel" | "date" | "time" | "cpf" | "datetime-local"
 	theme?: "dark" | "light"
 	mode?: "outline" | "fill" | "transparent"
 	placeholder?: string
