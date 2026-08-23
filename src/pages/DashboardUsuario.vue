@@ -2,13 +2,12 @@
 import NavBar from "@/components/NavBar.vue"
 import BaseButton from "@/components/BaseButton.vue"
 import SymptomBlock from "@/components/SymptomBlock.vue"
-import { useAuthStore } from "@/stores/authStore";
+import { useAuthStore } from "@/stores/authStore"
 
 const authStore = useAuthStore()
-const userData = authStore.userData
-if (userData) {
-	console.log(userData.user_type)
-}
+authStore.onReady((data) => {
+	console.log(data.user_type)
+})
 </script>
 
 <template>
