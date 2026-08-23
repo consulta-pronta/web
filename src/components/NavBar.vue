@@ -1,65 +1,125 @@
 <script setup lang="ts">
+import { useNavbarStore } from "@/stores/navbarStore"
+
 import BaseLogo from "@/components/BaseLogo.vue"
 import BaseButton from "@/components/BaseButton.vue"
+
+const navbarStore = useNavbarStore()
 </script>
 
 <template>
-	<aside class="absolute w-[16%] h-full bg-primaryBlue flex flex-col items-center">
-		<section class="w-full flex flex-col items-center">
-			<BaseLogo />
+	<aside :class="[
+		'h-screen bg-primary flex flex-col items-center justify-between transition-all duration-500 shrink-0',
+		navbarStore.malfermita ? 'w-67' : 'w-20'
+	]">
+		<section class="w-full flex flex-col overflow-hidden">
+			<BaseLogo :class="[
+				'mx-auto my-10 transition-all object-cover duration-500',
+				navbarStore.malfermita ? 'w-50' : 'w-10',
+				]" />
 			<nav>
 				<BaseButton
 					type="nav"
 					icon="home"
-					text-color="accent"
-					icon-color="accent"
-					justify="start"
+					theme="dark"
+					mode="transparent"
+					path="dashboard"
 				>
 					<p class="text-xl ml-8">Início</p>
 				</BaseButton>
 				<BaseButton
 					type="nav"
 					icon="browse_activity"
-					text-color="textlight"
-					justify="start"
+					theme="dark"
+					mode="transparent"
+					path="historico-sintomas"
 				>
 					<p class="text-xl ml-8">Histórico</p>
 				</BaseButton>
-				<BaseButton type="nav" icon="home_health" text-color="textlight" justify="start">
+				<BaseButton
+					type="nav"
+					icon="home_health"
+					theme="dark"
+					mode="transparent"
+				>
 					<p class="text-xl ml-8">Hospitais</p>
 				</BaseButton>
-				<BaseButton type="nav" icon="settings" text-color="textlight" justify="start">
+				<BaseButton
+					type="nav"
+					icon="settings"
+					theme="dark"
+					mode="transparent"
+				>
 					<p class="text-xl ml-8">Configurações</p>
 				</BaseButton>
 			</nav>
 
-			<hr class="border-t-3 border-primarydark w-1/4 m-4 rounded-full opacity-70" />
+			<hr class="border-t-3 border-primaryDark w-1/4 my-4 rounded-full opacity-70 mx-auto" />
 
 			<nav class="opacity-75">
-				<BaseButton type="nav" icon="stethoscope" text-color="textlight" justify="start">
+				<BaseButton
+					type="nav"
+					icon="stethoscope"
+					theme="dark"
+					mode="transparent"
+				>
 					<p class="text-xl ml-8">Exames</p>
 				</BaseButton>
-				<BaseButton type="nav" icon="pill" text-color="textlight" justify="start">
+				<BaseButton
+					type="nav"
+					icon="pill"
+					theme="dark"
+					mode="transparent"
+				>
 					<p class="text-xl ml-8">Medicamentos</p>
 				</BaseButton>
 				<BaseButton
 					type="nav"
 					icon="medical_services"
-					text-color="textlight"
-					justify="start"
+					theme="dark"
+					mode="transparent"
 				>
 					<p class="text-xl ml-8">Consultas</p>
 				</BaseButton>
-				<BaseButton type="nav" icon="assignment" text-color="textlight" justify="start">
+				<BaseButton
+					type="nav"
+					icon="assignment"
+					theme="dark"
+					mode="transparent"
+				>
 					<p class="text-xl ml-8">Relatórios</p>
 				</BaseButton>
 			</nav>
 		</section>
 
-		<section class="absolute bottom-0 w-full">
-			<BaseButton type="nav" icon="notifications" text-color="textlight" justify="start">
-				<p class="text-xl ml-8">Notificações</p>
-			</BaseButton>
+		<section class="w-full flex flex-col bottom-0 relative">
+			<button @click="navbarStore.malfermi()" type="button" class="w-10 h-10 bg-primaryDark absolute rounded-3xl flex items-center justify-center cursor-pointer -right-5 bottom-20">
+				<span class="material-symbols-rounded text-textLight text-3xl!">
+					<p v-if="navbarStore.malfermita">arrow_back</p>
+					<p v-else>arrow_forward</p>
+
+				</span>
+			</button>
+
+			<div class="overflow-hidden">
+				<BaseButton
+					type="nav"
+					icon="notifications"
+					theme="dark"
+					mode="transparent"
+				>
+					<p class="text-xl ml-8">Notificações</p>
+				</BaseButton>
+
+				<BaseButton
+					type="nav"
+					icon="person"
+					theme="dark"
+					mode="transparent"
+				>
+					<p class="text-xl ml-8">Perfil</p>
+				</BaseButton>
+			</div>
 		</section>
 	</aside>
 </template>

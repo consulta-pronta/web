@@ -18,24 +18,24 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
 	type: "text",
-	bgColor: "primaryBlue",
+	bgColor: "primary",
 	w: "full",
 	h: "11",
-	textColor: "textlight",
-	placeholderColor: "textlight",
+	textColor: "textLight",
+	placeholderColor: "textLight",
 	px: "5"
 })
 
 const inputTag = ref<HTMLInputElement>()
 const value = defineModel<string>()
 
-const formatValue = () => {
+const formatValue = (event) => {
 	switch (props.type) {
 		case "cpf":
-			value.value = formatToCPF(value.value as string)
+			value.value = formatToCPF(event.target.value)
 			break
 		case "tel":
-			value.value = formatToPhone(value.value as string)
+			value.value = formatToPhone(event.target.value)
 			break
 	}
 }
@@ -58,7 +58,7 @@ onMounted(() => {
 <template>
 	<div class="relative flex items-center w-full">
 		<span
-			class="material-symbols-rounded text-textlight absolute left-3 text-xl pointer-events-none"
+			class="material-symbols-rounded text-textLight absolute left-3 text-xl pointer-events-none"
 		>
 			{{ icon }}
 		</span>

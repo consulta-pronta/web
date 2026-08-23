@@ -56,17 +56,17 @@ function toggleOrd() {
 	</section>
 
 	<div v-if="showFilters === true" class="h-[4.88%] flex mb-5">
-		<BaseButton text="Todos" bg-color="backgroundRoxo" text-color="textlight" w="fit" rounded="full" class="mr-1"/>
-		<BaseButton text="Abodômen" bg-color="backgroundRoxo" text-color="textlight" w="fit" rounded="full" class="mr-1"/>
-		<BaseButton text="Barriga" bg-color="backgroundRoxo" text-color="textlight" w="fit" rounded="full" class="mr-1"/>
-		<BaseButton text="Cabeça" bg-color="backgroundRoxo" text-color="textlight" w="fit" rounded="full" class="mr-1"/>
-		<BaseButton text="Costas" bg-color="backgroundRoxo" text-color="textlight" w="fit" rounded="full" class="mr-1"/>
+		<BaseButton text="Todos" bg-color="background" text-color="textLight" w="fit" rounded="full" class="mr-1"/>
+		<BaseButton text="Abdômen" bg-color="background" text-color="textLight" w="fit" rounded="full" class="mr-1"/> <!-- Abodômen -->
+		<BaseButton text="Barriga" bg-color="background" text-color="textLight" w="fit" rounded="full" class="mr-1"/>
+		<BaseButton text="Cabeça" bg-color="background" text-color="textLight" w="fit" rounded="full" class="mr-1"/>
+		<BaseButton text="Costas" bg-color="background" text-color="textLight" w="fit" rounded="full" class="mr-1"/>
 	</div>
 
 	<div v-if="showOrd === true" class="h-[4.88%] flex mb-5">
 		<BaseButton icon="arrow_downward" iconColor="accent" w="fit" class="mr-1"/>
-		<BaseButton text="Data de início" bg-color="Transparent" text-color="textlight" w="fit" rounded="full" class="mr-1"/>
-		<BaseButton text="Intensidade" bg-color="Transparent" text-color="textlight" w="fit" rounded="full" class="mr-1"/>
+		<BaseButton text="Data de início" bg-color="Transparent" text-color="textLight" w="fit" rounded="full" class="mr-1"/>
+		<BaseButton text="Intensidade" bg-color="Transparent" text-color="textLight" w="fit" rounded="full" class="mr-1"/>
 	</div>
 
 </template>

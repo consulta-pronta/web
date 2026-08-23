@@ -37,7 +37,7 @@ import AuthBackground from "@/components/AuthBackground.vue"
 				>
 					<img src="/img/IconAdicionar.png" />
 					<p class="text-accent">Tirar foto ou enviar documento</p>
-					<p class="text-textlight text-bold">(Arquivo deve ser .jpg .jpeg .png .pdf)</p>
+					<p class="text-textLight text-bold">(Arquivo deve ser .jpg .jpeg .png .pdf)</p>
 				</label>
 
 				<input

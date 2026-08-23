@@ -12,7 +12,7 @@ const toggleStatus = (newStatus: string) => {
 			type="button"
 			@click="toggleStatus('paciente')"
 			:class="
-				status === 'paciente' ? 'bg-accent text-primarydark' : 'bg-primarydark text-accent'
+				status === 'paciente' ? 'bg-accent text-primaryDark' : 'bg-primaryDark text-accent'
 			"
 			class="w-42.25 h-8.5 rounded-lg flex items-center justify-center cursor-pointer transition-all duration-600"
 		>
@@ -24,8 +24,8 @@ const toggleStatus = (newStatus: string) => {
 			@click="toggleStatus('profissional')"
 			:class="
 				status === 'profissional'
-					? 'bg-accent text-primarydark'
-					: 'bg-primarydark text-accent'
+					? 'bg-accent text-primaryDark'
+					: 'bg-primaryDark text-accent'
 			"
 			class="w-42.25 h-8.5 rounded-lg flex items-center justify-center cursor-pointer transition-all duration-600"
 		>

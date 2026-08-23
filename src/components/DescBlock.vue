@@ -41,7 +41,7 @@ const props = withDefaults(defineProps<Props>(), {
 		<div class="w-[95%] h-fit bg-surface rounded-[15px] p-2 m-1">
 
 			<section class="flex justify-between">
-				<article class="text-primarydark flex justify-center">
+				<article class="text-primaryDark flex justify-center">
 					<span class="material-symbols-rounded text-[28px]! mr-1">
 						calendar_month
 					</span>
@@ -52,7 +52,7 @@ const props = withDefaults(defineProps<Props>(), {
 				</article>
 
 				<button type="button" @click="toggle">
-					<span class="material-symbols-rounded text-[32px]! mr-1 text-primarydark">
+					<span class="material-symbols-rounded text-[32px]! mr-1 text-primaryDark">
 						{{ Show ? 'keyboard_arrow_down' : 'keyboard_arrow_up' }}
 					</span>
 				</button>
@@ -66,29 +66,29 @@ const props = withDefaults(defineProps<Props>(), {
 					class="mb-2"
 				/>
 
-				<p class="text-primarydark font-bold text-[16px] mb-2">
+				<p class="text-primaryDark font-bold text-[16px] mb-2">
 					{{ props.title }}
 				</p>
 
-				<p class="text-primarydark font-light text-[12px] mb-2">
+				<p class="text-primaryDark font-light text-[12px] mb-2">
 					{{ props.desc }}
 				</p>
 
 				<LocationTag
 					:localizacao="props.localizacao"
-					bgcolor="primarydark"
+					bgcolor="primaryDark"
 					textcolor="surface"
 					class="mb-2"
 				/>
 
 				<section
 					v-if="props.imagem"
-					class="border-t border-primarydark p-2"
+					class="border-t border-primaryDark p-2"
 				>
 					<UserPhoto
 						rounded="0"
 						:circle="false"
-						borderColor="primarydark"
+						borderColor="primaryDark"
 					/>
 				</section>
 

@@ -7,7 +7,7 @@ import BaseButton, { type ButtonState } from "@/components/BaseButton.vue"
 import BaseLogo from "@/components/BaseLogo.vue"
 import BaseInput from "@/components/BaseInput.vue"
 import ToggleUser from "@/components/ToggleUser.vue"
-import UserPhoto from "@/components/UserPhoto.vue"
+// import UserPhoto from "@/components/UserPhoto.vue"
 
 import { useSignUpStore } from "@/stores/signUpStore"
 
@@ -22,7 +22,7 @@ const showPasswordRules = ref(false)
 
 const submitForm = async () => {
 	buttonState.value = "sync"
- 
+
 	try {
 		// const isPasswordValid = await signUpStore.isPasswordValid()
 		await signUpStore.submitForm()
@@ -47,7 +47,7 @@ const submitForm = async () => {
 				@submit.prevent="submitForm"
 				class="space-y-2 items-center justify-center flex flex-col w-116.25"
 			>
-				<UserPhoto borderColor="accent"/>
+				<!-- <UserPhoto borderColor="accent"/> -->
 
 				<ToggleUser v-model="status" class="mb-4" />
 
@@ -92,33 +92,36 @@ const submitForm = async () => {
 				<BaseButton
 					v-if="status === 'profissional'"
 					type="button"
-					text-color="accent"
-					icon-color="accent"
+					theme="dark"
+					mode="transparent"
 					icon="article"
 					path="cadastroCRM"
+					class="border-0 bg-textDark"
 				>
 					Enviar CRM ou E-CRM
 				</BaseButton>
 
 				<div>
-					<p class="text-textlight">
+					<p class="text-textLight">
 						Li e aceito os <a href="" class="text-accent">Termos de Uso</a> e a
 						<a href="" class="text-accent">Política de Privacidade</a>
 					</p>
 				</div>
-				<RouterLink to="login">
-					<p class="text-textlight">
-						Já possui conta? <a href="" class="text-accent">Fazer Login</a>
-					</p>
-				</RouterLink>
 
 				<BaseButton
-					type="submit" bg-color="accent"
-					class="w-40"
+					type="submit"
+					theme="light"
+					class="w-full justify-center"
 					v-model:state="buttonState"
 				>
-					Cadastrar
+					Criar Conta
 				</BaseButton>
+
+				<RouterLink to="login">
+					<p class="text-textLight">
+						Já possui conta? <a href="" class="text-accent">Fazer login</a>
+					</p>
+				</RouterLink>
 			</form>
 		</div>
 	</AuthBackground>

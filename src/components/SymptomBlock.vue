@@ -50,11 +50,11 @@ const emit = defineEmits<{
 
 		</section>
 
-		<p class="text-sm font-bold text-primarydark text-left my-[1%]">
+		<p class="text-sm font-bold text-primaryDark text-left my-[1%]">
 			{{ props.titulo }}
 		</p>
 
-		<section class="flex items-center text-primaryBlue my-[1%]">
+		<section class="flex items-center text-primary my-[1%]">
 			<span class="material-symbols-rounded text-base! mr-1">
 				calendar_month
 			</span>
@@ -78,7 +78,7 @@ const emit = defineEmits<{
 
 		<section class="my-[1%]">
 			<div
-				class="flex items-center text-primarydark bg-accent rounded-md w-fit p-1"
+				class="flex items-center text-primaryDark bg-accent rounded-md w-fit p-1"
 			>
 				<span class="material-symbols-rounded text-xs! mr-1">
 					location_on

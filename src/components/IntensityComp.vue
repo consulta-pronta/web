@@ -19,7 +19,7 @@ const intensidadeClass = computed(() => {
 		case 'warning':
 			return 'text-warning'
 		default:
-			return 'text-textlight'
+			return 'text-textLight'
 	}
 })
 </script>
