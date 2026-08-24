@@ -5,6 +5,8 @@ import { useAuthStore } from "@/stores/authStore";
 
 import BaseLogo from "@/components/BaseLogo.vue"
 import BaseButton from "@/components/BaseButton.vue"
+import { auth } from "@/config/firebase";
+import { signOut } from "firebase/auth";
 
 const navbarStore = useNavbarStore()
 
@@ -165,6 +167,7 @@ authStore.onReady((data) => {
 					theme="dark"
 					mode="transparent"
 					exit
+					@click="signOut(auth)"
 				>
 					<p class="text-xl ml-8">Sair</p>
 				</BaseButton>
