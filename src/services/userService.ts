@@ -6,7 +6,7 @@ import type {FieldValue, Timestamp} from "firebase/firestore"
 
  // TODO: setup Cloud Storage for storing photo url
 export type User = {
-	readonly uid: string
+	id: string
 	name: string
 	email: string
 	phone: string
@@ -38,8 +38,10 @@ export const createUser = async (uid: string, data: UserData) => {
 
 export const getUser = async (uid: string) => {
 	const userSnap = await getDoc(getUserRef(uid))
+	const user = userSnap.data() as User ?? {}
+	user.id = uid
 
-	return userSnap.data() as User ?? {}
+	return user
 }
 
 export const updateUser = async (uid: string, data: UserData) => {
