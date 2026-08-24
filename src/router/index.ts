@@ -1,5 +1,14 @@
+import type { UserType } from "@/components/ToggleUser.vue"
+import { auth } from "@/config/firebase"
+import { useAuthStore } from "@/stores/authStore"
 import { createRouter, createWebHistory } from "vue-router"
 
+/*
+meta.roles values explained:
+	- undefined: doesn't need auth
+	- null: must not be authenticated
+	- UserType[]: must be authenticated as one of the values of the list
+*/
 const router = createRouter({
 	history: createWebHistory(import.meta.env.BASE_URL),
 	routes: [
@@ -12,21 +21,34 @@ const router = createRouter({
 			path: "/cadastro",
 			name: "cadastro",
 			component: () => import("@/pages/CadastroUsuario.vue"),
+			meta: {
+				roles: [],
+			},
+			
 		},
 		{
 			path: "/login",
 			name: "login",
 			component: () => import("@/pages/LoginUsuario.vue"),
+			meta: {
+				roles: [],
+			},
 		},
 		{
 			path: "/dashboard",
 			name: "dashboard",
 			component: () => import("@/pages/DashboardUsuario.vue"),
+			meta: {
+				roles: ["paciente", "profissional"],
+			},
 		},
 		{
-			path: "/HistoricoUsuario",
-			name: "Historico",
-			component: () => import("../pages/HistoricoUsuario.vue"),
+			path: "/exames",
+			name: "exames",
+			component: () => import("../pages/ExamesUsuario.vue"),
+			meta: {
+				roles: ["paciente"],
+			},
 		},
 		{
 			path: "/ExamesUsuario",
@@ -37,13 +59,35 @@ const router = createRouter({
 			path: "/historico-sintomas",
 			name: "historico-sintomas",
 			component: () => import("@/pages/HistoricoUsuario.vue"),
-		},
-		{
-			path: "/ExamesProfissional",
-			name: "ExamesPro",
-			component: () => import("../pages/ExamesProfissional.vue"),
-		},
+			meta: {
+				roles: ["paciente"],
+			},
+		}
 	],
+})
+
+router.beforeEach(async (to) => {
+	const roles = to.meta.roles as undefined | UserType[]
+	if (roles === undefined) {
+		return
+	}
+
+	await auth.authStateReady()
+	const user = auth.currentUser
+	
+	const authStore = useAuthStore()
+	authStore.setUser(user)
+	
+	const needsAuth = roles.length !== 0
+	const isAuthenticated = user !== null
+
+	if (needsAuth && !isAuthenticated) {
+		return "/login"
+	} else if (!needsAuth && isAuthenticated) {
+		return "/dashboard"
+	} else {
+		return
+	}
 })
 
 export default router

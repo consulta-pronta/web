@@ -27,7 +27,7 @@ const emit = defineEmits<{
 </script>
 
 <template>
-	<button type="button" @click="emit('toggle')" class="shrink-0 w-full h-[24%] bg-surface rounded-[10px] p-[2.5%] cursor-pointer">
+	<button type="button" @click="emit('toggle')" class="shrink-0 w-full h-fit bg-surface rounded-[10px] p-[2.5%] cursor-pointer">
 		<section class="flex w-fit justify-center mb-[1%]">
 			<p
 				v-if="props.sintomaPersistente"

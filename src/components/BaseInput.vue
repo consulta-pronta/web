@@ -4,30 +4,41 @@ import { formatToCPF, formatToPhone } from "brazilian-values"
 import { onMounted, ref } from "vue"
 
 interface Props {
-	type?: "text" | "password" | "email" | "number" | "tel" | "date" | "time" | "cpf"
+	type?: "text" | "password" | "email" | "number" | "tel" | "date" | "time" | "cpf" | "datetime-local"
+	theme?: "dark" | "light"
+	mode?: "outline" | "fill" | "transparent"
 	placeholder?: string
 	icon?: string
-	bgColor?: string
-	w?: string | number
-	textColor?: string
-	placeholderColor?: string
-	h?: string | number
-	px?: string,
-	required?: boolean,
+	required?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
 	type: "text",
-	bgColor: "primary",
-	w: "full",
-	h: "11",
-	textColor: "textLight",
-	placeholderColor: "textLight",
-	px: "5"
+	theme: "light",
+	mode: "fill",
 })
 
 const inputTag = ref<HTMLInputElement>()
 const value = defineModel<string>()
+const colors = {
+	background: props.theme === "light" ? "surface" : "primary",
+	text: props.theme === "light" ? "textDark" : "textLight",
+	border: props.theme === "light" ?  "textLight" : "textDark"
+}
+let broski = ""
+switch (props.mode) {
+	case "outline":
+		broski = `bg-${colors.background} text-${colors.text} border-${colors.border} border-2`
+		break
+
+	case "fill":
+		broski = `bg-${colors.background} text-${colors.text} border-0`
+		break
+
+	default:
+		broski = `bg-transparent text-${colors.text} border-0`
+		break
+}
 
 const formatValue = (event) => {
 	switch (props.type) {
@@ -56,32 +67,26 @@ onMounted(() => {
 </script>
 
 <template>
-	<div class="relative flex items-center w-full">
+	<label
+		class="flex items-center rounded-md px-4 gap-2 cursor-text"
+		:class="broski"
+	>
 		<span
-			class="material-symbols-rounded text-textLight absolute left-3 text-xl pointer-events-none"
+			class="material-symbols-rounded pointer-events-none select-none"
+			v-if="icon"
 		>
 			{{ icon }}
 		</span>
 
 		<input
-			v-model="value"
-			ref="inputTag"
-
-			:type="props.type"
-			:placeholder="props.placeholder"
-			:class="[
-				`bg-${props.bgColor}`,
-				`px-${props.px}`,
-				`rounded-md`,
-				`w-${props.w}`,
-				`h-${props.h}`,
-				`flex items-center`,
-				`text-${props.textColor}`,
-				`placeholder:text-${props.placeholderColor}`,
-				'outline-none pl-10',
-			]"
+			id="input"
+			class="py-3 outline-0 grow"
+			:type="type"
+			:placeholder="placeholder"
 			:required="required"
 			@input="formatValue"
+			v-model="value"
+			ref="inputTag"
 		/>
-	</div>
+	</label>
 </template>

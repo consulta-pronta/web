@@ -1,10 +1,21 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import { useNavbarStore } from "@/stores/navbarStore"
+import { useAuthStore } from "@/stores/authStore";
 
 import BaseLogo from "@/components/BaseLogo.vue"
 import BaseButton from "@/components/BaseButton.vue"
+import { auth } from "@/config/firebase";
+import { signOut } from "firebase/auth";
 
 const navbarStore = useNavbarStore()
+
+const authStore = useAuthStore()
+const userType = ref('')
+
+authStore.onReady((data) => {
+	userType.value = data.user_type
+})
 </script>
 
 <template>
@@ -14,8 +25,8 @@ const navbarStore = useNavbarStore()
 	]"> <!--"w-[20%]" : "w-[5%]"-->
 		<section class="w-full flex flex-col overflow-hidden">
 			<BaseLogo :class="[
-				'mx-auto my-10 transition-all object-cover duration-500',
-				navbarStore.malfermita ? 'w-50' : 'w-10',
+				'mx-auto transition-all object-cover duration-500',
+				navbarStore.malfermita ? 'w-50 my-6' : 'w-10 my-10',
 				]" />
 			<nav>
 				<BaseButton
@@ -27,23 +38,43 @@ const navbarStore = useNavbarStore()
 				>
 					<p class="text-xl ml-8">Início</p>
 				</BaseButton>
-				<BaseButton
-					type="nav"
-					icon="browse_activity"
-					theme="dark"
-					mode="transparent"
-					path="historico-sintomas"
-				>
-					<p class="text-xl ml-8">Histórico</p>
-				</BaseButton>
-				<BaseButton
-					type="nav"
-					icon="home_health"
-					theme="dark"
-					mode="transparent"
-				>
-					<p class="text-xl ml-8">Hospitais</p>
-				</BaseButton>
+				<div v-if="userType === 'paciente'">
+					<BaseButton
+						type="nav"
+						icon="browse_activity"
+						theme="dark"
+						mode="transparent"
+						path="historico-sintomas"
+					>
+						<p class="text-xl ml-8">Histórico</p>
+					</BaseButton>
+					<BaseButton
+						type="nav"
+						icon="home_health"
+						theme="dark"
+						mode="transparent"
+					>
+						<p class="text-xl ml-8">Hospitais</p>
+					</BaseButton>
+				</div>
+				<div v-else>
+					<BaseButton
+						type="nav"
+						icon="group"
+						theme="dark"
+						mode="transparent"
+					>
+						<p class="text-xl ml-8">Pacientes</p>
+					</BaseButton>
+					<BaseButton
+						type="nav"
+						icon="pill"
+						theme="dark"
+						mode="transparent"
+					>
+						<p class="text-xl ml-8">Farmácia</p>
+					</BaseButton>
+				</div>
 				<BaseButton
 					type="nav"
 					icon="settings"
@@ -67,12 +98,22 @@ const navbarStore = useNavbarStore()
 					<p class="text-xl ml-8">Exames</p>
 				</BaseButton>
 				<BaseButton
+					v-if="userType === 'paciente'"
 					type="nav"
 					icon="pill"
 					theme="dark"
 					mode="transparent"
 				>
 					<p class="text-xl ml-8">Medicamentos</p>
+				</BaseButton>
+				<BaseButton
+					v-else
+					type="nav"
+					icon="shelves"
+					theme="dark"
+					mode="transparent"
+				>
+					<p class="text-xl ml-8">Recursos</p>
 				</BaseButton>
 				<BaseButton
 					type="nav"
@@ -119,6 +160,17 @@ const navbarStore = useNavbarStore()
 					mode="transparent"
 				>
 					<p class="text-xl ml-8">Perfil</p>
+				</BaseButton>
+
+				<BaseButton
+					type="nav"
+					icon="logout"
+					theme="dark"
+					mode="transparent"
+					exit
+					@click="signOut(auth)"
+				>
+					<p class="text-xl ml-8">Sair</p>
 				</BaseButton>
 			</div>
 		</section>
