@@ -1,43 +1,32 @@
 <script setup lang="ts">
-import BaseButton from '@/components/BaseButton.vue'
-import FilterOrd from '@/components/FilterOrd.vue'
+import { ref } from 'vue'
 import NavBar from '@/components/NavBar.vue'
-import SymptomBlock from '@/components/SymptomBlock.vue'
-import DescBlock from '@/components/DescBlock.vue'
-import { computed, ref } from 'vue'
+import BaseButton from '@/components/BaseButton.vue'
 import BaseInput from '@/components/BaseInput.vue'
 import FormSintoma from "@/components/forms/FormSintoma.vue"
+import FilterOrd from '@/components/FilterOrd.vue'
+import SymptomBlock from '@/components/SymptomBlock.vue'
 import { useAuthStore } from "@/stores/authStore"
 import { getAllSymptoms, type Symptom } from "@/services/symptomService"
+import SymptomExtended from "@/components/SymptomExtended.vue"
 
-const sintomaSelecionado = ref<number | null>(null)
-const sobre = ref(false)
+const currentSymptom = ref<Symptom | null>(null)
+const registerFormVisible = ref(false)
 const editar = ref(false)
 
 const authStore = useAuthStore()
-const sintomas = ref<Symptom[]>([])
+const symptoms = ref<Symptom[]>([])
 
 authStore.onReady(async (data) => {
-	sintomas.value = await getAllSymptoms(data.id)
+	symptoms.value = await getAllSymptoms(data.id)
 })
 
-
-const sintomaAtual = computed(() => {
-	return sintomas.value.find(
-		sintoma => sintoma.id === sintomaSelecionado.value
-	) ?? null
-})
-
-function toggleDesc(id: number) {
-	if (sintomaSelecionado.value === id) {
-		sintomaSelecionado.value = null
-	} else {
-		sintomaSelecionado.value = id
-	}
+const viewSymptom = (symptom: Symptom | null) => {
+	currentSymptom.value = symptom
 }
 
-function toggleSobre() {
-	sobre.value = !sobre.value
+const toggleRegisterForm = () => {
+	registerFormVisible.value = !registerFormVisible.value
 }
 function toggleEditar() {
 	editar.value = !editar.value
@@ -60,7 +49,7 @@ function toggleEditar() {
 					
 						<!--Botão de registrar sintoma-->
 						<div class="absolute right-0 w-[20%]">
-							<BaseButton type="button" text="Registrar Sintoma" icon="add" :border="true" borderColor="textLight" rounded="full" @click="toggleSobre" textColor="textLight"/>
+							<BaseButton type="button" text="Registrar Sintoma" icon="add" :border="true" borderColor="textLight" rounded="full" @click="toggleRegisterForm" textColor="textLight"/>
 						</div>
 					</section>
 
@@ -69,55 +58,41 @@ function toggleEditar() {
 				</header>
 				
 				<br>
-				<p class="text-textLight text-2xl">{{ sintomas.length }} sintomas registrados</p>
+				<p class="text-textLight text-2xl">{{ symptoms.length }} sintomas registrados</p>
 				<br>
 				
 				<!-- Content -->
-				<section class="max-h-full overflow-hidden flex gap-4 scrollbar-track-transparent scrollbar-thumb-accent">
+				<section class="max-h-full overflow-hidden flex gap-8 scrollbar-track-transparent scrollbar-thumb-accent">
 					<!-- List -->
 					<ul class="max-h-full overflow-hidden flex flex-col gap-2 overflow-y-auto">
-						<template v-for="sintoma in sintomas" :key="sintoma.id">
-							<SymptomBlock :symptom="sintoma" class="w-80" theme="light"/>
+						<template v-for="symptom in symptoms" :key="symptom.id">
+							<SymptomBlock :symptom="symptom" theme="light"
+								class="w-80 cursor-pointer" @click="viewSymptom(symptom)"
+							/>
 						</template>
 					</ul>
 
 					<!-- Details -->
-					<section class="w-full h-full flex flex-col min-h-0" v-if="sintomaSelecionado !== null">
-						<section class="flex justify-center items-center w-[96%] h-[9%] relative mb-3 shrink-0">
-							<button button @click="sintomaSelecionado = null" class="cursor-pointer absolute left-0 ">
-								<span class="material-symbols-rounded text-4xl! text-textLight">
-									arrow_back
-								</span>
-							</button>
-							<button @click="toggleEditar" type="button" class="flex justify-center w-[25%] h-11 bg-surface place-items-center rounded-2xl cursor-pointer absolute right-1">
-								<span class="material-symbols-rounded text-primaryDark pointer-events-none mr-1">
-									edit
-								</span>
-								<p class="text-lg text-primaryDark text-semibold">Editar sintomas</p>
-							</button>
-						</section>
-						
-						<div v-if="sintomaAtual" class="flex-1 min-h-0 overflow-y-auto scrollbar-hide">
-							<DescBlock
-								v-for="desc in sintomaAtual.descBlocks"
-								:key="desc.dia + desc.mes + desc.ano + desc.titulo"
-								:dia="desc.dia"
-								:mes="desc.mes"
-								:ano="desc.ano"
-								:title="desc.titulo"
-								:desc="desc.desc"
-								:imagem="desc.imagem"
-							/>
-						</div>
+					<section class="grow h-full flex flex-col items-start" v-show="currentSymptom">
+						<button type="button" class="cursor-pointer text-textLight" @click="viewSymptom(null)">
+							<span class="material-symbols-rounded text-3xl!">
+								arrow_back
+							</span>
+						</button>
+					
+						<SymptomExtended
+							v-model="currentSymptom" ref="areaDescription"
+							class="w-full"
+						/>
 					</section>
 				</section>
 				
 				<!-- Forms -->
 				<!-- Registrar -->
-				<section v-if="sobre === true" class="dialog">
+				<section v-show="registerFormVisible" class="dialog" @click.self="toggleRegisterForm">
 					<div class="w-150 p-10 bg-primary rounded-xl shadow-xl">
 						<header class="grid grid-cols-[min-content_1fr]">
-							<button type="button" class="cursor-pointer text-textLight" @click="toggleSobre">
+							<button type="button" class="cursor-pointer text-textLight" @click="toggleRegisterForm">
 								<span class="material-symbols-rounded text-3xl!">
 									close
 								</span>
@@ -131,7 +106,7 @@ function toggleEditar() {
 				</section>
 				<!-- Editar -->
 				<div v-if="editar === true" class="dialog">
-					<form class="bg-primary w-[45%] h-[95%] rounded-[25px] px-15 py-5 flex flex-col place-items-center relative" @submit.prevent="registrarSintoma">
+					<form class="bg-primary w-[45%] h-[95%] rounded-[25px] px-15 py-5 flex flex-col place-items-center relative">
 						<button type="button" @click="toggleEditar">
 							<span class="material-symbols-rounded absolute left-0 text-[38px]! text-textLight ml-4 cursor-pointer">
 								arrow_back
