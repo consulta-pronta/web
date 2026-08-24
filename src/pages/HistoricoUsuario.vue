@@ -5,7 +5,7 @@ import BaseButton from '@/components/BaseButton.vue'
 import BaseInput from '@/components/BaseInput.vue'
 import FormSintoma from "@/components/forms/FormSintoma.vue"
 import FilterOrd from '@/components/FilterOrd.vue'
-import SymptomBlock from '@/components/SymptomBlock.vue'
+import SymptomCard from '@/components/cards/SymptomCard.vue'
 import { useAuthStore } from "@/stores/authStore"
 import { getAllSymptoms, type Symptom } from "@/services/symptomService"
 import SymptomExtended from "@/components/SymptomExtended.vue"
@@ -66,7 +66,7 @@ function toggleEditar() {
 					<!-- List -->
 					<ul class="max-h-full overflow-hidden flex flex-col gap-2 overflow-y-auto">
 						<template v-for="symptom in symptoms" :key="symptom.id">
-							<SymptomBlock :symptom="symptom" theme="light"
+							<SymptomCard :symptom="symptom" theme="light"
 								class="w-80 cursor-pointer" @click="viewSymptom(symptom)"
 							/>
 						</template>

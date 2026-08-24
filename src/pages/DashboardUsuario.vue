@@ -5,7 +5,7 @@ import { useAuthStore } from "@/stores/authStore"
 
 import NavBar from "@/components/NavBar.vue"
 import BaseButton from "@/components/BaseButton.vue"
-import SymptomBlock from "@/components/SymptomBlock.vue"
+import SymptomCard from "@/components/SymptomCard.vue"
 
 const authStore = useAuthStore()
 const userName = ref('')
@@ -48,7 +48,7 @@ authStore.onReady((data) => {
 						</RouterLink>
 					</div>
 					<!-- Colocar cards de sintomas aqui -->
-					 <SymptomBlock :sintoma-persistente="false" />
+					 <SymptomCard :sintoma-persistente="false" />
 				</div>
 			</section>
 			<section v-else class="bg-primary rounded-2xl col-span-6 row-span-5 p-5 flex flex-col justify-between h-full">

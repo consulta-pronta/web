@@ -35,6 +35,13 @@ const intensityColor = ranges
 		:class="`bg-${colors.bg} *:text-${colors.text}!`"
 	>
 	
+		<p>
+			<span class="material-symbols-rounded text-sm!">
+				calendar_month
+			</span>
+			{{ symptom?.date_time.toDate().toDateString() ?? "00/00/0000" }}
+		</p>
+		
 		<p class="font-bold oneliner">
 			{{ symptom.title ?? "Titulo" }}
 		</p>
@@ -45,12 +52,6 @@ const intensityColor = ranges
 		
 		<hr class="my-2">
 		
-		<!-- <p>
-			<span class="material-symbols-rounded text-sm!">
-				calendar_month
-			</span>
-			{{ symptom?.date_time.toDate().toDateString() ?? "00/00/0000" }}
-		</p> -->
 		
 		<p>
 			<span class="
