@@ -138,7 +138,7 @@ function selecionarExame() {
 											</span>
 										</button>
 
-										<div v-if="dropdownExameAberto" class="flex flex-col z-50 mt-1 w-full h-67 rounded-md overflow-y-scroll scrollbar-hide"> <!--problema futuro quanto a responsividade-->
+										<div v-if="dropdownExameAberto" class="flex flex-col z-50 mt-1 w-full h-60 rounded-md overflow-y-scroll scrollbar-hide"> <!--problema futuro quanto a responsividade-->
 											<button type="button" @click="selecionarExame" class="w-full px-4 py-3 flex items-center gap-3 text-left text-primaryDark cursor-pointer bg-textLight">
 												<span class="material-symbols-rounded">
 													bloodtype
