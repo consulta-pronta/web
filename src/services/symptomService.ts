@@ -3,7 +3,7 @@ import { getUserRef } from "./userService"
 
 
 export type Symptom = {
-	readonly uid: string
+	id: string
 	title: string
 	description: string
 	date_time: Timestamp
@@ -52,7 +52,7 @@ export const getSymptom = async (userUid: string, uid: string) => {
 export const getAllSymptoms = async (userUid: string) => {
 	const querySnap = await getDocs(getSymptomCollectionFromUserRef(userUid))
 	const documents = querySnap.docs.map(document => ({
-		uid: document.id,
+		id: document.id,
 		...document.data()
 	} as Symptom))
 

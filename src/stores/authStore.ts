@@ -8,28 +8,28 @@ type arglessCallback = () => void
 type userCallback = (data: AppUser) => void
 
 export const useAuthStore = defineStore("auth", () => {
-	const user = ref<AuthUser | null>(null)
-	const userData = ref<AppUser | null>(null)
+	const authUser = ref<AuthUser | null>(null)
+	const appUser = ref<AppUser | null>(null)
 
-	watch(user, async (newUser) => {
-		userData.value = newUser ? await getUser(newUser.uid) : null
+	watch(authUser, async (newUser) => {
+		appUser.value = newUser ? await getUser(newUser.uid) : null
 	}, { immediate: true })
 
 
 	const setUser = (firebaseUser: AuthUser | null) => {
-		user.value = firebaseUser
+		authUser.value = firebaseUser
 	}
 
 	const onReady = async (callback: arglessCallback | userCallback) => {
-		await until(userData).toBeTruthy()
+		await until(appUser).toBeTruthy()
 		
-		if (callback.length === 1 && userData.value) {
-			(callback as userCallback)(userData.value)
+		if (callback.length === 1 && appUser.value) {
+			(callback as userCallback)(appUser.value)
 		} else {
 			(callback as arglessCallback)()
 		}
 	}
 
 
-	return { user, userData, setUser, onReady }
+	return { user: authUser, userData: appUser, setUser, onReady }
 })
