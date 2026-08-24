@@ -55,18 +55,18 @@ function toggleOrd() {
 		</div>
 	</section>
 
-	<div v-if="showFilters === true" class="h-[4.88%] flex mb-5">
-		<BaseButton text="Todos" bg-color="background" text-color="textLight" w="fit" rounded="full" class="mr-1"/>
-		<BaseButton text="Abdômen" bg-color="background" text-color="textLight" w="fit" rounded="full" class="mr-1"/> <!-- Abodômen -->
-		<BaseButton text="Barriga" bg-color="background" text-color="textLight" w="fit" rounded="full" class="mr-1"/>
-		<BaseButton text="Cabeça" bg-color="background" text-color="textLight" w="fit" rounded="full" class="mr-1"/>
-		<BaseButton text="Costas" bg-color="background" text-color="textLight" w="fit" rounded="full" class="mr-1"/>
+	<div v-if="showFilters === true" class="h-fit flex mb-3 gap-2">
+		<BaseButton theme="light" mode="fill" class="rounded-4xl! h-fit p-1">Todos</BaseButton>
+		<BaseButton theme="dark" mode="fill" class="text-textLight rounded-4xl! h-fit p-1">Abdômen</BaseButton> <!-- Abodômen -->
+		<BaseButton theme="dark" mode="fill" class="text-textLight rounded-4xl! h-fit p-1">Barriga</BaseButton>
+		<BaseButton theme="dark" mode="fill" class="text-textLight rounded-4xl! h-fit p-1">Cabeça</BaseButton>
+		<BaseButton theme="dark" mode="fill" class="text-textLight rounded-4xl! h-fit p-1">Costas</BaseButton>
 	</div>
 
-	<div v-if="showOrd === true" class="h-[4.88%] flex mb-5">
-		<BaseButton icon="arrow_downward" iconColor="accent" w="fit" class="mr-1"/>
-		<BaseButton text="Data de início" bg-color="Transparent" text-color="textLight" w="fit" rounded="full" class="mr-1"/>
-		<BaseButton text="Intensidade" bg-color="Transparent" text-color="textLight" w="fit" rounded="full" class="mr-1"/>
+	<div v-if="showOrd === true" class="h-fit flex mb-3 gap-2">
+		<BaseButton theme="dark" mode="transparent" icon="arrow_downward" class="h-8! px-0!"/>
+		<BaseButton theme="light" mode="fill" class="rounded-4xl! h-fit p-1">Data de início</BaseButton>
+		<BaseButton theme="dark" mode="fill" class="text-textLight rounded-4xl! h-fit p-1">Intensidade</BaseButton>
 	</div>
 
 </template>

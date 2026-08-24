@@ -115,31 +115,29 @@ function toggleEditar() {
 
 <template>
 	<!-- Screen -->
-	<div class="flex h-screen overflow-hidden">
+	<div class="flex h-screen">
 		<NavBar />
 
-		<main class="bg-background w-full h-full flex justify-center items-center overflow-hidden">
+		<main class="bg-background w-full h-full flex justify-center items-center p-10 overflow-hidden">
 			<!-- Fernando Wrapper -->
-			<div class="w-[88%] h-[85%] bg-primary rounded-3xl py-[1.5%] px-[2.5%] flex flex-col min-h-0">
+			<div class="size-full bg-primary rounded-3xl py-8 px-5 flex flex-col min-h-0">
 				<header>
-					<section class="flex justify-center place-items-center relative mb-3">
+					<section class="flex justify-center place-items-center relative gap-6 mb-3">
 						<!--Barra de pesquisa-->
-						<BaseInput placeholder="Pesquisar" icon="search" theme="light" class="w-120"></BaseInput>
-					
+						<BaseInput placeholder="Pesquisar" icon="search" theme="light" class="w-2xl"></BaseInput>
+
 						<!--Botão de registrar sintoma-->
-						<div class="absolute right-0 w-[20%]">
-							<BaseButton type="button" text="Registrar Sintoma" icon="add" :border="true" borderColor="textLight" rounded="full" @click="toggleSobre" textColor="textLight"/>
-						</div>
+						<BaseButton theme="dark" mode="outline" text="Registrar Sintoma" icon="add" class="rounded-4xl!" @click="toggleSobre" />
 					</section>
 
 					<!--Sliders-->
 					<FilterOrd class="mb-3"/>
 				</header>
-				
+
 				<br>
 				<p class="text-textLight text-2xl">{{ sintomas.length }} sintomas registrados</p>
 				<br>
-				
+
 				<!-- Content -->
 				<section class="flex h-[82.5%] gap-x-4">
 					<!-- List -->
@@ -174,7 +172,7 @@ function toggleEditar() {
 								<p class="text-lg text-primaryDark text-semibold">Editar sintomas</p>
 							</button>
 						</section>
-						
+
 						<div v-if="sintomaAtual" class="flex-1 min-h-0 overflow-y-auto scrollbar-hide">
 							<DescBlock
 								v-for="desc in sintomaAtual.descBlocks"
@@ -187,10 +185,10 @@ function toggleEditar() {
 								:imagem="desc.imagem"
 								/>
 							</div>
-							
+
 						</section>
 				</section>
-				
+
 				<!-- Forms -->
 				<!-- Registrar -->
 				<section v-if="sobre === true" class="dialog">
