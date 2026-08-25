@@ -17,8 +17,11 @@ const editar = ref(false)
 const authStore = useAuthStore()
 const symptoms = ref<Symptom[]>([])
 
+const updateSymptoms = async (id: string) => {
+	symptoms.value = await getAllSymptoms(id)
+}
 authStore.onReady(async (data) => {
-	symptoms.value = await getAllSymptoms(data.id)
+	updateSymptoms(data.id)
 })
 
 const viewSymptom = (symptom: Symptom | null) => {
@@ -28,10 +31,15 @@ const viewSymptom = (symptom: Symptom | null) => {
 const toggleRegisterForm = () => {
 	registerFormVisible.value = !registerFormVisible.value
 }
+
 function toggleEditar() {
 	editar.value = !editar.value
 }
 
+const handleSubmit = () => {
+	toggleRegisterForm()
+	updateSymptoms(authStore.userData!.id)
+}
 </script>
 
 <template>
@@ -95,7 +103,7 @@ function toggleEditar() {
 				
 				<!-- Forms -->
 				<!-- Registrar -->
-				<section v-show="registerFormVisible" class="dialog" @click.self="toggleRegisterForm">
+				<section v-show="registerFormVisible" class="dialog" @click.self="toggleRegisterForm" @submit="handleSubmit">
 					<div class="w-150 p-10 bg-primary rounded-xl shadow-xl">
 						<header class="grid grid-cols-[min-content_1fr]">
 							<button type="button" class="cursor-pointer text-textLight" @click="toggleRegisterForm">
