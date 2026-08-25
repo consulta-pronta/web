@@ -24,11 +24,10 @@ authStore.onReady((data) => {
 		navbarStore.malfermita ? 'w-67' : 'w-20'
 	]">
 		<section class="w-full flex flex-col overflow-hidden">
-			<BaseLogo :class="[
-				'mx-auto transition-all object-cover duration-500',
-				navbarStore.malfermita ? 'w-50 my-6' : 'w-10 my-10',
-				]" />
-			<nav>
+			<BaseLogo class="mx-auto transition-all object-cover duration-500"
+				:class="navbarStore.malfermita ? 'w-50 my-6' : 'w-10 my-10'"
+			/>
+			<nav class="*:w-full">
 				<BaseButton
 					type="nav"
 					icon="home"
@@ -38,7 +37,8 @@ authStore.onReady((data) => {
 				>
 					<p class="text-xl ml-8">Início</p>
 				</BaseButton>
-				<div v-if="userType === 'paciente'">
+
+				<template v-if="userType === 'paciente'">
 					<BaseButton
 						type="nav"
 						icon="browse_activity"
@@ -56,8 +56,9 @@ authStore.onReady((data) => {
 					>
 						<p class="text-xl ml-8">Hospitais</p>
 					</BaseButton>
-				</div>
-				<div v-else>
+				</template>
+
+				<template v-else>
 					<BaseButton
 						type="nav"
 						icon="group"
@@ -74,7 +75,7 @@ authStore.onReady((data) => {
 					>
 						<p class="text-xl ml-8">Farmácia</p>
 					</BaseButton>
-				</div>
+				</template>
 				<BaseButton
 					type="nav"
 					icon="settings"
@@ -87,7 +88,7 @@ authStore.onReady((data) => {
 
 			<hr class="border-t-3 border-primaryDark w-1/4 my-4 rounded-full opacity-70 mx-auto" />
 
-			<nav class="opacity-75">
+			<nav class="opacity-75 *:w-full">
 				<BaseButton
 					type="nav"
 					icon="stethoscope"

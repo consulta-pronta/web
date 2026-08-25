@@ -64,13 +64,19 @@ function toggleEditar() {
 				<!-- Content -->
 				<section class="max-h-full overflow-hidden flex gap-8 scrollbar-track-transparent scrollbar-thumb-accent">
 					<!-- List -->
-					<ul class="max-h-full overflow-hidden flex flex-col gap-2 overflow-y-auto">
+					<ul v-if="symptoms.length"
+						class="max-h-full overflow-hidden flex flex-col gap-2 overflow-y-auto">
 						<template v-for="symptom in symptoms" :key="symptom.id">
 							<SymptomCard :symptom="symptom" theme="light"
 								class="w-80 cursor-pointer" @click="viewSymptom(symptom)"
 							/>
 						</template>
 					</ul>
+					<template v-else>
+						<span class="material-symbols-rounded animate-spin text-accent w-fit m-auto">
+							sync
+						</span>
+					</template>
 
 					<!-- Details -->
 					<section class="grow h-full flex flex-col items-start" v-show="currentSymptom">
