@@ -74,7 +74,7 @@ const handleSubmit = () => {
 						class="max-h-full overflow-hidden flex flex-col gap-2 overflow-y-auto">
 						<template v-for="symptom in symptoms" :key="symptom.id">
 							<SymptomCard :symptom="symptom" theme="light"
-								class="w-80 cursor-pointer" @click="viewSymptom(symptom)"
+								class="w-full cursor-pointer" @click="viewSymptom(symptom)"
 							/>
 						</template>
 					</ul>
@@ -85,7 +85,7 @@ const handleSubmit = () => {
 					</template>
 
 					<!-- Details -->
-					<section class="grow h-full flex flex-col items-start" v-show="currentSymptom">
+					<section class="grow w-fit h-full flex flex-col items-start" v-show="currentSymptom">
 						<button type="button" class="cursor-pointer text-textLight" @click="viewSymptom(null)">
 							<span class="material-symbols-rounded text-3xl!">
 								arrow_back
