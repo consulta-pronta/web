@@ -1,116 +1,45 @@
 <script setup lang="ts">
-import BaseButton from '@/components/BaseButton.vue'
-import FilterOrd from '@/components/FilterOrd.vue'
+import { ref } from 'vue'
 import NavBar from '@/components/NavBar.vue'
-import SymptomBlock from '@/components/SymptomBlock.vue'
-import DescBlock from '@/components/DescBlock.vue'
-import { computed, ref } from 'vue'
+import BaseButton from '@/components/BaseButton.vue'
 import BaseInput from '@/components/BaseInput.vue'
 import FormSintoma from "@/components/forms/FormSintoma.vue"
+import FilterOrd from '@/components/FilterOrd.vue'
+import SymptomCard from '@/components/cards/SymptomCard.vue'
+import { useAuthStore } from "@/stores/authStore"
+import { getAllSymptoms, type Symptom } from "@/services/symptomService"
+import SymptomExtended from "@/components/SymptomExtended.vue"
 
-const sintomaSelecionado = ref<number | null>(null)
-const sobre = ref(false)
+const currentSymptom = ref<Symptom | null>(null)
+const registerFormVisible = ref(false)
 const editar = ref(false)
 
-const sintomas = ref([
-	{
-		id: 1,
-		persistente: false,
-		cor: 'warning',
-		intensidade: '6',
-		titulo: 'Dor persistente ao levantar',
-		localizacao: 'Costas',
+const authStore = useAuthStore()
+const symptoms = ref<Symptom[]>([])
 
-		descBlocks: [
-			{
-				dia: '28',
-				mes: '08',
-				ano: '2025',
-				titulo: 'Dor ao levantar',
-				desc: 'Começou durante a manhã.',
-				imagem: false,
-			},
-			{
-				dia: '30',
-				mes: '08',
-				ano: '2025',
-				titulo: 'Dor mais intensa',
-				desc: 'A dor aumentou durante o dia.',
-				imagem: true,
-			},
-		],
-	},
-
-	{
-		id: 2,
-		persistente: false,
-		cor: 'error',
-		intensidade: '8',
-		titulo: 'Dor no braço',
-		localizacao: 'Braço',
-
-		descBlocks: [
-			{
-				dia: '15',
-				mes: '08',
-				ano: '2026',
-				titulo: 'Dor no braço',
-				desc: 'Descrição da primeira ocorrência.',
-				imagem: true,
-			},
-			{
-				dia: '20',
-				mes: '08',
-				ano: '2026',
-				titulo: 'Dor no braço novamente',
-				desc: 'A dor voltou após alguns dias.',
-				imagem: false,
-			},
-		],
-	},
-
-	{
-		id: 3,
-		persistente: false,
-		cor: 'sucess',
-		intensidade: '2',
-		titulo: 'Dor de cabeça',
-		localizacao: 'Cabeça',
-
-		descBlocks: [
-			{
-				dia: '10',
-				mes: '08',
-				ano: '2026',
-				titulo: 'Dor de cabeça',
-				desc: 'Dor leve pela manhã.',
-				imagem: true,
-			},
-		],
-	},
-])
-
-const sintomaAtual = computed(() => {
-	return sintomas.value.find(
-		sintoma => sintoma.id === sintomaSelecionado.value
-	) ?? null
+const updateSymptoms = async (id: string) => {
+	symptoms.value = await getAllSymptoms(id)
+}
+authStore.onReady(async (data) => {
+	updateSymptoms(data.id)
 })
 
-function toggleDesc(id: number) {
-	if (sintomaSelecionado.value === id) {
-		sintomaSelecionado.value = null
-	} else {
-		sintomaSelecionado.value = id
-	}
+const viewSymptom = (symptom: Symptom | null) => {
+	currentSymptom.value = symptom
 }
 
-function toggleSobre() {
-	sobre.value = !sobre.value
+const toggleRegisterForm = () => {
+	registerFormVisible.value = !registerFormVisible.value
 }
+
 function toggleEditar() {
 	editar.value = !editar.value
 }
 
+const handleSubmit = () => {
+	toggleRegisterForm()
+	updateSymptoms(authStore.userData!.id)
+}
 </script>
 
 <template>
@@ -135,66 +64,47 @@ function toggleEditar() {
 				</header>
 
 				<br>
-				<p class="text-textLight text-2xl">{{ sintomas.length }} sintomas registrados</p>
+				<p class="text-textLight text-2xl">{{ symptoms.length }} sintomas registrados</p>
 				<br>
 
 				<!-- Content -->
-				<section class="flex h-[82.5%] gap-x-4">
+				<section class="max-h-full overflow-hidden flex gap-8 scrollbar-track-transparent scrollbar-thumb-accent">
 					<!-- List -->
-					<section class="w-[38%] h-fit flex flex-col gap-y-2 overflow-y-auto scrollbar-hide">
-						<SymptomBlock
-						v-for="sintoma in sintomas"
-						:key="sintoma.id"
-						:sintoma-persistente="sintoma.persistente"
-						:Cor="sintoma.cor"
-						:intensidade="sintoma.intensidade"
-						:titulo="sintoma.titulo"
-						:dia="sintoma.descBlocks[0]?.dia"
-						:mes="sintoma.descBlocks[0]?.mes"
-						:ano="sintoma.descBlocks[0]?.ano"
-						:localizacao="sintoma.localizacao"
-						@toggle="toggleDesc(sintoma.id)"
-						/>
-					</section>
+					<ul v-if="symptoms.length"
+						class="max-h-full overflow-hidden flex flex-col gap-2 overflow-y-auto">
+						<template v-for="symptom in symptoms" :key="symptom.id">
+							<SymptomCard :symptom="symptom" theme="light"
+								class="w-80 cursor-pointer" @click="viewSymptom(symptom)"
+							/>
+						</template>
+					</ul>
+					<template v-else>
+						<span class="material-symbols-rounded animate-spin text-accent w-fit m-auto">
+							sync
+						</span>
+					</template>
 
 					<!-- Details -->
-					<section class="w-[60%] h-full flex flex-col min-h-0" v-if="sintomaSelecionado !== null">
-						<section class="flex justify-center items-center w-[96%] h-[9%] relative mb-3 shrink-0">
-							<button button @click="sintomaSelecionado = null" class="cursor-pointer absolute left-0 ">
-								<span class="material-symbols-rounded text-4xl! text-textLight">
-									arrow_back
-								</span>
-							</button>
-							<button @click="toggleEditar" type="button" class="flex justify-center w-[25%] h-11 bg-surface place-items-center rounded-2xl cursor-pointer absolute right-1">
-								<span class="material-symbols-rounded text-primaryDark pointer-events-none mr-1">
-									edit
-								</span>
-								<p class="text-lg text-primaryDark text-semibold">Editar sintomas</p>
-							</button>
-						</section>
-
-						<div v-if="sintomaAtual" class="flex-1 min-h-0 overflow-y-auto scrollbar-hide">
-							<DescBlock
-								v-for="desc in sintomaAtual.descBlocks"
-								:key="desc.dia + desc.mes + desc.ano + desc.titulo"
-								:dia="desc.dia"
-								:mes="desc.mes"
-								:ano="desc.ano"
-								:title="desc.titulo"
-								:desc="desc.desc"
-								:imagem="desc.imagem"
-								/>
-							</div>
-
-						</section>
+					<section class="grow h-full flex flex-col items-start" v-show="currentSymptom">
+						<button type="button" class="cursor-pointer text-textLight" @click="viewSymptom(null)">
+							<span class="material-symbols-rounded text-3xl!">
+								arrow_back
+							</span>
+						</button>
+					
+						<SymptomExtended
+							v-model="currentSymptom" ref="areaDescription"
+							class="w-full"
+						/>
+					</section>
 				</section>
 
 				<!-- Forms -->
 				<!-- Registrar -->
-				<section v-if="sobre === true" class="dialog">
+				<section v-show="registerFormVisible" class="dialog" @click.self="toggleRegisterForm" @submit="handleSubmit">
 					<div class="w-150 p-10 bg-primary rounded-xl shadow-xl">
 						<header class="grid grid-cols-[min-content_1fr]">
-							<button type="button" class="cursor-pointer text-textLight" @click="toggleSobre">
+							<button type="button" class="cursor-pointer text-textLight" @click="toggleRegisterForm">
 								<span class="material-symbols-rounded text-3xl!">
 									close
 								</span>
@@ -208,7 +118,7 @@ function toggleEditar() {
 				</section>
 				<!-- Editar -->
 				<div v-if="editar === true" class="dialog">
-					<form class="bg-primary w-[45%] h-[95%] rounded-[25px] px-15 py-5 flex flex-col place-items-center relative" @submit.prevent="registrarSintoma">
+					<form class="bg-primary w-[45%] h-[95%] rounded-[25px] px-15 py-5 flex flex-col place-items-center relative">
 						<button type="button" @click="toggleEditar">
 							<span class="material-symbols-rounded absolute left-0 text-[38px]! text-textLight ml-4 cursor-pointer">
 								arrow_back

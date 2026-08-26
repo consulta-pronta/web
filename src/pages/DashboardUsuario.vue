@@ -1,19 +1,23 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useAuthStore } from "@/stores/authStore"
-
-
 import NavBar from "@/components/NavBar.vue"
 import BaseButton from "@/components/BaseButton.vue"
-import SymptomBlock from "@/components/SymptomBlock.vue"
+import SymptomCard from "@/components/cards/SymptomCard.vue"
+import { type UserType } from "@/components/ToggleUser.vue"
+import { getAllSymptoms, type Symptom } from "@/services/symptomService"
 
 const authStore = useAuthStore()
 const userName = ref('')
-const userType = ref('')
+const userType = ref<UserType>()
 
-authStore.onReady((data) => {
+const symptoms = ref<Symptom[]>([])
+
+authStore.onReady(async (data) => {
 	userName.value = data.name
 	userType.value = data.user_type
+
+	symptoms.value = await getAllSymptoms(data.id)
 })
 </script>
 
@@ -47,8 +51,17 @@ authStore.onReady((data) => {
 							<span class="material-symbols-rounded text-xl!">arrow_forward</span>
 						</RouterLink>
 					</div>
-					<!-- Colocar cards de sintomas aqui -->
-					 <SymptomBlock :sintoma-persistente="false" />
+					
+					<template v-if="symptoms.length">
+						<template v-for="symptom in symptoms" :key="symptom.id">
+							<SymptomCard :symptom="symptom" theme="light"/>
+						</template>
+					</template>
+					<template v-else>
+						<span class="material-symbols-rounded animate-spin text-accent w-fit m-auto">
+							sync
+						</span>
+					</template>
 				</div>
 			</section>
 			<section v-else class="bg-primary rounded-2xl col-span-6 row-span-5 p-5 flex flex-col justify-between h-full">
