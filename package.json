@@ -17,7 +17,12 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.3.3",
-    "pinia": "^4.0.2",
+    "@vueuse/core": "^14.4.0",
+    "axios": "^1.19.0",
+    "brazilian-values": "^0.14.0",
+    "firebase": "^12.16.0",
+    "material-symbols": "^0.45.10",
+    "pinia": "^4.0.3",
     "tailwindcss": "^4.3.3",
     "vue": "^3.5.40",
     "vue-router": "^5.2.0"
@@ -49,5 +54,9 @@
   },
   "engines": {
     "node": "^22.18.0 || >=24.12.0"
+  },
+  "allowScripts": {
+    "@firebase/util@1.15.1": true,
+    "protobufjs@7.6.5": true
   }
 }
