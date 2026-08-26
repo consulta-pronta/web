@@ -24,8 +24,8 @@ authStore.onReady((data) => {
 		navbarStore.malfermita ? 'w-67' : 'w-20'
 	]">
 		<section class="w-full flex flex-col overflow-hidden">
-			<BaseLogo class="mx-auto transition-all object-cover duration-500"
-				:class="navbarStore.malfermita ? 'w-50 my-6' : 'w-10 my-10'"
+			<BaseLogo class="mx-auto transition-all object-cover duration-600 h-30"
+				:class="navbarStore.malfermita ? 'w-50' : 'w-10'"
 			/>
 			<nav class="*:w-full">
 				<BaseButton
@@ -35,7 +35,7 @@ authStore.onReady((data) => {
 					mode="transparent"
 					path="dashboard"
 				>
-					<p class="text-xl ml-8">Início</p>
+					<p>Início</p>
 				</BaseButton>
 
 				<template v-if="userType === 'paciente'">
@@ -46,7 +46,7 @@ authStore.onReady((data) => {
 						mode="transparent"
 						path="historico-sintomas"
 					>
-						<p class="text-xl ml-8">Histórico</p>
+						<p>Histórico</p>
 					</BaseButton>
 					<BaseButton
 						type="nav"
@@ -54,7 +54,7 @@ authStore.onReady((data) => {
 						theme="dark"
 						mode="transparent"
 					>
-						<p class="text-xl ml-8">Hospitais</p>
+						<p>Hospitais</p>
 					</BaseButton>
 				</template>
 
@@ -65,7 +65,7 @@ authStore.onReady((data) => {
 						theme="dark"
 						mode="transparent"
 					>
-						<p class="text-xl ml-8">Pacientes</p>
+						<p>Pacientes</p>
 					</BaseButton>
 					<BaseButton
 						type="nav"
@@ -73,7 +73,7 @@ authStore.onReady((data) => {
 						theme="dark"
 						mode="transparent"
 					>
-						<p class="text-xl ml-8">Farmácia</p>
+						<p>Farmácia</p>
 					</BaseButton>
 				</template>
 				<BaseButton
@@ -82,7 +82,7 @@ authStore.onReady((data) => {
 					theme="dark"
 					mode="transparent"
 				>
-					<p class="text-xl ml-8">Configurações</p>
+					<p>Configurações</p>
 				</BaseButton>
 			</nav>
 
@@ -95,7 +95,7 @@ authStore.onReady((data) => {
 					theme="dark"
 					mode="transparent"
 				>
-					<p class="text-xl ml-8">Exames</p>
+					<p>Exames</p>
 				</BaseButton>
 				<BaseButton
 					v-if="userType === 'paciente'"
@@ -104,7 +104,7 @@ authStore.onReady((data) => {
 					theme="dark"
 					mode="transparent"
 				>
-					<p class="text-xl ml-8">Medicamentos</p>
+					<p>Medicamentos</p>
 				</BaseButton>
 				<BaseButton
 					v-else
@@ -113,7 +113,7 @@ authStore.onReady((data) => {
 					theme="dark"
 					mode="transparent"
 				>
-					<p class="text-xl ml-8">Recursos</p>
+					<p>Recursos</p>
 				</BaseButton>
 				<BaseButton
 					type="nav"
@@ -121,7 +121,7 @@ authStore.onReady((data) => {
 					theme="dark"
 					mode="transparent"
 				>
-					<p class="text-xl ml-8">Consultas</p>
+					<p>Consultas</p>
 				</BaseButton>
 				<BaseButton
 					type="nav"
@@ -129,7 +129,7 @@ authStore.onReady((data) => {
 					theme="dark"
 					mode="transparent"
 				>
-					<p class="text-xl ml-8">Relatórios</p>
+					<p>Relatórios</p>
 				</BaseButton>
 			</nav>
 		</section>
@@ -137,8 +137,8 @@ authStore.onReady((data) => {
 		<section class="w-full flex flex-col bottom-0 relative">
 			<button @click="navbarStore.malfermi()" type="button" class="w-10 h-10 bg-primaryDark absolute rounded-3xl flex items-center justify-center cursor-pointer -right-5 bottom-20">
 				<span class="material-symbols-rounded text-textLight text-3xl!">
-					<p v-if="navbarStore.malfermita">arrow_back</p>
-					<p v-else>arrow_forward</p>
+					<template v-if="navbarStore.malfermita">arrow_back</template>
+					<template v-else>arrow_forward</template>
 
 				</span>
 			</button>
@@ -150,7 +150,7 @@ authStore.onReady((data) => {
 					theme="dark"
 					mode="transparent"
 				>
-					<p class="text-xl ml-8">Notificações</p>
+					<p>Notificações</p>
 				</BaseButton>
 
 				<BaseButton
@@ -159,7 +159,7 @@ authStore.onReady((data) => {
 					theme="dark"
 					mode="transparent"
 				>
-					<p class="text-xl ml-8">Perfil</p>
+					<p>Perfil</p>
 				</BaseButton>
 
 				<BaseButton
@@ -170,9 +170,17 @@ authStore.onReady((data) => {
 					exit
 					@click="signOut(auth)"
 				>
-					<p class="text-xl ml-8">Sair</p>
+					<p>Sair</p>
 				</BaseButton>
 			</div>
 		</section>
 	</aside>
 </template>
+
+<style scoped>
+	@reference "@/assets/main.css";
+
+	p {
+		@apply text-xl ml-8
+	}
+</style>

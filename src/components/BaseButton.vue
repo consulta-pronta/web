@@ -71,19 +71,18 @@ switch (props.mode) {
 
 <template>
 	<button
-		:type="props.type === 'nav' ? 'button' : props.type"
+		:type="type === 'nav' ? 'button' : type"
 		@click="redirect()"
 		:class="[
 			'px-5 rounded-md h-11 flex items-center',
-			props.type === 'nav' ? 'justify-start' : 'justify-center',
 			`${broski}`,
-			props.type === 'nav' ? 'mb-2' : '',
+			type === 'nav' ? 'justify-start mb-2' : 'justify-center',
 			stateModel.valueOf() !== 'enabled' ? 'contrast-50' : 'cursor-pointer',
 		]"
 		:disabled="stateModel !== 'enabled'"
 	>
 		<span v-if="stateModel === 'sync'" class="material-symbols-rounded animate-spin">loop</span>
-		<template v-else>{{ props.text }}</template>
+		<template v-else>{{ text }}</template>
 
 		<span class="material-symbols-rounded text-3xl! select-none">
 			{{icon}}
