@@ -24,7 +24,7 @@ const router = createRouter({
 			meta: {
 				roles: [],
 			},
-			
+
 		},
 		{
 			path: "/login",
@@ -58,6 +58,11 @@ const router = createRouter({
 			meta: {
 				roles: ["paciente"],
 			},
+		},
+		{
+			path: "/:catchAll(.*)",
+			name: "not-found",
+			component: () => import("@/pages/NotFound.vue")
 		}
 	],
 })
@@ -70,10 +75,10 @@ router.beforeEach(async (to) => {
 
 	await auth.authStateReady()
 	const user = auth.currentUser
-	
+
 	const authStore = useAuthStore()
 	authStore.setUser(user)
-	
+
 	const needsAuth = roles.length !== 0
 	const isAuthenticated = user !== null
 
