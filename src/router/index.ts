@@ -24,7 +24,7 @@ const router = createRouter({
 			meta: {
 				roles: [],
 			},
-			
+
 		},
 		{
 			path: "/login",
@@ -58,6 +58,15 @@ const router = createRouter({
 			meta: {
 				roles: ["paciente"],
 			},
+		},
+		{
+			path: "/relatorios",
+			name: "relatorios-usuario",
+			alias: ["/relatorios", "/relatoriosUsuario"],
+			component: () => import("@/pages/RelatoriosUsuario.vue"),
+			meta: {
+				roles: ["paciente"],
+			},
 		}
 	],
 })
@@ -70,10 +79,10 @@ router.beforeEach(async (to) => {
 
 	await auth.authStateReady()
 	const user = auth.currentUser
-	
+
 	const authStore = useAuthStore()
 	authStore.setUser(user)
-	
+
 	const needsAuth = roles.length !== 0
 	const isAuthenticated = user !== null
 
