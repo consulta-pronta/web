@@ -56,9 +56,8 @@ const handleSubmit = () => {
 						<BaseInput placeholder="Pesquisar" icon="search" theme="light" class="w-2xl"></BaseInput>
 
 						<!--Botão de registrar sintoma-->
-						<BaseButton theme="dark" mode="outline" text="Registrar Sintoma" icon="add" class="rounded-4xl!" @click="toggleSobre" />
+						<BaseButton theme="dark" mode="outline" text="Registrar Sintoma" icon="add" class="rounded-4xl!" @click="toggleRegisterForm" />
 					</section>
-
 					<!--Sliders-->
 					<FilterOrd class="mb-3"/>
 				</header>
@@ -91,7 +90,7 @@ const handleSubmit = () => {
 								arrow_back
 							</span>
 						</button>
-					
+
 						<SymptomExtended
 							v-model="currentSymptom" ref="areaDescription"
 							class="w-full"

@@ -42,42 +42,44 @@ const exames = ref<Exame[]>([
 </script>
 
 <template class="justify-end">
-	<main class="flex h-screen overflow-hidden">
-		<NavBar />
+	<div class="flex h-screen">
+		<main class="flex h-screen overflow-hidden w-full">
+			<NavBar />
 
-		<article class="w-[84%] h-screen ml-auto overflow-hidden">
-			<div class="bg-backgroundRoxo w-full h-full  py-[1.5%] px-[2.5%] flex flex-col min-h-0">
+			<article class="bg-background w-full h-full flex justify-center items-center p-10 overflow-hidden">
+				<div class="size-full flex flex-col min-h-0">
 
-					<p class="text-4xl text-textlight font-bold h-20.25 mb-5">Meus Exames</p>
+						<p class="text-4xl text-textLight font-bold h-20.25 mb-5">Meus Exames</p>
 
-					<div class="flex flex-col items-center justify-center">
-						<section class="relative mb-3 w-full flex justify-center">
-							<div class="relative flex items-center w-[56%] h-11 bg-surface rounded-sm">
-								<span class="material-symbols-rounded text-primarydark absolute left-3 pointer-events-none">
-									search
+						<div class="flex flex-col items-center justify-center">
+							<section class="relative mb-3 w-full flex justify-center">
+								<div class="relative flex items-center w-[56%] h-11 bg-surface rounded-sm">
+									<span class="material-symbols-rounded text-primaryDark absolute left-3 pointer-events-none">
+										search
+									</span>
+
+									<input type="text" placeholder="Pesquisar" class="text-primarydark placeholder-primaryDark w-full h-full outline-none pl-10"/>
+								</div>
+							</section>
+
+							<section class="relative flex w-[50%] min-h-11 items-center border border-textLight text-sm text-textLight rounded-[15px] mb-5 ">
+								<span class="material-symbols-rounded pointer-events-none absolute left-3">
+									shield
 								</span>
 
-								<input type="text" placeholder="Pesquisar" class="text-primarydark placeholder-primarydark w-full h-full outline-none pl-10"/>
-							</div>
-						</section>
+								<div class="w-full px-12 text-center">
+									<p>
+										Veja os exames que já foram concluídos ou que estão em processo.
+									</p>
+								</div>
+							</section>
 
-						<section class="relative flex w-[50%] min-h-11 items-center border border-textlight text-sm text-textlight rounded-[15px] mb-5 ">
-							<span class="material-symbols-rounded pointer-events-none absolute left-3">
-								shield
-							</span>
+							<ExamsTable :exames="exames"/>
 
-							<div class="w-full px-12 text-center">
-								<p>
-									Veja os exames que já foram concluídos ou que estão em processo.
-								</p>
-							</div>
-						</section>
+						</div>
 
-						<ExamsTable :exames="exames"/>
-
-					</div>
-
-			</div>
-		</article>
-	</main>
+				</div>
+			</article>
+		</main>
+	</div>
 </template>

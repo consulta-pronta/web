@@ -19,9 +19,9 @@ const props = defineProps<Props>()
 
 <template>
 	<section class="w-full flex justify-center place-items-center text-center min-h-0">
-		<div class="w-[80%] max-h-[55vh] overflow-y-auto rounded-[20px] scrollbar-hide">
+		<div class="w-[90%] max-h-[55vh] overflow-y-auto rounded-[20px] scrollbar-hide">
 			<table class="bg-surface w-full">
-				<thead class="text-lg text-primarydark font-bold sticky top-0 bg-surface z-10">
+				<thead class="text-lg text-primaryDark font-bold sticky top-0 bg-surface z-10">
 					<tr>
 						<th class="px-4 py-3">Exame</th>
 						<th class="px-4 py-3">Local</th>
@@ -30,11 +30,11 @@ const props = defineProps<Props>()
 					</tr>
 				</thead>
 
-				<tbody class="text-sm text-primarydark font-light">
+				<tbody class="text-sm text-primaryDark font-light">
 
-					<tr v-for="(exame, index) in props.exames" v-bind:key="index" class="border-t border-primarydark">
+					<tr v-for="(exame, index) in props.exames" v-bind:key="index" class="border-t border-primaryDark">
 						<td class="px-4 py-3 font-bold flex justify-center items-center relative m-1.5">
-							<span class="material-symbols-rounded text-primarydark absolute left-3">
+							<span class="material-symbols-rounded text-primaryDark absolute left-3">
 								{{ exame.icone }}
 							</span>
 							{{ exame.nome }}
@@ -46,7 +46,7 @@ const props = defineProps<Props>()
 
 						<td class="px-4 py-3">
 							<div class="justify-center items-center relative">
-								<span class="material-symbols-rounded text-primarydark absolute right-2">
+								<span class="material-symbols-rounded text-primaryDark absolute right-2">
 									{{ exame.iconeResultado }}
 								</span>
 								{{ exame.resultado }}

@@ -58,7 +58,7 @@ const props = withDefaults(defineProps<Props>(), {
 				</button>
 			</section>
 
-			<section v-if="Show === true" class="border border-primarydark rounded-lg p-2">
+			<section v-if="Show === true" class="border border-primaryDark rounded-lg p-2">
 
 				<IntensityComp
 					Cor="warning"
