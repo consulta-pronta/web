@@ -22,7 +22,7 @@ authStore.onReady((data) => {
 	<aside :class="[
 		'h-screen bg-primary flex flex-col items-center justify-between transition-all duration-500 shrink-0',
 		navbarStore.malfermita ? 'w-67' : 'w-20'
-	]">
+	]"> <!--"w-[20%]" : "w-[5%]"-->
 		<section class="w-full flex flex-col overflow-hidden">
 			<BaseLogo class="mx-auto transition-all object-cover duration-500"
 				:class="navbarStore.malfermita ? 'w-50 my-6' : 'w-10 my-10'"
@@ -94,6 +94,7 @@ authStore.onReady((data) => {
 					icon="stethoscope"
 					theme="dark"
 					mode="transparent"
+					path="examesUsuario"
 				>
 					<p class="text-xl ml-8">Exames</p>
 				</BaseButton>

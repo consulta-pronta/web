@@ -7,13 +7,18 @@ interface Exame {
 	resultado: string
 	icone: string
 	iconeResultado: string
+	paciente?: string
 }
 
 interface Props {
 	exames: Exame[]
+	paciente?: boolean
 }
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+	paciente: false,
+})
+
 
 </script>
 
@@ -24,6 +29,7 @@ const props = defineProps<Props>()
 				<thead class="text-lg text-primaryDark font-bold sticky top-0 bg-surface z-10">
 					<tr>
 						<th class="px-4 py-3">Exame</th>
+						<th class="px-4 py-3" v-if="props.paciente === true">Paciente</th>
 						<th class="px-4 py-3">Local</th>
 						<th class="px-4 py-3">Data</th>
 						<th class="px-4 py-3">Resultado</th>
@@ -39,6 +45,8 @@ const props = defineProps<Props>()
 							</span>
 							{{ exame.nome }}
 						</td>
+
+						<td class="px-4 py-3 font-bold" v-if="props.paciente === true"> {{ exame.paciente }}</td>
 
 						<td class="px-4 py-3">{{ exame.local }}</td>
 

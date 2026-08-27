@@ -77,7 +77,6 @@ const exames = ref<Exame[]>([
 							<ExamsTable :exames="exames"/>
 
 						</div>
-
 				</div>
 			</article>
 		</main>
