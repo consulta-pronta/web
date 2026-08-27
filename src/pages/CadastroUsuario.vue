@@ -37,14 +37,14 @@ const submitForm = async () => {
 	<AuthBackground>
 		<BaseLogo text complete />
 
-		<div class="w-1/2 box-border items-center justify-center flex flex-col">
-			<div class="text-[36px] text-surface font-bold mb-1">Crie uma Conta</div>
-			<div class="text-[16px] text-surface mb-3">Preencha seus dados para começar.</div>
+		<div class="lg:w-1/2 box-border items-center justify-center flex flex-col">
+			<div class="text-4xl sm:text-5xl xl:text-6xl text-surface font-bold mb-1">Crie uma Conta</div>
+			<div class="text-lg sm:text-xl xl:text-2xl text-surface mb-3">Preencha seus dados para começar.</div>
 
 			<!--form-->
 			<form
 				@submit.prevent="submitForm"
-				class="space-y-2 items-center justify-center flex flex-col w-116.25"
+				class="space-y-2 items-center justify-center flex flex-col p-4 w-100 sm:w-120 lg:w-120 xl:w-140"
 			>
 				<!-- <UserPhoto borderColor="accent"/> -->
 
@@ -72,7 +72,7 @@ const submitForm = async () => {
 				/>
 				<div class="relative w-full">
 					<BaseInput
-						type="password" placeholder="Senha" icon="lock" theme="dark" 
+						type="password" placeholder="Senha" icon="lock" theme="dark"
 						v-model="signUpStore.password" required
 						@focusin="showPasswordRules = true" @focusout="showPasswordRules = false"
 					/>
@@ -120,13 +120,7 @@ const submitForm = async () => {
 					Enviar CRM ou E-CRM
 				</BaseButton>
 
-				<div>
-					<p class="text-textLight">
-						Li e aceito os <a href="" class="text-accent">Termos de Uso</a> e a
-						<a href="" class="text-accent">Política de Privacidade</a>
-					</p>
-				</div>
-
+				<br>
 				<BaseButton
 					type="submit"
 					theme="light"

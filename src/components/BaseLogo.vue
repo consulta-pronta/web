@@ -10,13 +10,13 @@ const props = defineProps<Props>()
 <template>
 	<div
 		:class="[
-			'box-border select-none',
-			!props.complete ? 'flex justify-center items-center' : 'w-1/2 p-16',
+			'box-border select-none flex flex-col justify-center items-center',
+			props.complete ? 'w-full lg:w-1/2 p-16 lg:justify-start lg:items-start' : '',
 		]"
 	>
 		<img v-if="props.complete" src="/img/LogoCompleta.png" />
 		<img v-else src="/img/Logo.png" class="drop-shadow-lg/80" />
-		<div>
+		<div class="hidden lg:block">
 			<p
 				v-if="props.text"
 				class="text-3xl text-surface font-bold drop-shadow-[3px_3px_3px_rgba(0,0,0,1)]"

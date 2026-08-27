@@ -34,15 +34,15 @@ const login = async () => {
 <template>
 	<AuthBackground>
 		<BaseLogo text complete />
-		<div class="w-1/2 box-border items-center justify-center flex flex-col">
-			<div class="text-[36px] text-surface font-bold mb-1">Bem-Vindo</div>
-			<div class="text-[16px] text-surface mb-3">
+		<div class="lg:w-1/2 box-border items-center justify-center flex flex-col">
+			<div class="text-4xl sm:text-5xl xl:text-6xl text-surface font-bold mb-1">Bem-Vindo</div>
+			<div class="text-lg sm:text-xl xl:text-2xl text-surface mb-5">
 				Faça o login para acessar os seus dados.
 			</div>
 
 			<form
 				@submit.prevent="login()"
-				class="space-y-2 items-center justify-center flex flex-col w-116.25"
+				class="space-y-2 items-center justify-center flex flex-col p-4 w-100 sm:w-120 lg:w-120 xl:w-140"
 			>
 				<ToggleUser v-model="status" />
 				<br>
