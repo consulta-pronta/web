@@ -68,7 +68,9 @@ const registrarSintoma = async () => {
 				<input id="arquivo" name="arquivo" type="file" accept=".jpg,.jpeg,.png,.pdf" class="hidden"/>
 			</div>
 		</label>
-		<BaseButton type="submit" theme="light" text="Registrar Sintoma" class="m-auto px-10"/>
+		<BaseButton type="submit" theme="accent" class="m-auto px-10">
+			Registrar Sintoma
+		</BaseButton>
 	</form>
 </template>
 

@@ -111,7 +111,7 @@ const submitForm = async () => {
 				<BaseButton
 					v-if="signUpStore.userType === 'profissional'"
 					type="button"
-					theme="dark"
+					theme="accent"
 					mode="transparent"
 					icon="article"
 					path="cadastroCRM"
@@ -129,7 +129,7 @@ const submitForm = async () => {
 
 				<BaseButton
 					type="submit"
-					theme="light"
+					theme="accent"
 					class="w-full justify-center"
 					v-model:state="buttonState"
 				>

@@ -34,10 +34,10 @@ authStore.onReady(async (data) => {
 					<p v-if="userType === 'paciente'" class="font-normal">Você está sentindo algum desconforto hoje? Registre!</p>
 					<p v-else class="font-normal">Alguma consulta marcada? Verifique!</p>
 				</div>
-				<BaseButton v-if="userType === 'paciente'" path="historico-sintomas" theme="dark" mode="outline" icon="edit_square" class="w-full rounded-4xl!">
+				<BaseButton v-if="userType === 'paciente'" path="historico-sintomas" theme="textLight" mode="outline" icon="edit_square" class="w-full rounded-4xl!">
 					Registrar sintoma
 				</BaseButton>
-				<BaseButton v-else theme="dark" mode="outline" icon="vital_signs" class="w-full rounded-4xl!">
+				<BaseButton v-else theme="textLight" mode="outline" icon="vital_signs" class="w-full rounded-4xl!">
 					Verificar consultas
 				</BaseButton>
 			</section>
@@ -80,14 +80,14 @@ authStore.onReady(async (data) => {
 			<section v-if="userType === 'paciente'" class="bg-primary rounded-2xl col-span-5 row-span-3 p-5 flex flex-col justify-between items-center h-full">
 				<p class="text-textLight font-bold text-xl">Informações de saúde:</p>
 				<!-- Colocar informações de saúde aqui -->
-				<BaseButton theme="dark" mode="outline" icon="edit_square" class="w-full rounded-4xl!">
+				<BaseButton theme="textLight" mode="outline" icon="edit_square" class="w-full rounded-4xl!">
 					Editar informações de saúde
 				</BaseButton>
 			</section>
 			<section v-else class="bg-primary rounded-2xl col-span-6 row-span-3 p-5 flex flex-col justify-between items-center h-full">
 				<p class="text-textLight font-bold text-xl">Triagens:</p>
 				<!-- Colocar cards de triagem aqui -->
-				<BaseButton theme="dark" mode="outline" icon="person" class="w-full rounded-4xl!">
+				<BaseButton theme="textLight" mode="outline" icon="person" class="w-full rounded-4xl!">
 					Verificar triagens
 				</BaseButton>
 			</section>
@@ -95,14 +95,14 @@ authStore.onReady(async (data) => {
 			<section v-if="userType === 'paciente'" class="bg-primary rounded-2xl col-span-5 row-span-3 p-5 flex flex-col justify-between items-center h-full">
 				<p class="text-textLight font-bold text-xl">Permissões médicas:</p>
 				<!-- Colocar foto de profissionais permitidos aqui -->
-				<BaseButton theme="dark" mode="outline" icon="edit_square" class="w-full rounded-4xl!">
+				<BaseButton theme="textLight" mode="outline" icon="edit_square" class="w-full rounded-4xl!">
 					Editar permissões
 				</BaseButton>
 			</section>
 			<section v-else class="bg-primary rounded-2xl col-span-4 row-span-3 p-5 flex flex-col justify-between items-center h-full">
 				<p class="text-textLight font-bold text-xl">Relatórios:</p>
 				<!-- Colocar cards de relatórios aqui -->
-				<BaseButton theme="dark" mode="outline" icon="assignment" class="w-full rounded-4xl!">
+				<BaseButton theme="textLight" mode="outline" icon="assignment" class="w-full rounded-4xl!">
 					Verificar relatórios
 				</BaseButton>
 			</section>

@@ -57,7 +57,9 @@ const handleSubmit = () => {
 					
 						<!--Botão de registrar sintoma-->
 						<div class="absolute right-0 w-[20%]">
-							<BaseButton type="button" text="Registrar Sintoma" icon="add" :border="true" borderColor="textLight" rounded="full" @click="toggleRegisterForm" textColor="textLight"/>
+							<BaseButton theme="accent" type="button" icon="add" @click="toggleRegisterForm">
+								Registrar Sintoma
+							</BaseButton>
 						</div>
 					</section>
 

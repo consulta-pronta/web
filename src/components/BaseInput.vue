@@ -40,7 +40,8 @@ switch (props.mode) {
 		break
 }
 
-const formatValue = (event) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const formatValue = (event: any) => {
 	switch (props.type) {
 		case "cpf":
 			value.value = formatToCPF(event.target.value)
