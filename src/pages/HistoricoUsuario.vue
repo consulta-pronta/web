@@ -56,7 +56,9 @@ const handleSubmit = () => {
 						<BaseInput placeholder="Pesquisar" icon="search" theme="light" class="w-2xl"></BaseInput>
 
 						<!--Botão de registrar sintoma-->
-						<BaseButton theme="dark" mode="outline" text="Registrar Sintoma" icon="add" class="rounded-4xl!" @click="toggleSobre" />
+						<BaseButton theme="accent" type="button" icon="add" class="rounded-4xl!" @click="toggleRegisterForm">
+							Registrar Sintoma
+						</BaseButton>
 					</section>
 
 					<!--Sliders-->
