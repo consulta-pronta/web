@@ -56,7 +56,7 @@ function toggleOrd() {
 		</section>
 		<div v-if="showFilters === true" class="h-[4.88%] flex mb-5">
 			<BaseButton theme="primaryDark" class="mr-1">Todos</BaseButton>
-			<BaseButton theme="primaryDark" class="mr-1">Abdômen</BaseButton>
+			<BaseButton theme="primaryDark" class="mr-1">Abdômen</BaseButton> <!-- Abodômen -->
 			<BaseButton theme="primaryDark" class="mr-1">Barriga</BaseButton>
 			<BaseButton theme="primaryDark" class="mr-1">Cabeça</BaseButton>
 			<BaseButton theme="primaryDark" class="mr-1">Costas</BaseButton>

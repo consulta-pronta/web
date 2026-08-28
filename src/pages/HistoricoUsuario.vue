@@ -44,33 +44,31 @@ const handleSubmit = () => {
 
 <template>
 	<!-- Screen -->
-	<div class="flex h-screen overflow-hidden">
+	<div class="flex h-screen">
 		<NavBar />
 
-		<main class="bg-background w-full h-full flex justify-center items-center overflow-hidden">
+		<main class="bg-background w-full h-full flex justify-center items-center p-10 overflow-hidden">
 			<!-- Fernando Wrapper -->
-			<div class="w-[88%] h-[85%] bg-primary rounded-3xl py-[1.5%] px-[2.5%] flex flex-col min-h-0">
+			<div class="size-full bg-primary rounded-3xl py-8 px-5 flex flex-col min-h-0">
 				<header>
-					<section class="flex justify-center place-items-center relative mb-3">
+					<section class="flex justify-center place-items-center relative gap-6 mb-3">
 						<!--Barra de pesquisa-->
-						<BaseInput placeholder="Pesquisar" icon="search" theme="light" class="w-120"></BaseInput>
-					
+						<BaseInput placeholder="Pesquisar" icon="search" theme="light" class="w-2xl"></BaseInput>
+
 						<!--Botão de registrar sintoma-->
-						<div class="absolute right-0 w-[20%]">
-							<BaseButton theme="accent" type="button" icon="add" @click="toggleRegisterForm">
-								Registrar Sintoma
-							</BaseButton>
-						</div>
+						<BaseButton theme="accent" type="button" icon="add" class="rounded-4xl!" @click="toggleRegisterForm">
+							Registrar Sintoma
+						</BaseButton>
 					</section>
 
 					<!--Sliders-->
 					<FilterOrd class="mb-3"/>
 				</header>
-				
+
 				<br>
 				<p class="text-textLight text-2xl">{{ symptoms.length }} sintomas registrados</p>
 				<br>
-				
+
 				<!-- Content -->
 				<section class="max-h-full overflow-hidden flex gap-8 scrollbar-track-transparent scrollbar-thumb-accent">
 					<!-- List -->
@@ -102,7 +100,7 @@ const handleSubmit = () => {
 						/>
 					</section>
 				</section>
-				
+
 				<!-- Forms -->
 				<!-- Registrar -->
 				<section v-show="registerFormVisible" class="dialog" @click.self="toggleRegisterForm" @submit="handleSubmit">
