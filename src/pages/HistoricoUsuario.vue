@@ -103,7 +103,7 @@ const handleSubmit = () => {
 
 				<!-- Forms -->
 				<!-- Registrar -->
-				<section v-show="registerFormVisible" class="dialog" @click.self="toggleRegisterForm" @submit="handleSubmit">
+				<section v-show="registerFormVisible" class="dialog" @click.self="toggleRegisterForm">
 					<div class="w-150 p-10 bg-primary rounded-xl shadow-xl">
 						<header class="grid grid-cols-[min-content_1fr]">
 							<button type="button" class="cursor-pointer text-textLight" @click="toggleRegisterForm">
@@ -115,7 +115,7 @@ const handleSubmit = () => {
 							<h2 class="text-2xl text-center font-semibold text-textLight">Registrar Sintoma</h2>
 						</header>
 
-						<FormSintoma class="mt-4"/>
+						<FormSintoma class="mt-4" @handled-submit="handleSubmit"/>
 					</div>
 				</section>
 				<!-- Editar -->
