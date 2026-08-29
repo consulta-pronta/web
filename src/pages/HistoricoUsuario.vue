@@ -63,14 +63,9 @@ const handleSubmit = () => {
 						></BaseInput>
 
 						<!--Botão de registrar sintoma-->
-						<BaseButton
-							theme="dark"
-							mode="outline"
-							text="Registrar Sintoma"
-							icon="add"
-							class="rounded-4xl!"
-							@click="toggleRegisterForm"
-						/>
+						<BaseButton theme="accent" type="button" icon="add" class="rounded-4xl!" @click="toggleRegisterForm">
+							Registrar Sintoma
+						</BaseButton>
 					</section>
 
 					<!--Sliders-->
@@ -130,12 +125,7 @@ const handleSubmit = () => {
 
 				<!-- Forms -->
 				<!-- Registrar -->
-				<section
-					v-show="registerFormVisible"
-					class="dialog"
-					@click.self="toggleRegisterForm"
-					@submit="handleSubmit"
-				>
+				<section v-show="registerFormVisible" class="dialog" @click.self="toggleRegisterForm">
 					<div class="w-150 p-10 bg-primary rounded-xl shadow-xl">
 						<header class="grid grid-cols-[min-content_1fr]">
 							<button
@@ -151,7 +141,7 @@ const handleSubmit = () => {
 							</h2>
 						</header>
 
-						<FormSintoma class="mt-4" />
+						<FormSintoma class="mt-4" @handled-submit="handleSubmit"/>
 					</div>
 				</section>
 				<!-- Editar -->

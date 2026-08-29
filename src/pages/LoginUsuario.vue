@@ -66,13 +66,8 @@ const login = async () => {
 					v-model="signInStore.password"
 					required
 				/>
-				<br />
-				<BaseButton
-					type="submit"
-					theme="light"
-					class="justify-center w-full"
-					v-model:state="buttonState"
-				>
+				<br>
+				<BaseButton type="submit" theme="accent" class="justify-center w-full" v-model:state="buttonState">
 					Entrar
 				</BaseButton>
 
