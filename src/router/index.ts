@@ -15,7 +15,7 @@ const router = createRouter({
 		{
 			path: "/",
 			name: "root",
-			component: () => import("@/pages/LandingPage.vue")
+			component: () => import("@/pages/LandingPage.vue"),
 		},
 		{
 			path: "/cadastro",
@@ -24,7 +24,6 @@ const router = createRouter({
 			meta: {
 				roles: [],
 			},
-
 		},
 		{
 			path: "/login",
@@ -62,8 +61,8 @@ const router = createRouter({
 		{
 			path: "/:catchAll(.*)",
 			name: "not-found",
-			component: () => import("@/pages/NotFound.vue")
-		}
+			component: () => import("@/pages/NotFound.vue"),
+		},
 	],
 })
 

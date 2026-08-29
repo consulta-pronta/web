@@ -33,7 +33,7 @@ const redirect = () => {
 	}
 }
 
-const stateModel = defineModel<ButtonState>("state", { default:"enabled" })
+const stateModel = defineModel<ButtonState>("state", { default: "enabled" })
 
 const colors = {
 	background: props.theme === "light" ? "accent" : "primaryDark",
@@ -41,16 +41,16 @@ const colors = {
 	border: props.theme === "light" ? "textDark" : "accent",
 }
 
-if (props.type === 'nav') {
+if (props.type === "nav") {
 	if (props.path === route.path || props.path === route.name) {
-		colors.text = 'accent'
+		colors.text = "accent"
 	} else {
-		colors.text = 'textLight'
+		colors.text = "textLight"
 	}
 }
 
 if (props.exit) {
-	colors.text = 'error'
+	colors.text = "error"
 }
 
 let broski: string = ""
@@ -86,7 +86,7 @@ switch (props.mode) {
 		<template v-else>{{ props.text }}</template>
 
 		<span class="material-symbols-rounded text-3xl! select-none">
-			{{icon}}
+			{{ icon }}
 		</span>
 		<slot></slot>
 	</button>
