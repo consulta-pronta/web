@@ -20,7 +20,7 @@ authStore.onReady((data) => {
 
 <template>
 	<aside :class="[
-		'h-screen bg-primary flex flex-col items-center justify-between transition-all duration-500 shrink-0',
+		'h-screen bg-primary flex flex-col items-center justify-between transition-all duration-500 shrink-0 sticky',
 		navbarStore.malfermita ? 'w-67' : 'w-20'
 	]">
 		<section class="w-full flex flex-col overflow-hidden">
