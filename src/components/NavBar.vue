@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref } from "vue"
 import { useNavbarStore } from "@/stores/navbarStore"
 import { useAuthStore } from "@/stores/authStore";
 import BaseLogo from "@/components/BaseLogo.vue"
 import BaseButton from "@/components/BaseButton.vue"
-import { auth } from "@/config/firebase";
-import { signOut } from "firebase/auth";
+import { auth } from "@/config/firebase"
+import { signOut } from "firebase/auth"
 
 
 const navbarStore = useNavbarStore()
@@ -28,7 +28,7 @@ authStore.onReady((data) => {
 </script>
 
 <template>
-	<aside class="h-screen bg-primary flex flex-col items-center justify-between transition-[width] duration-500 shrink-0 py-4"
+	<aside class="h-screen bg-primary flex flex-col items-center justify-between transition-[width] duration-500 shrink-0 py-4 sticky"
 		:class="navbarStore.malfermita ? 'w-67' : 'w-17'"
 	>
 		<section class="w-full flex flex-col overflow-hidden">

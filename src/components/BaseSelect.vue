@@ -16,7 +16,7 @@ const props = withDefaults(defineProps<Props>(), {
 const colors = {
 	background: props.theme === "light" ? "surface" : "primary",
 	text: props.theme === "light" ? "textDark" : "textLight",
-	border: props.theme === "light" ?  "textLight" : "textDark"
+	border: props.theme === "light" ? "textLight" : "textDark",
 }
 let broski = ""
 switch (props.mode) {
@@ -38,26 +38,15 @@ const value = defineModel<string>()
 
 <template>
 	<label
-		class="
-			flex items-center justify-between gap-2
-			relative h-12 px-4
-			rounded-md cursor-pointer
-		"
+		class="flex items-center justify-between gap-2 relative h-12 px-4 rounded-md cursor-pointer"
 		:class="broski"
 	>
-		<span
-			class="material-symbols-rounded pointer-events-none select-none"
-			v-if="icon"
-		>
+		<span class="material-symbols-rounded pointer-events-none select-none" v-if="icon">
 			{{ icon }}
 		</span>
 
 		<select
-			class="
-				absolute left-0 w-full grow
-				px-12 py-3 outline-0
-				cursor-pointer appearance-none
-			"
+			class="absolute left-0 w-full grow px-12 py-3 outline-0 cursor-pointer appearance-none"
 			:required="required"
 			v-model="value"
 		>
@@ -66,11 +55,7 @@ const value = defineModel<string>()
 			</option>
 			<slot></slot>
 		</select>
-		
-		<span
-			class="material-symbols-rounded pointer-events-none select-none"
-		>
-			expand_more
-		</span>
+
+		<span class="material-symbols-rounded pointer-events-none select-none"> expand_more </span>
 	</label>
 </template>

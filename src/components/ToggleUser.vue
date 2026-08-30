@@ -12,13 +12,12 @@ const toggleStatus = (newStatus: UserType) => {
 	<div class="flex flex-row bg-primaryDark p-1 gap-4 rounded-lg relative">
 		<div
 			class="boogieman absolute bg-accent z-0"
-			:class="status === 'paciente'
-				? 'left-1'
-				: 'left-[calc(100%-0.25rem-10rem)]'">
-		</div>
+			:class="status === 'paciente' ? 'left-1' : 'left-[calc(100%-0.25rem-10rem)]'"
+		></div>
 
 		<button
-			type="button" @click="toggleStatus('paciente')"
+			type="button"
+			@click="toggleStatus('paciente')"
 			class="boogieman"
 			:class="status === 'paciente' ? 'active' : ''"
 		>
@@ -26,7 +25,8 @@ const toggleStatus = (newStatus: UserType) => {
 		</button>
 
 		<button
-			type="button" @click="toggleStatus('profissional')"
+			type="button"
+			@click="toggleStatus('profissional')"
 			class="boogieman"
 			:class="status === 'profissional' ? 'active' : ''"
 		>
@@ -36,17 +36,17 @@ const toggleStatus = (newStatus: UserType) => {
 </template>
 
 <style scoped>
-	@reference "@/assets/main.css";
+@reference "@/assets/main.css";
 
-	button {
-		@apply cursor-pointer z-1 text-accent
-	}
+button {
+	@apply cursor-pointer z-1 text-accent;
+}
 
-	.boogieman {
-		@apply w-40 h-8 rounded-lg transition-all duration-300
-	}
+.boogieman {
+	@apply w-40 h-8 rounded-lg transition-all duration-300;
+}
 
-	.active {
-		@apply  text-textDark cursor-default
-	}
+.active {
+	@apply text-textDark cursor-default;
+}
 </style>
