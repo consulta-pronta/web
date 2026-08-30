@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from "vue"
 import NavBar from "@/components/NavBar.vue"
-import BaseButton from "@/components/BaseButton.vue"
-import BaseInput from "@/components/BaseInput.vue"
+import BaseButton from "@/components/bases/BaseButton.vue"
+import BaseInput from "@/components/bases/BaseInput.vue"
 import FormSintoma from "@/components/forms/FormSintoma.vue"
 import FilterOrd from "@/components/FilterOrd.vue"
 import SymptomCard from "@/components/cards/SymptomCard.vue"
@@ -24,8 +24,10 @@ authStore.onReady(async (data) => {
 	updateSymptoms(data.id)
 })
 
+const symptomsOn = ref(true)
 const viewSymptom = (symptom: Symptom | null) => {
 	currentSymptom.value = symptom
+	symptomsOn.value = !symptomsOn.value
 }
 
 const toggleRegisterForm = () => {
@@ -48,22 +50,31 @@ const handleSubmit = () => {
 		<NavBar />
 
 		<main
-			class="bg-background w-full h-full flex justify-center items-center p-10 overflow-hidden"
+			class="bg-background w-full h-full flex justify-center items-center gap-4 lg:gap-6 xl:gap-8 p-5 lg:p-7 xl:p-10 overflow-hidden"
 		>
 			<!-- Fernando Wrapper -->
 			<div class="size-full bg-primary rounded-3xl py-8 px-5 flex flex-col min-h-0">
 				<header>
-					<section class="flex justify-center place-items-center relative gap-6 mb-3">
+					<section
+						class="flex flex-col md:flex-row justify-center place-items-center relative gap-6 mb-3"
+					>
 						<!--Barra de pesquisa-->
 						<BaseInput
 							placeholder="Pesquisar"
 							icon="search"
 							theme="light"
-							class="w-2xl"
+							class="w-full md:w-2xl"
 						></BaseInput>
 
 						<!--Botão de registrar sintoma-->
-						<BaseButton theme="accent" type="button" icon="add" class="rounded-4xl!" @click="toggleRegisterForm">
+						<BaseButton
+							theme="accent"
+							type="button"
+							icon="add"
+							iconPosition="right"
+							class="rounded-4xl!"
+							@click="toggleRegisterForm"
+						>
 							Registrar Sintoma
 						</BaseButton>
 					</section>
@@ -73,7 +84,9 @@ const handleSubmit = () => {
 				</header>
 
 				<br />
-				<p class="text-textLight text-2xl">{{ symptoms.length }} sintomas registrados</p>
+				<p class="text-textLight text-2xl" :class="[symptomsOn ? '' : 'hidden lg:flex']">
+					{{ symptoms.length }} sintomas registrados
+				</p>
 				<br />
 
 				<!-- Content -->
@@ -83,7 +96,8 @@ const handleSubmit = () => {
 					<!-- List -->
 					<ul
 						v-if="symptoms.length"
-						class="max-h-full overflow-hidden flex flex-col gap-2 overflow-y-auto"
+						class="w-full lg:w-max max-h-full overflow-hidden flex flex-col gap-2 overflow-y-auto"
+						:class="[symptomsOn ? '' : 'hidden lg:flex']"
 					>
 						<template v-for="symptom in symptoms" :key="symptom.id">
 							<SymptomCard
@@ -125,7 +139,11 @@ const handleSubmit = () => {
 
 				<!-- Forms -->
 				<!-- Registrar -->
-				<section v-show="registerFormVisible" class="dialog" @click.self="toggleRegisterForm">
+				<section
+					v-show="registerFormVisible"
+					class="dialog"
+					@click.self="toggleRegisterForm"
+				>
 					<div class="w-150 p-10 bg-primary rounded-xl shadow-xl">
 						<header class="grid grid-cols-[min-content_1fr]">
 							<button
@@ -141,7 +159,7 @@ const handleSubmit = () => {
 							</h2>
 						</header>
 
-						<FormSintoma class="mt-4" @handled-submit="handleSubmit"/>
+						<FormSintoma class="mt-4" @handled-submit="handleSubmit" />
 					</div>
 				</section>
 				<!-- Editar -->

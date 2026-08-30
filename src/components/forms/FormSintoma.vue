@@ -1,15 +1,13 @@
 <script setup lang="ts">
 import { ref } from "vue"
-import BaseInput from "@/components/BaseInput.vue"
-import BaseButton, { type ButtonState } from "@/components/BaseButton.vue"
-import BaseSelect from "@/components/BaseSelect.vue"
+import BaseInput from "@/components/bases/BaseInput.vue"
+import BaseButton, { type ButtonState } from "@/components/bases/BaseButton.vue"
+import BaseSelect from "@/components/bases/BaseSelect.vue"
 import { useSymptomStore } from "@/stores/symptomStore.ts"
 import { useAuthStore } from "@/stores/authStore.ts"
 
-
 const buttonState = ref<ButtonState>("enabled")
 const emit = defineEmits(["handled-submit"])
-
 
 const locais = ["Abdomen", "Barriga", "Cabeça", "Costas", "Olhos", "Pés", "Pescoço"]
 const symptomStore = useSymptomStore()
@@ -17,20 +15,20 @@ const authStore = useAuthStore()
 
 const registrarSintoma = async () => {
 	buttonState.value = "sync"
-	
+
 	if (authStore.user) {
 		await symptomStore.submitForm(authStore.user.uid)
 		emit("handled-submit", true)
 	} else {
 		emit("handled-submit", false)
 	}
-	
+
 	buttonState.value = "enabled"
 }
 </script>
 
 <template>
-	<form @submit.prevent="registrarSintoma" class="flex flex-col gap-4">
+	<form @submit.prevent="registrarSintoma" class="flex flex-col gap-4 z-48">
 		<label>
 			<!-- <span class="text-red-400">*</span> -->
 			<p>O que você está sentindo?</p>
@@ -68,8 +66,14 @@ const registrarSintoma = async () => {
 
 		<label>
 			<p>Em qual parte do corpo?</p>
-			
-			<BaseSelect v-model="symptomStore.place" icon="location_on" theme="light" defaultValue="Localização" required>
+
+			<BaseSelect
+				v-model="symptomStore.place"
+				icon="location_on"
+				theme="light"
+				defaultValue="Localização"
+				required
+			>
 				<template v-for="value in locais" :key="value">
 					<option :value="value">{{ value }}</option>
 				</template>

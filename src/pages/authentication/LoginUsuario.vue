@@ -3,9 +3,9 @@ import { ref, type Ref } from "vue"
 import { useRouter } from "vue-router"
 
 import AuthBackground from "@/components/AuthBackground.vue"
-import BaseButton, { type ButtonState } from "@/components/BaseButton.vue"
-import BaseInput from "@/components/BaseInput.vue"
-import BaseLogo from "@/components/BaseLogo.vue"
+import BaseButton, { type ButtonState } from "@/components/bases/BaseButton.vue"
+import BaseInput from "@/components/bases/BaseInput.vue"
+import BaseLogo from "@/components/bases/BaseLogo.vue"
 import ToggleUser, { type UserType } from "@/components/ToggleUser.vue"
 
 import { useSignInStore } from "@/stores/signInStore"
@@ -66,8 +66,13 @@ const login = async () => {
 					v-model="signInStore.password"
 					required
 				/>
-				<br>
-				<BaseButton type="submit" theme="accent" class="justify-center w-full" v-model:state="buttonState">
+				<br />
+				<BaseButton
+					type="submit"
+					theme="accent"
+					class="justify-center w-full"
+					v-model:state="buttonState"
+				>
 					Entrar
 				</BaseButton>
 

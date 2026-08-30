@@ -20,7 +20,7 @@ const router = createRouter({
 		{
 			path: "/cadastro",
 			name: "cadastro",
-			component: () => import("@/pages/CadastroUsuario.vue"),
+			component: () => import("@/pages/authentication/CadastroUsuario.vue"),
 			meta: {
 				roles: [],
 			},
@@ -28,7 +28,7 @@ const router = createRouter({
 		{
 			path: "/login",
 			name: "login",
-			component: () => import("@/pages/LoginUsuario.vue"),
+			component: () => import("@/pages/authentication/LoginUsuario.vue"),
 			meta: {
 				roles: [],
 			},
