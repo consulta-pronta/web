@@ -6,10 +6,8 @@ import BaseSelect from "@/components/bases/BaseSelect.vue"
 import { useSymptomStore } from "@/stores/symptomStore.ts"
 import { useAuthStore } from "@/stores/authStore.ts"
 
-
 const buttonState = ref<ButtonState>("enabled")
 const emit = defineEmits(["handled-submit"])
-
 
 const locais = ["Abdomen", "Barriga", "Cabeça", "Costas", "Olhos", "Pés", "Pescoço"]
 const symptomStore = useSymptomStore()
@@ -69,7 +67,13 @@ const registrarSintoma = async () => {
 		<label>
 			<p>Em qual parte do corpo?</p>
 
-			<BaseSelect v-model="symptomStore.place" icon="location_on" theme="light" defaultValue="Localização" required>
+			<BaseSelect
+				v-model="symptomStore.place"
+				icon="location_on"
+				theme="light"
+				defaultValue="Localização"
+				required
+			>
 				<template v-for="value in locais" :key="value">
 					<option :value="value">{{ value }}</option>
 				</template>

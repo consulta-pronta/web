@@ -40,10 +40,23 @@ authStore.onReady(async (data) => {
 					</p>
 					<p v-else class="font-normal">Alguma consulta marcada? Verifique!</p>
 				</div>
-				<BaseButton v-if="userType === 'paciente'" goto="historico-sintomas" theme="textLight" mode="outline" icon="edit_square" class="w-full rounded-4xl! justify-center!">
+				<BaseButton
+					v-if="userType === 'paciente'"
+					goto="historico-sintomas"
+					theme="textLight"
+					mode="outline"
+					icon="edit_square"
+					class="w-full rounded-4xl! justify-center!"
+				>
 					Registrar sintoma
 				</BaseButton>
-				<BaseButton v-else theme="textLight" mode="outline" icon="vital_signs" class="w-full rounded-4xl!">
+				<BaseButton
+					v-else
+					theme="textLight"
+					mode="outline"
+					icon="vital_signs"
+					class="w-full rounded-4xl!"
+				>
 					Verificar consultas
 				</BaseButton>
 			</section>
@@ -97,7 +110,12 @@ authStore.onReady(async (data) => {
 			>
 				<p class="text-textLight font-bold text-xl">Informações de saúde:</p>
 				<!-- Colocar informações de saúde aqui -->
-				<BaseButton theme="textLight" mode="outline" icon="edit_square" class="w-full rounded-4xl!">
+				<BaseButton
+					theme="textLight"
+					mode="outline"
+					icon="edit_square"
+					class="w-full rounded-4xl!"
+				>
 					Editar informações de saúde
 				</BaseButton>
 			</section>
@@ -107,7 +125,12 @@ authStore.onReady(async (data) => {
 			>
 				<p class="text-textLight font-bold text-xl">Triagens:</p>
 				<!-- Colocar cards de triagem aqui -->
-				<BaseButton theme="textLight" mode="outline" icon="person" class="w-full rounded-4xl!">
+				<BaseButton
+					theme="textLight"
+					mode="outline"
+					icon="person"
+					class="w-full rounded-4xl!"
+				>
 					Verificar triagens
 				</BaseButton>
 			</section>
@@ -118,7 +141,12 @@ authStore.onReady(async (data) => {
 			>
 				<p class="text-textLight font-bold text-xl">Permissões médicas:</p>
 				<!-- Colocar foto de profissionais permitidos aqui -->
-				<BaseButton theme="textLight" mode="outline" icon="edit_square" class="w-full rounded-4xl!">
+				<BaseButton
+					theme="textLight"
+					mode="outline"
+					icon="edit_square"
+					class="w-full rounded-4xl!"
+				>
 					Editar permissões
 				</BaseButton>
 			</section>
@@ -128,7 +156,12 @@ authStore.onReady(async (data) => {
 			>
 				<p class="text-textLight font-bold text-xl">Relatórios:</p>
 				<!-- Colocar cards de relatórios aqui -->
-				<BaseButton theme="textLight" mode="outline" icon="assignment" class="w-full rounded-4xl!">
+				<BaseButton
+					theme="textLight"
+					mode="outline"
+					icon="assignment"
+					class="w-full rounded-4xl!"
+				>
 					Verificar relatórios
 				</BaseButton>
 			</section>
