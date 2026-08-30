@@ -3,9 +3,9 @@ import { ref, type Ref } from "vue"
 import { useRouter } from "vue-router"
 
 import AuthBackground from "@/components/AuthBackground.vue"
-import BaseButton, { type ButtonState } from "@/components/BaseButton.vue"
-import BaseLogo from "@/components/BaseLogo.vue"
-import BaseInput from "@/components/BaseInput.vue"
+import BaseButton, { type ButtonState } from "@/components/bases/BaseButton.vue"
+import BaseLogo from "@/components/bases/BaseLogo.vue"
+import BaseInput from "@/components/bases/BaseInput.vue"
 import ToggleUser from "@/components/ToggleUser.vue"
 // import UserPhoto from "@/components/UserPhoto.vue"
 

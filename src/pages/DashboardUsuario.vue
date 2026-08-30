@@ -2,7 +2,7 @@
 import { ref } from "vue"
 import { useAuthStore } from "@/stores/authStore"
 import NavBar from "@/components/NavBar.vue"
-import BaseButton from "@/components/BaseButton.vue"
+import BaseButton from "@/components/bases/BaseButton.vue"
 import SymptomCard from "@/components/cards/SymptomCard.vue"
 import { type UserType } from "@/components/ToggleUser.vue"
 import { getAllSymptoms, type Symptom } from "@/services/symptomService"

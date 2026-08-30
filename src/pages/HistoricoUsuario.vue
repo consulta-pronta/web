@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from "vue"
 import NavBar from "@/components/NavBar.vue"
-import BaseButton from "@/components/BaseButton.vue"
-import BaseInput from "@/components/BaseInput.vue"
+import BaseButton from "@/components/bases/BaseButton.vue"
+import BaseInput from "@/components/bases/BaseInput.vue"
 import FormSintoma from "@/components/forms/FormSintoma.vue"
 import FilterOrd from "@/components/FilterOrd.vue"
 import SymptomCard from "@/components/cards/SymptomCard.vue"

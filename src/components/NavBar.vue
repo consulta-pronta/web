@@ -2,8 +2,8 @@
 import { ref } from "vue"
 import { useNavbarStore } from "@/stores/navbarStore"
 import { useAuthStore } from "@/stores/authStore";
-import BaseLogo from "@/components/BaseLogo.vue"
-import BaseButton from "@/components/BaseButton.vue"
+import BaseLogo from "@/components/bases/BaseLogo.vue"
+import BaseButton from "@/components/bases/BaseButton.vue"
 import { auth } from "@/config/firebase"
 import { signOut } from "firebase/auth"
 
@@ -33,7 +33,7 @@ authStore.onReady((data) => {
 	>
 		<section class="w-full flex flex-col overflow-hidden">
 			<BaseLogo class="mx-auto transition-all object-cover duration-600 h-25"
-				:class="navbarStore.malfermita ? 'w-50' : 'w-10'" 
+				:class="navbarStore.malfermita ? 'w-50' : 'w-10'"
 			/>
 			<nav class="button:w-full flex flex-col gap-2">
 				<BaseButton v-bind="sharedAttributes"
@@ -103,13 +103,13 @@ authStore.onReady((data) => {
 					<p>Recursos</p>
 				</BaseButton>
 				<BaseButton v-bind="sharedAttributes"
-					goto="#"					
+					goto="#"
 					icon="medical_services"
 				>
 					<p>Consultas</p>
 				</BaseButton>
 				<BaseButton v-bind="sharedAttributes"
-					goto="#"					
+					goto="#"
 					icon="assignment"
 				>
 					<p>Relatórios</p>
