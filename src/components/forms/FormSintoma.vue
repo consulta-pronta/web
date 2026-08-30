@@ -30,7 +30,7 @@ const registrarSintoma = async () => {
 </script>
 
 <template>
-	<form @submit.prevent="registrarSintoma" class="flex flex-col gap-4">
+	<form @submit.prevent="registrarSintoma" class="flex flex-col gap-4 z-48">
 		<label>
 			<!-- <span class="text-red-400">*</span> -->
 			<p>O que você está sentindo?</p>
