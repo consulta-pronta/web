@@ -40,7 +40,7 @@ authStore.onReady(async (data) => {
 					</p>
 					<p v-else class="font-normal">Alguma consulta marcada? Verifique!</p>
 				</div>
-				<BaseButton v-if="userType === 'paciente'" path="historico-sintomas" theme="textLight" mode="outline" icon="edit_square" class="w-full rounded-4xl!">
+				<BaseButton v-if="userType === 'paciente'" goto="historico-sintomas" theme="textLight" mode="outline" icon="edit_square" class="w-full rounded-4xl! justify-center!">
 					Registrar sintoma
 				</BaseButton>
 				<BaseButton v-else theme="textLight" mode="outline" icon="vital_signs" class="w-full rounded-4xl!">
