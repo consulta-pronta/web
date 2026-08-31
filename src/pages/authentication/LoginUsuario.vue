@@ -83,7 +83,7 @@ const login = async () => {
 					</p>
 				</RouterLink>
 
-				<RouterLink to="">
+				<RouterLink to="recuperar-senha">
 					<p class="text-accent">Esqueceu a senha?</p>
 				</RouterLink>
 			</form>
