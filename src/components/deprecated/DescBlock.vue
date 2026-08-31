@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import IntensityComp from "@/components/IntensityComp.vue"
-import LocationTag from "@/components/LocationTag.vue"
+import IntensityComp from "@/components/deprecated/IntensityComp.vue"
+import LocationTag from "@/components/deprecated/LocationTag.vue"
 import UserPhoto from "@/components/UserPhoto.vue"
 import { ref } from "vue"
 

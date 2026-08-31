@@ -6,6 +6,18 @@ import { ref } from "vue"
 const showFilters = ref(false)
 const showOrd = ref(false)
 
+interface Props {
+	filter?: boolean
+	order?: boolean
+	status?: "location" | "typing"
+}
+
+const props = withDefaults(defineProps<Props>(), {
+	filter: true,
+	order: true,
+	status: "location",
+})
+
 function toggleFilter() {
 	showFilters.value = !showFilters.value
 
@@ -25,7 +37,7 @@ function toggleOrd() {
 
 <template>
 	<section class="flex justify-start items-center relative w-fit">
-		<div>
+		<div v-if="props.filter">
 			<article class="flex items-center">
 				<span class="material-symbols-rounded text-[24px] text-accent mr-1">
 					filter_alt
@@ -41,7 +53,7 @@ function toggleOrd() {
 			</article>
 		</div>
 
-		<div>
+		<div v-if="props.order">
 			<article class="flex items-center">
 				<span class="material-symbols-rounded text-[24px] text-accent mr-1">
 					bar_chart

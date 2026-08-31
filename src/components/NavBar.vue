@@ -85,7 +85,7 @@ const openMobile = () => {
 
 				<hr class="h-1 border-0 bg-primaryDark w-1/4 m-auto rounded-full opacity-70" />
 
-				<BaseButton v-bind="sharedAttributes" icon="stethoscope" goto="#">
+				<BaseButton v-bind="sharedAttributes" icon="stethoscope" goto="/exames">
 					<p>Exames</p>
 				</BaseButton>
 				<BaseButton

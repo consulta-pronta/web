@@ -78,7 +78,6 @@ const handleSubmit = () => {
 							Registrar Sintoma
 						</BaseButton>
 					</section>
-
 					<!--Sliders-->
 					<FilterOrd class="mb-3" />
 				</header>

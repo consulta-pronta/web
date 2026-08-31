@@ -44,7 +44,7 @@ const router = createRouter({
 		{
 			path: "/exames",
 			name: "exames",
-			component: () => import("../pages/ExamesUsuario.vue"),
+			component: () => import("@/pages/ExamesUsuario.vue"),
 			meta: {
 				roles: ["paciente"],
 			},
@@ -52,7 +52,6 @@ const router = createRouter({
 		{
 			path: "/historico-sintomas",
 			name: "historico-sintomas",
-			alias: ["/historico", "/sintomas"],
 			component: () => import("@/pages/HistoricoUsuario.vue"),
 			meta: {
 				roles: ["paciente"],

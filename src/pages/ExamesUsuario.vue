@@ -1,85 +1,55 @@
 <script setup lang="ts">
 import { ref } from "vue"
 import NavBar from "@/components/NavBar.vue"
-import ExamsTable from "@/components/ExamsTable.vue"
+import BaseInput from "@/components/bases/BaseInput.vue"
+import { type Exam } from "@/models/examModel"
+import ExamRow from "@/components/ExamRow.vue"
+import { getExams } from "@/services/examService"
+import { useAuthStore } from "@/stores/authStore"
 
-interface Exame {
-	nome: string
-	local: string
-	data: string
-	resultado: string
-	icone: string
-	iconeResultado: string
-}
+const authStore = useAuthStore()
 
-const exames = ref<Exame[]>([
-	{
-		nome: "Hemograma Completo",
-		local: "Hospital Meridional",
-		data: "10/05/2026",
-		resultado: "Exame Concluído",
-		icone: "bloodtype",
-		iconeResultado: "check_circle",
-	},
-	{
-		nome: "Raio-X",
-		local: "Hospital Meridional",
-		data: "12/05/2026",
-		resultado: "Exame em andamento",
-		icone: "radiology",
-		iconeResultado: "schedule",
-	},
-	{
-		nome: "Exame de Urina",
-		local: "Hospital Meridional",
-		data: "01/05/1967",
-		resultado: "Exame em andamento",
-		icone: "colorize",
-		iconeResultado: "schedule",
-	},
-])
+const exames = ref<Exam[]>([])
+
+authStore.onReady(async (user) => {
+	exames.value = await getExams(user.id)
+})
 </script>
 
-<template class="justify-end">
-	<main class="flex h-screen overflow-hidden">
+<template>
+	<div class="flex h-screen">
 		<NavBar />
 
-		<article class="w-[84%] h-screen ml-auto overflow-hidden">
-			<div class="bg-backgroundRoxo w-full h-full py-[1.5%] px-[2.5%] flex flex-col min-h-0">
-				<p class="text-4xl text-textlight font-bold h-20.25 mb-5">Meus Exames</p>
+		<main class="w-full h-full overflow-clip px-6 py-8">
+			<header class="mb-16 flex flex-col gap-8">
+				<h1 class="text-4xl text-textLight font-bold text-center lg:text-start">
+					Meus Exames
+				</h1>
 
-				<div class="flex flex-col items-center justify-center">
-					<section class="relative mb-3 w-full flex justify-center">
-						<div class="relative flex items-center w-[56%] h-11 bg-surface rounded-sm">
-							<span
-								class="material-symbols-rounded text-primarydark absolute left-3 pointer-events-none"
-							>
-								search
-							</span>
+				<BaseInput
+					placeholder="Pesquisar"
+					icon="search"
+					class="place-self-center w-full md:w-120"
+				/>
+			</header>
 
-							<input
-								type="text"
-								placeholder="Pesquisar"
-								class="text-primarydark placeholder-primarydark w-full h-full outline-none pl-10"
-							/>
-						</div>
-					</section>
-
-					<section
-						class="relative flex w-[50%] min-h-11 items-center border border-textlight text-sm text-textlight rounded-[15px] mb-5"
-					>
-						<span class="material-symbols-rounded pointer-events-none absolute left-3">
-							shield
-						</span>
-
-						<div class="w-full px-12 text-center">
-							<p>Veja os exames que já foram concluídos ou que estão em processo.</p>
-						</div>
-					</section>
-
-					<ExamsTable :exames="exames" />
-				</div>
-			</div>
-		</article>
-	</main>
+			<table class="text-textDark w-full *:*:*:p-3 rounded-xs overflow-clip">
+				<thead>
+					<tr class="bg-surface/80 *:text-start">
+						<!-- <th><input type="checkbox" name="" id=""></th> Selecionar -->
+						<th>Exame</th>
+						<th>Local</th>
+						<th>Data</th>
+						<th>Status</th>
+						<!-- <th>&nbsp;</th> Mais -->
+					</tr>
+				</thead>
+				<tbody>
+					<template v-for="exame in exames" :key="exame.id">
+						<ExamRow :exam="exame" class="bg-surface border-b hover:brightness-90" />
+					</template>
+				</tbody>
+			</table>
+		</main>
+	</div>
 </template>
