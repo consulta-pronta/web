@@ -7,9 +7,9 @@ const showFilters = ref(false)
 const showOrd = ref(false)
 
 interface Props {
-	filter?: boolean,
-	order?: boolean,
-	status?: 'location' | 'typing',
+	filter?: boolean
+	order?: boolean
+	status?: "location" | "typing"
 }
 
 const props = withDefaults(defineProps<Props>(), {

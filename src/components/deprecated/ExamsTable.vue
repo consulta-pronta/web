@@ -46,7 +46,9 @@ const props = defineProps<Props>()
 							{{ exame.nome }}
 						</td>
 
-						<td class="px-4 py-3 font-bold" v-if="props.paciente === true"> {{ exame.paciente }}</td>
+						<td class="px-4 py-3 font-bold" v-if="props.paciente === true">
+							{{ exame.paciente }}
+						</td>
 
 						<td class="px-4 py-3">{{ exame.local }}</td>
 

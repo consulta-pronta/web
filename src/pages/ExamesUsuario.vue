@@ -22,9 +22,15 @@ authStore.onReady(async (user) => {
 
 		<main class="w-full h-full overflow-clip px-6 py-8">
 			<header class="mb-16 flex flex-col gap-8">
-				<h1 class="text-4xl text-textLight font-bold text-center lg:text-start">Meus Exames</h1>
-				
-				<BaseInput placeholder="Pesquisar" icon="search" class="place-self-center w-full md:w-120" />
+				<h1 class="text-4xl text-textLight font-bold text-center lg:text-start">
+					Meus Exames
+				</h1>
+
+				<BaseInput
+					placeholder="Pesquisar"
+					icon="search"
+					class="place-self-center w-full md:w-120"
+				/>
 			</header>
 
 			<table class="text-textDark w-full *:*:*:p-3 rounded-xs overflow-clip">
@@ -39,11 +45,8 @@ authStore.onReady(async (user) => {
 					</tr>
 				</thead>
 				<tbody>
-					<template v-for="(exame) in exames" :key="exame.id">
-						<ExamRow
-							:exam="exame"
-							class="bg-surface border-b hover:brightness-90"
-						/>
+					<template v-for="exame in exames" :key="exame.id">
+						<ExamRow :exam="exame" class="bg-surface border-b hover:brightness-90" />
 					</template>
 				</tbody>
 			</table>
