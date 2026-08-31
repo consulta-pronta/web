@@ -3,39 +3,17 @@ import { ref } from "vue"
 import NavBar from "@/components/NavBar.vue"
 import BaseInput from "@/components/bases/BaseInput.vue"
 import { type Exam } from "@/models/examModel"
-import { Timestamp } from "firebase/firestore"
 import ExamRow from "@/components/ExamRow.vue"
+import { getExams } from "@/services/examService"
+import { useAuthStore } from "@/stores/authStore"
 
+const authStore = useAuthStore()
 
-const exames = ref<Exam[]>([
-	{
-		id: "1",
-		name: "Hemograma Completo",
-		category: "laboratorial",
-		type: "hemograma",
-		place: "Hospital Meridional",
-		date: Timestamp.fromMillis(Date.parse("10/05/2026")),
-		status: "liberado",
-	},
-	{
-		id: "2",
-		name: "Raio-X",
-		category: "imagem",
-		type: "radiografia",
-		place: "Hospital Meridional",
-		date: Timestamp.fromMillis(Date.parse("12/05/2026")),
-		status: "triagem",
-	},
-	{
-		id: "3",
-		name: "Exame de Urina",
-		category: "laboratorial",
-		type: "urina",
-		place: "Hospital Meridional",
-		date: Timestamp.fromMillis(Date.parse("01/05/1967")),
-		status: "triagem",
-	},
-])
+const exames = ref<Exam[]>([])
+
+authStore.onReady(async (user) => {
+	exames.value = await getExams(user.id)
+})
 </script>
 
 <template>
