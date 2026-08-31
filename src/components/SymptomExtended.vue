@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Symptom } from "@/services/symptomService";
+import type { Symptom } from "@/services/symptomService"
 
 const symptom = defineModel<Symptom | null>()
 </script>
@@ -18,13 +18,11 @@ const symptom = defineModel<Symptom | null>()
 		</details>
 
 		<p class="flex items-center text mt-1">
-			<span class="material-symbols-rounded text-base!">
-				calendar_month
-			</span>
+			<span class="material-symbols-rounded text-base!"> calendar_month </span>
 			{{ symptom?.date_time.toDate().toDateString() ?? "00/00/0000" }}
 		</p>
 
-		<hr class="mx-8 my-2">
+		<hr class="mx-8 my-2" />
 		<p class="italic">{{ symptom.description }}</p>
 		<p>Local: {{ symptom.place }}</p>
 		<p>Intensidade: {{ symptom.intensity }}/10</p>

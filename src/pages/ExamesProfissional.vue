@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import NavBar from '@/components/NavBar.vue';
 import ExamsTable from '@/components/ExamsTable.vue';
 import BaseButton from '@/components/BaseButton.vue';
-import FilterOrd from '@/components/FilterOrd.vue';
+import FilterOrd from '@/components/deprecated/FilterOrd.vue';
 
 const solicitacao = ref(false)
 const dropdownExameAberto = ref(false)

@@ -4,7 +4,16 @@ import { formatToCPF, formatToPhone } from "brazilian-values"
 import { onMounted, ref } from "vue"
 
 interface Props {
-	type?: "text" | "password" | "email" | "number" | "tel" | "date" | "time" | "cpf" | "datetime-local"
+	type?:
+		| "text"
+		| "password"
+		| "email"
+		| "number"
+		| "tel"
+		| "date"
+		| "time"
+		| "cpf"
+		| "datetime-local"
 	theme?: "dark" | "light"
 	mode?: "outline" | "fill" | "transparent"
 	placeholder?: string
@@ -23,7 +32,7 @@ const value = defineModel<string>()
 const colors = {
 	background: props.theme === "light" ? "surface" : "primary",
 	text: props.theme === "light" ? "textDark" : "textLight",
-	border: props.theme === "light" ?  "textLight" : "textDark"
+	border: props.theme === "light" ? "textLight" : "textDark",
 }
 let broski = ""
 switch (props.mode) {
@@ -40,7 +49,8 @@ switch (props.mode) {
 		break
 }
 
-const formatValue = (event) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const formatValue = (event: any) => {
 	switch (props.type) {
 		case "cpf":
 			value.value = formatToCPF(event.target.value)
@@ -67,14 +77,8 @@ onMounted(() => {
 </script>
 
 <template>
-	<label
-		class="flex items-center rounded-md px-4 gap-2 cursor-text"
-		:class="broski"
-	>
-		<span
-			class="material-symbols-rounded pointer-events-none select-none"
-			v-if="icon"
-		>
+	<label class="flex items-center rounded-md px-4 gap-2 cursor-text" :class="broski">
+		<span class="material-symbols-rounded pointer-events-none select-none" v-if="icon">
 			{{ icon }}
 		</span>
 

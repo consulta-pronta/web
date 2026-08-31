@@ -3,21 +3,19 @@ import { ref, type Ref } from "vue"
 import { useRouter } from "vue-router"
 
 import AuthBackground from "@/components/AuthBackground.vue"
-import BaseButton, { type ButtonState } from "@/components/BaseButton.vue"
-import BaseLogo from "@/components/BaseLogo.vue"
-import BaseInput from "@/components/BaseInput.vue"
+import BaseButton, { type ButtonState } from "@/components/bases/BaseButton.vue"
+import BaseLogo from "@/components/bases/BaseLogo.vue"
+import BaseInput from "@/components/bases/BaseInput.vue"
 import ToggleUser from "@/components/ToggleUser.vue"
 // import UserPhoto from "@/components/UserPhoto.vue"
 
 import { useSignUpStore } from "@/stores/signUpStore"
-
 
 const router = useRouter()
 const signUpStore = useSignUpStore()
 
 const buttonState: Ref<ButtonState> = ref("enabled")
 const showPasswordRules = ref(false)
-
 
 const submitForm = async () => {
 	buttonState.value = "sync"
@@ -37,48 +35,73 @@ const submitForm = async () => {
 	<AuthBackground>
 		<BaseLogo text complete />
 
-		<div class="w-1/2 box-border items-center justify-center flex flex-col">
-			<div class="text-[36px] text-surface font-bold mb-1">Crie uma Conta</div>
-			<div class="text-[16px] text-surface mb-3">Preencha seus dados para começar.</div>
+		<div class="lg:w-1/2 box-border items-center justify-center flex flex-col">
+			<div class="text-4xl sm:text-5xl xl:text-6xl text-surface font-bold mb-1">
+				Crie uma Conta
+			</div>
+			<div class="text-lg sm:text-xl xl:text-2xl text-surface mb-3">
+				Preencha seus dados para começar.
+			</div>
 
 			<!--form-->
 			<form
 				@submit.prevent="submitForm"
-				class="space-y-2 items-center justify-center flex flex-col w-116.25"
+				class="space-y-2 items-center justify-center flex flex-col p-4 w-100 sm:w-120 lg:w-120 xl:w-140"
 			>
 				<!-- <UserPhoto borderColor="accent"/> -->
 
 				<ToggleUser v-model="signUpStore.userType" class="mb-4" />
 
 				<BaseInput
-					type="text" placeholder="Nome" icon="person" theme="dark"
+					type="text"
+					placeholder="Nome"
+					icon="person"
+					theme="dark"
 					class="w-full"
-					v-model="signUpStore.name" required
+					v-model="signUpStore.name"
+					required
 				/>
 				<BaseInput
-					type="cpf" placeholder="CPF" icon="article" theme="dark"
+					type="cpf"
+					placeholder="CPF"
+					icon="article"
+					theme="dark"
 					class="w-full"
-					v-model="signUpStore.cpf" required
+					v-model="signUpStore.cpf"
+					required
 				/>
 				<BaseInput
-					type="email" placeholder="E-Mail" icon="email" theme="dark"
+					type="email"
+					placeholder="E-Mail"
+					icon="email"
+					theme="dark"
 					class="w-full"
-					v-model="signUpStore.email" required
+					v-model="signUpStore.email"
+					required
 				/>
 				<BaseInput
-					type="tel" placeholder="Telefone" icon="phone" theme="dark"
+					type="tel"
+					placeholder="Telefone"
+					icon="phone"
+					theme="dark"
 					class="w-full"
-					v-model="signUpStore.phone" required
+					v-model="signUpStore.phone"
+					required
 				/>
 				<div class="relative w-full">
 					<BaseInput
-						type="password" placeholder="Senha" icon="lock" theme="dark" 
-						v-model="signUpStore.password" required
-						@focusin="showPasswordRules = true" @focusout="showPasswordRules = false"
+						type="password"
+						placeholder="Senha"
+						icon="lock"
+						theme="dark"
+						v-model="signUpStore.password"
+						required
+						@focusin="showPasswordRules = true"
+						@focusout="showPasswordRules = false"
 					/>
 					<div
 						v-if="showPasswordRules"
-						class="absolute left-0 right-0 bottom-[130%] mx-auto w-64 bg-surface p-3 "
+						class="absolute left-0 right-0 bottom-[130%] mx-auto w-64 bg-surface p-3"
 					>
 						<p
 							v-for="(value, key) in signUpStore.rules"
@@ -87,31 +110,42 @@ const submitForm = async () => {
 							class="flex items-center gap-2 text-sm py-0.5"
 						>
 							<span class="material-symbols-rounded">
-								{{ value ? 'check_circle' : 'cancel' }}
+								{{ value ? "check_circle" : "cancel" }}
 							</span>
 							{{
-								key === "minLength" ? "Mínimo 8 caracteres" :
-								key === "hasNumber" ? "Pelo menos 1 número" :
-								key === "hasLowercase" ? "Pelo menos 1 letra minúscula" :
-								key === "hasUppercase" ? "Pelo menos 1 letra maiúscula" :
-								key === "match" ? "Senhas coincidem" :
-								key
+								key === "minLength"
+									? "Mínimo 8 caracteres"
+									: key === "hasNumber"
+										? "Pelo menos 1 número"
+										: key === "hasLowercase"
+											? "Pelo menos 1 letra minúscula"
+											: key === "hasUppercase"
+												? "Pelo menos 1 letra maiúscula"
+												: key === "match"
+													? "Senhas coincidem"
+													: key
 							}}
 						</p>
-						<span class="w-4 h-4 bg-surface absolute -bottom-2 left-0 right-0 mx-auto rotate-45"></span>
+						<span
+							class="w-4 h-4 bg-surface absolute -bottom-2 left-0 right-0 mx-auto rotate-45"
+						></span>
 					</div>
 				</div>
 
 				<BaseInput
-					type="password" placeholder="Confirmar senha" icon="lock" theme="dark"
+					type="password"
+					placeholder="Confirmar senha"
+					icon="lock"
+					theme="dark"
 					class="w-full"
-					v-model="signUpStore.confirmPassword" required
+					v-model="signUpStore.confirmPassword"
+					required
 				/>
 
 				<BaseButton
 					v-if="signUpStore.userType === 'profissional'"
 					type="button"
-					theme="dark"
+					theme="accent"
 					mode="transparent"
 					icon="article"
 					path="cadastroCRM"
@@ -120,16 +154,10 @@ const submitForm = async () => {
 					Enviar CRM ou E-CRM
 				</BaseButton>
 
-				<div>
-					<p class="text-textLight">
-						Li e aceito os <a href="" class="text-accent">Termos de Uso</a> e a
-						<a href="" class="text-accent">Política de Privacidade</a>
-					</p>
-				</div>
-
+				<br />
 				<BaseButton
 					type="submit"
-					theme="light"
+					theme="accent"
 					class="w-full justify-center"
 					v-model:state="buttonState"
 				>
