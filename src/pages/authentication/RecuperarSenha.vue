@@ -30,13 +30,13 @@ const bruh = ref('')
 
 <template>
 	<AuthBackground>
-		<BaseLogo text complete />
-		<main class="lg:w-1/2 box-border items-center justify-center flex flex-col relative">
+		<BaseLogo text complete class="p-8!" />
+		<main class="lg:w-1/2 box-border items-center justify-center flex flex-col lg:relative">
 			<BaseButton
 				theme="textLight"
 				mode="transparent"
 				icon="arrow_back"
-				class="absolute top-0 left-0 m-5"
+				class="lg:absolute lg:top-0 lg:left-0 mb-3 sm:m-5"
 				@click="voltar()"
 			>
 				<p class="text-3xl font-bold">Voltar</p>
@@ -45,13 +45,13 @@ const bruh = ref('')
 				<div class="text-4xl sm:text-5xl xl:text-6xl text-surface font-bold mb-1">
 					Recuperar senha
 				</div>
-				<div class="text-lg sm:text-xl xl:text-2xl text-surface mb-5">
+				<div class="text-lg sm:text-xl xl:text-2xl text-surface mb-5 text-center">
 					Siga os passos abaixo para recuperar sua senha.
 				</div>
 
-				<hr class="h-px border-0 bg-textLight w-140 my-3 mx-auto rounded-full" />
+				<hr class="h-px border-0 bg-textLight w-90 sm:w-120 xl:w-140 my-1 sm:my-3 mx-auto rounded-full" />
 
-				<form @submit.prevent="prosseguir"
+				<form @submit.prevent="prosseguir()"
 					class="space-y-2 items-center justify-center flex flex-col p-4 w-100 sm:w-120 lg:w-120 xl:w-140"
 				>
 					<section class="flex flex-col w-full justify-start gap-3 mb-6 text-accent">
