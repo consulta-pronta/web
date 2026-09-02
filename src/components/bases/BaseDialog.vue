@@ -16,10 +16,20 @@ const visible = ref(false)
 const toggle = () => {
 	visible.value = !visible.value
 }
+const hide = () => {
+	visible.value = false
+}
+const show = () => {
+	visible.value = true
+}
 
 const style = props.theme === "dark" ? "bg-primary text-textLight" : "bg-surface text-textDark"
 
-defineExpose({ toggle })
+defineExpose({
+	toggle,
+	hide,
+	show,
+})
 </script>
 
 <template>
