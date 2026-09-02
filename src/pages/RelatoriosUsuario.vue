@@ -1,13 +1,20 @@
 <script setup lang="ts">
 import BaseButton from '@/components/BaseButton.vue';
+import BaseInput from '@/components/BaseInput.vue'
 import NavBar from '@/components/NavBar.vue';
 import { ref } from 'vue';
 
 const Show = ref(false)
 
+const AddRelatorio = ref(false)
+
 
 function toggle() {
 	Show.value = !Show.value
+}
+
+function toggleAdicao() {
+	AddRelatorio.value = !AddRelatorio.value
 }
 
 
@@ -25,7 +32,7 @@ function toggle() {
 					<div class="flex flex-col items-center justify-center">
 
 						<section class="relative mb-3 w-full flex justify-center">
-							<BaseButton type="button" text="Adicionar Relatórios" icon="add_notes"></BaseButton>
+							<BaseButton type="button" text="Adicionar Relatórios" icon="add_notes" @click="toggleAdicao"></BaseButton>
 
 							<div class="relative flex items-center w-[42%] h-11 bg-surface rounded-sm mx-4">
 								<span class="material-symbols-rounded text-primarydark absolute left-3 pointer-events-none">
@@ -123,10 +130,105 @@ function toggle() {
 								</table>
 							</div>
 						</section>
+				</div>
+				<section v-if="AddRelatorio === true" class="dialog">
+					<form class="bg-background w-[45%] h-[95%] rounded-[25px] px-15 py-5 flex flex-col place-items-center relative">
+						<!--Seta de Retorno-->
+						<button type="button" @click="toggleAdicao">
+							<span class="material-symbols-rounded absolute left-0 text-[38px]! text-textLight ml-4 cursor-pointer">
+								arrow_back
+							</span>
+						</button>
+						<p class="text-textLight text-2xl text-semibold mb-2">
+							Gerar Relatório
+						</p>
+						<p class="text-textLight text-sm text-medium mb-1">
+							Gere um relatório completo do seus sintomas para compartilhar com seu médico.
+						</p>
+						<!--Barra de Pesquisa-->
+						<div class="relative flex items-center w-full h-11 bg-surface rounded-sm mx-4 my-3">
+							<span class="material-symbols-rounded text-primaryDark absolute left-3 pointer-events-none">
+								content_paste
+							</span>
+							<input type="text" placeholder="Título do Relatório" class="text-primaryDark placeholder-primaryDark w-full h-full outline-none pl-10 opacity-50"/>
+						</div>
+						<!--Data-->
+						<section class="w-full bg-surface rounded-md mb-3">
+							<article class="relative py-3">
+								<span class="material-symbols-rounded text-primaryDark absolute left-3 pointer-events-none">
+									calendar_today
+								</span>
+								<p class="text-primaryDark text-base text-semibold mb-1 pl-10">
+									Período
+								</p>
+							</article>
 
-					</div>
+							<article class="flex w-full mb-1">
+								<span class="flex-1 flex-col">
+									<p>
+										De:
+									</p>
+									<BaseInput type="date" name="data" bgColor="textLight" textColor="surface" px="0" class="opacity-50" />
+								</span>
+								<span class="flex-1 flex-col">
+									<p>
+										Até:
+									</p>
+									<BaseInput type="time" name="horario" bgColor="dark" textColor="surface" px="0" class="opacity-50" />
+								</span>
+							</article>
+						</section>
+						<!--Permissão de visualização-->
+						<div class="relative w-full mb-3">
+							<span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+								expand_more
+							</span>
+							<select name="intensidade" required class="w-full h-11 rounded-md bg-surface text-primaryDark px-4 appearance-none outline-none">
+								<option value="" disabled selected>
+									Profissionais que podem visualizar
+								</option>
+								<option value="1">1</option>
+								<option value="2">2</option>
+								<option value="3">3</option>
+								<option value="4">4</option>
+								<option value="5">5</option>
+								<option value="6">6</option>
+								<option value="7">7</option>
+								<option value="8">8</option>
+								<option value="9">9</option>
+								<option value="10">10</option>
+							</select>
+						</div>
+						<!--Visualizar sintomas incluídos-->
+						<BaseButton type="button" theme="dark" text="Visualizar Sintomas Incluídos" class="bg-primary w-full text-textLight mb-3"/>
+						<!--Resumo do Período-->
+						<section class="grid grid-cols-2 gap-4">
+							<div class="col-span-2">
+								<p class="text-textLight text-base text-bold mb-1">
+									Resumo do Período
+								</p>
+							</div>
 
+							<div>registro</div>
+							<div>intensidade</div>
+							<div>area afetada</div>
+
+						</section>
+					</form>
+				</section>
 			</div>
 		</article>
 	</main>
 </template>
+
+<style scoped>
+	@reference "@/assets/main.css";
+
+	.dialog {
+		@apply
+			absolute inset-0 w-full h-full
+			bg-black/80
+			flex justify-center place-items-center
+			z-50
+	}
+</style>
