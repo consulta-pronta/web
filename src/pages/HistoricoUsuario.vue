@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue"
+import { ref, useTemplateRef } from "vue"
 import NavBar from "@/components/NavBar.vue"
 import BaseButton from "@/components/bases/BaseButton.vue"
 import BaseInput from "@/components/bases/BaseInput.vue"
@@ -9,9 +9,10 @@ import SymptomCard from "@/components/cards/SymptomCard.vue"
 import { useAuthStore } from "@/stores/authStore"
 import { getAllSymptoms, type Symptom } from "@/services/symptomService"
 import SymptomExtended from "@/components/SymptomExtended.vue"
+import BaseDialog from "@/components/bases/BaseDialog.vue"
 
 const currentSymptom = ref<Symptom | null>(null)
-const registerFormVisible = ref(false)
+const formRegister = useTemplateRef("registerForm")
 const editar = ref(false)
 
 const authStore = useAuthStore()
@@ -30,16 +31,12 @@ const viewSymptom = (symptom: Symptom | null) => {
 	symptomsOn.value = !symptomsOn.value
 }
 
-const toggleRegisterForm = () => {
-	registerFormVisible.value = !registerFormVisible.value
-}
-
 function toggleEditar() {
 	editar.value = !editar.value
 }
 
 const handleSubmit = () => {
-	toggleRegisterForm()
+	formRegister.value!.toggle()
 	updateSymptoms(authStore.userData!.id)
 }
 </script>
@@ -73,7 +70,7 @@ const handleSubmit = () => {
 							icon="add"
 							iconPosition="right"
 							class="rounded-4xl!"
-							@click="toggleRegisterForm"
+							@click="formRegister?.toggle()"
 						>
 							Registrar Sintoma
 						</BaseButton>
@@ -138,29 +135,10 @@ const handleSubmit = () => {
 
 				<!-- Forms -->
 				<!-- Registrar -->
-				<section
-					v-show="registerFormVisible"
-					class="dialog"
-					@click.self="toggleRegisterForm"
-				>
-					<div class="w-150 p-10 bg-primary rounded-xl shadow-xl">
-						<header class="grid grid-cols-[min-content_1fr]">
-							<button
-								type="button"
-								class="cursor-pointer text-textLight"
-								@click="toggleRegisterForm"
-							>
-								<span class="material-symbols-rounded text-3xl!"> close </span>
-							</button>
+				<BaseDialog title="Registrar Sintoma" ref="registerForm">
+					<FormSintoma @handled-submit="handleSubmit" />
+				</BaseDialog>
 
-							<h2 class="text-2xl text-center font-semibold text-textLight">
-								Registrar Sintoma
-							</h2>
-						</header>
-
-						<FormSintoma class="mt-4" @handled-submit="handleSubmit" />
-					</div>
-				</section>
 				<!-- Editar -->
 				<div v-if="editar === true" class="dialog">
 					<form
