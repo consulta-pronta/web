@@ -27,13 +27,16 @@ const props = withDefaults(defineProps<Props>(), {
 	mode: "fill",
 })
 
-const inputTag = ref<HTMLInputElement>()
 const value = defineModel<string>()
+
+const inputTag = ref<HTMLInputElement>()
+
 const colors = {
 	background: props.theme === "light" ? "surface" : "primary",
 	text: props.theme === "light" ? "textDark" : "textLight",
 	border: props.theme === "light" ? "textLight" : "textDark",
 }
+
 let broski = ""
 switch (props.mode) {
 	case "outline":

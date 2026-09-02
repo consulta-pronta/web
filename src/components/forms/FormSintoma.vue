@@ -1,23 +1,72 @@
 <script setup lang="ts">
-import { ref } from "vue"
+import { ref, watch } from "vue"
 import BaseInput from "@/components/bases/BaseInput.vue"
 import BaseButton, { type ButtonState } from "@/components/bases/BaseButton.vue"
 import BaseSelect from "@/components/bases/BaseSelect.vue"
-import { useSymptomStore } from "@/stores/symptomStore.ts"
 import { useAuthStore } from "@/stores/authStore.ts"
+import {
+	createSymptom,
+	updateSymptom,
+	type Symptom,
+	type SymptomData,
+} from "@/services/symptomService"
+import { toInputValue } from "@feelinglovelynow/datetime-local"
+import { Timestamp } from "firebase/firestore"
+
+const props = defineProps<{
+	symptom?: Symptom | null
+}>()
+
+const authStore = useAuthStore()
 
 const buttonState = ref<ButtonState>("enabled")
+const symptomData = ref({
+	title: "",
+	description: "",
+	date_time: "",
+	place: "",
+	intensity: 0,
+
+	loadFrom(symptom: Symptom) {
+		this.title = symptom.title
+		this.description = symptom.description
+		this.date_time = toInputValue(symptom.date_time.toDate())
+		this.place = symptom.place
+		this.intensity = symptom.intensity
+	},
+
+	clear() {
+		this.title = ""
+		this.description = ""
+		this.date_time = ""
+		this.place = ""
+		this.intensity = 0
+	},
+})
+
 const emit = defineEmits(["handled-submit"])
 
 const locais = ["Abdomen", "Barriga", "Cabeça", "Costas", "Olhos", "Pés", "Pescoço"]
-const symptomStore = useSymptomStore()
-const authStore = useAuthStore()
 
 const registrarSintoma = async () => {
 	buttonState.value = "sync"
 
 	if (authStore.user) {
-		await symptomStore.submitForm(authStore.user.uid)
+		const id = authStore.user.uid
+		const { title, description, date_time, place, intensity } = symptomData.value
+		const data: SymptomData = {
+			title,
+			description,
+			date_time: Timestamp.fromDate(new Date(date_time)),
+			place,
+			intensity,
+		}
+
+		if (props.symptom) {
+			await updateSymptom(id, props.symptom.id, data)
+		} else {
+			await createSymptom(id, data)
+		}
 		emit("handled-submit", true)
 	} else {
 		emit("handled-submit", false)
@@ -25,6 +74,17 @@ const registrarSintoma = async () => {
 
 	buttonState.value = "enabled"
 }
+
+watch(
+	() => props.symptom,
+	(value) => {
+		if (value) {
+			symptomData.value.loadFrom(value)
+		} else {
+			symptomData.value.clear()
+		}
+	},
+)
 </script>
 
 <template>
@@ -33,7 +93,7 @@ const registrarSintoma = async () => {
 			<!-- <span class="text-red-400">*</span> -->
 			<p>O que você está sentindo?</p>
 			<BaseInput
-				v-model="symptomStore.title"
+				v-model="symptomData.title"
 				type="text"
 				placeholder="Resuma seus sintomas"
 				theme="light"
@@ -44,7 +104,7 @@ const registrarSintoma = async () => {
 		<label>
 			<p>Explique com mais detalhes</p>
 			<BaseInput
-				v-model="symptomStore.description"
+				v-model="symptomData.description"
 				name="descricao"
 				placeholder="Descreva seus sintomas com mais detalhes"
 				bgColor="textLight"
@@ -56,7 +116,7 @@ const registrarSintoma = async () => {
 			<p>Quando começou?</p>
 			<fieldset class="flex gap-4 w-full">
 				<BaseInput
-					v-model="symptomStore.date_time"
+					v-model="symptomData.date_time"
 					type="datetime-local"
 					theme="light"
 					class="grow"
@@ -68,7 +128,7 @@ const registrarSintoma = async () => {
 			<p>Em qual parte do corpo?</p>
 
 			<BaseSelect
-				v-model="symptomStore.place"
+				v-model="symptomData.place"
 				icon="location_on"
 				theme="light"
 				defaultValue="Localização"
@@ -85,7 +145,7 @@ const registrarSintoma = async () => {
 			<div class="flex flex-row gap-4 text-textLight w-full">
 				1
 				<input
-					v-model="symptomStore.intensity"
+					v-model="symptomData.intensity"
 					type="range"
 					min="1"
 					max="10"
@@ -116,7 +176,7 @@ const registrarSintoma = async () => {
 			</div>
 		</label>
 		<BaseButton type="submit" theme="accent" class="m-auto px-10" :state="buttonState">
-			Registrar Sintoma
+			{{ symptom ? "Atualizar Sintoma" : "Registrar Sintoma" }}
 		</BaseButton>
 	</form>
 </template>
