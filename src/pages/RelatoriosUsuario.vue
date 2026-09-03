@@ -8,6 +8,10 @@ const Show = ref(false)
 
 const AddRelatorio = ref(false)
 
+const registers = ref(1)
+
+const intensity = ref(6.7)
+
 
 function toggle() {
 	Show.value = !Show.value
@@ -16,7 +20,6 @@ function toggle() {
 function toggleAdicao() {
 	AddRelatorio.value = !AddRelatorio.value
 }
-
 
 </script>
 
@@ -153,7 +156,7 @@ function toggleAdicao() {
 							<input type="text" placeholder="Título do Relatório" class="text-primaryDark placeholder-primaryDark w-full h-full outline-none pl-10 opacity-50"/>
 						</div>
 						<!--Data-->
-						<section class="w-full bg-surface rounded-md mb-3">
+						<section class="w-full bg-surface rounded-md mb-4">
 							<article class="relative py-3">
 								<span class="material-symbols-rounded text-primaryDark absolute left-3 pointer-events-none">
 									calendar_today
@@ -163,23 +166,23 @@ function toggleAdicao() {
 								</p>
 							</article>
 
-							<article class="flex w-full mb-1">
+							<article class="flex w-full mb-1 gap-2 p-2">
 								<span class="flex-1 flex-col">
 									<p>
 										De:
 									</p>
-									<BaseInput type="date" name="data" bgColor="textLight" textColor="surface" px="0" class="opacity-50" />
+									<BaseInput type="date" name="data" theme="dark" class="brightness-80 rounded-lg" />
 								</span>
 								<span class="flex-1 flex-col">
 									<p>
 										Até:
 									</p>
-									<BaseInput type="time" name="horario" bgColor="dark" textColor="surface" px="0" class="opacity-50" />
+									<BaseInput type="time" name="horario" theme="dark" class="brightness-80 rounded-lg" />
 								</span>
 							</article>
 						</section>
 						<!--Permissão de visualização-->
-						<div class="relative w-full mb-3">
+						<div class="relative w-full mb-4">
 							<span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
 								expand_more
 							</span>
@@ -187,33 +190,69 @@ function toggleAdicao() {
 								<option value="" disabled selected>
 									Profissionais que podem visualizar
 								</option>
-								<option value="1">1</option>
-								<option value="2">2</option>
-								<option value="3">3</option>
-								<option value="4">4</option>
-								<option value="5">5</option>
-								<option value="6">6</option>
-								<option value="7">7</option>
-								<option value="8">8</option>
-								<option value="9">9</option>
-								<option value="10">10</option>
+								<option value="1">Cláudio Silva</option>
 							</select>
 						</div>
 						<!--Visualizar sintomas incluídos-->
-						<BaseButton type="button" theme="dark" text="Visualizar Sintomas Incluídos" class="bg-primary w-full text-textLight mb-3"/>
+						<BaseButton type="button" theme="dark" text="Visualizar Sintomas Incluídos" class="bg-primary w-full text-textLight mb-4 rounded-[25px]"/>
 						<!--Resumo do Período-->
-						<section class="grid grid-cols-2 gap-4">
+						<section class="grid grid-cols-2 gap-4 w-full text-textLight">
 							<div class="col-span-2">
-								<p class="text-textLight text-base text-bold mb-1">
+								<p class="text-textLight text-base font-bold">
 									Resumo do Período
 								</p>
 							</div>
 
-							<div>registro</div>
-							<div>intensidade</div>
-							<div>area afetada</div>
+							<div class="flex flex-col border border-textLight rounded-md p-5 text-center ">
 
+								<article class="flex justify-center text-center gap-1">
+									<span class="material-symbols-rounded">
+										book_4
+									</span>
+									<p>
+										{{ registers }}
+									</p>
+								</article>
+								<p class="text-base font-bold">
+									Registros
+								</p>
+
+							</div>
+
+							<div class="flex flex-col border border-textLight rounded-md p-5 text-center">
+								<article class="flex justify-center text-center gap-1">
+									<span class="material-symbols-rounded text-warning">
+										vital_signs
+									</span>
+									<p>
+										{{ intensity }}
+									</p>
+
+								</article>
+								<p class="text-base font-bold">
+									Intensidade Média
+								</p>
+							</div>
+
+							<div class="flex border border-textLight rounded-md p-3 col-span-2 justify-center gap-0.5">
+								<span class="flex material-symbols-rounded text-4xl! text-center text-sucess">
+									location_on
+								</span>
+								<article class="flex flex-col">
+									<p class="text-xs">
+										Área mais afetada
+									</p>
+									<p class="text-base font-bold">
+										Cabeça
+									</p>
+								</article>
+							</div>
 						</section>
+						<!--Botão-->
+						<BaseButton type="submit" icon="add_circle" class="mt-4 w-[80%] gap-1">Criar Relatório</BaseButton>
+						<!--Criar e Baixar-->
+						<BaseButton type="submit" icon="download" class="mt-4 w-[80%] bg-background! text-accent! gap-1">Criar e Baixar Relatório em PDF</BaseButton>
+
 					</form>
 				</section>
 			</div>
