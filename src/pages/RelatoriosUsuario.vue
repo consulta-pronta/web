@@ -2,11 +2,14 @@
 import BaseButton from '@/components/BaseButton.vue';
 import BaseInput from '@/components/BaseInput.vue'
 import NavBar from '@/components/NavBar.vue';
+import UserPhoto from '@/components/UserPhoto.vue';
 import { ref } from 'vue';
 
 const Show = ref(false)
 
 const AddRelatorio = ref(false)
+
+const VisuRelatorio = ref(false)
 
 const registers = ref(1)
 
@@ -19,6 +22,10 @@ function toggle() {
 
 function toggleAdicao() {
 	AddRelatorio.value = !AddRelatorio.value
+}
+
+function toggleVisu() {
+	VisuRelatorio.value = !VisuRelatorio.value
 }
 
 </script>
@@ -120,7 +127,7 @@ function toggleAdicao() {
 														</span>
 														Definir Senha
 													</button>
-													<button type="button" class="text-primaryDark cursor-pointer">
+													<button type="button" class="text-primaryDark cursor-pointer" @click="toggleVisu">
 														<span class="material-symbols-rounded text-sm!">
 															visibility
 														</span>
@@ -134,6 +141,8 @@ function toggleAdicao() {
 							</div>
 						</section>
 				</div>
+
+				<!--Layout Registro-->
 				<section v-if="AddRelatorio === true" class="dialog">
 					<form class="bg-background w-[45%] h-[95%] rounded-[25px] px-15 py-5 flex flex-col place-items-center relative">
 						<!--Seta de Retorno-->
@@ -149,7 +158,7 @@ function toggleAdicao() {
 							Gere um relatório completo do seus sintomas para compartilhar com seu médico.
 						</p>
 						<!--Barra de Pesquisa-->
-						<div class="relative flex items-center w-full h-11 bg-surface rounded-sm mx-4 my-3">
+						<div class="relative flex items-center w-full h-full bg-surface rounded-sm mx-4 my-3">
 							<span class="material-symbols-rounded text-primaryDark absolute left-3 pointer-events-none">
 								content_paste
 							</span>
@@ -157,7 +166,7 @@ function toggleAdicao() {
 						</div>
 						<!--Data-->
 						<section class="w-full bg-surface rounded-md mb-4">
-							<article class="relative py-3">
+							<article class="relative py-2">
 								<span class="material-symbols-rounded text-primaryDark absolute left-3 pointer-events-none">
 									calendar_today
 								</span>
@@ -166,7 +175,7 @@ function toggleAdicao() {
 								</p>
 							</article>
 
-							<article class="flex w-full mb-1 gap-2 p-2">
+							<article class="flex w-full mb-1 gap-2 px-2">
 								<span class="flex-1 flex-col">
 									<p>
 										De:
@@ -182,7 +191,7 @@ function toggleAdicao() {
 							</article>
 						</section>
 						<!--Permissão de visualização-->
-						<div class="relative w-full mb-4">
+						<div class="relative w-full mb-3">
 							<span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
 								expand_more
 							</span>
@@ -194,9 +203,9 @@ function toggleAdicao() {
 							</select>
 						</div>
 						<!--Visualizar sintomas incluídos-->
-						<BaseButton type="button" theme="dark" text="Visualizar Sintomas Incluídos" class="bg-primary w-full text-textLight mb-4 rounded-[25px]"/>
+						<BaseButton type="button" theme="dark" text="Visualizar Sintomas Incluídos" class="bg-primary w-full text-textLight mb-3 rounded-[25px]"/>
 						<!--Resumo do Período-->
-						<section class="grid grid-cols-2 gap-4 w-full text-textLight">
+						<section class="grid grid-cols-2 gap-2 w-full text-textLight">
 							<div class="col-span-2">
 								<p class="text-textLight text-base font-bold">
 									Resumo do Período
@@ -252,6 +261,95 @@ function toggleAdicao() {
 						<BaseButton type="submit" icon="add_circle" class="mt-4 w-[80%] gap-1">Criar Relatório</BaseButton>
 						<!--Criar e Baixar-->
 						<BaseButton type="submit" icon="download" class="mt-4 w-[80%] bg-background! text-accent! gap-1">Criar e Baixar Relatório em PDF</BaseButton>
+					</form>
+				</section>
+				<!--Fim Layout Registro-->
+
+
+				<section v-if="VisuRelatorio === true" class="dialog">
+					<form class="bg-background w-[45%] h-[95%] rounded-[25px] px-10 py-6">
+						<article class="max-h-full overflow-hidden flex flex-col border border-textLight w-full h-full relative rounded-2xl scrollbar-track-transparent scrollbar-thumb-accent">
+							<!--Seta de Retorno-->
+							<button type="button" @click="toggleVisu">
+								<span class="material-symbols-rounded absolute left-0 text-[30px]! text-textLight m-3 cursor-pointer">
+									arrow_back
+								</span>
+							</button>
+
+							<!--Textos-->
+							<p class="text-textLight text-2xl font-bold mx-4 mt-10">
+								Dor Constante
+							</p>
+							<p class="text-textLight text-base font-light italic mx-4">
+								Relatório: ID51966
+							</p>
+							<span class="flex">
+								<p class="text-textLight text-base font-bold mx-4">
+									Período:
+								</p>
+								<p class="text-textLight text-base font-bold mx-0.5">
+									10 de abr 2026 a 18 abr 2026
+								</p>
+							</span>
+							<span class="flex">
+								<p class="text-textLight text-base font-bold mx-4">
+									Duração:
+								</p>
+								<p class="text-textLight text-base font-bold mx-0.5">
+									8 dias (20 dias)
+								</p>
+							</span>
+
+							<!--Paciente-->
+							<section class="flex just mx-3 mt-3">
+								<UserPhoto/>
+								<article class="flex flex-col justify-center mx-4">
+									<p class="text-textLight text-base font-bold">
+										Cláudio Silva
+									</p>
+									<p class="text-textLight text-xs">
+										claudiosilva213@email.com
+									</p>
+									<p class="text-textLight text-xs">
+										(27) 99722-3725
+									</p>
+								</article>
+							</section>
+
+							<!--Informações-->
+							<p class="text-textLight text-xl font-bold mx-4 mt-2">
+								Resumo Geral
+							</p>
+							<section class="grid grid-cols-2 gap-2 mx-4 mt-1 w-[95%] h-[18%] text-background">
+								<div class="bg-surface rounded-xl flex flex-col p-2.5">
+									<p class="text-sm font-medium">
+										Sintoma mais comum:
+									</p>
+									<p class="text-xl font-bold">
+										Dor nas costas
+									</p>
+									<p class="text-sm font-medium">
+										2 semanas
+									</p>
+									<div class="flex bg-error rounded-3xl text-surface mt-1 w-[55%] h-[25%] items-center">
+										<span class="material-symbols-rounded text-xs! mx-1.5">
+											warning
+										</span>
+										<p>
+											Prioridade Alta
+										</p>
+									</div>
+								</div>
+
+								<div class="bg-surface rounded-xl">
+									aaaa
+								</div>
+							</section>
+
+							<!--Cronologia-->
+
+
+						</article>
 
 					</form>
 				</section>
