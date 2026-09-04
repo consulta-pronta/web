@@ -1,43 +1,53 @@
 <script setup lang="ts">
-import { ref } from "vue"
+import { ref, watch } from "vue"
 import { useRouter } from "vue-router"
-
 import AuthBackground from "@/components/AuthBackground.vue"
 import BaseButton from "@/components/bases/BaseButton.vue"
 import BaseInput from "@/components/bases/BaseInput.vue"
 import BaseLogo from "@/components/bases/BaseLogo.vue"
+import { auth } from "@/config/firebase"
+import { sendPasswordResetEmail } from "firebase/auth"
 
 const router = useRouter()
 
-const passo = ref(1)
-const prosseguir = () => {
-	if (passo.value === 3) {
-		router.push("login")
-	}
-	passo.value++
-}
+const step = ref(1)
+const email = ref("")
 
-const voltar = () => {
-	if (passo.value === 1) {
-		router.push("login")
-	}
-	passo.value--
+const steps = 4
+
+const actions = {
+	0: () => { router.push("login") },
+	1: () => {
+		// NOT COMPLETE
+		sendPasswordResetEmail(auth, email.value, {
+			url: `${import.meta.env.VITE_APP_URL}`,
+			handleCodeInApp: true
+		})
+	},
+	2: () => {},
+	3: () => {},
+	4: () => { router.push("login") }
 }
+  
+watch(step, (value) => {
+	const callback = actions[value as keyof typeof actions]
+	if (callback) { callback() }
+})
 
 // Excluir depois, só pra n ficar com codigo vermelho
-const bruh = ref('')
+const bruh = ref("")
 </script>
 
 <template>
 	<AuthBackground>
-		<BaseLogo text complete class="p-8!" />
+		<BaseLogo text complete />
 		<main class="lg:w-1/2 box-border items-center justify-center flex flex-col lg:relative">
 			<BaseButton
 				theme="textLight"
 				mode="transparent"
 				icon="arrow_back"
 				class="lg:absolute lg:top-0 lg:left-0 mb-3 sm:m-5"
-				@click="voltar()"
+				@click="step--"
 			>
 				<p class="text-3xl font-bold">Voltar</p>
 			</BaseButton>
@@ -49,48 +59,45 @@ const bruh = ref('')
 					Siga os passos abaixo para recuperar sua senha.
 				</div>
 
-				<hr class="h-px border-0 bg-textLight w-90 sm:w-120 xl:w-140 my-1 sm:my-3 mx-auto rounded-full" />
+				<hr
+					class="h-px border-0 bg-textLight w-90 sm:w-120 xl:w-140 my-1 sm:my-3 mx-auto rounded-full"
+				/>
 
-				<form @submit.prevent="prosseguir()"
+				<form
+					@submit.prevent="step++"
 					class="space-y-2 items-center justify-center flex flex-col p-4 w-100 sm:w-120 lg:w-120 xl:w-140"
 				>
 					<section class="flex flex-col w-full justify-start gap-3 mb-6 text-accent">
-						<p :class="passo !== 1 ? 'opacity-70' : ''">
-							1. Digite seu e-mail
-						</p>
-						<p v-if="passo >= 2" :class="passo !== 2 ? 'opacity-70' : ''">
+						<p :class="step !== 1 ? 'opacity-70' : ''">1. Digite seu e-mail</p>
+						<p v-if="step >= 2" :class="step !== 2 ? 'opacity-70' : ''">
 							2. Digite o código enviado por e-mail
 						</p>
-						<p v-if="passo == 3">
-							3. Digite sua nova senha
-						</p>
+						<p v-if="step == 3">3. Digite sua nova senha</p>
 					</section>
 
 					<BaseInput
-						v-if="passo === 1"
+						v-if="step === 1"
 						type="email"
 						theme="dark"
 						placeholder="Email"
 						icon="email"
 						class="w-full"
 						required
+						v-model="email"
 					/>
 
-					<section v-if="passo === 2" class="flex justify-center items-center gap-3">
+					<section v-if="step === 2" class="flex justify-center items-center gap-3">
 						<input
 							v-for="n in 6"
 							:key="n"
 							type="text"
 							required
 							class="w-full h-30 text-4xl text-textLight bg-primaryDark outline-2 outline-primary rounded-2xl p-3 text-center"
-						>
+						/>
 					</section>
 
 					<!-- Trocar para uma store de recuperar senha (Rafael) -->
-					<div
-						v-if="passo === 3"
-						class="relative w-full"
-					>
+					<div v-if="step === 3" class="relative w-full">
 						<BaseInput
 							type="password"
 							placeholder="Senha"
@@ -135,7 +142,7 @@ const bruh = ref('')
 					</div>
 
 					<BaseInput
-						v-if="passo === 3"
+						v-if="step === 3"
 						type="password"
 						placeholder="Confirmar senha"
 						icon="lock"
@@ -145,13 +152,9 @@ const bruh = ref('')
 						required
 					/>
 
-					<br>
+					<br />
 
-					<BaseButton
-						type="submit"
-						theme="accent"
-						class="justify-center w-full mt-4"
-					>
+					<BaseButton type="submit" theme="accent" class="justify-center w-full mt-4">
 						Prosseguir
 					</BaseButton>
 				</form>
