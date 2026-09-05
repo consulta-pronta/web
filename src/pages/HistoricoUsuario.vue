@@ -61,6 +61,7 @@ authStore.onReady(async (data) => {
 						></BaseInput>
 
 						<!--Botão de registrar sintoma-->
+						<BaseButton theme="dark" mode="outline" text="Registrar Sintoma" icon="add" class="rounded-4xl!" @click="toggleRegisterForm" />
 						<BaseButton
 							theme="accent"
 							type="button"
@@ -113,30 +114,13 @@ authStore.onReady(async (data) => {
 					</template>
 
 					<!-- Details -->
-					<section
-						class="grow w-fit h-full flex flex-col items-start"
-						v-show="currentSymptom"
-					>
-						<header class="w-full flex flex-row justify-between">
-							<button
-								type="button"
-								class="cursor-pointer text-textLight"
-								@click="viewSymptom(null)"
-							>
-								<span class="material-symbols-rounded text-3xl!"> arrow_back </span>
-							</button>
+					<section class="grow h-full flex flex-col items-start" v-show="currentSymptom">
+						<button type="button" class="cursor-pointer text-textLight" @click="viewSymptom(null)">
+							<span class="material-symbols-rounded text-3xl!">
+								arrow_back
+							</span>
+						</button>
 
-							<BaseButton
-								theme="accent"
-								icon="edit_document"
-								class="gap-3"
-								@click.prevent="formUpdate!.show()"
-							>
-								<p>Atualizar sintoma</p>
-							</BaseButton>
-						</header>
-
-						<br />
 						<SymptomExtended
 							v-model="currentSymptom"
 							ref="areaDescription"
