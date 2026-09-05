@@ -52,20 +52,25 @@ const router = createRouter({
 		{
 			path: "/historico-sintomas",
 			name: "historico-sintomas",
+			alias: ["/historico", "/sintomas"],
 			component: () => import("@/pages/HistoricoUsuario.vue"),
 			meta: {
 				roles: ["paciente"],
 			},
 		},
 		{
+			path: "/:catchAll(.*)",
+			name: "not-found",
+			component: () => import("@/pages/NotFound.vue"),
+		},
+		{
 			path: "/relatorios",
-			name: "relatorios-usuario",
-			alias: ["/relatorios", "/relatoriosUsuario"],
+			name: "relatorios",
 			component: () => import("@/pages/RelatoriosUsuario.vue"),
 			meta: {
 				roles: ["paciente"],
 			},
-		}
+		},
 	],
 })
 

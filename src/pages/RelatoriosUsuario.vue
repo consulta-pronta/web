@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import BaseButton from '@/components/BaseButton.vue';
-import BaseInput from '@/components/BaseInput.vue'
+import BaseButton from '@/components/bases/BaseButton.vue';
+import BaseInput from '@/components/bases/BaseInput.vue'
 import NavBar from '@/components/NavBar.vue';
 import UserPhoto from '@/components/UserPhoto.vue';
 import { ref } from 'vue';
@@ -70,7 +70,7 @@ function togglePermissao() {
 								<input type="text" placeholder="Pesquisar" class="text-primaryDark placeholder-primaryDark w-full h-full outline-none pl-10"/>
 							</div>
 
-							<BaseButton type="button" theme="dark" text="Exportar Relatórios" icon="download" class="text-textLight"></BaseButton>
+							<BaseButton type="button" theme="primary" text="Exportar Relatórios" icon="download" class="text-textLight"></BaseButton>
 
 						</section>
 
@@ -222,7 +222,7 @@ function togglePermissao() {
 						</div>
 						<!--Visualizar sintomas incluídos-->
 						<div class="flex w-full h-11">
-							<BaseButton type="button" theme="dark" text="Visualizar Sintomas Incluídos" class="bg-primary w-full h-11! text-textLight mb-3 rounded-[25px]"/>
+							<BaseButton type="button" theme="primary" text="Visualizar Sintomas Incluídos" class="bg-primary w-full h-11! text-textLight mb-3 rounded-[25px]"/>
 						</div>
 						<!--Resumo do Período-->
 						<section class="grid grid-cols-2 gap-2 w-full text-textLight">

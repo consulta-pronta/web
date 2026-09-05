@@ -102,7 +102,7 @@ const openMobile = () => {
 				<BaseButton v-bind="sharedAttributes" goto="#" icon="medical_services">
 					<p>Consultas</p>
 				</BaseButton>
-				<BaseButton v-bind="sharedAttributes" goto="#" icon="assignment">
+				<BaseButton v-bind="sharedAttributes" goto="/relatorios" icon="assignment">
 					<p>Relatórios</p>
 				</BaseButton>
 			</nav>
