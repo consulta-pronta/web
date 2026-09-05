@@ -11,6 +11,12 @@ const AddRelatorio = ref(false)
 
 const VisuRelatorio = ref(false)
 
+const AddRenomear = ref(false)
+
+const AddSenha = ref(false)
+
+const AddPermissao = ref(false)
+
 const registers = ref(1)
 
 const intensity = ref(6.7)
@@ -26,6 +32,18 @@ function toggleAdicao() {
 
 function toggleVisu() {
 	VisuRelatorio.value = !VisuRelatorio.value
+}
+
+function toggleName() {
+	AddRenomear.value = !AddRenomear.value
+}
+
+function togglePassword() {
+	AddSenha.value = !AddSenha.value
+}
+
+function togglePermissao() {
+	AddPermissao.value = !AddPermissao.value
 }
 
 </script>
@@ -103,13 +121,13 @@ function toggleVisu() {
 														</span>
 														Baixar Relatório
 													</button>
-													<button type="button" class="text-primaryDark cursor-pointer">
+													<button type="button" class="text-primaryDark cursor-pointer" @click="togglePermissao">
 														<span class="material-symbols-rounded text-sm!">
 															shield_toggle
 														</span>
 														Profissionais Permitidos
 													</button>
-													<button type="button" class="text-primaryDark cursor-pointer">
+													<button type="button" class="text-primaryDark cursor-pointer" @click="toggleName">
 														<span class="material-symbols-rounded text-sm!">
 															edit_square
 														</span>
@@ -121,7 +139,7 @@ function toggleVisu() {
 														</span>
 														Apagar Relatório
 													</button>
-													<button type="button" class="text-primaryDark cursor-pointer">
+													<button type="button" class="text-primaryDark cursor-pointer" @click="togglePassword">
 														<span class="material-symbols-rounded text-sm!">
 															lock
 														</span>
@@ -154,18 +172,18 @@ function toggleVisu() {
 						<p class="text-textLight text-2xl text-semibold mb-2">
 							Gerar Relatório
 						</p>
-						<p class="text-textLight text-sm text-medium mb-1">
+						<p class="text-textLight text-sm text-medium">
 							Gere um relatório completo do seus sintomas para compartilhar com seu médico.
 						</p>
 						<!--Barra de Pesquisa-->
-						<div class="relative flex items-center w-full h-full bg-surface rounded-sm mx-4 my-3">
+						<div class="relative flex items-center w-full h-11 bg-surface rounded-sm mx-2 my-3">
 							<span class="material-symbols-rounded text-primaryDark absolute left-3 pointer-events-none">
 								content_paste
 							</span>
-							<input type="text" placeholder="Título do Relatório" class="text-primaryDark placeholder-primaryDark w-full h-full outline-none pl-10 opacity-50"/>
+							<input type="text" placeholder="Título do Relatório" class="text-primaryDark placeholder-primaryDark w-full h-11 outline-none pl-10 opacity-50"/>
 						</div>
 						<!--Data-->
-						<section class="w-full bg-surface rounded-md mb-4">
+						<section class="w-full bg-surface rounded-md mb-2">
 							<article class="relative py-2">
 								<span class="material-symbols-rounded text-primaryDark absolute left-3 pointer-events-none">
 									calendar_today
@@ -191,7 +209,7 @@ function toggleVisu() {
 							</article>
 						</section>
 						<!--Permissão de visualização-->
-						<div class="relative w-full mb-3">
+						<div class="relative w-full mb-2">
 							<span class="material-symbols-rounded absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
 								expand_more
 							</span>
@@ -203,7 +221,9 @@ function toggleVisu() {
 							</select>
 						</div>
 						<!--Visualizar sintomas incluídos-->
-						<BaseButton type="button" theme="dark" text="Visualizar Sintomas Incluídos" class="bg-primary w-full text-textLight mb-3 rounded-[25px]"/>
+						<div class="flex w-full h-11">
+							<BaseButton type="button" theme="dark" text="Visualizar Sintomas Incluídos" class="bg-primary w-full h-11! text-textLight mb-3 rounded-[25px]"/>
+						</div>
 						<!--Resumo do Período-->
 						<section class="grid grid-cols-2 gap-2 w-full text-textLight">
 							<div class="col-span-2">
@@ -258,9 +278,9 @@ function toggleVisu() {
 							</div>
 						</section>
 						<!--Botão-->
-						<BaseButton type="submit" icon="add_circle" class="mt-4 w-[80%] gap-1">Criar Relatório</BaseButton>
+						<BaseButton type="submit" icon="add_circle" class="mt-2 w-[80%] gap-1">Criar Relatório</BaseButton>
 						<!--Criar e Baixar-->
-						<BaseButton type="submit" icon="download" class="mt-4 w-[80%] bg-background! text-accent! gap-1">Criar e Baixar Relatório em PDF</BaseButton>
+						<BaseButton type="submit" icon="download" class="mt-2 w-[80%] bg-background! text-accent! gap-1">Criar e Baixar Relatório em PDF</BaseButton>
 					</form>
 				</section>
 				<!--Fim Layout Registro-->
@@ -268,16 +288,16 @@ function toggleVisu() {
 
 				<section v-if="VisuRelatorio === true" class="dialog">
 					<form class="bg-background w-[45%] h-[95%] rounded-[25px] px-10 py-6">
-						<article class="max-h-full overflow-hidden flex flex-col border border-textLight w-full h-full relative rounded-2xl scrollbar-track-transparent scrollbar-thumb-accent">
+						<article class=" overflow-y-auto flex flex-col border border-textLight w-full h-full relative rounded-2xl scrollbar-hide">
 							<!--Seta de Retorno-->
-							<button type="button" @click="toggleVisu">
-								<span class="material-symbols-rounded absolute left-0 text-[30px]! text-textLight m-3 cursor-pointer">
+							<button type="button" @click="toggleVisu" class="flex justify-start sticky top-0 left z-50 self-start cursor-pointer bg-background w-full">
+								<span class="material-symbols-rounded text-[30px]! w-fit text-textLight m-3 cursor-pointer">
 									arrow_back
 								</span>
 							</button>
 
 							<!--Textos-->
-							<p class="text-textLight text-2xl font-bold mx-4 mt-10">
+							<p class="text-textLight text-2xl font-bold mx-4">
 								Dor Constante
 							</p>
 							<p class="text-textLight text-base font-light italic mx-4">
@@ -287,7 +307,7 @@ function toggleVisu() {
 								<p class="text-textLight text-base font-bold mx-4">
 									Período:
 								</p>
-								<p class="text-textLight text-base font-bold mx-0.5">
+								<p class="text-textLight text-base font-normal mx-0.5">
 									10 de abr 2026 a 18 abr 2026
 								</p>
 							</span>
@@ -295,7 +315,7 @@ function toggleVisu() {
 								<p class="text-textLight text-base font-bold mx-4">
 									Duração:
 								</p>
-								<p class="text-textLight text-base font-bold mx-0.5">
+								<p class="text-textLight text-base font-normal mx-0.5">
 									8 dias (20 dias)
 								</p>
 							</span>
@@ -341,18 +361,238 @@ function toggleVisu() {
 									</div>
 								</div>
 
-								<div class="bg-surface rounded-xl">
-									aaaa
+								<div class="flex flex-col bg-surface text-background rounded-xl p-2.5">
+									<span class="flex">
+										<p class="text-base font-bold mx-4">
+											10/04:
+										</p>
+										<p class="text-error text-base font-normal mx-0.5">
+											8 de intensidade
+										</p>
+									</span>
+									<span class="flex">
+										<p class="text-base font-bold mx-4">
+											12/04:
+										</p>
+										<p class="text-sucess text-base font-normal mx-0.5">
+											4 de intensidade
+										</p>
+									</span>
+									<span class="flex">
+										<p class="text-base font-bold mx-4">
+											14/04:
+										</p>
+										<p class="text-warning text-base font-normal mx-0.5">
+											5 de intensidade
+										</p>
+									</span>
 								</div>
 							</section>
 
 							<!--Cronologia-->
+							<p class="text-textLight text-xl font-bold mx-4 mt-2">
+								Cronologia do Sintoma
+							</p>
 
+							<section class="flex flex-col p-4 max-h-full">
 
+								<div class="flex">
+									<article class="flex flex-col justify-center items-center w-[10%]">
+										<div class="flex justify-center items-center">
+											<span class="material-symbols-rounded bg-primaryLight text-background rounded-full">
+												vital_signs
+											</span>
+										</div>
+										<hr class="flex-1 w-px bg-primaryLight border-0">
+									</article>
+									<article class="flex flex-col w-[90%] h-[90%] bg-surface text-background rounded-lg p-3">
+										<p class="text-lg font-bold">
+											Dor nas costas ao levantar peso
+										</p>
+										<p class="text-sm font-medium">
+											(16 abr. 2026)
+										</p>
+										<p class="text-sm font-medium">
+											- Intensidade 6/10; "Começa a doer um pouco despois de eu levantar, mas para de doer em pouco tempo."
+										</p>
+									</article>
+								</div>
+
+								<div class="flex">
+									<article class="flex flex-col justify-center items-center w-[10%]">
+										<div class="flex justify-center items-center">
+											<span class="material-symbols-rounded bg-primaryLight text-background rounded-full">
+												vital_signs
+											</span>
+										</div>
+										<hr class="flex-1 w-px bg-primaryLight border-0">
+									</article>
+									<article class="flex flex-col w-[90%] h-[90%] bg-surface text-background rounded-lg p-3">
+										<p class="text-lg font-bold">
+											Dor nas costas ao levantar peso
+										</p>
+										<p class="text-sm font-medium">
+											(16 abr. 2026)
+										</p>
+										<p class="text-sm font-medium">
+											- Intensidade 6/10; "Começa a doer um pouco despois de eu levantar, mas para de doer em pouco tempo."
+										</p>
+									</article>
+								</div>
+
+								<div class="flex">
+									<article class="flex flex-col justify-center items-center w-[10%]">
+										<div class="flex justify-center items-center">
+											<span class="material-symbols-rounded bg-primaryLight text-background rounded-full">
+												vital_signs
+											</span>
+										</div>
+										<hr class="flex-1 w-px bg-primaryLight border-0">
+									</article>
+									<article class="flex flex-col w-[90%] h-[90%] bg-surface text-background rounded-lg p-3">
+										<p class="text-lg font-bold">
+											Dor nas costas ao levantar peso
+										</p>
+										<p class="text-sm font-medium">
+											(16 abr. 2026)
+										</p>
+										<p class="text-sm font-medium">
+											- Intensidade 6/10; "Começa a doer um pouco despois de eu levantar, mas para de doer em pouco tempo."
+										</p>
+									</article>
+								</div>
+
+								<!--Visão geral-->
+								<p class="text-textLight text-xl font-bold mx-4 mt-2">
+									Visão Geral
+								</p>
+
+								<article class="flex justify-center w-full">
+									<table class="w-[95%] border-separate border-spacing-0.5">
+										<thead class="gap-0.5 text-background font-semibold">
+											<tr>
+												<th class="bg-surface">Sintoma</th>
+												<th class="bg-surface">Duração</th>
+												<th class="bg-surface">Ocorrência</th>
+											</tr>
+										</thead>
+										<tbody class="gap-0.5 text-background">
+											<tr>
+												<th class="bg-textLight">Dor nas Costas</th>
+												<th class="bg-textLight">20 dias</th>
+												<th class="bg-textLight">9 Ocorrências</th>
+											</tr>
+											<tr>
+												<th class="bg-textLight">Estômago Ardendo</th>
+												<th class="bg-textLight">4 dias</th>
+												<th class="bg-textLight">3 Ocorrências</th>
+											</tr>
+										</tbody>
+									</table>
+								</article>
+							</section>
+						</article>
+					</form>
+				</section>
+
+				<!--Renomear-->
+				<section v-if="AddRenomear === true" class="dialog">
+					<form class="bg-primary w-[45%] h-[30%] rounded-[25px] px-15 py-5 flex flex-col place-items-center relative">
+						<button type="button" @click="toggleName">
+							<span class="material-symbols-rounded absolute left-0 text-[38px]! text-textLight ml-4 cursor-pointer">
+								arrow_back
+							</span>
+						</button>
+						<p class="text-textLight text-2xl text-semibold mb-6">
+							Renomear Relatório
+						</p>
+
+						<div class="relative flex items-center w-full h-11 bg-surface rounded-sm mx-4 mb-4">
+							<span class="material-symbols-rounded text-primarydark absolute left-3 pointer-events-none">
+								edit_square
+							</span>
+							<input type="text" placeholder="Nome" class="text-primaryDark placeholder-primaryDark w-full h-full outline-none pl-10"/>
+						</div>
+
+						<BaseButton type="submit" class="mt-2 w-[60%] gap-1">Mudar Nome</BaseButton>
+
+					</form>
+				</section>
+
+				<!--Mudar Senha-->
+				<section v-if="AddSenha === true" class="dialog">
+					<form class="bg-primary w-[45%] h-[35%] rounded-[25px] px-15 py-5 flex flex-col place-items-center relative">
+						<button type="button" @click="togglePassword">
+							<span class="material-symbols-rounded absolute left-0 text-[38px]! text-textLight ml-4 cursor-pointer">
+								arrow_back
+							</span>
+						</button>
+						<p class="text-textLight text-2xl text-semibold mb-6">
+							Digite sua nova senha
+						</p>
+
+						<div class="relative flex items-center w-full h-11 bg-surface rounded-sm mx-4 mb-2">
+							<span class="material-symbols-rounded text-primaryDark absolute left-3 pointer-events-none">
+								lock
+							</span>
+							<input type="password" placeholder="Senha" class="text-primaryDark placeholder-primaryDark w-full h-full outline-none pl-10"/>
+						</div>
+						<div class="relative flex items-center w-full h-11 bg-surface rounded-sm mx-4 mb-4">
+							<span class="material-symbols-rounded text-primaryDark absolute left-3 pointer-events-none">
+								lock
+							</span>
+							<input type="password" placeholder="Digite Novamente" class="text-primaryDark placeholder-primaryDark w-full h-full outline-none pl-10"/>
+						</div>
+
+						<BaseButton type="submit" class="mt-2 w-[60%] gap-1">Mudar Senha</BaseButton>
+
+					</form>
+				</section>
+
+				<section v-if="AddPermissao === true" class="dialog">
+					<form class="bg-primary w-[45%] h-[35%] rounded-[25px] px-10 py-5 flex flex-col relative">
+						<!-- Seta de retorno -->
+						<button type="button" @click="togglePermissao">
+							<span class="material-symbols-rounded absolute left-0 top-0 text-[30px]! text-textLight m-4 cursor-pointer" >
+								arrow_back
+							</span>
+						</button>
+
+						<!-- Título -->
+						<div class="flex flex-col items-center mb-3">
+							<span class="material-symbols-rounded text-[30px]! text-textLight">
+								admin_panel_settings
+							</span>
+							<p class="text-textLight text-xl font-semibold">
+								Permissões de visualização
+							</p>
+						</div>
+
+						<!-- Permissões -->
+						<div class="flex flex-col gap-2 w-full">
+							<label class="flex items-center w-full h-11 bg-surface rounded-md px-3 cursor-pointer">
+								<input type="checkbox" class="w-4 h-4 mr-3 accent-primary"/>
+								<span class="text-primaryDark text-sm">
+									Dra. Cláudia Leite
+								</span>
+							</label>
+
+							<label class="flex items-center w-full h-11 bg-surface rounded-md px-3 cursor-pointer">
+								<input type="checkbox" class="w-4 h-4 mr-3 accent-primary"/>
+								<span class="text-primaryDark text-sm">
+									Dr. Auzio Varella
+								</span>
+							</label>
+
+						</div>
+
+						<article class="flex justify-center">
+							<BaseButton type="submit" class="mt-2 w-[60%] gap-1">Salvar</BaseButton>
 						</article>
 
 					</form>
 				</section>
+
 			</div>
 		</article>
 	</main>
