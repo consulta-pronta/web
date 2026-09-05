@@ -15,21 +15,20 @@ const router = createRouter({
 		{
 			path: "/",
 			name: "root",
-			component: () => import("@/pages/LandingPage.vue")
+			component: () => import("@/pages/LandingPage.vue"),
 		},
 		{
 			path: "/cadastro",
 			name: "cadastro",
-			component: () => import("@/pages/CadastroUsuario.vue"),
+			component: () => import("@/pages/authentication/CadastroUsuario.vue"),
 			meta: {
 				roles: [],
 			},
-
 		},
 		{
 			path: "/login",
 			name: "login",
-			component: () => import("@/pages/LoginUsuario.vue"),
+			component: () => import("@/pages/authentication/LoginUsuario.vue"),
 			meta: {
 				roles: [],
 			},
@@ -45,7 +44,7 @@ const router = createRouter({
 		{
 			path: "/exames",
 			name: "exames",
-			component: () => import("../pages/ExamesUsuario.vue"),
+			component: () => import("@/pages/ExamesUsuario.vue"),
 			meta: {
 				roles: ["paciente"],
 			},
@@ -53,7 +52,6 @@ const router = createRouter({
 		{
 			path: "/historico-sintomas",
 			name: "historico-sintomas",
-			alias: ["/historico", "/sintomas"],
 			component: () => import("@/pages/HistoricoUsuario.vue"),
 			meta: {
 				roles: ["paciente"],

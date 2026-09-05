@@ -1,6 +1,16 @@
-import { collection, deleteDoc, doc, getDoc, getDocs, serverTimestamp, setDoc, updateDoc, type FieldValue, type Timestamp } from "firebase/firestore"
+import {
+	collection,
+	deleteDoc,
+	doc,
+	getDoc,
+	getDocs,
+	serverTimestamp,
+	setDoc,
+	updateDoc,
+	type FieldValue,
+	type Timestamp,
+} from "firebase/firestore"
 import { getUserRef } from "./userService"
-
 
 export type Symptom = {
 	id: string
@@ -21,7 +31,6 @@ export type SymptomData = {
 	created_at?: FieldValue
 }
 
-
 const getSymptomCollectionFromUserRef = (userUid: string) => {
 	return collection(getUserRef(userUid), "symptom")
 }
@@ -34,7 +43,6 @@ const getSymptomRef = (userUid: string, uid: string) => {
 	return doc(getUserRef(userUid), "symptom", uid)
 }
 
-
 export const createSymptom = async (userUid: string, data: SymptomData) => {
 	data.created_at = serverTimestamp()
 	const docRef = getSymptomFromUserRef(userUid)
@@ -45,16 +53,19 @@ export const createSymptom = async (userUid: string, data: SymptomData) => {
 
 export const getSymptom = async (userUid: string, uid: string) => {
 	const symptomSnap = await getDoc(getSymptomRef(userUid, uid))
-	
-	return symptomSnap.data() as Symptom ?? {}
+
+	return (symptomSnap.data() as Symptom) ?? {}
 }
 
 export const getAllSymptoms = async (userUid: string) => {
 	const querySnap = await getDocs(getSymptomCollectionFromUserRef(userUid))
-	const documents = querySnap.docs.map(document => ({
-		id: document.id,
-		...document.data()
-	} as Symptom))
+	const documents = querySnap.docs.map(
+		(document) =>
+			({
+				id: document.id,
+				...document.data(),
+			}) as Symptom,
+	)
 
 	return documents ?? {}
 }
