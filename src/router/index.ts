@@ -34,6 +34,14 @@ const router = createRouter({
 			},
 		},
 		{
+			path: "/recuperar-senha",
+			name: "recuperar-senha",
+			component: () => import("@/pages/authentication/RecuperarSenha.vue"),
+			meta: {
+				roles: [],
+			},
+		},
+		{
 			path: "/dashboard",
 			name: "dashboard",
 			component: () => import("@/pages/DashboardUsuario.vue"),
