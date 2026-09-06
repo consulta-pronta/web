@@ -5,8 +5,6 @@ import NavBar from '@/components/NavBar.vue';
 import UserPhoto from '@/components/UserPhoto.vue';
 import { ref } from 'vue';
 
-const Show = ref(false)
-
 const AddRelatorio = ref(false)
 
 const VisuRelatorio = ref(false)
@@ -20,11 +18,6 @@ const AddPermissao = ref(false)
 const registers = ref(1)
 
 const intensity = ref(6.7)
-
-
-function toggle() {
-	Show.value = !Show.value
-}
 
 function toggleAdicao() {
 	AddRelatorio.value = !AddRelatorio.value
@@ -46,6 +39,35 @@ function togglePermissao() {
 	AddPermissao.value = !AddPermissao.value
 }
 
+interface Relatorio {
+	id: string
+	nome: string
+	data: string
+	horario: string
+	Show: boolean
+}
+
+const relatorios = ref<Relatorio[]>([
+	{
+		id: '123456789/1242',
+		nome: 'Dores',
+		data: '01/04/2026',
+		horario: '14:14',
+		Show: false
+	},
+	{
+		id: '987654321/5678',
+		nome: 'Dor Constante',
+		data: '10/04/2026',
+		horario: '09:30',
+		Show: false
+	}
+])
+
+function toggle(relatorio: Relatorio) {
+	relatorio.Show = !relatorio.Show
+}
+
 </script>
 
 <template class="justify-end">
@@ -53,107 +75,136 @@ function togglePermissao() {
 		<NavBar />
 
 		<article class="flex-1 min-w-0 h-screen overflow-hidden">
-			<div class="bg-background w-full h-full  py-[1.5%] px-[2.5%] flex flex-col min-h-0">
+			<div class="bg-background w-full h-full py-[1.5%] px-[2.5%] flex flex-col min-h-0">
 
-					<p class="text-4xl text-textLight font-bold h-20.25 mb-5">Meus Relatórios</p>
+					<p class="text-3xl md:text-4xl text-textLight font-bold h-20.25 mb-5 text-center lg:text-left">Meus Relatórios</p>
 
-					<div class="flex flex-col items-center justify-center">
+					<div class="grid grid-cols-11 gap-5 items-center justify-center px-15">
 
-						<section class="relative mb-3 w-full flex justify-center">
-							<BaseButton type="button" text="Adicionar Relatórios" icon="add_notes" @click="toggleAdicao"></BaseButton>
+						<BaseButton type="button" theme="accent" icon="add_notes" @click="toggleAdicao" class="col-span-3 rounded-2xl">
+							<p class="hidden lg:block">
+								Adicionar Relatórios
+							</p>
+						</BaseButton>
 
-							<div class="relative flex items-center w-[42%] h-11 bg-surface rounded-sm mx-4">
-								<span class="material-symbols-rounded text-primarydark absolute left-3 pointer-events-none">
-									search
-								</span>
+						<div class="relative flex items-center w-full h-11 bg-surface rounded-[10px] col-span-5">
+							<span class="material-symbols-rounded text-primarydark absolute left-3 pointer-events-none">
+								search
+							</span>
+							<input type="text" placeholder="Pesquisar" class="text-primaryDark placeholder-primaryDark w-full h-full outline-none pl-10"/>
+						</div>
 
-								<input type="text" placeholder="Pesquisar" class="text-primaryDark placeholder-primaryDark w-full h-full outline-none pl-10"/>
-							</div>
+						<BaseButton type="button" theme="primary" icon="download" class="col-span-3 rounded-2xl">
+							<p class="hidden lg:block">
+								Adicionar Relatórios
+							</p>
+						</BaseButton>
 
-							<BaseButton type="button" theme="primary" text="Exportar Relatórios" icon="download" class="text-textLight"></BaseButton>
-
-						</section>
-
-						<section class="w-full flex justify-center place-items-center text-center min-h-0">
-							<div class="w-[80%] max-h-[55vh] overflow-y-auto rounded-[20px] scrollbar-hide">
+						<!--Dados-->
+						<section class="w-full flex justify-center place-items-center text-center min-h-0 col-span-11">
+							<div class="w-full max-h-[55vh] overflow-y-auto rounded-[20px] scrollbar-hide">
 								<table class="bg-surface w-full">
 									<thead class="text-lg text-primaryDark font-bold sticky top-0 bg-surface z-10">
 										<tr>
-											<th class="px-4 py-3">Relatório</th>
-											<th class="px-4 py-3">ID</th>
-											<th class="px-4 py-3">Data</th>
-											<th class="px-4 py-3">Horário</th>
+											<th class="px-4 py-3 text-base">Relatório</th>
+											<th class="px-4 py-3 text-base">ID</th>
+											<th class="px-4 py-3 text-base">Data</th>
+											<th class="px-4 py-3 text-base">Horário</th>
 										</tr>
 									</thead>
 
 									<tbody class="text-sm text-primaryDark font-light">
 
-										<tr class="border-t border-primaryDark">
-											<td class="px-4 py-3 font-bold flex justify-center items-center relative m-1.5">
-												<span class="material-symbols-rounded text-primarydark absolute left-3">
-													description
-												</span>
-												Dores
-											</td>
+										<template v-for="relatorio in relatorios" :key="relatorio.id">
 
-											<td class="px-4 py-3">123456789/1242</td>
+											<tr class="border-t border-primaryDark">
+												<td class="px-4 py-3 font-bold flex justify-center items-center relative m-1.5">
+													<span class="material-symbols-rounded text-base! md:text-2xl! text-primarydark absolute left-1 md:left-3">
+														description
+													</span>
+													<p class="text-xs md:text-base">
+														{{ relatorio.nome }}
+													</p>
+												</td>
 
-											<td class="px-4 py-3">01/04/2026</td>
+												<td class="px-4 py-3 text-xs md:text-base">{{ relatorio.id }}</td>
 
-											<td class="px-4 py-3">
-												<div class="flex justify-center items-center relative">
-													14:14
-													<button type="button" @click="toggle"  class="absolute right-2 cursor-pointer">
-														<span class="material-symbols-rounded text-primaryDark">
-															{{ Show ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}
-														</span>
-													</button>
+												<td class="px-4 py-3 text-xs md:text-base">{{ relatorio.data }}</td>
 
-												</div>
-											</td>
-										</tr>
-										<tr v-if="Show === true" class="col-span-4 text-sm">
-											<td colspan="4">
-												<div class="flex justify-between px-8 py-4">
-													<button type="button" class="text-primaryDark cursor-pointer">
-														<span class="material-symbols-rounded text-sm!">
-															download
-														</span>
-														Baixar Relatório
-													</button>
-													<button type="button" class="text-primaryDark cursor-pointer" @click="togglePermissao">
-														<span class="material-symbols-rounded text-sm!">
-															shield_toggle
-														</span>
-														Profissionais Permitidos
-													</button>
-													<button type="button" class="text-primaryDark cursor-pointer" @click="toggleName">
-														<span class="material-symbols-rounded text-sm!">
-															edit_square
-														</span>
-														Renomear Relatório
-													</button>
-													<button type="button" class="text-primaryDark cursor-pointer">
-														<span class="material-symbols-rounded text-sm!">
-															delete
-														</span>
-														Apagar Relatório
-													</button>
-													<button type="button" class="text-primaryDark cursor-pointer" @click="togglePassword">
-														<span class="material-symbols-rounded text-sm!">
-															lock
-														</span>
-														Definir Senha
-													</button>
-													<button type="button" class="text-primaryDark cursor-pointer" @click="toggleVisu">
-														<span class="material-symbols-rounded text-sm!">
-															visibility
-														</span>
-														Visualizar Relatório
-													</button>
-												</div>
-											</td>
-										</tr>
+												<td class="px-4 py-3 text-xs md:text-base">
+													<div class="flex justify-center items-center relative">
+														{{ relatorio.horario }}
+														<button type="button" @click="toggle(relatorio)" class="absolute right-1 md:right-2 cursor-pointer">
+															<span class="material-symbols-rounded text-primaryDark">
+																{{ relatorio.Show ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}
+															</span>
+														</button>
+													</div>
+												</td>
+											</tr>
+
+											<tr v-if="relatorio.Show === true" class="col-span-4 text-sm">
+												<td colspan="4">
+													<div class="flex justify-between px-16 lg:px-8 py-4">
+														<button type="button" class="flex flex-col text-primaryDark cursor-pointer">
+															<span class="material-symbols-rounded text-2xl! lg:text-sm!">
+																download
+															</span>
+															<p class="hidden lg:block text-xs">
+																Baixar Relatório
+															</p>
+														</button>
+
+														<button type="button" class="flex flex-col text-primaryDark cursor-pointer" @click="togglePermissao">
+															<span class="material-symbols-rounded text-2xl! lg:text-sm!">
+																shield_toggle
+															</span>
+															<p class="hidden lg:block text-xs">
+																Profissionais Permitidos
+															</p>
+														</button>
+
+														<button type="button" class="flex flex-col text-primaryDark cursor-pointer" @click="toggleName">
+															<span class="material-symbols-rounded text-2xl! lg:text-sm!">
+																edit_square
+															</span>
+															<p class="hidden lg:block text-2xl! lg:text-xs!">
+																Renomear Relatório
+															</p>
+														</button>
+
+														<button type="button" class="flex flex-col text-primaryDark cursor-pointer">
+															<span class="material-symbols-rounded text-2xl! lg:text-sm!">
+																delete
+															</span>
+															<p class="hidden lg:block text-xs">
+																Apagar Relatório
+															</p>
+														</button>
+
+														<button type="button" class="flex flex-col text-primaryDark cursor-pointer" @click="togglePassword">
+															<span class="material-symbols-rounded text-2xl! lg:text-sm!">
+																lock
+															</span>
+															<p class="hidden lg:block text-xs!">
+																Definir Senha
+															</p>
+														</button>
+
+														<button type="button" class="flex flex-col text-primaryDark cursor-pointer" @click="toggleVisu">
+															<span class="material-symbols-rounded text-2xl! lg:text-sm!">
+																visibility
+															</span>
+															<p class="hidden lg:block text-xs!">
+																Visualizar Relatório
+															</p>
+														</button>
+													</div>
+												</td>
+											</tr>
+
+										</template>
+
 									</tbody>
 								</table>
 							</div>
@@ -162,17 +213,17 @@ function togglePermissao() {
 
 				<!--Layout Registro-->
 				<section v-if="AddRelatorio === true" class="dialog">
-					<form class="bg-background w-[45%] h-[95%] rounded-[25px] px-15 py-5 flex flex-col place-items-center relative">
+					<form class="bg-background lg:w-[45%] h-[95%] rounded-[25px] px-15 py-5 flex flex-col place-items-center relative">
 						<!--Seta de Retorno-->
 						<button type="button" @click="toggleAdicao">
 							<span class="material-symbols-rounded absolute left-0 text-[38px]! text-textLight ml-4 cursor-pointer">
 								arrow_back
 							</span>
 						</button>
-						<p class="text-textLight text-2xl text-semibold mb-2">
+						<p class="text-textLight text-xl text-bold mb-2">
 							Gerar Relatório
 						</p>
-						<p class="text-textLight text-sm text-medium">
+						<p class="text-textLight text-xs text-medium">
 							Gere um relatório completo do seus sintomas para compartilhar com seu médico.
 						</p>
 						<!--Barra de Pesquisa-->
@@ -222,7 +273,7 @@ function togglePermissao() {
 						</div>
 						<!--Visualizar sintomas incluídos-->
 						<div class="flex w-full h-11">
-							<BaseButton type="button" theme="primary" text="Visualizar Sintomas Incluídos" class="bg-primary w-full h-11! text-textLight mb-3 rounded-[25px]"/>
+							<BaseButton type="button" theme="primary" class="bg-primary w-full h-11! text-textLight mb-3 rounded-[25px]">Visualizar Sintomas Incluídos</BaseButton>
 						</div>
 						<!--Resumo do Período-->
 						<section class="grid grid-cols-2 gap-2 w-full text-textLight">
@@ -232,7 +283,7 @@ function togglePermissao() {
 								</p>
 							</div>
 
-							<div class="flex flex-col border border-textLight rounded-md p-5 text-center ">
+							<div class="flex flex-col border border-textLight rounded-md p-3 text-center ">
 
 								<article class="flex justify-center text-center gap-1">
 									<span class="material-symbols-rounded">
@@ -242,13 +293,13 @@ function togglePermissao() {
 										{{ registers }}
 									</p>
 								</article>
-								<p class="text-base font-bold">
+								<p class="text-sm font-bold">
 									Registros
 								</p>
 
 							</div>
 
-							<div class="flex flex-col border border-textLight rounded-md p-5 text-center">
+							<div class="flex flex-col border border-textLight rounded-md p-3 text-center">
 								<article class="flex justify-center text-center gap-1">
 									<span class="material-symbols-rounded text-warning">
 										vital_signs
@@ -258,27 +309,27 @@ function togglePermissao() {
 									</p>
 
 								</article>
-								<p class="text-base font-bold">
+								<p class="text-sm font-bold">
 									Intensidade Média
 								</p>
 							</div>
 
-							<div class="flex border border-textLight rounded-md p-3 col-span-2 justify-center gap-0.5">
-								<span class="flex material-symbols-rounded text-4xl! text-center text-sucess">
+							<div class="flex border border-textLight rounded-md p-2 col-span-2 justify-center gap-0.5">
+								<span class="flex material-symbols-rounded text-3xl! text-center text-sucess">
 									location_on
 								</span>
 								<article class="flex flex-col">
-									<p class="text-xs">
+									<p class="text-[10px]">
 										Área mais afetada
 									</p>
-									<p class="text-base font-bold">
+									<p class="text-sm font-bold">
 										Cabeça
 									</p>
 								</article>
 							</div>
 						</section>
 						<!--Botão-->
-						<BaseButton type="submit" icon="add_circle" class="mt-2 w-[80%] gap-1">Criar Relatório</BaseButton>
+						<BaseButton type="submit" theme="accent" icon="add_circle" class="mt-2 w-[80%] gap-1">Criar Relatório</BaseButton>
 						<!--Criar e Baixar-->
 						<BaseButton type="submit" icon="download" class="mt-2 w-[80%] bg-background! text-accent! gap-1">Criar e Baixar Relatório em PDF</BaseButton>
 					</form>
@@ -287,7 +338,7 @@ function togglePermissao() {
 
 
 				<section v-if="VisuRelatorio === true" class="dialog">
-					<form class="bg-background w-[45%] h-[95%] rounded-[25px] px-10 py-6">
+					<form class="bg-background w-[95%] md:w-[70%] lg:w-[55%] h-[95%] rounded-[25px] px-10 py-6">
 						<article class=" overflow-y-auto flex flex-col border border-textLight w-full h-full relative rounded-2xl scrollbar-hide">
 							<!--Seta de Retorno-->
 							<button type="button" @click="toggleVisu" class="flex justify-start sticky top-0 left z-50 self-start cursor-pointer bg-background w-full">
@@ -351,11 +402,11 @@ function togglePermissao() {
 									<p class="text-sm font-medium">
 										2 semanas
 									</p>
-									<div class="flex bg-error rounded-3xl text-surface mt-1 w-[55%] h-[25%] items-center">
+									<div class="flex bg-error rounded-3xl text-surface mt-1 w-[55%] md:w-[60%] lg:w-[45%] h-[30%] md:h-[35%] lg:h-[45%] items-center">
 										<span class="material-symbols-rounded text-xs! mx-1.5">
 											warning
 										</span>
-										<p>
+										<p class="text-xs p-2 md:p-1 lg:p-0.5">
 											Prioridade Alta
 										</p>
 									</div>
@@ -390,7 +441,7 @@ function togglePermissao() {
 							</section>
 
 							<!--Cronologia-->
-							<p class="text-textLight text-xl font-bold mx-4 mt-2">
+							<p class="text-textLight text-xl font-bold mx-4 mt-10 md:mt-12 lg:mt-8">
 								Cronologia do Sintoma
 							</p>
 
@@ -497,7 +548,7 @@ function togglePermissao() {
 
 				<!--Renomear-->
 				<section v-if="AddRenomear === true" class="dialog">
-					<form class="bg-primary w-[45%] h-[30%] rounded-[25px] px-15 py-5 flex flex-col place-items-center relative">
+					<form class="bg-primary lg:w-[45%] h-[30%] rounded-[25px] px-15 py-5 flex flex-col place-items-center relative">
 						<button type="button" @click="toggleName">
 							<span class="material-symbols-rounded absolute left-0 text-[38px]! text-textLight ml-4 cursor-pointer">
 								arrow_back
@@ -514,14 +565,14 @@ function togglePermissao() {
 							<input type="text" placeholder="Nome" class="text-primaryDark placeholder-primaryDark w-full h-full outline-none pl-10"/>
 						</div>
 
-						<BaseButton type="submit" class="mt-2 w-[60%] gap-1">Mudar Nome</BaseButton>
+						<BaseButton type="submit" theme="accent" class="mt-2 w-[60%] gap-1">Mudar Nome</BaseButton>
 
 					</form>
 				</section>
 
 				<!--Mudar Senha-->
 				<section v-if="AddSenha === true" class="dialog">
-					<form class="bg-primary w-[45%] h-[35%] rounded-[25px] px-15 py-5 flex flex-col place-items-center relative">
+					<form class="bg-primary w-[70%] lg:w-[45%] h-[35%] rounded-[25px] px-15 py-5 flex flex-col place-items-center relative">
 						<button type="button" @click="togglePassword">
 							<span class="material-symbols-rounded absolute left-0 text-[38px]! text-textLight ml-4 cursor-pointer">
 								arrow_back
@@ -544,13 +595,13 @@ function togglePermissao() {
 							<input type="password" placeholder="Digite Novamente" class="text-primaryDark placeholder-primaryDark w-full h-full outline-none pl-10"/>
 						</div>
 
-						<BaseButton type="submit" class="mt-2 w-[60%] gap-1">Mudar Senha</BaseButton>
+						<BaseButton type="submit" theme="accent" class="mt-2 w-[60%] gap-1">Mudar Senha</BaseButton>
 
 					</form>
 				</section>
 
 				<section v-if="AddPermissao === true" class="dialog">
-					<form class="bg-primary w-[45%] h-[35%] rounded-[25px] px-10 py-5 flex flex-col relative">
+					<form class="bg-primary w-[70%] lg:w-[45%] h-[40%] rounded-[25px] px-10 py-5 flex flex-col place-items-center relative">
 						<!-- Seta de retorno -->
 						<button type="button" @click="togglePermissao">
 							<span class="material-symbols-rounded absolute left-0 top-0 text-[30px]! text-textLight m-4 cursor-pointer" >
@@ -586,9 +637,7 @@ function togglePermissao() {
 
 						</div>
 
-						<article class="flex justify-center">
-							<BaseButton type="submit" class="mt-2 w-[60%] gap-1">Salvar</BaseButton>
-						</article>
+						<BaseButton type="submit" theme="accent" class="mt-4 w-[60%] gap-1">Salvar</BaseButton>
 
 					</form>
 				</section>

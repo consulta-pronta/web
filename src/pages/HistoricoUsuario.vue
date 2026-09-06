@@ -61,7 +61,6 @@ authStore.onReady(async (data) => {
 						></BaseInput>
 
 						<!--Botão de registrar sintoma-->
-						<BaseButton theme="dark" mode="outline" text="Registrar Sintoma" icon="add" class="rounded-4xl!" @click="toggleRegisterForm" />
 						<BaseButton
 							theme="accent"
 							type="button"
