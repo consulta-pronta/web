@@ -26,6 +26,14 @@ const router = createRouter({
 			},
 		},
 		{
+			path: "/cadastroContatos",
+			name: "cadastroContatos",
+			component: () => import("@/pages/authentication/CadastroContatos.vue"),
+			meta: {
+				roles: [],
+			},
+		},
+		{
 			path: "/login",
 			name: "login",
 			component: () => import("@/pages/authentication/LoginUsuario.vue"),
