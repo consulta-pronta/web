@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted } from "vue"
-import { useRouter } from "vue-router"
+import { useRouter, useRoute } from "vue-router"
 
 export type ButtonState = "enabled" | "disabled" | "sync"
 
@@ -24,13 +24,19 @@ const stateModel = defineModel<ButtonState>("state", {
 })
 
 const router = useRouter()
+const route = useRoute()
 
 const isDisabled = computed(() => stateModel.value !== "enabled")
 
 const textColor = computed(() => {
+	if (props.goto === route.path) {
+		return "text-accent"
+	}
+
 	if (props.mode !== "fill") {
 		return `text-${props.theme}`
 	}
+
 	switch (props.theme) {
 		case "accent":
 			return "text-textDark"
