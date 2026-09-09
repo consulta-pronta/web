@@ -18,6 +18,7 @@ interface Props {
 	mode?: "outline" | "fill" | "transparent"
 	placeholder?: string
 	icon?: string
+	iconImage?: string
 	required?: boolean
 }
 
@@ -85,6 +86,12 @@ onMounted(() => {
 			{{ icon }}
 		</span>
 
+		<img
+			v-if="iconImage"
+			:src="iconImage"
+			class="w-6 h-7 object-contain"
+			alt=""
+		/>
 		<input
 			id="input"
 			class="py-3 outline-0 grow"

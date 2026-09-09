@@ -28,6 +28,7 @@ const router = createRouter({
 		{
 			path: "/cadastroContatos",
 			name: "cadastroContatos",
+			alias: ["/contatos", "/cadastroContatos"],
 			component: () => import("@/pages/authentication/CadastroContatos.vue"),
 			meta: {
 				roles: [],

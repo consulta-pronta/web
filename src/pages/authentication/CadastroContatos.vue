@@ -6,6 +6,8 @@ import AuthBackground from "@/components/AuthBackground.vue"
 import BaseButton, { type ButtonState } from "@/components/bases/BaseButton.vue"
 import BaseLogo from "@/components/bases/BaseLogo.vue"
 import BaseInput from "@/components/bases/BaseInput.vue"
+import whatsappIcon from "@/assets/icons/whatsapp.svg"
+import telegramIcon from "@/assets/icons/telegram.svg"
 // import UserPhoto from "@/components/UserPhoto.vue"
 
 import { useSignUpStore } from "@/stores/signUpStore"
@@ -14,7 +16,12 @@ const router = useRouter()
 const signUpStore = useSignUpStore()
 
 const buttonState: Ref<ButtonState> = ref("enabled")
-const showPasswordRules = ref(false)
+
+const mostrarEmail = ref(false)
+const mostrarSMS = ref(false)
+const mostrarWhatsapp = ref(false)
+const mostrarTelegram = ref(false)
+
 
 const submitForm = async () => {
 	buttonState.value = "sync"
@@ -50,12 +57,13 @@ const submitForm = async () => {
 
 				<article class="flex flex-col w-full rounded-md px-3 cursor-pointer">
 					<section>
-						<input type="checkbox" class="h-4 w-4 appearance-none rounded border border-textLight checked:border-textLight checked:bg-textLight hover:border-textLight"/>
+						<input type="checkbox" class="h-4 w-4 appearance-none rounded border border-textLight checked:border-textLight checked:bg-textLight hover:border-textLight" v-model="mostrarEmail"/>
 						<span class="text-textLight text-xl font-bold">
 							Email
 						</span>
 					</section>
 					<BaseInput
+						v-if="mostrarEmail"
 						type="email"
 						placeholder="E-Mail"
 						icon="email"
@@ -66,115 +74,78 @@ const submitForm = async () => {
 					/>
 				</article>
 
-
-				<BaseInput
-					type="cpf"
-					placeholder="CPF"
-					icon="article"
-					theme="dark"
-					class="w-full"
-					v-model="signUpStore.cpf"
-					required
-				/>
-				<BaseInput
-					type="email"
-					placeholder="E-Mail"
-					icon="email"
-					theme="dark"
-					class="w-full"
-					v-model="signUpStore.email"
-					required
-				/>
-				<BaseInput
-					type="tel"
-					placeholder="Telefone"
-					icon="phone"
-					theme="dark"
-					class="w-full"
-					v-model="signUpStore.phone"
-					required
-				/>
-				<div class="relative w-full">
+				<article class="flex flex-col w-full rounded-md px-3 cursor-pointer">
+					<section>
+						<input type="checkbox" class="h-4 w-4 appearance-none rounded border border-textLight checked:border-textLight checked:bg-textLight hover:border-textLight" v-model="mostrarSMS"/>
+						<span class="text-textLight text-xl font-bold">
+							SMS
+						</span>
+					</section>
 					<BaseInput
-						type="password"
-						placeholder="Senha"
-						icon="lock"
+						v-if="mostrarSMS"
+						type="tel"
+						placeholder="SMS"
+						icon="sms"
 						theme="dark"
-						v-model="signUpStore.password"
+						class="w-full"
+						v-model="signUpStore.phone"
 						required
-						@focusin="showPasswordRules = true"
-						@focusout="showPasswordRules = false"
 					/>
-					<div
-						v-if="showPasswordRules"
-						class="absolute left-0 right-0 bottom-[130%] mx-auto w-64 bg-surface p-3"
-					>
-						<p
-							v-for="(value, key) in signUpStore.rules"
-							:key="key"
-							:class="value ? 'text-textDark' : 'text-error'"
-							class="flex items-center gap-2 text-sm py-0.5"
-						>
-							<span class="material-symbols-rounded">
-								{{ value ? "check_circle" : "cancel" }}
-							</span>
-							{{
-								key === "minLength"
-									? "Mínimo 8 caracteres"
-									: key === "hasNumber"
-										? "Pelo menos 1 número"
-										: key === "hasLowercase"
-											? "Pelo menos 1 letra minúscula"
-											: key === "hasUppercase"
-												? "Pelo menos 1 letra maiúscula"
-												: key === "match"
-													? "Senhas coincidem"
-													: key
-							}}
-						</p>
-						<span
-							class="w-4 h-4 bg-surface absolute -bottom-2 left-0 right-0 mx-auto rotate-45"
-						></span>
-					</div>
-				</div>
+				</article>
 
-				<BaseInput
-					type="password"
-					placeholder="Confirmar senha"
-					icon="lock"
-					theme="dark"
-					class="w-full"
-					v-model="signUpStore.confirmPassword"
-					required
-				/>
 
-				<BaseButton
-					v-if="signUpStore.userType === 'profissional'"
-					type="button"
-					theme="accent"
-					mode="transparent"
-					icon="article"
-					path="cadastroCRM"
-					class="border-0 bg-textDark"
-				>
-					Enviar CRM ou E-CRM
-				</BaseButton>
+				<article class="flex flex-col w-full rounded-md px-3 cursor-pointer">
+					<section>
+						<input type="checkbox" class="h-4 w-4 appearance-none rounded border border-textLight checked:border-textLight  accent-textLight" v-model="mostrarWhatsapp"/>
+						<span class="text-textLight text-xl font-bold">
+							Whatsapp
+						</span>
+					</section>
+					<BaseInput
+						v-if="mostrarWhatsapp"
+						type="tel"
+						placeholder="Whatsapp"
+						:icon-image="whatsappIcon"
+						theme="dark"
+						class="w-full"
+						v-model="signUpStore.phone"
+						required
+					/>
+				</article>
 
+				<article class="flex flex-col w-full rounded-md px-3 cursor-pointer">
+					<section>
+						<input type="checkbox" class="h-4 w-4 rounded border border-textLight accent-textLight" v-model="mostrarTelegram"/>
+						<span class="text-textLight text-xl font-bold">
+							Telegram
+						</span>
+					</section>
+					<BaseInput
+						v-if="mostrarTelegram"
+						type="tel"
+						placeholder="Telegram"
+						:icon-image="telegramIcon"
+						theme="dark"
+						class="w-full"
+						v-model="signUpStore.phone"
+						required
+					/>
+				</article>
 				<br />
+				<RouterLink to="login">
+					<p class="text-textLight">
+						Já possui conta? <a href="" class="text-accent">Fazer login</a>
+					</p>
+				</RouterLink>
+
 				<BaseButton
 					type="submit"
 					theme="accent"
 					class="w-full justify-center"
 					v-model:state="buttonState"
 				>
-					Criar Conta
+					Verificar
 				</BaseButton>
-
-				<RouterLink to="login">
-					<p class="text-textLight">
-						Já possui conta? <a href="" class="text-accent">Fazer login</a>
-					</p>
-				</RouterLink>
 			</form>
 		</div>
 	</AuthBackground>
