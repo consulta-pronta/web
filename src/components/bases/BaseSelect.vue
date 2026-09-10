@@ -7,7 +7,6 @@ interface Props {
 	defaultValue?: string
 }
 const props = withDefaults(defineProps<Props>(), {
-	type: "text",
 	theme: "light",
 	mode: "fill",
 	defaultValue: "",

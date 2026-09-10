@@ -53,19 +53,23 @@ const statusIcon = computed(() => {
 
 <template>
 	<tr>
-		<td class="flex gap-2">
-			<span class="material-symbols-rounded select-none">
-				{{ typeIcon }}
-			</span>
-			<p>{{ exam.name }}</p>
+		<td>
+			<div class="flex gap-2">
+				<span class="material-symbols-rounded select-none">
+					{{ typeIcon }}
+				</span>
+				<p>{{ exam.name }}</p>
+			</div>
 		</td>
 		<td>{{ exam.place }}</td>
 		<td>{{ date }}</td>
-		<td class="flex gap-2">
-			<p>{{ status }}</p>
-			<span class="material-symbols-rounded select-none">
-				{{ statusIcon }}
-			</span>
+		<td>
+			<div class="flex gap-2">
+				<p>{{ status }}</p>
+				<span class="material-symbols-rounded select-none">
+					{{ statusIcon }}
+				</span>
+			</div>
 		</td>
 	</tr>
 </template>
