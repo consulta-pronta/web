@@ -8,6 +8,6 @@ import BaseButton from "@/components/bases/BaseButton.vue"
 	>
 		<h1 class="text-9xl font-extrabold text-textLight">404 :(</h1>
 		<p class="text-2xl text-textLight">Página não encontrada!</p>
-		<BaseButton path="/">Voltar</BaseButton>
+		<BaseButton goto="/">Voltar</BaseButton>
 	</section>
 </template>

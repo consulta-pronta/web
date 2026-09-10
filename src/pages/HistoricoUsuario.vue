@@ -7,10 +7,13 @@ import FormSintoma from "@/components/forms/FormSintoma.vue"
 import FilterOrd from "@/components/FilterOrd.vue"
 import SymptomCard from "@/components/cards/SymptomCard.vue"
 import { useAuthStore } from "@/stores/authStore"
-import { getAllSymptoms, type Symptom } from "@/services/symptomService"
+import { getAllSymptoms, getSymptom, type Symptom } from "@/services/symptomService"
 import SymptomExtended from "@/components/SymptomExtended.vue"
 import BaseDialog from "@/components/bases/BaseDialog.vue"
+import { useRoute } from "vue-router"
+import router from "@/router"
 
+const route = useRoute()
 const authStore = useAuthStore()
 
 const symptoms = ref<Symptom[]>([])
@@ -18,12 +21,20 @@ const currentSymptom = ref<Symptom | null>(null)
 const formRegister = useTemplateRef("formRegister")
 const formUpdate = useTemplateRef("formUpdate")
 
+const rootPath = "/" + route.path.split("/")[1]
+
 const updateSymptoms = async (id: string) => {
 	symptoms.value = await getAllSymptoms(id)
 }
 
 const viewSymptom = (symptom: Symptom | null) => {
 	currentSymptom.value = symptom
+
+	if (symptom) {
+		router.replace(`${rootPath}/${symptom.id}`)
+	} else {
+		router.replace(rootPath)
+	}
 }
 
 const handleSubmit = () => {
@@ -35,6 +46,10 @@ const handleSubmit = () => {
 
 authStore.onReady(async (data) => {
 	updateSymptoms(data.id)
+	const id = route.params.id as string
+	if (id) {
+		viewSymptom(await getSymptom(data.id, id))
+	}
 })
 </script>
 

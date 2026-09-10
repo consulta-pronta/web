@@ -52,9 +52,14 @@ export const createSymptom = async (userUid: string, data: SymptomData) => {
 }
 
 export const getSymptom = async (userUid: string, uid: string) => {
-	const symptomSnap = await getDoc(getSymptomRef(userUid, uid))
-
-	return (symptomSnap.data() as Symptom) ?? {}
+	const symptomDoc = await getDoc(getSymptomRef(userUid, uid))
+	const data = symptomDoc.data()
+	const symptom = {
+		id: symptomDoc.id,
+		...data,
+	} as Symptom
+	
+	return symptom
 }
 
 export const getAllSymptoms = async (userUid: string) => {

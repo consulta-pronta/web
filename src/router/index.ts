@@ -67,7 +67,7 @@ const router = createRouter({
 			},
 		},
 		{
-			path: "/historico-sintomas",
+			path: "/historico-sintomas/:id?",
 			name: "historico-sintomas",
 			alias: ["/historico", "/sintomas"],
 			component: () => import("@/pages/HistoricoUsuario.vue"),
