@@ -29,7 +29,7 @@ authStore.onReady(async (user) => {
 				<BaseInput
 					placeholder="Pesquisar"
 					icon="search"
-					class="place-self-center w-full md:w-120"
+					class="place-self-center w-full md:w-2xl"
 				/>
 			</header>
 
