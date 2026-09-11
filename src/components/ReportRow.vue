@@ -2,6 +2,7 @@
 import { useTemplateRef } from 'vue'
 import BaseDialog from '@/components/bases/BaseDialog.vue'
 import BaseButton from '@/components/bases/BaseButton.vue'
+import BaseInput from '@/components/bases/BaseInput.vue'
 
 interface Report {
 	id: string
@@ -56,16 +57,16 @@ const viewReport = useTemplateRef('viewReport')
 			<BaseButton icon="download" theme="primaryDark" mode="transparent" class="text-sm! p-2! justify-start">
 				Baixar relatório
 			</BaseButton>
-			<BaseButton @click="allowedProfessionals" icon="shield_toggle" theme="primaryDark" mode="transparent" class="text-sm! p-2! justify-start">
+			<BaseButton @click="allowedProfessionals?.toggle()" icon="shield_toggle" theme="primaryDark" mode="transparent" class="text-sm! p-2! justify-start">
 				Profissionais permitidos
 			</BaseButton>
-			<BaseButton @click="formRename" icon="edit_square" theme="primaryDark" mode="transparent" class="text-sm! p-2! justify-start">
+			<BaseButton @click="formRename?.toggle()" icon="edit_square" theme="primaryDark" mode="transparent" class="text-sm! p-2! justify-start">
 				Renomear relatório
 			</BaseButton>
 			<BaseButton icon="delete" theme="primaryDark" mode="transparent" class="text-sm! p-2! justify-start">
 				Apagar relatório
 			</BaseButton>
-			<BaseButton @click="definePassword" icon="lock" theme="primaryDark" mode="transparent" class="text-sm! p-2! justify-start">
+			<BaseButton @click="definePassword?.toggle()" icon="lock" theme="primaryDark" mode="transparent" class="text-sm! p-2! justify-start">
 				Definir senha
 			</BaseButton>
 			<BaseButton @click="viewReport?.toggle()" icon="visibility" theme="primaryDark" mode="transparent" class="text-sm! p-2! justify-start">
@@ -277,78 +278,31 @@ const viewReport = useTemplateRef('viewReport')
 	</BaseDialog>
 
 	<!--Renomear-->
-	<section v-if="AddRenomear === true" class="dialog">
-		<form class="bg-primary lg:w-[45%] h-[30%] rounded-[25px] px-15 py-5 flex flex-col place-items-center relative">
-			<button type="button" @click="toggleName">
-				<span class="material-symbols-rounded absolute left-0 text-[38px]! text-textLight ml-4 cursor-pointer">
-					arrow_back
-				</span>
-			</button>
-			<p class="text-textLight text-2xl text-semibold mb-6">
-				Renomear Relatório
-			</p>
+	<BaseDialog title="Renomear relatório" ref="formRename">
+		<form class="flex flex-col place-items-center relative gap-1">
+			<BaseInput placeholder="Novo nome" icon="edit_square" class="w-full" required />
 
-			<div class="relative flex items-center w-full h-11 bg-surface rounded-sm mx-4 mb-4">
-				<span class="material-symbols-rounded text-primarydark absolute left-3 pointer-events-none">
-					edit_square
-				</span>
-				<input type="text" placeholder="Nome" class="text-primaryDark placeholder-primaryDark w-full h-full outline-none pl-10"/>
-			</div>
-
-			<BaseButton type="submit" theme="accent" class="mt-2 w-[60%] gap-1">Mudar Nome</BaseButton>
-
+			<BaseButton type="submit" theme="accent" class="mt-1">
+				Mudar Nome
+			</BaseButton>
 		</form>
-	</section>
+	</BaseDialog>
 
 	<!--Mudar Senha-->
-	<section v-if="AddSenha === true" class="dialog">
-		<form class="bg-primary w-[70%] lg:w-[45%] h-[35%] rounded-[25px] px-15 py-5 flex flex-col place-items-center relative">
-			<button type="button" @click="togglePassword">
-				<span class="material-symbols-rounded absolute left-0 text-[38px]! text-textLight ml-4 cursor-pointer">
-					arrow_back
-				</span>
-			</button>
-			<p class="text-textLight text-2xl text-semibold mb-6">
-				Digite sua nova senha
-			</p>
+	<BaseDialog title="Definir senha" ref="definePassword">
+		<form class="flex flex-col place-items-center relative gap-1">
+			<BaseInput placeholder="Senha" icon="lock" class="w-full" required />
+			<BaseInput placeholder="Confirmar senha" icon="lock" class="w-full" required />
 
-			<div class="relative flex items-center w-full h-11 bg-surface rounded-sm mx-4 mb-2">
-				<span class="material-symbols-rounded text-primaryDark absolute left-3 pointer-events-none">
-					lock
-				</span>
-				<input type="password" placeholder="Senha" class="text-primaryDark placeholder-primaryDark w-full h-full outline-none pl-10"/>
-			</div>
-			<div class="relative flex items-center w-full h-11 bg-surface rounded-sm mx-4 mb-4">
-				<span class="material-symbols-rounded text-primaryDark absolute left-3 pointer-events-none">
-					lock
-				</span>
-				<input type="password" placeholder="Digite Novamente" class="text-primaryDark placeholder-primaryDark w-full h-full outline-none pl-10"/>
-			</div>
-
-			<BaseButton type="submit" theme="accent" class="mt-2 w-[60%] gap-1">Mudar Senha</BaseButton>
+			<BaseButton type="submit" theme="accent" class="mt-1">
+				Mudar Senha
+			</BaseButton>
 
 		</form>
-	</section>
+	</BaseDialog>
 
-	<section v-if="AddPermissao === true" class="dialog">
-		<form class="bg-primary w-[70%] lg:w-[45%] h-[40%] rounded-[25px] px-10 py-5 flex flex-col place-items-center relative">
-			<!-- Seta de retorno -->
-			<button type="button" @click="togglePermissao">
-				<span class="material-symbols-rounded absolute left-0 top-0 text-[30px]! text-textLight m-4 cursor-pointer" >
-					arrow_back
-				</span>
-			</button>
-
-			<!-- Título -->
-			<div class="flex flex-col items-center mb-3">
-				<span class="material-symbols-rounded text-[30px]! text-textLight">
-					admin_panel_settings
-				</span>
-				<p class="text-textLight text-xl font-semibold">
-					Permissões de visualização
-				</p>
-			</div>
-
+	<BaseDialog title="Gerenciar permissões" ref="allowedProfessionals">
+		<form class="flex flex-col place-items-center relative">
 			<!-- Permissões -->
 			<div class="flex flex-col gap-2 w-full">
 				<label class="flex items-center w-full h-11 bg-surface rounded-md px-3 cursor-pointer">
@@ -370,5 +324,5 @@ const viewReport = useTemplateRef('viewReport')
 			<BaseButton type="submit" theme="accent" class="mt-4 w-[60%] gap-1">Salvar</BaseButton>
 
 		</form>
-	</section>
+	</BaseDialog>
 </template>
