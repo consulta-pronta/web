@@ -27,6 +27,7 @@ const rootPath = "/" + route.path.split("/")[1]
 let userId = ""
 
 const updateSymptoms = async () => {
+	symptoms.value = []
 	symptoms.value = await getAllSymptoms(userId)
 }
 

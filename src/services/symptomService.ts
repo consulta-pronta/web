@@ -11,7 +11,12 @@ import {
 	updateDoc,
 } from "firebase/firestore"
 import { getUserRef } from "./userService"
-import { SYMPTOM_COLLECTION, symptomFromDocument, type SymptomData } from "@/models/symptomModel"
+import {
+	extractDataFromSymptom,
+	SYMPTOM_COLLECTION,
+	symptomFromDocument,
+	type SymptomData,
+} from "@/models/symptomModel"
 
 const getSymptomCollection = (userUid: string) => {
 	return collection(getUserRef(userUid), SYMPTOM_COLLECTION)
@@ -33,11 +38,12 @@ export const createSymptom = async (userUid: string, data: SymptomData) => {
 	return docRef.id
 }
 
-export const getSymptom = async (userUid: string, uid: string) => {
+export const getSymptom = async (userUid: string, uid: string, deep = true) => {
 	const symptomDoc = await getDoc(getSymptomRef(userUid, uid))
 	const symptom = symptomFromDocument(symptomDoc)
-
-	symptom.historic = await getAllSymptoms(userUid, uid)
+	if (deep) {
+		symptom.historic = await getAllSymptoms(userUid, uid)
+	}
 
 	return symptom
 }
@@ -54,16 +60,19 @@ export const updateSymptom = async (
 	userUid: string,
 	uid: string,
 	data: SymptomData,
-	generic = false,
+	hotfix = false,
 ) => {
-	if (generic) {
+	if (hotfix) {
 		await updateDoc(getSymptomRef(userUid, uid), data)
 		return
 	}
 
+	const previousSymptom = await getSymptom(userUid, uid, false)
+
 	const newHistoricDoc = doc(getHistoricCollection(userUid, uid))
-	data.created_at = serverTimestamp()
-	await setDoc(newHistoricDoc, data)
+	await setDoc(newHistoricDoc, extractDataFromSymptom(previousSymptom))
+
+	updateSymptom(userUid, uid, data, true)
 }
 
 export const deleteSymptom = async (userUid: string, uid: string) => {

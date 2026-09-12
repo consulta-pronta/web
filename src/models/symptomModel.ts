@@ -25,3 +25,10 @@ export type SymptomData = {
 export const symptomFromDocument = (doc: DocumentSnapshot) => {
 	return { id: doc.id, ...doc.data() } as Symptom
 }
+
+export const extractDataFromSymptom = (symptom: Symptom) => {
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const { id, historic, ...data } = symptom
+
+	return data
+}
