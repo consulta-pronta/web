@@ -7,11 +7,12 @@ import FormSintoma from "@/components/forms/FormSintoma.vue"
 import FilterOrd from "@/components/FilterOrd.vue"
 import SymptomCard from "@/components/cards/SymptomCard.vue"
 import { useAuthStore } from "@/stores/authStore"
-import { getAllSymptoms, getSymptom, type Symptom } from "@/services/symptomService"
+import { getAllSymptoms, getSymptom } from "@/services/symptomService"
 import SymptomExtended from "@/components/SymptomExtended.vue"
 import BaseDialog from "@/components/bases/BaseDialog.vue"
 import { useRoute } from "vue-router"
 import router from "@/router"
+import type { Symptom } from "@/models/symptomModel"
 
 const route = useRoute()
 const authStore = useAuthStore()
@@ -25,6 +26,7 @@ const rootPath = "/" + route.path.split("/")[1]
 
 const updateSymptoms = async (id: string) => {
 	symptoms.value = await getAllSymptoms(id)
+	viewSymptom(currentSymptom.value)
 }
 
 const viewSymptom = (symptom: Symptom | null) => {
@@ -40,7 +42,6 @@ const viewSymptom = (symptom: Symptom | null) => {
 const handleSubmit = () => {
 	formRegister.value!.hide()
 	formUpdate.value!.hide()
-	currentSymptom.value = null
 	updateSymptoms(authStore.userData!.id)
 }
 
@@ -129,11 +130,26 @@ authStore.onReady(async (data) => {
 
 					<!-- Details -->
 					<section class="grow h-full flex flex-col items-start" v-show="currentSymptom">
-						<button type="button" class="cursor-pointer text-textLight" @click="viewSymptom(null)">
-							<span class="material-symbols-rounded text-3xl!">
-								arrow_back
-							</span>
-						</button>
+						<header class="w-full flex flex-row justify-between">
+							<button
+								type="button"
+								class="cursor-pointer text-textLight"
+								@click="viewSymptom(null)"
+							>
+								<span class="material-symbols-rounded text-3xl!"> arrow_back </span>
+							</button>
+
+							<BaseButton
+								theme="accent"
+								icon="edit_document"
+								class="gap-3"
+								@click.prevent="formUpdate!.show()"
+							>
+								<p>Atualizar sintoma</p>
+							</BaseButton>
+						</header>
+
+						<br />
 
 						<SymptomExtended
 							v-model="currentSymptom"

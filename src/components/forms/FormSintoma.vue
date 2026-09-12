@@ -4,14 +4,10 @@ import BaseInput from "@/components/bases/BaseInput.vue"
 import BaseButton, { type ButtonState } from "@/components/bases/BaseButton.vue"
 import BaseSelect from "@/components/bases/BaseSelect.vue"
 import { useAuthStore } from "@/stores/authStore.ts"
-import {
-	createSymptom,
-	updateSymptom,
-	type Symptom,
-	type SymptomData,
-} from "@/services/symptomService"
+import { createSymptom, updateSymptom } from "@/services/symptomService"
 import { toInputValue } from "@feelinglovelynow/datetime-local"
 import { Timestamp } from "firebase/firestore"
+import type { Symptom, SymptomData } from "@/models/symptomModel"
 
 const props = defineProps<{
 	symptom?: Symptom | null
