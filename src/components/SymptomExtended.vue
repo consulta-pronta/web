@@ -1,24 +1,44 @@
 <script setup lang="ts">
 import type { Symptom } from "@/models/symptomModel"
-import { watch } from "vue"
+import { getSymptom } from "@/services/symptomService"
+import { useAuthStore } from "@/stores/authStore"
+import { ref, watch } from "vue"
 
-const symptom = defineModel<Symptom | null>()
+const symptomId = defineModel<string>()
+const isFetching = defineModel<boolean>("isFetching")
 
-let list: Symptom[] = []
-watch(symptom, (value) => {
-	if (value) {
-		list = [value]
-		if (value.historic) {
-			list = list.concat(value.historic)
-		}
-	} else {
-		list = []
+const authStore = useAuthStore()
+
+const list = ref<Symptom[]>()
+
+watch(symptomId, async (value) => {
+	list.value = []
+
+	if (!value) {
+		return
 	}
+
+	isFetching.value = true
+
+	const symptom = await getSymptom(authStore.user!.uid, value)
+	list.value = [symptom]
+	if (symptom.historic) {
+		list.value = list.value.concat(symptom.historic)
+	}
+
+	isFetching.value = false
 })
 </script>
 
 <template>
-	<ul v-if="symptom" class="flex flex-col gap-4">
+	<ul
+		v-if="symptomId"
+		class="flex flex-col gap-4"
+		:class="isFetching ? 'h-full justify-center items-center' : ''"
+	>
+		<span v-if="isFetching" class="material-symbols-rounded animate-spin text-accent w-fit">
+			sync
+		</span>
 		<article
 			v-for="symptom in list"
 			:key="symptom.id"

@@ -4,6 +4,8 @@ import {
 	doc,
 	getDoc,
 	getDocs,
+	orderBy,
+	query,
 	serverTimestamp,
 	setDoc,
 	updateDoc,
@@ -41,9 +43,8 @@ export const getSymptom = async (userUid: string, uid: string) => {
 }
 
 export const getAllSymptoms = async (userUid: string, uid?: string) => {
-	const querySnap = await getDocs(
-		uid ? getHistoricCollection(userUid, uid) : getSymptomCollection(userUid),
-	)
+	const collectionRef = uid ? getHistoricCollection(userUid, uid) : getSymptomCollection(userUid)
+	const querySnap = await getDocs(query(collectionRef, orderBy("date_time", "desc")))
 	const documents = querySnap.docs.map((document) => symptomFromDocument(document))
 
 	return documents ?? {}

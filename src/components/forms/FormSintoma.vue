@@ -4,13 +4,13 @@ import BaseInput from "@/components/bases/BaseInput.vue"
 import BaseButton, { type ButtonState } from "@/components/bases/BaseButton.vue"
 import BaseSelect from "@/components/bases/BaseSelect.vue"
 import { useAuthStore } from "@/stores/authStore.ts"
-import { createSymptom, updateSymptom } from "@/services/symptomService"
+import { createSymptom, getSymptom, updateSymptom } from "@/services/symptomService"
 import { toInputValue } from "@feelinglovelynow/datetime-local"
 import { Timestamp } from "firebase/firestore"
-import type { Symptom, SymptomData } from "@/models/symptomModel"
+import type { SymptomData } from "@/models/symptomModel"
 
 const props = defineProps<{
-	symptom?: Symptom | null
+	symptomId?: string
 }>()
 
 const authStore = useAuthStore()
@@ -23,7 +23,8 @@ const symptomData = ref({
 	place: "",
 	intensity: 0,
 
-	loadFrom(symptom: Symptom) {
+	async loadFrom(symptomId: string) {
+		const symptom = await getSymptom(authStore.user!.uid, symptomId)
 		this.title = symptom.title
 		this.description = symptom.description
 		this.date_time = toInputValue(symptom.date_time.toDate())
@@ -58,8 +59,8 @@ const registrarSintoma = async () => {
 			intensity,
 		}
 
-		if (props.symptom) {
-			await updateSymptom(id, props.symptom.id, data)
+		if (props.symptomId) {
+			await updateSymptom(id, props.symptomId, data)
 		} else {
 			await createSymptom(id, data)
 		}
@@ -72,7 +73,7 @@ const registrarSintoma = async () => {
 }
 
 watch(
-	() => props.symptom,
+	() => props.symptomId,
 	(value) => {
 		if (value) {
 			symptomData.value.loadFrom(value)
@@ -172,7 +173,7 @@ watch(
 			</div>
 		</label>
 		<BaseButton type="submit" theme="accent" class="m-auto px-10" :state="buttonState">
-			{{ symptom ? "Atualizar Sintoma" : "Registrar Sintoma" }}
+			{{ symptomId ? "Atualizar Sintoma" : "Registrar Sintoma" }}
 		</BaseButton>
 	</form>
 </template>
