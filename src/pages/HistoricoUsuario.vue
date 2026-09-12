@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, useTemplateRef } from "vue"
+import { ref, useTemplateRef, watch } from "vue"
 import NavBar from "@/components/NavBar.vue"
 import BaseButton from "@/components/bases/BaseButton.vue"
 import BaseInput from "@/components/bases/BaseInput.vue"
@@ -7,34 +7,53 @@ import FormSintoma from "@/components/forms/FormSintoma.vue"
 import FilterOrd from "@/components/FilterOrd.vue"
 import SymptomCard from "@/components/cards/SymptomCard.vue"
 import { useAuthStore } from "@/stores/authStore"
-import { getAllSymptoms, type Symptom } from "@/services/symptomService"
+import { getAllSymptoms } from "@/services/symptomService"
 import SymptomExtended from "@/components/SymptomExtended.vue"
 import BaseDialog from "@/components/bases/BaseDialog.vue"
+import { useRoute } from "vue-router"
+import router from "@/router"
+import type { Symptom } from "@/models/symptomModel"
 
+const route = useRoute()
 const authStore = useAuthStore()
 
 const symptoms = ref<Symptom[]>([])
-const currentSymptom = ref<Symptom | null>(null)
+const currentSymptomId = ref<string>("")
 const formRegister = useTemplateRef("formRegister")
 const formUpdate = useTemplateRef("formUpdate")
 
-const updateSymptoms = async (id: string) => {
-	symptoms.value = await getAllSymptoms(id)
+const rootPath = "/" + route.path.split("/")[1]
+
+let userId = ""
+
+const updateSymptoms = async () => {
+	symptoms.value = []
+	symptoms.value = await getAllSymptoms(userId)
 }
 
-const viewSymptom = (symptom: Symptom | null) => {
-	currentSymptom.value = symptom
+const viewSymptom = (symptomId: string) => {
+	currentSymptomId.value = symptomId ?? ""
 }
 
 const handleSubmit = () => {
 	formRegister.value!.hide()
 	formUpdate.value!.hide()
-	currentSymptom.value = null
-	updateSymptoms(authStore.userData!.id)
+	updateSymptoms()
 }
 
+watch(currentSymptomId, (value) => {
+	if (value) {
+		router.replace(`${rootPath}/${value}`)
+	} else {
+		router.replace(rootPath)
+	}
+})
+
 authStore.onReady(async (data) => {
-	updateSymptoms(data.id)
+	userId = data.id
+	currentSymptomId.value = route.params.id as string
+
+	updateSymptoms()
 })
 </script>
 
@@ -79,7 +98,7 @@ authStore.onReady(async (data) => {
 				<br />
 				<p
 					class="text-textLight text-2xl"
-					:class="[!currentSymptom ? '' : 'hidden lg:flex']"
+					:class="[!currentSymptomId ? '' : 'hidden lg:flex']"
 				>
 					{{ symptoms.length }} sintomas registrados
 				</p>
@@ -93,14 +112,14 @@ authStore.onReady(async (data) => {
 					<ul
 						v-if="symptoms.length"
 						class="w-full lg:w-max max-h-full overflow-hidden flex flex-col gap-2 overflow-y-auto"
-						:class="[!currentSymptom ? '' : 'hidden lg:flex']"
+						:class="[!currentSymptomId ? '' : 'hidden lg:flex']"
 					>
 						<template v-for="symptom in symptoms" :key="symptom.id">
 							<SymptomCard
 								:symptom="symptom"
 								theme="light"
 								class="w-full cursor-pointer"
-								@click="viewSymptom(symptom)"
+								@click="viewSymptom(symptom.id)"
 							/>
 						</template>
 					</ul>
@@ -113,15 +132,33 @@ authStore.onReady(async (data) => {
 					</template>
 
 					<!-- Details -->
-					<section class="grow h-full flex flex-col items-start" v-show="currentSymptom">
-						<button type="button" class="cursor-pointer text-textLight" @click="viewSymptom(null)">
-							<span class="material-symbols-rounded text-3xl!">
-								arrow_back
-							</span>
-						</button>
+					<section
+						class="grow h-full flex flex-col items-start"
+						v-show="currentSymptomId"
+					>
+						<header class="w-full flex flex-row justify-between">
+							<button
+								type="button"
+								class="cursor-pointer text-textLight"
+								@click="viewSymptom('')"
+							>
+								<span class="material-symbols-rounded text-3xl!"> arrow_back </span>
+							</button>
+
+							<BaseButton
+								theme="accent"
+								icon="edit_document"
+								class="gap-3"
+								@click.prevent="formUpdate!.show()"
+							>
+								<p>Atualizar sintoma</p>
+							</BaseButton>
+						</header>
+
+						<br />
 
 						<SymptomExtended
-							v-model="currentSymptom"
+							v-model="currentSymptomId"
 							ref="areaDescription"
 							class="w-full"
 						/>
@@ -134,7 +171,7 @@ authStore.onReady(async (data) => {
 				</BaseDialog>
 
 				<BaseDialog title="Atualizar Sintoma" ref="formUpdate">
-					<FormSintoma @handled-submit="handleSubmit" :symptom="currentSymptom" />
+					<FormSintoma @handled-submit="handleSubmit" :symptomId="currentSymptomId" />
 				</BaseDialog>
 			</div>
 		</main>
