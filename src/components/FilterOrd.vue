@@ -70,29 +70,29 @@ function toggleOrd() {
 		</div>
 	</section>
 
-	<div v-if="showFilters === true" class="h-fit flex mb-3 gap-2">
-		<BaseButton theme="light" mode="fill" class="rounded-4xl! h-fit p-1">Todos</BaseButton>
-		<BaseButton theme="dark" mode="fill" class="text-textLight rounded-4xl! h-fit p-1"
+	<div v-if="showFilters === true" class="h-fit flex my-2 gap-2">
+		<BaseButton theme="accent" mode="fill" class="rounded-4xl! h-fit p-1">Todos</BaseButton>
+		<BaseButton theme="primaryDark" mode="fill" class="text-textLight rounded-4xl! h-fit p-1"
 			>Abdômen</BaseButton
 		>
 		<!-- Abodômen -->
-		<BaseButton theme="dark" mode="fill" class="text-textLight rounded-4xl! h-fit p-1"
+		<BaseButton theme="primaryDark" mode="fill" class="text-textLight rounded-4xl! h-fit p-1"
 			>Barriga</BaseButton
 		>
-		<BaseButton theme="dark" mode="fill" class="text-textLight rounded-4xl! h-fit p-1"
+		<BaseButton theme="primaryDark" mode="fill" class="text-textLight rounded-4xl! h-fit p-1"
 			>Cabeça</BaseButton
 		>
-		<BaseButton theme="dark" mode="fill" class="text-textLight rounded-4xl! h-fit p-1"
+		<BaseButton theme="primaryDark" mode="fill" class="text-textLight rounded-4xl! h-fit p-1"
 			>Costas</BaseButton
 		>
 	</div>
 
-	<div v-if="showOrd === true" class="h-fit flex mb-3 gap-2">
-		<BaseButton theme="dark" mode="transparent" icon="arrow_downward" class="h-8! px-0!" />
-		<BaseButton theme="light" mode="fill" class="rounded-4xl! h-fit p-1"
+	<div v-if="showOrd === true" class="h-fit flex my-2 gap-2">
+		<BaseButton theme="accent" mode="transparent" icon="arrow_downward" class="h-8! px-0!" />
+		<BaseButton theme="accent" mode="fill" class="rounded-4xl! h-fit p-1"
 			>Data de início</BaseButton
 		>
-		<BaseButton theme="dark" mode="fill" class="text-textLight rounded-4xl! h-fit p-1"
+		<BaseButton theme="primaryDark" mode="fill" class="text-textLight rounded-4xl! h-fit p-1"
 			>Intensidade</BaseButton
 		>
 	</div>

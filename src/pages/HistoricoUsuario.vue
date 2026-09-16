@@ -146,7 +146,8 @@ authStore.onReady(async (data) => {
 							</button>
 
 							<BaseButton
-								theme="accent"
+								theme="textLight"
+								mode="transparent"
 								icon="edit_document"
 								class="gap-3"
 								@click.prevent="formUpdate!.show()"
