@@ -125,7 +125,7 @@ const openMobile = () => {
 					<p>Notificações</p>
 				</BaseButton>
 
-				<BaseButton v-bind="sharedAttributes" icon="person" goto="perfil">
+				<BaseButton v-bind="sharedAttributes" icon="person" goto="/perfil">
 					<p>Perfil</p>
 				</BaseButton>
 

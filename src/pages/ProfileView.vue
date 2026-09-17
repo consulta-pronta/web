@@ -94,7 +94,7 @@ authStore.onReady(async (data) => {
 							</div>
 						</div>
 
-						<div class="bg-primary rounded-2xl md:col-span-2 p-5 flex flex-col justify-between h-full gap-4 text-textLight">
+						<div v-if="userType === 'paciente'" class="bg-primary rounded-2xl md:col-span-2 p-5 flex flex-col justify-between h-full gap-4 text-textLight">
 							<p class="text-xl font-bold">Informações de saúde</p>
 							<div class="grid grid-cols-3 gap-5">
 								<div class="grid col-span-1">
@@ -125,6 +125,24 @@ authStore.onReady(async (data) => {
 									<p>{{ userName }}: {{ userName }}</p>
 									<p>{{ userName }}: {{ userName }}</p>
 									<p class="font-normal opacity-70">Histórico familiar</p>
+								</div>
+							</div>
+						</div>
+
+						<div v-else class="bg-primary rounded-2xl md:col-span-2 p-5 flex flex-col justify-between h-full gap-4 text-textLight">
+							<p class="text-xl font-bold">Dados profissionais</p>
+							<div class="grid grid-cols-3 gap-5">
+								<div class="grid col-span-1">
+									<p>{{ userName }}</p>
+									<p class="font-normal opacity-70">CRM</p>
+								</div>
+								<div class="grid col-span-1">
+									<p>{{ userName }}</p>
+									<p class="font-normal opacity-70">Pediatria</p>
+								</div>
+								<div class="grid col-span-1">
+									<p>{{ userName }}</p>
+									<p class="font-normal opacity-70">Local</p>
 								</div>
 							</div>
 						</div>
