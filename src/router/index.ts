@@ -88,6 +88,14 @@ const router = createRouter({
 				roles: ["paciente"],
 			},
 		},
+		{
+			path: "/relatoriosPro",
+			name: "relatoriosPro",
+			component: () => import("@/pages/RelatoriosProfissional.vue"),
+			meta: {
+				roles: ["paciente"],
+			},
+		},
 	],
 })
 
