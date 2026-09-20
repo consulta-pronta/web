@@ -12,7 +12,10 @@ import { type UserType } from "@/components/ToggleUser.vue"
 const authStore = useAuthStore()
 const userName = ref("")
 const userType = ref<UserType>()
-const formProfile = useTemplateRef("formProfile")
+const formPersonal = useTemplateRef("formPersonal")
+const formContacts = useTemplateRef("formContacts")
+const formHealth = useTemplateRef("formHealth")
+const formProfessional = useTemplateRef("formProfessional")
 
 authStore.onReady(async (data) => {
 	userName.value = data.name
@@ -48,7 +51,7 @@ authStore.onReady(async (data) => {
 							<div class="bg-primary w-full rounded-2xl md:col-span-1 p-5 flex flex-col h-full gap-4 text-textLight font-bold">
 								<div class="flex justify-between">
 									<p class="text-xl">Dados pessoais</p>
-									<BaseButton type="button" theme="textLight" mode="transparent" icon="edit_square" @click="formProfile?.toggle()" />
+									<BaseButton type="button" theme="textLight" mode="transparent" icon="edit_square" @click="formPersonal?.toggle()" />
 								</div>
 
 								<div class="grid grid-cols-2 gap-5">
@@ -82,7 +85,7 @@ authStore.onReady(async (data) => {
 							<div class="bg-primary w-full rounded-2xl md:col-span-1 p-5 flex flex-col h-full gap-4 text-textLight font-bold">
 								<div class="flex justify-between">
 									<p class="text-xl">Meios de contato</p>
-									<BaseButton type="button" theme="textLight" mode="transparent" icon="edit_square" />
+									<BaseButton type="button" theme="textLight" mode="transparent" icon="edit_square" @click="formContacts?.toggle()" />
 								</div>
 								<div class="flex flex-col gap-5">
 									<div>
@@ -94,10 +97,10 @@ authStore.onReady(async (data) => {
 										<p class="font-normal opacity-70">Email</p>
 									</div>
 
-									<hr class="h-0.5 border-0 bg-textLight w-full m-auto rounded-full opacity-70" />
+									<hr v-if="bruh" class="h-0.5 border-0 bg-textLight w-full m-auto rounded-full opacity-70" />
 
-									<p>Aplicativos conectados</p>
-									<div>
+									<p v-if="bruh">Aplicativos conectados</p>
+									<div v-for="bruh in bruhs" :key="bruh">
 										<p>{{ userName }}</p>
 										<p class="font-normal opacity-70">Whatsapp</p>
 									</div>
@@ -107,8 +110,8 @@ authStore.onReady(async (data) => {
 
 						<div v-if="userType === 'paciente'" class="bg-primary rounded-2xl md:col-span-2 p-5 flex flex-col justify-between h-full gap-4 text-textLight">
 							<div class="flex justify-between">
-								<p class="text-xl">Informações de saúde</p>
-								<BaseButton type="button" theme="textLight" mode="transparent" icon="edit_square" />
+								<p class="text-xl font-bold">Informações de saúde</p>
+								<BaseButton type="button" theme="textLight" mode="transparent" icon="edit_square" @click="formHealth?.toggle()" />
 							</div>
 							<div class="grid grid-cols-3 gap-5">
 								<div class="grid col-span-1">
@@ -146,7 +149,7 @@ authStore.onReady(async (data) => {
 						<div v-else class="bg-primary rounded-2xl md:col-span-2 p-5 flex flex-col justify-between h-full gap-4 text-textLight">
 							<div class="flex justify-between">
 								<p class="text-xl">Dados profissionais</p>
-								<BaseButton type="button" theme="textLight" mode="transparent" icon="edit_square" />
+								<BaseButton type="button" theme="textLight" mode="transparent" icon="edit_square" @click="formProfessional?.toggle()" />
 							</div>
 							<div class="grid grid-cols-3 gap-5">
 								<div class="grid col-span-1">
@@ -168,8 +171,20 @@ authStore.onReady(async (data) => {
 			</article>
 
 			<!-- Forms -->
-			<BaseDialog title="Atualizar dados" ref="formProfile">
+			<BaseDialog title="Atualizar dados pessoais" ref="formPersonal">
 				<FormProfile />
+			</BaseDialog>
+
+			<BaseDialog title="Atualizar meios de contato" ref="formContacts">
+				<FormProfile type="contacts" />
+			</BaseDialog>
+
+			<BaseDialog title="Atualizar informações de saúde" ref="formHealth">
+				<FormProfile type="health" />
+			</BaseDialog>
+
+			<BaseDialog title="Atualizar dados profissionais" ref="formProfessional">
+				<FormProfile type="professional" />
 			</BaseDialog>
 		</main>
 	</div>
