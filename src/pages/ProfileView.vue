@@ -1,14 +1,18 @@
 <script setup lang="ts">
 import NavBar from '@/components/NavBar.vue'
 import UserPhoto from '@/components/UserPhoto.vue'
+import BaseButton from '@/components/bases/BaseButton.vue'
+import BaseDialog from '@/components/bases/BaseDialog.vue'
+import FormProfile from '@/components/forms/FormProfile.vue'
 
-import { ref } from "vue"
+import { ref, useTemplateRef } from "vue"
 import { useAuthStore } from "@/stores/authStore"
 import { type UserType } from "@/components/ToggleUser.vue"
 
 const authStore = useAuthStore()
 const userName = ref("")
 const userType = ref<UserType>()
+const formProfile = useTemplateRef("formProfile")
 
 authStore.onReady(async (data) => {
 	userName.value = data.name
@@ -42,7 +46,11 @@ authStore.onReady(async (data) => {
 					<section class="max-h-150 flex flex-col overflow-y-auto gap-5 rounded-2xl">
 						<div class="flex flex-col md:flex-row w-full gap-5">
 							<div class="bg-primary w-full rounded-2xl md:col-span-1 p-5 flex flex-col h-full gap-4 text-textLight font-bold">
-								<p class="text-xl">Dados pessoais</p>
+								<div class="flex justify-between">
+									<p class="text-xl">Dados pessoais</p>
+									<BaseButton type="button" theme="textLight" mode="transparent" icon="edit_square" @click="formProfile?.toggle()" />
+								</div>
+
 								<div class="grid grid-cols-2 gap-5">
 									<div class="grid col-span-1">
 										<p>{{ userName }} anos</p>
@@ -66,13 +74,16 @@ authStore.onReady(async (data) => {
 									</div>
 									<div class="grid col-span-1">
 										<p>{{ userName }}</p>
-										<p class="font-normal opacity-70">Local</p>
+										<p class="font-normal opacity-70">Endereço</p>
 									</div>
 								</div>
 							</div>
 
 							<div class="bg-primary w-full rounded-2xl md:col-span-1 p-5 flex flex-col h-full gap-4 text-textLight font-bold">
-								<p class="text-xl text-textLight font-bold">Meios de contato</p>
+								<div class="flex justify-between">
+									<p class="text-xl">Meios de contato</p>
+									<BaseButton type="button" theme="textLight" mode="transparent" icon="edit_square" />
+								</div>
 								<div class="flex flex-col gap-5">
 									<div>
 										<p>{{ userName }}</p>
@@ -95,7 +106,10 @@ authStore.onReady(async (data) => {
 						</div>
 
 						<div v-if="userType === 'paciente'" class="bg-primary rounded-2xl md:col-span-2 p-5 flex flex-col justify-between h-full gap-4 text-textLight">
-							<p class="text-xl font-bold">Informações de saúde</p>
+							<div class="flex justify-between">
+								<p class="text-xl">Informações de saúde</p>
+								<BaseButton type="button" theme="textLight" mode="transparent" icon="edit_square" />
+							</div>
 							<div class="grid grid-cols-3 gap-5">
 								<div class="grid col-span-1">
 									<p>{{ userName }}</p>
@@ -130,7 +144,10 @@ authStore.onReady(async (data) => {
 						</div>
 
 						<div v-else class="bg-primary rounded-2xl md:col-span-2 p-5 flex flex-col justify-between h-full gap-4 text-textLight">
-							<p class="text-xl font-bold">Dados profissionais</p>
+							<div class="flex justify-between">
+								<p class="text-xl">Dados profissionais</p>
+								<BaseButton type="button" theme="textLight" mode="transparent" icon="edit_square" />
+							</div>
 							<div class="grid grid-cols-3 gap-5">
 								<div class="grid col-span-1">
 									<p>{{ userName }}</p>
@@ -149,6 +166,11 @@ authStore.onReady(async (data) => {
 					</section>
 				</div>
 			</article>
+
+			<!-- Forms -->
+			<BaseDialog title="Atualizar dados" ref="formProfile">
+				<FormProfile />
+			</BaseDialog>
 		</main>
 	</div>
 </template>
