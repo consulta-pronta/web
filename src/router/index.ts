@@ -15,21 +15,37 @@ const router = createRouter({
 		{
 			path: "/",
 			name: "root",
-			component: () => import("@/pages/LandingPage.vue")
+			component: () => import("@/pages/LandingPage.vue"),
 		},
 		{
 			path: "/cadastro",
 			name: "cadastro",
-			component: () => import("@/pages/CadastroUsuario.vue"),
+			component: () => import("@/pages/authentication/CadastroUsuario.vue"),
 			meta: {
 				roles: [],
 			},
-			
+		},
+		{
+			path: "/cadastroContatos",
+			name: "cadastroContatos",
+			alias: ["/contatos", "/cadastroContatos"],
+			component: () => import("@/pages/authentication/CadastroContatos.vue"),
+			meta: {
+				roles: [],
+			},
 		},
 		{
 			path: "/login",
 			name: "login",
-			component: () => import("@/pages/LoginUsuario.vue"),
+			component: () => import("@/pages/authentication/LoginUsuario.vue"),
+			meta: {
+				roles: [],
+			},
+		},
+		{
+			path: "/recuperar-senha",
+			name: "recuperar-senha",
+			component: () => import("@/pages/authentication/RecuperarSenha.vue"),
 			meta: {
 				roles: [],
 			},
@@ -45,20 +61,33 @@ const router = createRouter({
 		{
 			path: "/exames",
 			name: "exames",
-			component: () => import("../pages/ExamesUsuario.vue"),
+			component: () => import("@/pages/ExamesUsuario.vue"),
 			meta: {
 				roles: ["paciente"],
 			},
 		},
 		{
-			path: "/historico-sintomas",
+			path: "/historico-sintomas/:id?",
 			name: "historico-sintomas",
 			alias: ["/historico", "/sintomas"],
 			component: () => import("@/pages/HistoricoUsuario.vue"),
 			meta: {
 				roles: ["paciente"],
 			},
-		}
+		},
+		{
+			path: "/:catchAll(.*)",
+			name: "not-found",
+			component: () => import("@/pages/NotFound.vue"),
+		},
+		{
+			path: "/relatorios",
+			name: "relatorios",
+			component: () => import("@/pages/RelatoriosUsuario.vue"),
+			meta: {
+				roles: ["paciente"],
+			},
+		},
 	],
 })
 
@@ -70,10 +99,10 @@ router.beforeEach(async (to) => {
 
 	await auth.authStateReady()
 	const user = auth.currentUser
-	
+
 	const authStore = useAuthStore()
 	authStore.setUser(user)
-	
+
 	const needsAuth = roles.length !== 0
 	const isAuthenticated = user !== null
 
