@@ -3,13 +3,13 @@ import { ref, type Ref } from "vue"
 import { useRouter } from "vue-router"
 
 import AuthBackground from "@/components/AuthBackground.vue"
-import BaseButton, { type ButtonState } from "@/components/bases/BaseButton.vue"
 import BaseLogo from "@/components/bases/BaseLogo.vue"
-import BaseInput from "@/components/bases/BaseInput.vue"
+import BaseButton, { type ButtonState } from "@/components/bases/BaseButton.vue"
+import BaseInput, { type BaseInputProps } from "@/components/bases/BaseInput.vue"
+import BaseSelect from "@/components/bases/BaseSelect.vue"
 import ToggleUser from "@/components/ToggleUser.vue"
-// import UserPhoto from "@/components/UserPhoto.vue"
-
 import { useSignUpStore } from "@/stores/signUpStore"
+import ufList from "@/assets/lista_uf.json" with { type: "json" }
 
 const router = useRouter()
 const signUpStore = useSignUpStore()
@@ -21,7 +21,6 @@ const submitForm = async () => {
 	buttonState.value = "sync"
 
 	try {
-		// const isPasswordValid = await signUpStore.isPasswordValid()
 		await signUpStore.submitForm()
 		router.push("dashboard")
 	} catch (error) {
@@ -29,6 +28,13 @@ const submitForm = async () => {
 	} finally {
 		buttonState.value = "enabled"
 	}
+}
+
+interface Uhh extends BaseInputProps { class: string }
+const sharedAttributes: Uhh = {
+	theme: "dark",
+	required: true,
+	class: "w-full",
 }
 </script>
 <template>
@@ -43,59 +49,77 @@ const submitForm = async () => {
 				Preencha seus dados para começar.
 			</div>
 
-			<!--form-->
 			<form
 				@submit.prevent="submitForm"
 				class="space-y-2 items-center justify-center flex flex-col p-4 w-100 sm:w-120 lg:w-120 xl:w-140"
 			>
-				<!-- <UserPhoto borderColor="accent"/> -->
 
 				<ToggleUser v-model="signUpStore.userType" class="mb-4" />
 
 				<BaseInput
+					v-bind="sharedAttributes"
 					type="text"
 					placeholder="Nome"
 					icon="person"
-					theme="dark"
-					class="w-full"
 					v-model="signUpStore.name"
-					required
 				/>
 				<BaseInput
+					v-bind="sharedAttributes"
 					type="cpf"
 					placeholder="CPF"
 					icon="article"
-					theme="dark"
-					class="w-full"
 					v-model="signUpStore.cpf"
-					required
 				/>
 				<BaseInput
+					v-bind="sharedAttributes"
 					type="email"
 					placeholder="E-Mail"
 					icon="email"
-					theme="dark"
-					class="w-full"
 					v-model="signUpStore.email"
-					required
 				/>
 				<BaseInput
+					v-bind="sharedAttributes"
 					type="tel"
 					placeholder="Telefone"
 					icon="phone"
-					theme="dark"
-					class="w-full"
 					v-model="signUpStore.phone"
-					required
 				/>
+
+				<fieldset
+					v-if="signUpStore.userType === 'profissional'"
+					class="w-full flex flex-row gap-3"
+					>
+
+					<BaseInput
+						type="crm"
+						placeholder="CRM"
+						icon="assignment_ind"
+						theme="dark"
+						class="grow"
+						required
+						v-model="signUpStore.crm"
+					/>
+
+					<BaseSelect
+						theme="dark"
+						default-value="UF"
+						required
+						class="w-20"
+						v-model="signUpStore.uf"
+						>
+
+						<template v-for="uf in ufList" :key="uf">
+							<option :value="uf">{{ uf }}</option>
+						</template>
+					</BaseSelect>
+				</fieldset>
 				<div class="relative w-full">
 					<BaseInput
+						v-bind="sharedAttributes"
 						type="password"
 						placeholder="Senha"
 						icon="lock"
-						theme="dark"
 						v-model="signUpStore.password"
-						required
 						@focusin="showPasswordRules = true"
 						@focusout="showPasswordRules = false"
 					/>
@@ -133,26 +157,12 @@ const submitForm = async () => {
 				</div>
 
 				<BaseInput
+					v-bind="sharedAttributes"
 					type="password"
 					placeholder="Confirmar senha"
 					icon="lock"
-					theme="dark"
-					class="w-full"
 					v-model="signUpStore.confirmPassword"
-					required
 				/>
-
-				<BaseButton
-					v-if="signUpStore.userType === 'profissional'"
-					type="button"
-					theme="accent"
-					mode="transparent"
-					icon="article"
-					path="cadastroCRM"
-					class="border-0 bg-textDark"
-				>
-					Enviar CRM ou E-CRM
-				</BaseButton>
 
 				<br />
 				<BaseButton
