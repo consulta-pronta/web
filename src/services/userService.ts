@@ -1,7 +1,8 @@
 import type { UserType } from "@/components/ToggleUser.vue"
 import { db } from "@/config/firebase"
-import { deleteDoc, doc, getDoc, serverTimestamp, setDoc, updateDoc } from "firebase/firestore"
+import { collection, deleteDoc, doc, getDoc, serverTimestamp, setDoc, updateDoc } from "firebase/firestore"
 import type { FieldValue, Timestamp } from "firebase/firestore"
+import { computed } from "vue"
 
 // TODO: setup Cloud Storage for storing photo url
 export type User = {
@@ -25,9 +26,19 @@ export type UserData = {
 	created_at?: FieldValue
 }
 
+export type ProfessionalData = UserData & {
+	crm?: string
+	uf?: string
+}
+
 export const getUserRef = (uid: string) => {
 	return doc(db, "users", uid)
 }
+
+export const signUpRequestsRef = computed(
+	() => collection(db, "signupRequests")
+)
+	
 
 export const createUser = async (uid: string, data: UserData) => {
 	data.created_at = serverTimestamp()
@@ -48,4 +59,11 @@ export const updateUser = async (uid: string, data: UserData) => {
 
 export const deleteUser = async (uid: string) => {
 	await deleteDoc(getUserRef(uid))
+}
+
+export const createUserSignUpRequest = async (uid: string, data: UserData) => {
+	const requestDoc = doc(signUpRequestsRef.value, uid)
+	await setDoc(requestDoc, data)
+	
+	return requestDoc.id
 }

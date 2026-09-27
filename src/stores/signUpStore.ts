@@ -4,10 +4,12 @@ import {
 	createUserWithEmailAndPassword,
 	sendEmailVerification,
 	validatePassword,
+	type User,
 } from "firebase/auth"
 import { auth } from "@/config/firebase"
-import { createUser } from "@/services/userService"
+import { createUser, createUserSignUpRequest, type ProfessionalData, type UserData } from "@/services/userService"
 import type { UserType } from "@/components/ToggleUser.vue"
+import { Timestamp } from "firebase/firestore"
 
 export const minPasswordLength = 8
 export const maxPasswordLength = 4096
@@ -19,6 +21,8 @@ export const useSignUpStore = defineStore("sign_up", () => {
 	const confirmPassword = ref("")
 	const phone = ref("")
 	const cpf = ref("")
+	const crm = ref("")
+	const uf = ref("")
 	const userType = ref<UserType>("paciente")
 
 	const rules = computed(() => ({
@@ -33,11 +37,32 @@ export const useSignUpStore = defineStore("sign_up", () => {
 		return Object.values(rules.value).includes(false)
 	})
 
+	const clearForm = () => {
+		name.value = ""
+		email.value = ""
+		password.value = ""
+		confirmPassword.value = ""
+		phone.value = ""
+		cpf.value = ""
+		crm.value = ""
+		uf.value = ""
+		userType.value = "paciente"
+	}
+
 	async function submitForm() {
 		const passwordStatus = await validatePassword(auth, password.value)
 		if (!passwordStatus.isValid) {
 			throw Error("Invalid password.")
 		}
+
+		const userData = {
+			name: name.value,
+			email: email.value,
+			phone: phone.value.replace(/[\(\)\-\s]/g, ""),
+			cpf: cpf.value.replace(/[.\-\s]/g, ""),
+			user_type: userType.value,
+			created_at: Timestamp.now()
+		} as UserData
 
 		const userCredential = await createUserWithEmailAndPassword(
 			auth,
@@ -45,16 +70,27 @@ export const useSignUpStore = defineStore("sign_up", () => {
 			password.value,
 		)
 		const user = userCredential.user
-
-		await createUser(user.uid, {
-			name: name.value,
-			email: email.value,
-			phone: phone.value.replace(/[\(\)\-\s]/g, ""),
-			cpf: cpf.value.replace(/[.\-\s]/g, ""),
-			user_type: userType.value,
-		})
-
 		console.log(`Successfuly created user of id ${user.uid}`)
+
+		if (userType.value == "profissional") {
+			createProfessional(user, {
+				...userData,
+				crm: crm.value,
+				uf: uf.value
+			} as ProfessionalData)
+		} else {
+			createPatient(user, userData)
+		}
+	}
+
+	const createProfessional = async (user: User, userData: ProfessionalData) => {
+		const id = await createUserSignUpRequest(user.uid, userData)
+		
+		console.log(`Successfuly requested signup of id ${id}`)
+	}
+
+	const createPatient = async (user: User, userData: UserData) => {
+		await createUser(user.uid, userData)
 
 		await sendEmailVerification(user)
 	}
@@ -65,10 +101,13 @@ export const useSignUpStore = defineStore("sign_up", () => {
 		confirmPassword,
 		name,
 		cpf,
+		crm,
+		uf,
 		phone,
 		userType,
 		rules,
 		isValid: isPasswordValid,
+		clearForm,
 		submitForm,
 	}
 })

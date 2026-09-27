@@ -96,6 +96,8 @@ const sharedAttributes: Uhh = {
 						icon="assignment_ind"
 						theme="dark"
 						class="grow"
+						required
+						v-model="signUpStore.crm"
 					/>
 
 					<BaseSelect
@@ -103,6 +105,7 @@ const sharedAttributes: Uhh = {
 						default-value="UF"
 						required
 						class="w-20"
+						v-model="signUpStore.uf"
 						>
 
 						<template v-for="uf in ufList" :key="uf">
