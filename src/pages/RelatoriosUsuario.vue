@@ -6,36 +6,20 @@ import ReportRow from '@/components/ReportRow.vue'
 import BaseDialog from '@/components/bases/BaseDialog.vue'
 import { ref, useTemplateRef } from 'vue'
 import FormReport from '@/components/forms/FormReport.vue'
-
-interface Relatorio {
-	id: string
-	nome: string
-	data: string
-	horario: string
-	show: boolean
-}
-
-const relatorios = ref<Relatorio[]>([
-	{
-		id: '123456789/1242',
-		nome: 'Dores',
-		data: '01/04/2026',
-		horario: '14:14',
-		show: false
-	},
-	{
-		id: '987654321/5678',
-		nome: 'Dor Constante',
-		data: '10/04/2026',
-		horario: '09:30',
-		show: false
-	}
-])
+import { useAuthStore } from "@/stores/authStore"
+import Report from "@/models/report.model"
 
 const formRegister = useTemplateRef("formRegister")
 
+const relatorios = ref<Report[]>()
 const registers = ref(1)
 const intensity = ref(6.7)
+
+const authStore = useAuthStore()
+
+authStore.onReady(async () => {
+	relatorios.value = await Report.getAll()
+})
 
 </script>
 

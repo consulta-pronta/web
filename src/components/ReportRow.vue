@@ -1,24 +1,18 @@
 <script setup lang="ts">
-import { useTemplateRef } from 'vue'
+import { computed, ref, useTemplateRef } from 'vue'
 import BaseDialog from '@/components/bases/BaseDialog.vue'
 import BaseButton from '@/components/bases/BaseButton.vue'
 import BaseInput from '@/components/bases/BaseInput.vue'
-
-interface Report {
-	id: string
-	nome: string
-	data: string
-	horario: string
-	show: boolean
-}
+import type Report from "@/models/report.model";
 
 const props = defineProps<{
 	report: Report
 }>()
 
-function toggle(report: Report) {
-	report.show = !report.show
-}
+const reportDateTime = computed(() => props.report.created_at?.toDate())
+const focused = ref(false)
+
+const toggle = () => { focused.value = !focused.value }
 
 const allowedProfessionals = useTemplateRef('allowedProfessionals')
 const formRename = useTemplateRef('formRename')
@@ -34,18 +28,18 @@ const viewReport = useTemplateRef('viewReport')
 				description
 			</span>
 			<p>
-				{{ report.nome }}
+				{{ report.title }}
 			</p>
 		</td>
 
 		<td class="text-center">{{ report.id }}</td>
 
-		<td class="text-center">{{ report.data }}</td>
+		<td class="text-center">{{ reportDateTime?.toLocaleDateString() }}</td>
 
 		<td class="relative">
 			<div class="flex justify-center items-center">
-				{{ report.horario }}
-				<button type="button" @click="toggle(report)" class="absolute right-1 md:right-2 cursor-pointer anchor-name-[--botoeira]">
+				{{ reportDateTime?.toLocaleTimeString() }}
+				<button type="button" @click="toggle()" class="absolute right-1 md:right-2 cursor-pointer anchor-name-[--botoeira]">
 					<span class="material-symbols-rounded text-primaryDark">
 						{{ 'more_horiz' }}
 					</span>
@@ -53,7 +47,7 @@ const viewReport = useTemplateRef('viewReport')
 			</div>
 		</td>
 
-		<div v-if="report.show" class="flex flex-col text-primaryDark absolute right-0 top-[anchor(top)] bg-surface z-10 outline-1 outline-primary rounded-lg p-1 position-anchor-[--botoeira]">
+		<div v-if="focused" class="flex flex-col text-primaryDark absolute right-0 top-[anchor(top)] bg-surface z-10 outline-1 outline-primary rounded-lg p-1 position-anchor-[--botoeira]">
 			<BaseButton icon="download" theme="primaryDark" mode="transparent" class="text-sm! p-2! justify-start">
 				Baixar relatório
 			</BaseButton>
@@ -104,7 +98,7 @@ const viewReport = useTemplateRef('viewReport')
 
 			<!--Paciente-->
 			<section class="flex just">
-				<UserPhoto/>
+				<!-- <UserPhoto/> -->
 				<article class="flex flex-col text-textLight text-xs justify-center">
 					<p class="text-base font-bold">
 						Cláudio Silva
