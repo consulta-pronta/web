@@ -1,7 +1,9 @@
 import type { Timestamp } from "firebase/firestore"
-import { BaseDocument, User } from "./baseDocument"
+import BaseDocument from "./baseDocument"
+import { User } from "./baseDocument"
+import { auth } from "@/config/firebase"
 
-export class Report extends BaseDocument {
+export default class Report extends BaseDocument {
 	constructor(
 		public readonly id: string = "",
 		public title: string = "",
@@ -13,7 +15,7 @@ export class Report extends BaseDocument {
 	) { super() }
 
 	static readonly collectionName: string =
-		User.getCollectionPath("reports")
+		User.getCollectionPath("reports", auth.currentUser!.uid)
 
 	protected static documentConverter(
 		id: string,
@@ -37,6 +39,14 @@ export class Report extends BaseDocument {
 			period_end: this.period_end,
 			created_at: this.created_at
 		}
+	}
+
+	static async get(id: string) {
+		return super.get(id) as Promise<Report | null>
+	}
+	
+	static async getAll() {
+		return super.getAll() as Promise<Report[]>
 	}
 }
 

@@ -1,7 +1,7 @@
 import { db } from "@/config/firebase";
-import { collection, DocumentSnapshot } from "firebase/firestore";
+import { collection, doc, DocumentSnapshot, getDoc, getDocs } from "firebase/firestore"
 
-export abstract class BaseDocument {
+export default abstract class BaseDocument {
 	readonly id: string = ""
 
 	static readonly collectionName: string = ""
@@ -10,8 +10,14 @@ export abstract class BaseDocument {
 		return collection(db, this.collectionName)
 	}
 	getCollectionName() {
-		const constructor = this.constructor as typeof BaseDocument;
-		return constructor.collectionName;
+		const constructor = this.constructor as typeof BaseDocument
+		return constructor.collectionName
+	}
+	static get emptyRef() {
+		return doc(this.collection) 
+	}
+	static ref(id: string) {
+		return doc(this.collection, id)
 	}
 
 	static fromDocument<T extends BaseDocument>(doc: DocumentSnapshot) {
@@ -30,9 +36,20 @@ export abstract class BaseDocument {
 	toMap(): Record<string, unknown> {
 		throw new Error("implement this >:(")
 	}
+
+	static async get(id: string) {
+		const snapshot = await getDoc(this.ref(id))
+		return this.fromDocument(snapshot)
+	}
+
+	static async getAll() {
+		const snapshot = await getDocs(this.collection)
+		const documents = snapshot.docs
+			.map(doc => this.fromDocument(doc))
+			.filter(item => item !== null)
+		return documents
+	}
 }
-
-
 
 export class User extends BaseDocument {
 	constructor(
@@ -41,7 +58,7 @@ export class User extends BaseDocument {
 
 	static readonly collectionName = "users"
 
-	static getCollectionPath(path: string) {
-		return `${User.collectionName}/${path}`
+	static getCollectionPath(path: string, id: string) {
+		return `${User.collectionName}/${id}/${path}`
 	}
 }
