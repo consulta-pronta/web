@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed, ref, useTemplateRef } from 'vue'
-import BaseDialog from '@/components/bases/BaseDialog.vue'
-import BaseButton from '@/components/bases/BaseButton.vue'
-import BaseInput from '@/components/bases/BaseInput.vue'
-import type Report from "@/models/report.model";
+import { computed, ref, useTemplateRef } from "vue"
+import BaseDialog from "@/components/bases/BaseDialog.vue"
+import BaseButton from "@/components/bases/BaseButton.vue"
+import BaseInput from "@/components/bases/BaseInput.vue"
+import type Report from "@/models/report.model"
 
 const props = defineProps<{
 	report: Report
@@ -12,19 +12,22 @@ const props = defineProps<{
 const reportDateTime = computed(() => props.report.created_at?.toDate())
 const focused = ref(false)
 
-const toggle = () => { focused.value = !focused.value }
+const toggle = () => {
+	focused.value = !focused.value
+}
 
-const allowedProfessionals = useTemplateRef('allowedProfessionals')
-const formRename = useTemplateRef('formRename')
-const definePassword = useTemplateRef('definePassword')
-const viewReport = useTemplateRef('viewReport')
-
+const allowedProfessionals = useTemplateRef("allowedProfessionals")
+const formRename = useTemplateRef("formRename")
+const definePassword = useTemplateRef("definePassword")
+const viewReport = useTemplateRef("viewReport")
 </script>
 
 <template>
 	<tr class="border-t border-primaryDark">
 		<td class="font-bold flex justify-center items-center relative m-1.5">
-			<span class="material-symbols-rounded text-base! md:text-2xl! text-primarydark absolute left-1 md:left-3">
+			<span
+				class="material-symbols-rounded text-base! md:text-2xl! text-primarydark absolute left-1 md:left-3"
+			>
 				description
 			</span>
 			<p>
@@ -39,31 +42,72 @@ const viewReport = useTemplateRef('viewReport')
 		<td class="relative">
 			<div class="flex justify-center items-center">
 				{{ reportDateTime?.toLocaleTimeString() }}
-				<button type="button" @click="toggle()" class="absolute right-1 md:right-2 cursor-pointer anchor-name-[--botoeira]">
+				<button
+					type="button"
+					@click="toggle()"
+					class="absolute right-1 md:right-2 cursor-pointer anchor-name-[--botoeira]"
+				>
 					<span class="material-symbols-rounded text-primaryDark">
-						{{ 'more_horiz' }}
+						{{ "more_horiz" }}
 					</span>
 				</button>
 			</div>
 		</td>
 
-		<div v-if="focused" class="flex flex-col text-primaryDark absolute right-0 top-[anchor(top)] bg-surface z-10 outline-1 outline-primary rounded-lg p-1 position-anchor-[--botoeira]">
-			<BaseButton icon="download" theme="primaryDark" mode="transparent" class="text-sm! p-2! justify-start">
+		<div
+			v-if="focused"
+			class="flex flex-col text-primaryDark absolute right-0 top-[anchor(top)] bg-surface z-10 outline-1 outline-primary rounded-lg p-1 position-anchor-[--botoeira]"
+		>
+			<BaseButton
+				icon="download"
+				theme="primaryDark"
+				mode="transparent"
+				class="text-sm! p-2! justify-start"
+			>
 				Baixar relatório
 			</BaseButton>
-			<BaseButton @click="allowedProfessionals?.toggle()" icon="shield_toggle" theme="primaryDark" mode="transparent" class="text-sm! p-2! justify-start">
+			<BaseButton
+				@click="allowedProfessionals?.toggle()"
+				icon="shield_toggle"
+				theme="primaryDark"
+				mode="transparent"
+				class="text-sm! p-2! justify-start"
+			>
 				Profissionais permitidos
 			</BaseButton>
-			<BaseButton @click="formRename?.toggle()" icon="edit_square" theme="primaryDark" mode="transparent" class="text-sm! p-2! justify-start">
+			<BaseButton
+				@click="formRename?.toggle()"
+				icon="edit_square"
+				theme="primaryDark"
+				mode="transparent"
+				class="text-sm! p-2! justify-start"
+			>
 				Renomear relatório
 			</BaseButton>
-			<BaseButton icon="delete" theme="primaryDark" mode="transparent" class="text-sm! p-2! justify-start">
+			<BaseButton
+				icon="delete"
+				theme="primaryDark"
+				mode="transparent"
+				class="text-sm! p-2! justify-start"
+			>
 				Apagar relatório
 			</BaseButton>
-			<BaseButton @click="definePassword?.toggle()" icon="lock" theme="primaryDark" mode="transparent" class="text-sm! p-2! justify-start">
+			<BaseButton
+				@click="definePassword?.toggle()"
+				icon="lock"
+				theme="primaryDark"
+				mode="transparent"
+				class="text-sm! p-2! justify-start"
+			>
 				Definir senha
 			</BaseButton>
-			<BaseButton @click="viewReport?.toggle()" icon="visibility" theme="primaryDark" mode="transparent" class="text-sm! p-2! justify-start">
+			<BaseButton
+				@click="viewReport?.toggle()"
+				icon="visibility"
+				theme="primaryDark"
+				mode="transparent"
+				class="text-sm! p-2! justify-start"
+			>
 				Visualizar relatório
 			</BaseButton>
 		</div>
@@ -73,26 +117,16 @@ const viewReport = useTemplateRef('viewReport')
 		<form class="flex flex-col gap-2 overflow-y-auto max-h-[80vh]">
 			<!--Textos-->
 			<section class="text-textLight">
-				<p class="text-base font-light italic">
-					Relatório: ID51966
-				</p>
+				<p class="text-base font-light italic">Relatório: ID51966</p>
 			</section>
 			<section class="text-textLight">
 				<span class="flex text-base">
-					<p class="font-bold">
-						Período:
-					</p>
-					<p class="font-normal mx-0.5">
-						10 de abr 2026 a 18 abr 2026
-					</p>
+					<p class="font-bold">Período:</p>
+					<p class="font-normal mx-0.5">10 de abr 2026 a 18 abr 2026</p>
 				</span>
 				<span class="flex text-base">
-					<p class="font-bold">
-						Duração:
-					</p>
-					<p class="font-normal mx-0.5">
-						8 dias (20 dias)
-					</p>
+					<p class="font-bold">Duração:</p>
+					<p class="font-normal mx-0.5">8 dias (20 dias)</p>
 				</span>
 			</section>
 
@@ -100,65 +134,37 @@ const viewReport = useTemplateRef('viewReport')
 			<section class="flex just">
 				<!-- <UserPhoto/> -->
 				<article class="flex flex-col text-textLight text-xs justify-center">
-					<p class="text-base font-bold">
-						Cláudio Silva
-					</p>
-					<p>
-						claudiosilva213@email.com
-					</p>
-					<p>
-						(27) 99722-3725
-					</p>
+					<p class="text-base font-bold">Cláudio Silva</p>
+					<p>claudiosilva213@email.com</p>
+					<p>(27) 99722-3725</p>
 				</article>
 			</section>
 
 			<!--Informações-->
 			<article>
-				<p class="text-textLight text-xl font-bold mt-2">
-					Resumo Geral
-				</p>
+				<p class="text-textLight text-xl font-bold mt-2">Resumo Geral</p>
 				<section class="flex w-full p-2 gap-2 text-background">
 					<div class="bg-surface rounded-xl flex flex-col w-full p-2.5">
-						<p class="text-sm font-medium">
-							Sintoma mais comum:
-						</p>
-						<p class="text-xl font-bold">
-							Dor nas costas
-						</p>
-						<p class="text-sm font-medium">
-							2 semanas
-						</p>
+						<p class="text-sm font-medium">Sintoma mais comum:</p>
+						<p class="text-xl font-bold">Dor nas costas</p>
+						<p class="text-sm font-medium">2 semanas</p>
 						<div class="flex bg-error rounded-3xl text-surface w-fit items-center p-1">
-							<span class="material-symbols-rounded text-xs! mx-1.5">
-								warning
-							</span>
-							<p class="text-xs p-2 md:p-1 lg:p-0.5">
-								Prioridade Alta
-							</p>
+							<span class="material-symbols-rounded text-xs! mx-1.5"> warning </span>
+							<p class="text-xs p-2 md:p-1 lg:p-0.5">Prioridade Alta</p>
 						</div>
 					</div>
 
 					<div class="flex flex-col w-full bg-surface text-background rounded-xl p-2.5">
 						<span class="flex">
-							<p class="text-base font-bold">
-								10/04:
-							</p>
-							<p class="text-error text-base font-normal mx-0.5">
-								8 de intensidade
-							</p>
+							<p class="text-base font-bold">10/04:</p>
+							<p class="text-error text-base font-normal mx-0.5">8 de intensidade</p>
 						</span>
 						<span class="flex">
-							<p class="text-base font-bold">
-								12/04:
-							</p>
-							<p class="text-sucess text-base font-normal mx-0.5">
-								4 de intensidade
-							</p>
+							<p class="text-base font-bold">12/04:</p>
+							<p class="text-sucess text-base font-normal mx-0.5">4 de intensidade</p>
 						</span>
 						<span class="flex">
-							<p class="text-base font-bold">
-								14/04:
-							</p>
+							<p class="text-base font-bold">14/04:</p>
 							<p class="text-warning text-base font-normal mx-0.5">
 								5 de intensidade
 							</p>
@@ -168,29 +174,26 @@ const viewReport = useTemplateRef('viewReport')
 			</article>
 
 			<!--Cronologia-->
-			<p class="text-textLight text-xl font-bold">
-				Cronologia do Sintoma
-			</p>
+			<p class="text-textLight text-xl font-bold">Cronologia do Sintoma</p>
 
 			<section class="flex flex-col gap-1 p-2 max-h-full">
 				<div class="flex">
 					<article class="flex flex-col justify-center items-center w-10">
 						<div class="flex justify-center items-center">
-							<span class="material-symbols-rounded bg-primaryLight text-background rounded-full">
+							<span
+								class="material-symbols-rounded bg-primaryLight text-background rounded-full"
+							>
 								vital_signs
 							</span>
 						</div>
-						<hr class="flex-1 w-px bg-primaryLight border-0">
+						<hr class="flex-1 w-px bg-primaryLight border-0" />
 					</article>
 					<article class="flex flex-col w-full bg-surface text-background rounded-lg p-3">
-						<p class="text-lg font-bold">
-							Dor nas costas ao levantar peso
-						</p>
+						<p class="text-lg font-bold">Dor nas costas ao levantar peso</p>
+						<p class="text-sm font-medium">(16 abr. 2026)</p>
 						<p class="text-sm font-medium">
-							(16 abr. 2026)
-						</p>
-						<p class="text-sm font-medium">
-							- Intensidade 6/10; "Começa a doer um pouco despois de eu levantar, mas para de doer em pouco tempo."
+							- Intensidade 6/10; "Começa a doer um pouco despois de eu levantar, mas
+							para de doer em pouco tempo."
 						</p>
 					</article>
 				</div>
@@ -198,21 +201,20 @@ const viewReport = useTemplateRef('viewReport')
 				<div class="flex">
 					<article class="flex flex-col justify-center items-center w-10">
 						<div class="flex justify-center items-center">
-							<span class="material-symbols-rounded bg-primaryLight text-background rounded-full">
+							<span
+								class="material-symbols-rounded bg-primaryLight text-background rounded-full"
+							>
 								vital_signs
 							</span>
 						</div>
-						<hr class="flex-1 w-px bg-primaryLight border-0">
+						<hr class="flex-1 w-px bg-primaryLight border-0" />
 					</article>
 					<article class="flex flex-col w-full bg-surface text-background rounded-lg p-3">
-						<p class="text-lg font-bold">
-							Dor nas costas ao levantar peso
-						</p>
+						<p class="text-lg font-bold">Dor nas costas ao levantar peso</p>
+						<p class="text-sm font-medium">(16 abr. 2026)</p>
 						<p class="text-sm font-medium">
-							(16 abr. 2026)
-						</p>
-						<p class="text-sm font-medium">
-							- Intensidade 6/10; "Começa a doer um pouco despois de eu levantar, mas para de doer em pouco tempo."
+							- Intensidade 6/10; "Começa a doer um pouco despois de eu levantar, mas
+							para de doer em pouco tempo."
 						</p>
 					</article>
 				</div>
@@ -220,29 +222,26 @@ const viewReport = useTemplateRef('viewReport')
 				<div class="flex">
 					<article class="flex flex-col justify-center items-center w-10">
 						<div class="flex justify-center items-center">
-							<span class="material-symbols-rounded bg-primaryLight text-background rounded-full">
+							<span
+								class="material-symbols-rounded bg-primaryLight text-background rounded-full"
+							>
 								vital_signs
 							</span>
 						</div>
-						<hr class="flex-1 w-px bg-primaryLight border-0">
+						<hr class="flex-1 w-px bg-primaryLight border-0" />
 					</article>
 					<article class="flex flex-col w-full bg-surface text-background rounded-lg p-3">
-						<p class="text-lg font-bold">
-							Dor nas costas ao levantar peso
-						</p>
+						<p class="text-lg font-bold">Dor nas costas ao levantar peso</p>
+						<p class="text-sm font-medium">(16 abr. 2026)</p>
 						<p class="text-sm font-medium">
-							(16 abr. 2026)
-						</p>
-						<p class="text-sm font-medium">
-							- Intensidade 6/10; "Começa a doer um pouco despois de eu levantar, mas para de doer em pouco tempo."
+							- Intensidade 6/10; "Começa a doer um pouco despois de eu levantar, mas
+							para de doer em pouco tempo."
 						</p>
 					</article>
 				</div>
 
 				<!--Visão geral-->
-				<p class="text-textLight text-xl font-bold mt-2">
-					Visão Geral
-				</p>
+				<p class="text-textLight text-xl font-bold mt-2">Visão Geral</p>
 
 				<article class="flex justify-center w-full">
 					<table class="w-full border-separate border-spacing-0.5">
@@ -276,9 +275,7 @@ const viewReport = useTemplateRef('viewReport')
 		<form class="flex flex-col place-items-center relative gap-1">
 			<BaseInput placeholder="Novo nome" icon="edit_square" class="w-full" required />
 
-			<BaseButton type="submit" theme="accent" class="mt-1">
-				Mudar Nome
-			</BaseButton>
+			<BaseButton type="submit" theme="accent" class="mt-1"> Mudar Nome </BaseButton>
 		</form>
 	</BaseDialog>
 
@@ -288,10 +285,7 @@ const viewReport = useTemplateRef('viewReport')
 			<BaseInput placeholder="Senha" icon="lock" class="w-full" required />
 			<BaseInput placeholder="Confirmar senha" icon="lock" class="w-full" required />
 
-			<BaseButton type="submit" theme="accent" class="mt-1">
-				Mudar Senha
-			</BaseButton>
-
+			<BaseButton type="submit" theme="accent" class="mt-1"> Mudar Senha </BaseButton>
 		</form>
 	</BaseDialog>
 
@@ -299,24 +293,22 @@ const viewReport = useTemplateRef('viewReport')
 		<form class="flex flex-col place-items-center relative">
 			<!-- Permissões -->
 			<div class="flex flex-col gap-2 w-full">
-				<label class="flex items-center w-full h-11 bg-surface rounded-md px-3 cursor-pointer">
-					<input type="checkbox" class="w-4 h-4 mr-3 accent-primary"/>
-					<span class="text-primaryDark text-sm">
-						Dra. Cláudia Leite
-					</span>
+				<label
+					class="flex items-center w-full h-11 bg-surface rounded-md px-3 cursor-pointer"
+				>
+					<input type="checkbox" class="w-4 h-4 mr-3 accent-primary" />
+					<span class="text-primaryDark text-sm"> Dra. Cláudia Leite </span>
 				</label>
 
-				<label class="flex items-center w-full h-11 bg-surface rounded-md px-3 cursor-pointer">
-					<input type="checkbox" class="w-4 h-4 mr-3 accent-primary"/>
-					<span class="text-primaryDark text-sm">
-						Dr. Auzio Varella
-					</span>
+				<label
+					class="flex items-center w-full h-11 bg-surface rounded-md px-3 cursor-pointer"
+				>
+					<input type="checkbox" class="w-4 h-4 mr-3 accent-primary" />
+					<span class="text-primaryDark text-sm"> Dr. Auzio Varella </span>
 				</label>
-
 			</div>
 
 			<BaseButton type="submit" theme="accent" class="mt-4 w-[60%] gap-1">Salvar</BaseButton>
-
 		</form>
 	</BaseDialog>
 </template>

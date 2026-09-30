@@ -1,26 +1,23 @@
 <script setup lang="ts">
-import BaseButton from '@/components/bases/BaseButton.vue'
+import BaseButton from "@/components/bases/BaseButton.vue"
 import BaseInput from "@/components/bases/BaseInput.vue"
-import NavBar from '@/components/NavBar.vue'
-import ReportRow from '@/components/ReportRow.vue'
-import BaseDialog from '@/components/bases/BaseDialog.vue'
-import { ref, useTemplateRef } from 'vue'
-import FormReport from '@/components/forms/FormReport.vue'
+import NavBar from "@/components/NavBar.vue"
+import ReportRow from "@/components/ReportRow.vue"
+import BaseDialog from "@/components/bases/BaseDialog.vue"
+import { ref, useTemplateRef } from "vue"
+import FormReport from "@/components/forms/FormReport.vue"
 import { useAuthStore } from "@/stores/authStore"
 import Report from "@/models/report.model"
 
 const formRegister = useTemplateRef("formRegister")
 
 const relatorios = ref<Report[]>()
-const registers = ref(1)
-const intensity = ref(6.7)
 
 const authStore = useAuthStore()
 
 authStore.onReady(async () => {
 	relatorios.value = await Report.getAll()
 })
-
 </script>
 
 <template>
@@ -34,10 +31,14 @@ authStore.onReady(async () => {
 				</h1>
 
 				<section class="flex flex-row gap-2 justify-center *:h-[stretch]">
-					<BaseButton type="button" theme="accent" icon="add_notes" @click="formRegister?.toggle()" class="col-span-3 rounded-2xl">
-						<p class="hidden lg:block">
-							Adicionar Relatórios
-						</p>
+					<BaseButton
+						type="button"
+						theme="accent"
+						icon="add_notes"
+						@click="formRegister?.toggle()"
+						class="col-span-3 rounded-2xl"
+					>
+						<p class="hidden lg:block">Adicionar Relatórios</p>
 					</BaseButton>
 
 					<BaseInput
@@ -46,10 +47,13 @@ authStore.onReady(async () => {
 						class="place-self-center w-full md:w-120"
 					/>
 
-					<BaseButton type="button" theme="primary" icon="download" class="col-span-3 rounded-2xl">
-						<p class="hidden lg:block">
-							Exportar lista
-						</p>
+					<BaseButton
+						type="button"
+						theme="primary"
+						icon="download"
+						class="col-span-3 rounded-2xl"
+					>
+						<p class="hidden lg:block">Exportar lista</p>
 					</BaseButton>
 				</section>
 			</header>
@@ -69,7 +73,6 @@ authStore.onReady(async () => {
 						<template v-for="relatorio in relatorios" :key="relatorio.id">
 							<ReportRow :report="relatorio" />
 						</template>
-
 					</tbody>
 				</table>
 			</div>
@@ -77,24 +80,24 @@ authStore.onReady(async () => {
 
 		<!--Form Registro-->
 		<BaseDialog title="Gerar Relatório" ref="formRegister">
-			<FormReport :registers="registers" :intensity="intensity" />
+			<FormReport />
 		</BaseDialog>
 		<!--Fim Form Registro-->
 	</div>
 </template>
 
 <style scoped>
-	@reference "@/assets/main.css";
+@reference "@/assets/main.css";
 
-	.dialog {
-		@apply
-			absolute inset-0 w-full h-full
+.dialog {
+	@apply absolute inset-0 w-full h-full
 			bg-black/80
 			flex justify-center place-items-center
-			z-50
-	}
+			z-50;
+}
 
-	td, th {
-		@apply p-3 text-center
-	}
+td,
+th {
+	@apply p-3 text-center;
+}
 </style>

@@ -114,10 +114,12 @@ authStore.onReady(async (data) => {
 
 					<!-- Details -->
 					<section class="grow h-full flex flex-col items-start" v-show="currentSymptom">
-						<button type="button" class="cursor-pointer text-textLight" @click="viewSymptom(null)">
-							<span class="material-symbols-rounded text-3xl!">
-								arrow_back
-							</span>
+						<button
+							type="button"
+							class="cursor-pointer text-textLight"
+							@click="viewSymptom(null)"
+						>
+							<span class="material-symbols-rounded text-3xl!"> arrow_back </span>
 						</button>
 
 						<SymptomExtended
