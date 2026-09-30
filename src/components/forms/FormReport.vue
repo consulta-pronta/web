@@ -2,10 +2,17 @@
 import BaseSelect from "@/components/bases/BaseSelect.vue"
 import BaseButton from "@/components/bases/BaseButton.vue"
 import BaseInput from "@/components/bases/BaseInput.vue"
-import { computed, ref } from "vue"
+import { computed, ref, useTemplateRef } from "vue"
 import Report from "@/models/report.model"
 import { Timestamp } from "firebase/firestore"
 import { inputDateToDate } from "@/utils"
+import { getSymptomsBetween, type Symptom } from "@/services/symptomService"
+import { useAuthStore } from "@/stores/authStore"
+import BaseDialog from "../bases/BaseDialog.vue"
+
+const authStore = useAuthStore()
+
+const dialogSymptoms = useTemplateRef("symptoms")
 
 const reportRef = ref(new Report())
 const periodStartInput = ref("")
@@ -14,7 +21,19 @@ const periodEndInput = ref("")
 const periodStart = computed(() => Timestamp.fromDate(inputDateToDate(periodStartInput.value)))
 const periodEnd = computed(() => Timestamp.fromDate(inputDateToDate(periodEndInput.value)))
 
-const loadSymptoms = () => {}
+const symptoms = ref<Symptom[]>([])
+
+const loadSymptoms = async () => {
+	const id = authStore.userData?.id
+	if (id == null) { return }
+	if (periodStartInput.value.length === 0 || periodEndInput.value.length === 0) {
+		return
+	}
+
+	symptoms.value = await getSymptomsBetween(id, periodStart.value, periodEnd.value)
+	
+	dialogSymptoms.value?.show()
+}
 
 const submitForm = () => {
 	reportRef.value.period_start = periodStart.value
@@ -52,8 +71,8 @@ const submitForm = () => {
 				<p>De:</p>
 				<p>Até:</p>
 
-				<BaseInput type="date" theme="dark" required />
-				<BaseInput type="date" theme="dark" required />
+				<BaseInput type="date" theme="dark" required v-model="periodStartInput" />
+				<BaseInput type="date" theme="dark" required v-model="periodEndInput" />
 			</div>
 		</fieldset>
 
@@ -64,7 +83,7 @@ const submitForm = () => {
 			class="hidden"
 		>
 			<!-- required -->
-			<!-- TODO: Balls -->
+			<!-- TODO: Add this functionality when that shit is implemented -->
 		</BaseSelect>
 
 		<BaseButton type="button" theme="accent" mode="transparent" @click="loadSymptoms">
@@ -104,5 +123,13 @@ const submitForm = () => {
 		<br />
 
 		<BaseButton type="submit" theme="accent" icon="add_circle"> Criar relatório </BaseButton>
+
+		<BaseDialog title="Sintomas incluídos no periodo" theme="light" ref="symptoms">
+			<ul class="list-inside list-disc">
+				<li v-for="symptom in symptoms" :key="symptom.id">
+					{{  symptom.title }}
+				</li>
+			</ul>
+		</BaseDialog>
 	</form>
 </template>
