@@ -67,6 +67,14 @@ const router = createRouter({
 			},
 		},
 		{
+			path: "/examesPro",
+			name: "examesProfissional",
+			component: () => import("@/pages/ExamesProfissional.vue"),
+			meta: {
+				roles: ["paciente"],
+			},
+		},
+		{
 			path: "/historico-sintomas/:id?",
 			name: "historico-sintomas",
 			alias: ["/historico", "/sintomas"],
