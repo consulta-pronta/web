@@ -42,7 +42,7 @@ const props = defineProps<Props>()
 							class="px-4 py-3 font-bold flex justify-center items-center relative m-1.5"
 						>
 							<span
-								class="material-symbols-rounded text-primarydark absolute left-3 text-sm!"
+								class="material-symbols-rounded text-primarydark absolute left-3 text-sm! md:text-base! lg:text-[18px]!"
 							>
 								{{ exame.icone }}
 							</span>
@@ -70,7 +70,7 @@ const props = defineProps<Props>()
 						<td class="px-4 py-3">
 							<div class="flex justify-center items-center relative">
 								<span
-									class="material-symbols-rounded text-primarydark absolute right-2 text-sm!"
+									class="material-symbols-rounded text-primarydark absolute right-2 text-sm! md:text-base! lg:text-[18px]!"
 								>
 									{{ exame.iconeResultado }}
 								</span>
