@@ -72,7 +72,7 @@ const openMobile = () => {
 				</template>
 
 				<template v-else>
-					<BaseButton v-bind="sharedAttributes" icon="group" goto="#">
+					<BaseButton v-bind="sharedAttributes" icon="group" goto="/pacientes">
 						<p>Pacientes</p>
 					</BaseButton>
 					<BaseButton v-bind="sharedAttributes" icon="pill" goto="#">
