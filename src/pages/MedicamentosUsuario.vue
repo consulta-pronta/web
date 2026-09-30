@@ -1,7 +1,29 @@
 <script setup lang="ts">
-import NavBar from "@/components/NavBar.vue"
-import BaseInput from "@/components/bases/BaseInput.vue";
 
+import NavBar from "@/components/NavBar.vue"
+import BaseInput from "@/components/bases/BaseInput.vue"
+import MedicationRow from "@/components/MedicationRow.vue"
+
+const Medicamentos = [
+	{
+		nome: "Dipirona",
+		quantidade: "500mg",
+		periodo: "De 8 em 8 horas",
+		consumo: "Oral"
+	},
+	{
+		nome: "Paracetamol",
+		quantidade: "750mg",
+		periodo: "De 6 em 6 horas",
+		consumo: "Oral"
+	},
+	{
+		nome: "Ibuprofeno",
+		quantidade: "600mg",
+		periodo: "De 12 em 12 horas",
+		consumo: "Oral"
+	}
+]
 </script>
 
 <template>
@@ -22,13 +44,13 @@ import BaseInput from "@/components/bases/BaseInput.vue";
 
 				<article class="w-full flex justify-center">
 					<section
-						class="relative flex w-[85%] md:w-[70%] lg:w-[45%] min-h-11 items-center border border-textLight text-sm text-textLight rounded-[15px]"
+						class="relative grid grid-cols-[1fr_10fr] w-[85%] md:w-[60%] lg:w-[40%] min-h-11 items-center border border-textLight text-sm text-textLight rounded-[15px]"
 					>
-						<span class="material-symbols-rounded pointer-events-none absolute left-3">
+						<span class="material-symbols-rounded text-[10px] pl-5">
 							shield
 						</span>
 
-						<div class="w-full text-center text-sm lg:text-[13px]">
+						<div class="w-full text-center text-sm lg:text-sm">
 							<p>
 								Controle quais profissionais da saúde podem acessar seu histórico.
 							</p>
@@ -37,11 +59,11 @@ import BaseInput from "@/components/bases/BaseInput.vue";
 				</article>
 			</header>
 			<section class="w-full flex justify-center place-items-center text-center min-h-0">
-				<div class="w-[80%] max-h-[55vh] overflow-y-auto rounded-[20px] scrollbar-hide">
+				<div class="w-full lg:w-[85%] max-h-[55vh] overflow-y-auto rounded-[20px] scrollbar-hide">
 					<table class="bg-surface w-full">
-						<thead class="text-lg text-primarydark font-bold sticky top-0 bg-surface z-10">
+						<thead class="text-sm text-primarydark font-bold sticky top-0 bg-surface z-10">
 							<tr>
-								<th class="px-4 py-3">Meidcamento</th>
+								<th class="px-4 py-3">Medicamento</th>
 								<th class="px-4 py-3">Quantidade</th>
 								<th class="px-4 py-3">Período</th>
 								<th class="px-4 py-3">Consumo</th>
@@ -49,22 +71,15 @@ import BaseInput from "@/components/bases/BaseInput.vue";
 							</tr>
 						</thead>
 
-						<tbody class="text-sm text-primarydark font-light">
-
-							<tr class="border-t border-primarydark">
-								<td class="px-4 py-3 font-bold flex justify-center items-center relative m-1.5">
-									<span class="material-symbols-rounded text-primarydark absolute left-3">
-										medication
-									</span>
-									Dipirona
-								</td>
-								<td class="px-4 py-3">500mg</td>
-								<td class="px-4 py-3">De 8 em 8 horas</td>
-								<td class="px-4 py-3">Oral</td>
-								<td class="px-4 py-3">
-									<input type="checkbox" class="h-4 w-4 appearance-none rounded border border-background bg-transparent checked:bg-background checked:border-background"/>
-								</td>
-							</tr>
+						<tbody class="text-[10px] md:text-sm text-primarydark font-light">
+							<MedicationRow
+								v-for="med in Medicamentos"
+								:key="med.nome"
+								:nome="med.nome"
+								:quantidade="med.quantidade"
+								:periodo="med.periodo"
+								:consumo="med.consumo"
+							/>
 						</tbody>
 					</table>
 				</div>
