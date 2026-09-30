@@ -32,7 +32,7 @@ const props = defineProps<Props>()
 					</tr>
 				</thead>
 
-				<tbody class="text-xs text-primarydark font-light">
+				<tbody class="text-xs lg:text-sm text-primarydark font-light">
 					<tr
 						v-for="(exame, index) in props.exames"
 						v-bind:key="index"
