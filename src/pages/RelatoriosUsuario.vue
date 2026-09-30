@@ -15,6 +15,11 @@ const relatorios = ref<Report[]>()
 
 const authStore = useAuthStore()
 
+const handleSubmit = async () => {
+	formRegister.value?.hide()
+	relatorios.value = await Report.getAll()
+}
+
 authStore.onReady(async () => {
 	relatorios.value = await Report.getAll()
 })
@@ -80,7 +85,7 @@ authStore.onReady(async () => {
 
 		<!--Form Registro-->
 		<BaseDialog title="Gerar Relatório" ref="formRegister">
-			<FormReport />
+			<FormReport @handled-submit="handleSubmit" />
 		</BaseDialog>
 		<!--Fim Form Registro-->
 	</div>

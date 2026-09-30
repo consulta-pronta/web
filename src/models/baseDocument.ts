@@ -1,5 +1,7 @@
 import { db } from "@/config/firebase"
-import { collection, doc, DocumentSnapshot, getDoc, getDocs } from "firebase/firestore"
+import { collection, doc, DocumentSnapshot, getDoc, getDocs, setDoc } from "firebase/firestore"
+
+export type FormData = Record<string, unknown>
 
 export default abstract class BaseDocument {
 	readonly id: string = ""
@@ -35,7 +37,7 @@ export default abstract class BaseDocument {
 		throw new Error("implement this >:(")
 	}
 
-	toMap(): Record<string, unknown> {
+	toMap(): FormData {
 		throw new Error("implement this >:(")
 	}
 
@@ -50,6 +52,12 @@ export default abstract class BaseDocument {
 			.map((doc) => this.fromDocument(doc))
 			.filter((item) => item !== null)
 		return documents
+	}
+
+	static async set(data: FormData) {
+		const doc = this.emptyRef
+		await setDoc(doc, data)
+		return doc.id
 	}
 }
 

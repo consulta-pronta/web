@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import BaseSelect from "@/components/bases/BaseSelect.vue"
-import BaseButton from "@/components/bases/BaseButton.vue"
+import BaseButton, { type ButtonState } from "@/components/bases/BaseButton.vue"
 import BaseInput from "@/components/bases/BaseInput.vue"
 import { computed, ref, useTemplateRef } from "vue"
 import Report from "@/models/report.model"
@@ -17,30 +17,39 @@ const dialogSymptoms = useTemplateRef("symptoms")
 const reportRef = ref(new Report())
 const periodStartInput = ref("")
 const periodEndInput = ref("")
+const symptoms = ref<Symptom[]>([])
+const buttonState = ref<ButtonState>("enabled")
 
 const periodStart = computed(() => Timestamp.fromDate(inputDateToDate(periodStartInput.value)))
 const periodEnd = computed(() => Timestamp.fromDate(inputDateToDate(periodEndInput.value)))
 
-const symptoms = ref<Symptom[]>([])
+const emit = defineEmits(["handled-submit"])
 
 const loadSymptoms = async () => {
 	const id = authStore.userData?.id
-	if (id == null) { return }
+	if (id == null) {
+		return
+	}
 	if (periodStartInput.value.length === 0 || periodEndInput.value.length === 0) {
 		return
 	}
 
 	symptoms.value = await getSymptomsBetween(id, periodStart.value, periodEnd.value)
-	
+
 	dialogSymptoms.value?.show()
 }
 
-const submitForm = () => {
+const submitForm = async () => {
 	reportRef.value.period_start = periodStart.value
 	reportRef.value.period_end = periodEnd.value
 
+	buttonState.value = "sync"
+
 	const data = reportRef.value.toMap()
-	console.log(data)
+	await Report.set(data)
+
+	emit("handled-submit")
+	buttonState.value = "enabled"
 }
 </script>
 
@@ -122,12 +131,14 @@ const submitForm = () => {
 
 		<br />
 
-		<BaseButton type="submit" theme="accent" icon="add_circle"> Criar relatório </BaseButton>
+		<BaseButton type="submit" theme="accent" icon="add_circle" :state="buttonState">
+			Criar relatório
+		</BaseButton>
 
 		<BaseDialog title="Sintomas incluídos no periodo" theme="light" ref="symptoms">
 			<ul class="list-inside list-disc">
 				<li v-for="symptom in symptoms" :key="symptom.id">
-					{{  symptom.title }}
+					{{ symptom.title }}
 				</li>
 			</ul>
 		</BaseDialog>

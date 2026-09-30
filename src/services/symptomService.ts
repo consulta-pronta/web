@@ -72,22 +72,23 @@ export const getAllSymptoms = async (userUid: string) => {
 	return documents ?? {}
 }
 
-export const getSymptomsBetween = async (
-	userUid: string,
-	start: Timestamp,
-	end: Timestamp,
-) => {
-	const snapshot = await getDocs(query(
-		getSymptomCollectionFromUserRef(userUid),
-		where("date_time", ">=", start),
-		where("date_time", "<=", end),
-	))
-	return snapshot.docs.map(
-		(doc) => ({
-			id: doc.id,
-			...doc.data(),
-		}) as Symptom
-	) ?? []
+export const getSymptomsBetween = async (userUid: string, start: Timestamp, end: Timestamp) => {
+	const snapshot = await getDocs(
+		query(
+			getSymptomCollectionFromUserRef(userUid),
+			where("date_time", ">=", start),
+			where("date_time", "<=", end),
+		),
+	)
+	return (
+		snapshot.docs.map(
+			(doc) =>
+				({
+					id: doc.id,
+					...doc.data(),
+				}) as Symptom,
+		) ?? []
+	)
 }
 
 export const updateSymptom = async (userUid: string, uid: string, data: SymptomData) => {
