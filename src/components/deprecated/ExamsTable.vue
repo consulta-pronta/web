@@ -1,3 +1,4 @@
+```vue
 <script setup lang="ts">
 interface Exame {
 	nome: string
@@ -19,9 +20,9 @@ const props = defineProps<Props>()
 
 <template>
 	<section class="w-full flex justify-center place-items-center text-center min-h-0">
-		<div class="w-[90%] max-h-[55vh] overflow-y-auto rounded-[20px] scrollbar-hide">
+		<div class="w-full lg:w-[80%] max-h-[55vh] overflow-y-auto rounded-[20px] scrollbar-hide">
 			<table class="bg-surface w-full">
-				<thead class="text-lg text-primaryDark font-bold sticky top-0 bg-surface z-10">
+				<thead class="text-sm text-primaryDark font-bold sticky top-0 bg-surface z-10">
 					<tr>
 						<th class="px-4 py-3">Exame</th>
 						<th class="px-4 py-3" v-if="props.paciente === true">Paciente</th>
@@ -31,7 +32,7 @@ const props = defineProps<Props>()
 					</tr>
 				</thead>
 
-				<tbody class="text-sm text-primarydark font-light">
+				<tbody class="text-xs text-primarydark font-light">
 					<tr
 						v-for="(exame, index) in props.exames"
 						v-bind:key="index"
@@ -40,28 +41,43 @@ const props = defineProps<Props>()
 						<td
 							class="px-4 py-3 font-bold flex justify-center items-center relative m-1.5"
 						>
-							<span class="material-symbols-rounded text-primarydark absolute left-3">
+							<span
+								class="material-symbols-rounded text-primarydark absolute left-3 text-sm!"
+							>
 								{{ exame.icone }}
 							</span>
-							{{ exame.nome }}
+
+							<div class="text-center max-w-[70%] mx-auto break-words">
+								{{ exame.nome }}
+							</div>
 						</td>
 
-						<td class="px-4 py-3 font-bold" v-if="props.paciente === true">
+						<td
+							class="px-4 py-3 font-bold"
+							v-if="props.paciente === true"
+						>
 							{{ exame.paciente }}
 						</td>
 
-						<td class="px-4 py-3">{{ exame.local }}</td>
-
-						<td class="px-4 py-3">{{ exame.data }}</td>
+						<td class="px-4 py-3">
+							{{ exame.local }}
+						</td>
 
 						<td class="px-4 py-3">
-							<div class="justify-center items-center relative">
+							{{ exame.data }}
+						</td>
+
+						<td class="px-4 py-3">
+							<div class="flex justify-center items-center relative">
 								<span
-									class="material-symbols-rounded text-primarydark absolute right-2"
+									class="material-symbols-rounded text-primarydark absolute right-2 text-sm!"
 								>
 									{{ exame.iconeResultado }}
 								</span>
-								{{ exame.resultado }}
+
+								<div class="text-center max-w-[70%] mx-auto break-words">
+									{{ exame.resultado }}
+								</div>
 							</div>
 						</td>
 					</tr>
@@ -70,3 +86,4 @@ const props = defineProps<Props>()
 		</div>
 	</section>
 </template>
+```
