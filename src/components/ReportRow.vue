@@ -104,14 +104,6 @@ authStore.onReady(async (data) => {
 			class="flex flex-col text-primaryDark absolute right-0 top-[anchor(top)] bg-surface z-10 outline-1 outline-primary rounded-lg p-1 position-anchor-[--botoeira]"
 		>
 			<BaseButton
-				icon="download"
-				theme="primaryDark"
-				mode="transparent"
-				class="text-sm! p-2! justify-start"
-			>
-				Baixar relatório
-			</BaseButton>
-			<BaseButton
 				@click="allowedProfessionals?.toggle()"
 				icon="shield_toggle"
 				theme="primaryDark"
@@ -136,15 +128,6 @@ authStore.onReady(async (data) => {
 				class="text-sm! p-2! justify-start"
 			>
 				Apagar relatório
-			</BaseButton>
-			<BaseButton
-				@click="definePassword?.toggle()"
-				icon="lock"
-				theme="primaryDark"
-				mode="transparent"
-				class="text-sm! p-2! justify-start"
-			>
-				Definir senha
 			</BaseButton>
 			<BaseButton
 				@click="viewReport?.toggle()"

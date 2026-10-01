@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { formatToNumber } from "brazilian-values";
-import { ref } from "vue";
+import { computed } from "vue";
 
 interface IntensityChipProps {
 	intensity: number,
@@ -10,14 +10,15 @@ interface IntensityChipProps {
 const props = defineProps<IntensityChipProps>()
 
 const ranges = [
-	{ min: 0, max: 4, bgColor: "sucess" },
-	{ min: 5, max: 7, bgColor: "warning" },
-	{ min: 8, max: 10, bgColor: "error" },
+	{ min: 0, max: 4, bgColor: "sucess", color: "Dark" },
+	{ min: 5, max: 7, bgColor: "warning", color: "Dark" },
+	{ min: 8, max: 10, bgColor: "error", color: "Light" },
 ]
-const current = ref(ranges.find((r) => {
+const current = computed(() => ranges.find((r) => {
 	return props.intensity >= r.min && props.intensity <= r.max
 }))
-const backgroundColor = "var(--color-" + current.value?.bgColor + ")"
+const backgroundColor = computed(() => "var(--color-" + current.value?.bgColor + ")")
+const textColor = computed(() => "var(--color-text" + current.value?.color + ")")
 
 </script>
 
@@ -36,5 +37,6 @@ const backgroundColor = "var(--color-" + current.value?.bgColor + ")"
 
 article	{
 	background-color: v-bind(backgroundColor);
+	color: v-bind(textColor);
 }
 </style>

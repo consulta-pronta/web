@@ -51,15 +51,6 @@ authStore.onReady(async () => {
 						icon="search"
 						class="place-self-center w-full md:w-120"
 					/>
-
-					<BaseButton
-						type="button"
-						theme="primary"
-						icon="download"
-						class="col-span-3 rounded-2xl"
-					>
-						<p class="hidden lg:block">Exportar lista</p>
-					</BaseButton>
 				</section>
 			</header>
 
