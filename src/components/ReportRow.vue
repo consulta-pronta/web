@@ -4,22 +4,45 @@ import BaseDialog from "@/components/bases/BaseDialog.vue"
 import BaseButton from "@/components/bases/BaseButton.vue"
 import BaseInput from "@/components/bases/BaseInput.vue"
 import type Report from "@/models/report.model"
+import { onClickOutside } from "@vueuse/core"
+import { useAuthStore } from "@/stores/authStore"
+import type { UserType } from "./ToggleUser.vue"
+import { timestampDiffDays, toCoolDate } from "@/utils.ts"
+import { getSymptomsBetween, type Symptom } from "@/services/symptomService.ts"
 
 const props = defineProps<{
 	report: Report
 }>()
 
-const reportDateTime = computed(() => props.report.created_at?.toDate())
 const focused = ref(false)
+const userType = ref<UserType>()
+const symptoms = ref<Symptom[]>([])
+
+const popup = useTemplateRef("popup")
+const allowedProfessionals = useTemplateRef("allowedProfessionals")
+const formRename = useTemplateRef("formRename")
+const definePassword = useTemplateRef("definePassword")
+const viewReport = useTemplateRef("viewReport")
+
+const reportDateTime = computed(() => props.report.created_at?.toDate())
+
+const authStore = useAuthStore()
 
 const toggle = () => {
 	focused.value = !focused.value
 }
 
-const allowedProfessionals = useTemplateRef("allowedProfessionals")
-const formRename = useTemplateRef("formRename")
-const definePassword = useTemplateRef("definePassword")
-const viewReport = useTemplateRef("viewReport")
+onClickOutside(popup, () => { focused.value = false })
+
+authStore.onReady(async (data) => {
+	userType.value = data.user_type
+	symptoms.value = await getSymptomsBetween(
+		data.id,
+		props.report.period_start!,
+		props.report.period_end!,
+	)
+})
+
 </script>
 
 <template>
@@ -56,6 +79,7 @@ const viewReport = useTemplateRef("viewReport")
 
 		<div
 			v-if="focused"
+			ref="popup"
 			class="flex flex-col text-primaryDark absolute right-0 top-[anchor(top)] bg-surface z-10 outline-1 outline-primary rounded-lg p-1 position-anchor-[--botoeira]"
 		>
 			<BaseButton
@@ -113,25 +137,28 @@ const viewReport = useTemplateRef("viewReport")
 		</div>
 	</tr>
 
-	<BaseDialog title="Dor constante" ref="viewReport">
-		<form class="flex flex-col gap-2 overflow-y-auto max-h-[80vh]">
-			<!--Textos-->
-			<section class="text-textLight">
-				<p class="text-base font-light italic">Relatório: ID51966</p>
+	<BaseDialog :title="report.title" ref="viewReport">
+		<form class="flex flex-col gap-2 overflow-y-auto max-h-[80vh] text-textLight scrollbar-track-transparent scrollbar-thumb-accent">
+			<section>
+				<p class="font-light italic">Relatório: {{ report.id }}</p>
 			</section>
-			<section class="text-textLight">
-				<span class="flex text-base">
-					<p class="font-bold">Período:</p>
-					<p class="font-normal mx-0.5">10 de abr 2026 a 18 abr 2026</p>
+			<section class="*:flex *:gap-1 *:*:first:font-semibold">
+				<span>
+					<p>Período:</p>
+					<p>
+						{{ toCoolDate(report.period_end!!.toDate())}}
+						a
+						{{ toCoolDate(report.period_start!!.toDate())}}
+					</p>
 				</span>
-				<span class="flex text-base">
-					<p class="font-bold">Duração:</p>
-					<p class="font-normal mx-0.5">8 dias (20 dias)</p>
+				<span>
+					<p>Duração:</p>
+					<p>{{ Math.floor(timestampDiffDays(report.period_start!!, report.period_end!!)) }} dias</p>
 				</span>
 			</section>
 
 			<!--Paciente-->
-			<section class="flex just">
+			<section class="flex just" v-if="userType === 'profissional'">
 				<!-- <UserPhoto/> -->
 				<article class="flex flex-col text-textLight text-xs justify-center">
 					<p class="text-base font-bold">Cláudio Silva</p>
@@ -176,69 +203,24 @@ const viewReport = useTemplateRef("viewReport")
 			<!--Cronologia-->
 			<p class="text-textLight text-xl font-bold">Cronologia do Sintoma</p>
 
-			<section class="flex flex-col gap-1 p-2 max-h-full">
-				<div class="flex">
-					<article class="flex flex-col justify-center items-center w-10">
-						<div class="flex justify-center items-center">
-							<span
-								class="material-symbols-rounded bg-primaryLight text-background rounded-full"
-							>
-								vital_signs
-							</span>
-						</div>
-						<hr class="flex-1 w-px bg-primaryLight border-0" />
-					</article>
-					<article class="flex flex-col w-full bg-surface text-background rounded-lg p-3">
-						<p class="text-lg font-bold">Dor nas costas ao levantar peso</p>
-						<p class="text-sm font-medium">(16 abr. 2026)</p>
-						<p class="text-sm font-medium">
-							- Intensidade 6/10; "Começa a doer um pouco despois de eu levantar, mas
-							para de doer em pouco tempo."
-						</p>
-					</article>
-				</div>
+			<section class="flex flex-col gap-0 p-2 max-h-full">
+				<article class="flex flex-row gap-2 *:flex *:flex-col" v-for="(symptom, index) in symptoms" :key="symptom.id">
+					<div class="items-center">
+						<span class="material-symbols-rounded bg-primaryLight text-background rounded-full p-1">
+							vital_signs
+						</span>
+						<hr class="flex-1 w-0.5 bg-textLight border-0" v-if="index + 1 !== symptoms.length" />
+					</div>
 
-				<div class="flex">
-					<article class="flex flex-col justify-center items-center w-10">
-						<div class="flex justify-center items-center">
-							<span
-								class="material-symbols-rounded bg-primaryLight text-background rounded-full"
-							>
-								vital_signs
-							</span>
+					<section class="bg-surface text-textDark rounded-lg p-3 w-full mb-2">
+						<div class="flex flex-row justify-between items-center">
+							<p class="grow font-semibold text-lg">{{ symptom.title }}</p>
+							<p class="text-sm">{{ toCoolDate(symptom.date_time.toDate()) }}</p>
 						</div>
-						<hr class="flex-1 w-px bg-primaryLight border-0" />
-					</article>
-					<article class="flex flex-col w-full bg-surface text-background rounded-lg p-3">
-						<p class="text-lg font-bold">Dor nas costas ao levantar peso</p>
-						<p class="text-sm font-medium">(16 abr. 2026)</p>
-						<p class="text-sm font-medium">
-							- Intensidade 6/10; "Começa a doer um pouco despois de eu levantar, mas
-							para de doer em pouco tempo."
-						</p>
-					</article>
-				</div>
-
-				<div class="flex">
-					<article class="flex flex-col justify-center items-center w-10">
-						<div class="flex justify-center items-center">
-							<span
-								class="material-symbols-rounded bg-primaryLight text-background rounded-full"
-							>
-								vital_signs
-							</span>
-						</div>
-						<hr class="flex-1 w-px bg-primaryLight border-0" />
-					</article>
-					<article class="flex flex-col w-full bg-surface text-background rounded-lg p-3">
-						<p class="text-lg font-bold">Dor nas costas ao levantar peso</p>
-						<p class="text-sm font-medium">(16 abr. 2026)</p>
-						<p class="text-sm font-medium">
-							- Intensidade 6/10; "Começa a doer um pouco despois de eu levantar, mas
-							para de doer em pouco tempo."
-						</p>
-					</article>
-				</div>
+						<p>Itensidade: {{ symptom.intensity }}/10</p>
+						<p class="text-sm">"{{ symptom.description }}"</p>
+					</section>
+				</article>
 
 				<!--Visão geral-->
 				<p class="text-textLight text-xl font-bold mt-2">Visão Geral</p>
