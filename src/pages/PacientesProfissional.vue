@@ -116,7 +116,6 @@ authStore.onReady(async (data) => {
 					<!-- Details -->
 					<section
 						class="grow h-full flex flex-col items-start"
-						v-show="currentPatientId"
 					>
 						<header class="w-full flex flex-row justify-between">
 							<button
