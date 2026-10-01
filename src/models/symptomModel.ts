@@ -1,4 +1,4 @@
-import { DocumentSnapshot, type FieldValue, type Timestamp } from "firebase/firestore"
+import { DocumentSnapshot, QueryDocumentSnapshot, type FieldValue, type Timestamp } from "firebase/firestore"
 
 export const SYMPTOM_COLLECTION = "symptom"
 
@@ -22,7 +22,7 @@ export type SymptomData = {
 	created_at?: FieldValue
 }
 
-export const symptomFromDocument = (doc: DocumentSnapshot) => {
+export const symptomFromDocument = (doc: DocumentSnapshot | QueryDocumentSnapshot) => {
 	return { id: doc.id, ...doc.data() } as Symptom
 }
 

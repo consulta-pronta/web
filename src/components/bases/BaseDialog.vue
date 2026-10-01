@@ -35,7 +35,7 @@ defineExpose({
 <template>
 	<section
 		v-show="visible"
-		class="absolute inset-0 w-full h-full bg-black/50 flex justify-center place-items-center"
+		class="absolute inset-0 w-full h-full z-67 bg-black/50 flex justify-center place-items-center"
 		@click.self="toggle"
 	>
 		<div class="w-150 p-10 rounded-xl shadow-xl" :class="style">

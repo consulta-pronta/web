@@ -9,6 +9,8 @@ import {
 	serverTimestamp,
 	setDoc,
 	updateDoc,
+	where,
+	type Timestamp,
 } from "firebase/firestore"
 import { getUserRef } from "./userService"
 import {
@@ -54,6 +56,30 @@ export const getAllSymptoms = async (userUid: string, uid?: string) => {
 	const documents = querySnap.docs.map((document) => symptomFromDocument(document))
 
 	return documents ?? {}
+}
+
+export const getSymptomsBetween = async (userUid: string, start: Timestamp, end: Timestamp, deep = false) => {
+	const snapshot = await getDocs(
+		query(
+			getSymptomCollection(userUid),
+			where("date_time", ">=", start),
+			where("date_time", "<=", end),
+			orderBy("date_time", "desc"),
+		),
+	)
+
+	const topLevelSymptoms = snapshot.docs.map((doc) => symptomFromDocument(doc)) ?? []
+	if (!deep) { 
+		return topLevelSymptoms
+	}
+
+	const historicSymptoms = await Promise.all(
+		topLevelSymptoms.map((item) => getAllSymptoms(userUid, item.id))
+	)
+
+	return [...topLevelSymptoms, ...historicSymptoms.flat()].sort(
+		(a, b) => b.date_time.toMillis() - a.date_time.toMillis(),
+	)
 }
 
 export const updateSymptom = async (
