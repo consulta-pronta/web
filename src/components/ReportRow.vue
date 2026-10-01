@@ -6,16 +6,18 @@ import BaseInput from "@/components/bases/BaseInput.vue"
 import type Report from "@/models/report.model"
 import { onClickOutside } from "@vueuse/core"
 import { useAuthStore } from "@/stores/authStore"
-import type { UserType } from "./ToggleUser.vue"
 import { timestampDiffDays, toCoolDate } from "@/utils.ts"
 import { getSymptomsBetween, type Symptom } from "@/services/symptomService.ts"
+import type { User } from "@/services/userService.ts"
+import { formatToPhone } from "brazilian-values"
+import IntensityChip from "./IntensityChip.vue"
 
 const props = defineProps<{
 	report: Report
 }>()
 
 const focused = ref(false)
-const userType = ref<UserType>()
+const user = ref<User>()
 const symptoms = ref<Symptom[]>([])
 
 const popup = useTemplateRef("popup")
@@ -32,22 +34,45 @@ const toggle = () => {
 	focused.value = !focused.value
 }
 
+const mostAffectedArea = computed(() => {
+	const areas = Object.groupBy(symptoms.value, (item) => item.place)
+	const entries = Object.entries(areas)
+	
+	// @ts-expect-error(Typescript don't know shit)
+	const [area, maxSymptoms] = entries.reduce((max, item) => {
+		return item.length > max.length ? item : max
+	}, [])
+	const amount = maxSymptoms?.length ?? 0
+
+	let intensity = 0.0
+	try {
+		const sum = maxSymptoms!.reduce((sum, item) => {
+			return sum + item.intensity
+		}, 0) ?? 0
+		intensity = sum / amount
+	}  catch (error) {
+		console.error(error)
+	}
+
+	return {area, amount, intensity}
+})
+
 onClickOutside(popup, () => { focused.value = false })
 
 authStore.onReady(async (data) => {
-	userType.value = data.user_type
+	user.value = data
 	symptoms.value = await getSymptomsBetween(
 		data.id,
 		props.report.period_start!,
 		props.report.period_end!,
+		true,
 	)
 })
-
 </script>
 
 <template>
 	<tr class="border-t border-primaryDark">
-		<td class="font-bold flex justify-center items-center relative m-1.5">
+		<td class="font-medium flex justify-center items-center relative m-1.5">
 			<span
 				class="material-symbols-rounded text-base! md:text-2xl! text-primarydark absolute left-1 md:left-3"
 			>
@@ -139,10 +164,9 @@ authStore.onReady(async (data) => {
 
 	<BaseDialog :title="report.title" ref="viewReport">
 		<form class="flex flex-col gap-2 overflow-y-auto max-h-[80vh] text-textLight scrollbar-track-transparent scrollbar-thumb-accent">
-			<section>
+			<section class="*:flex *:gap-1 *:*:first:font-semibold mb-2">
 				<p class="font-light italic">Relatório: {{ report.id }}</p>
-			</section>
-			<section class="*:flex *:gap-1 *:*:first:font-semibold">
+
 				<span>
 					<p>Período:</p>
 					<p>
@@ -155,33 +179,30 @@ authStore.onReady(async (data) => {
 					<p>Duração:</p>
 					<p>{{ Math.floor(timestampDiffDays(report.period_start!!, report.period_end!!)) }} dias</p>
 				</span>
+
+				<section class="flex just" v-if="user?.user_type === 'profissional'">
+					<!-- <UserPhoto/> -->
+					<article class="flex flex-col text-textLight text-xs justify-center">
+						<p class="text-base font-bold">{{ user.name }}</p>
+						<p>{{ user.email }}</p>
+						<p>{{ formatToPhone(user.phone) }}</p>
+					</article>
+				</section>
 			</section>
 
-			<!--Paciente-->
-			<section class="flex just" v-if="userType === 'profissional'">
-				<!-- <UserPhoto/> -->
-				<article class="flex flex-col text-textLight text-xs justify-center">
-					<p class="text-base font-bold">Cláudio Silva</p>
-					<p>claudiosilva213@email.com</p>
-					<p>(27) 99722-3725</p>
-				</article>
-			</section>
+			<section>
+				<h2>Resumo Geral</h2>
 
-			<!--Informações-->
-			<article>
-				<p class="text-textLight text-xl font-bold mt-2">Resumo Geral</p>
-				<section class="flex w-full p-2 gap-2 text-background">
-					<div class="bg-surface rounded-xl flex flex-col w-full p-2.5">
-						<p class="text-sm font-medium">Sintoma mais comum:</p>
-						<p class="text-xl font-bold">Dor nas costas</p>
-						<p class="text-sm font-medium">2 semanas</p>
-						<div class="flex bg-error rounded-3xl text-surface w-fit items-center p-1">
-							<span class="material-symbols-rounded text-xs! mx-1.5"> warning </span>
-							<p class="text-xs p-2 md:p-1 lg:p-0.5">Prioridade Alta</p>
-						</div>
-					</div>
+				<div class="flex gap-3 text-textDark *:bg-surface *:grow *:p-3 *:rounded-xl">
+					<article>
+						<small>Área mais afetada</small>
+						<h3>{{ mostAffectedArea.area }}</h3>
+						<h6 class="text-sm font-medium">{{ mostAffectedArea.amount }} registros</h6>
+						<IntensityChip :intensity="mostAffectedArea.intensity" custom-message="Média:" class="mt-3"/>
+					</article>
 
-					<div class="flex flex-col w-full bg-surface text-background rounded-xl p-2.5">
+					<!-- TODO: se não tem gráfico no frontend, não tem como fazer o back -->
+					<article v-if="false">
 						<span class="flex">
 							<p class="text-base font-bold">10/04:</p>
 							<p class="text-error text-base font-normal mx-0.5">8 de intensidade</p>
@@ -196,14 +217,13 @@ authStore.onReady(async (data) => {
 								5 de intensidade
 							</p>
 						</span>
-					</div>
-				</section>
-			</article>
+					</article>
+				</div>
+			</section>
 
-			<!--Cronologia-->
-			<p class="text-textLight text-xl font-bold">Cronologia do Sintoma</p>
-
-			<section class="flex flex-col gap-0 p-2 max-h-full">
+			<section class="flex flex-col max-h-full">
+				<h2>Cronologia do Sintoma</h2>
+				
 				<article class="flex flex-row gap-2 *:flex *:flex-col" v-for="(symptom, index) in symptoms" :key="symptom.id">
 					<div class="items-center">
 						<span class="material-symbols-rounded bg-primaryLight text-background rounded-full p-1">
@@ -212,18 +232,20 @@ authStore.onReady(async (data) => {
 						<hr class="flex-1 w-0.5 bg-textLight border-0" v-if="index + 1 !== symptoms.length" />
 					</div>
 
-					<section class="bg-surface text-textDark rounded-lg p-3 w-full mb-2">
+					<section class="bg-surface text-textDark rounded-lg p-3 grow mb-2">
 						<div class="flex flex-row justify-between items-center">
-							<p class="grow font-semibold text-lg">{{ symptom.title }}</p>
+							<h3 class="grow">{{ symptom.title }}</h3>
 							<p class="text-sm">{{ toCoolDate(symptom.date_time.toDate()) }}</p>
 						</div>
-						<p>Itensidade: {{ symptom.intensity }}/10</p>
+						<p>Intensidade: {{ symptom.intensity }}/10</p>
 						<p class="text-sm">"{{ symptom.description }}"</p>
 					</section>
 				</article>
-
-				<!--Visão geral-->
-				<p class="text-textLight text-xl font-bold mt-2">Visão Geral</p>
+			</section>
+			
+			<!-- TODO: uhhh, change how symptoms are store so that they can be groped together -->
+			<section v-if="false">
+				<p class="text-textLight text-xl font-bold mb-2">Visão Geral</p>
 
 				<article class="flex justify-center w-full">
 					<table class="w-full border-separate border-spacing-0.5">
@@ -294,3 +316,16 @@ authStore.onReady(async (data) => {
 		</form>
 	</BaseDialog>
 </template>
+
+<style scoped>
+@reference "@/assets/main.css";
+
+h2 {
+	@apply text-textLight text-xl font-medium mb-2;
+}
+
+h3 {
+	@apply font-semibold text-lg;
+}
+
+</style>
