@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { formatToNumber } from "brazilian-values";
 import { ref } from "vue";
 
 interface IntensityChipProps {
@@ -26,7 +27,7 @@ const backgroundColor = "var(--color-" + current.value?.bgColor + ")"
 		<p class="flex justify-center items-center">
 			{{ customMessage || "Intensidade:" }}
 		</p>
-		<p>{{ props.intensity }}/10</p>
+		<p>{{ formatToNumber(props.intensity.toFixed(2)) }}/10</p>
 	</article>
 </template>
 

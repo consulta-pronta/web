@@ -7,10 +7,11 @@ import type Report from "@/models/report.model"
 import { onClickOutside } from "@vueuse/core"
 import { useAuthStore } from "@/stores/authStore"
 import { timestampDiffDays, toCoolDate } from "@/utils.ts"
-import { getSymptomsBetween, type Symptom } from "@/services/symptomService.ts"
+import { getSymptomsBetween } from "@/services/symptomService.ts"
 import type { User } from "@/services/userService.ts"
 import { formatToPhone } from "brazilian-values"
 import IntensityChip from "./IntensityChip.vue"
+import type { Symptom } from "@/models/symptomModel.ts"
 
 const props = defineProps<{
 	report: Report
@@ -38,21 +39,16 @@ const mostAffectedArea = computed(() => {
 	const areas = Object.groupBy(symptoms.value, (item) => item.place)
 	const entries = Object.entries(areas)
 	
-	// @ts-expect-error(Typescript don't know shit)
 	const [area, maxSymptoms] = entries.reduce((max, item) => {
-		return item.length > max.length ? item : max
-	}, [])
+		return item[1]!.length > max.length ? item : max
+	}, ["", []])
 	const amount = maxSymptoms?.length ?? 0
 
 	let intensity = 0.0
-	try {
-		const sum = maxSymptoms!.reduce((sum, item) => {
-			return sum + item.intensity
-		}, 0) ?? 0
-		intensity = sum / amount
-	}  catch (error) {
-		console.error(error)
-	}
+	const sum = maxSymptoms!.reduce((sum, item) => {
+		return sum + Number(item.intensity)
+	}, 0) ?? 0
+	intensity = sum / amount
 
 	return {area, amount, intensity}
 })

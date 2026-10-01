@@ -26,6 +26,15 @@ const router = createRouter({
 			},
 		},
 		{
+			path: "/cadastroContatos",
+			name: "cadastroContatos",
+			alias: ["/contatos", "/cadastroContatos"],
+			component: () => import("@/pages/authentication/CadastroContatos.vue"),
+			meta: {
+				roles: [],
+			},
+		},
+		{
 			path: "/login",
 			name: "login",
 			component: () => import("@/pages/authentication/LoginUsuario.vue"),
@@ -58,7 +67,7 @@ const router = createRouter({
 			},
 		},
 		{
-			path: "/historico-sintomas",
+			path: "/historico-sintomas/:id?",
 			name: "historico-sintomas",
 			alias: ["/historico", "/sintomas"],
 			component: () => import("@/pages/HistoricoUsuario.vue"),

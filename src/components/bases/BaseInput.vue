@@ -12,14 +12,17 @@ interface Props {
 		| "tel"
 		| "date"
 		| "time"
+		| "crm"
 		| "cpf"
 		| "datetime-local"
 	theme?: "dark" | "light"
 	mode?: "outline" | "fill" | "transparent"
 	placeholder?: string
 	icon?: string
+	iconImage?: string
 	required?: boolean
 }
+export type {Props as BaseInputProps}
 
 const props = withDefaults(defineProps<Props>(), {
 	type: "text",
@@ -52,6 +55,19 @@ switch (props.mode) {
 		break
 }
 
+let realType = ""
+switch (props.type) {
+	case "cpf":
+	case "crm":
+		realType = "text"
+		break
+	default:
+		realType = props.type
+		break
+}
+
+const formatCRM = (raw: string): string => raw.replace(/\D/g, "")
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const formatValue = (event: any) => {
 	switch (props.type) {
@@ -61,20 +77,23 @@ const formatValue = (event: any) => {
 		case "tel":
 			value.value = formatToPhone(event.target.value)
 			break
+		case "crm":
+			value.value = formatCRM(event.target.value)
 	}
 }
 
+const maxLengths = {
+	cpf: 14,
+	tel: 15,
+	crm: 6,
+	password: maxPasswordLength
+}
+
 onMounted(() => {
-	switch (props.type) {
-		case "cpf":
-			inputTag.value!.maxLength = 14
-			break
-		case "tel":
-			inputTag.value!.maxLength = 15
-			break
-		case "password":
-			inputTag.value!.maxLength = maxPasswordLength
-			break
+	// @ts-expect-error: if max is undefined, it just won't set anything
+	const max = maxLengths[props.type]
+	if (max) {
+		inputTag.value!.maxLength = max
 	}
 })
 </script>
@@ -85,10 +104,15 @@ onMounted(() => {
 			{{ icon }}
 		</span>
 
+		<img
+			v-if="iconImage"
+			:src="iconImage"
+			class="w-6 h-7 object-contain"
+			alt=""
+		/>
 		<input
-			id="input"
 			class="py-3 outline-0 grow"
-			:type="type"
+			:type="realType"
 			:placeholder="placeholder"
 			:required="required"
 			@input="formatValue"

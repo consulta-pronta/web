@@ -29,7 +29,7 @@ const route = useRoute()
 const isDisabled = computed(() => stateModel.value !== "enabled")
 
 const textColor = computed(() => {
-	if (props.goto === route.path) {
+	if (props.goto === route.path || props.goto === "/" + route.path.split("/")[1]) {
 		return "text-accent"
 	}
 

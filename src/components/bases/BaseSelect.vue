@@ -33,11 +33,12 @@ switch (props.mode) {
 }
 
 const value = defineModel<string>()
+value.value = ""
 </script>
 
 <template>
 	<label
-		class="flex items-center justify-between gap-2 relative h-12 px-4 rounded-md cursor-pointer"
+		class="flex items-center justify-between gap-2 relative h-12 px-2 rounded-md cursor-pointer"
 		:class="broski"
 	>
 		<span class="material-symbols-rounded pointer-events-none select-none" v-if="icon">
@@ -45,16 +46,19 @@ const value = defineModel<string>()
 		</span>
 
 		<select
-			class="absolute left-0 w-full grow px-12 py-3 outline-0 cursor-pointer appearance-none"
+			class="absolute inset-0 w-full grow py-3 outline-0 cursor-pointer appearance-none *:text-textDark"
+			:class="icon? 'px-12' : 'px-3'"
 			:required="required"
 			v-model="value"
 		>
-			<option v-if="defaultValue" value="" selected hidden>
+			<option value="" hidden>
 				{{ defaultValue }}
 			</option>
 			<slot></slot>
 		</select>
 
-		<span class="material-symbols-rounded pointer-events-none select-none"> expand_more </span>
+		<span class="material-symbols-rounded pointer-events-none select-none ml-auto">
+			expand_more
+		</span>
 	</label>
 </template>
