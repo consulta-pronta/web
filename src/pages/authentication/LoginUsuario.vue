@@ -6,11 +6,9 @@ import AuthBackground from "@/components/AuthBackground.vue"
 import BaseButton, { type ButtonState } from "@/components/bases/BaseButton.vue"
 import BaseInput from "@/components/bases/BaseInput.vue"
 import BaseLogo from "@/components/bases/BaseLogo.vue"
-import ToggleUser, { type UserType } from "@/components/ToggleUser.vue"
 
 import { useSignInStore } from "@/stores/signInStore"
 
-const status = ref<UserType>("paciente")
 
 const signInStore = useSignInStore()
 const buttonState: Ref<ButtonState> = ref("enabled")
@@ -45,7 +43,6 @@ const login = async () => {
 				@submit.prevent="login()"
 				class="space-y-2 items-center justify-center flex flex-col p-4 w-100 sm:w-120 lg:w-120 xl:w-140"
 			>
-				<ToggleUser v-model="status" />
 				<br />
 
 				<BaseInput

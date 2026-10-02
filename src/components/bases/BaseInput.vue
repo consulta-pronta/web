@@ -55,14 +55,14 @@ switch (props.mode) {
 		break
 }
 
-let realType = ""
+const realType = ref<string>()
 switch (props.type) {
 	case "cpf":
 	case "crm":
-		realType = "text"
+		realType.value = "text"
 		break
 	default:
-		realType = props.type
+		realType.value = props.type
 		break
 }
 
@@ -89,6 +89,17 @@ const maxLengths = {
 	password: maxPasswordLength
 }
 
+const passwordToggleIcon = ref<string>("visibility")
+
+const togglePassword = () => {
+	if (props.type !== "password") { return }
+	const isVisible = realType.value === "password"
+
+	realType.value = isVisible ? "text" : "password"
+	passwordToggleIcon.value = isVisible ? "visibility_off" : "visibility"
+
+}
+
 onMounted(() => {
 	// @ts-expect-error: if max is undefined, it just won't set anything
 	const max = maxLengths[props.type]
@@ -100,7 +111,7 @@ onMounted(() => {
 
 <template>
 	<label class="flex items-center rounded-md px-4 gap-2 cursor-text" :class="broski">
-		<span class="material-symbols-rounded pointer-events-none select-none" v-if="icon">
+		<span class="material-symbols-rounded pointer-events-none" v-if="icon">
 			{{ icon }}
 		</span>
 
@@ -119,5 +130,9 @@ onMounted(() => {
 			v-model="value"
 			ref="inputTag"
 		/>
+		
+		<span class="material-symbols-rounded text-xl! cursor-pointer" v-if="type === 'password'" @click="togglePassword">
+			{{ passwordToggleIcon }}
+		</span>
 	</label>
 </template>

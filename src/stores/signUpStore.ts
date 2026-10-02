@@ -11,6 +11,13 @@ import { createUser, createUserSignUpRequest, type ProfessionalData, type UserDa
 import type { UserType } from "@/components/ToggleUser.vue"
 import { Timestamp } from "firebase/firestore"
 
+export type PasswordRules = {
+		minLength: boolean,
+		hasNumber: boolean,
+		hasLowercase: boolean,
+		hasUppercase: boolean,
+		match: boolean,
+}
 export const minPasswordLength = 8
 export const maxPasswordLength = 4096
 
@@ -31,7 +38,7 @@ export const useSignUpStore = defineStore("sign_up", () => {
 		hasLowercase: /[a-z]/.test(password.value),
 		hasUppercase: /[A-Z]/.test(password.value),
 		match: password.value === confirmPassword.value && password.value.length > 0,
-	}))
+	} as PasswordRules))
 
 	const isPasswordValid = computed(() => {
 		return Object.values(rules.value).includes(false)
@@ -70,7 +77,9 @@ export const useSignUpStore = defineStore("sign_up", () => {
 			password.value,
 		)
 		const user = userCredential.user
-		console.log(`Successfuly created user of id ${user.uid}`)
+		
+		await sendEmailVerification(user)
+		console.log(`Successfuly created user of id ${user.uid}, see email sent to verify account.`)
 
 		if (userType.value == "profissional") {
 			createProfessional(user, {

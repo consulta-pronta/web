@@ -5,7 +5,8 @@ import NavBar from "@/components/NavBar.vue"
 import BaseButton from "@/components/bases/BaseButton.vue"
 import SymptomCard from "@/components/cards/SymptomCard.vue"
 import { type UserType } from "@/components/ToggleUser.vue"
-import { getAllSymptoms, type Symptom } from "@/services/symptomService"
+import { getAllSymptoms } from "@/services/symptomService"
+import type { Symptom } from "@/models/symptomModel"
 
 const authStore = useAuthStore()
 const userName = ref("")

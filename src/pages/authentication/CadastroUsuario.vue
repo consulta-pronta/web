@@ -10,6 +10,7 @@ import BaseSelect from "@/components/bases/BaseSelect.vue"
 import ToggleUser from "@/components/ToggleUser.vue"
 import { useSignUpStore } from "@/stores/signUpStore"
 import ufList from "@/assets/lista_uf.json" with { type: "json" }
+import PasswordRules from "@/components/cards/PasswordRules.vue"
 
 const router = useRouter()
 const signUpStore = useSignUpStore()
@@ -28,6 +29,16 @@ const submitForm = async () => {
 	} finally {
 		buttonState.value = "enabled"
 	}
+}
+
+const rulesAnchor = ref<"--default" | "--confirm">("--default")
+const setPasswordRulesAnchor = (anchor: null | "default" | "confirm") => {
+	if (!anchor) {
+		showPasswordRules.value = false
+		return
+	}
+	showPasswordRules.value = true
+	rulesAnchor.value = `--${anchor}`
 }
 
 interface Uhh extends BaseInputProps { class: string }
@@ -49,10 +60,12 @@ const sharedAttributes: Uhh = {
 				Preencha seus dados para começar.
 			</div>
 
+			
 			<form
-				@submit.prevent="submitForm"
-				class="space-y-2 items-center justify-center flex flex-col p-4 w-100 sm:w-120 lg:w-120 xl:w-140"
+			@submit.prevent="submitForm"
+			class="space-y-2 items-center justify-center flex flex-col p-4 w-100 sm:w-120 lg:w-120 xl:w-140"
 			>
+				<!-- <progress class="w-full" max="3" value="1"></progress> -->
 
 				<ToggleUser v-model="signUpStore.userType" class="mb-4" />
 
@@ -113,55 +126,35 @@ const sharedAttributes: Uhh = {
 						</template>
 					</BaseSelect>
 				</fieldset>
-				<div class="relative w-full">
-					<BaseInput
-						v-bind="sharedAttributes"
-						type="password"
-						placeholder="Senha"
-						icon="lock"
-						v-model="signUpStore.password"
-						@focusin="showPasswordRules = true"
-						@focusout="showPasswordRules = false"
-					/>
-					<div
-						v-if="showPasswordRules"
-						class="absolute left-0 right-0 bottom-[130%] mx-auto w-64 bg-surface p-3"
-					>
-						<p
-							v-for="(value, key) in signUpStore.rules"
-							:key="key"
-							:class="value ? 'text-textDark' : 'text-error'"
-							class="flex items-center gap-2 text-sm py-0.5"
-						>
-							<span class="material-symbols-rounded">
-								{{ value ? "check_circle" : "cancel" }}
-							</span>
-							{{
-								key === "minLength"
-									? "Mínimo 8 caracteres"
-									: key === "hasNumber"
-										? "Pelo menos 1 número"
-										: key === "hasLowercase"
-											? "Pelo menos 1 letra minúscula"
-											: key === "hasUppercase"
-												? "Pelo menos 1 letra maiúscula"
-												: key === "match"
-													? "Senhas coincidem"
-													: key
-							}}
-						</p>
-						<span
-							class="w-4 h-4 bg-surface absolute -bottom-2 left-0 right-0 mx-auto rotate-45"
-						></span>
-					</div>
-				</div>
-
+				
+				<BaseInput
+					v-bind="sharedAttributes"
+					type="password"
+					placeholder="Senha"
+					icon="lock"
+					v-model="signUpStore.password"
+					@focusin="setPasswordRulesAnchor('default')"
+					@focusout="setPasswordRulesAnchor(null)"
+					style="anchor-name: --default;"
+					
+				/>
+				
 				<BaseInput
 					v-bind="sharedAttributes"
 					type="password"
 					placeholder="Confirmar senha"
 					icon="lock"
 					v-model="signUpStore.confirmPassword"
+					@focusin="setPasswordRulesAnchor('confirm')"
+					@focusout="setPasswordRulesAnchor(null)"
+					style="anchor-name: --confirm;"
+				/>
+				
+				<PasswordRules
+					v-show="showPasswordRules"
+					:rules="signUpStore.rules"
+					id="password-rules"
+					class="absolute w-64 bg-surface p-3 mb-4"
 				/>
 
 				<br />
@@ -183,3 +176,22 @@ const sharedAttributes: Uhh = {
 		</div>
 	</AuthBackground>
 </template>
+
+<style scoped>
+@reference "@/assets/main.css";
+
+progress {
+	@apply overflow-hidden rounded-full h-3
+		progress-unfilled:bg-primary
+		progress-filled:bg-accent
+		progress-filled:rounded-2xl
+		progress-filled:transition-all
+		progress-filled:duration-300
+}
+
+#password-rules {
+	position-anchor: v-bind(rulesAnchor);
+	bottom: anchor(top);
+}
+
+</style>
