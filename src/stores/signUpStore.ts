@@ -7,9 +7,10 @@ import {
 	type User,
 } from "firebase/auth"
 import { auth } from "@/config/firebase"
-import { createUser, createUserSignUpRequest, type ProfessionalData, type UserData } from "@/services/userService"
+import { createPatient, createProfessionalSignUpRequest, type PatientData, type ProfessionalData, type UserData } from "@/services/userService"
 import type { UserType } from "@/components/ToggleUser.vue"
 import { Timestamp } from "firebase/firestore"
+import { isCPF, isPhone } from "brazilian-values"
 
 export type PasswordRules = {
 		minLength: boolean,
@@ -28,8 +29,16 @@ export const useSignUpStore = defineStore("sign_up", () => {
 	const confirmPassword = ref("")
 	const phone = ref("")
 	const cpf = ref("")
-	const crm = ref("")
-	const uf = ref("")
+	const professionalData = ref({
+		crm: "",
+		uf: "",
+		localAtuacao: "",
+	})
+	const patientData = ref({
+		peso: "",
+		altura: "",
+		tipoSanguineo: "",
+	})
 	const userType = ref<UserType>("paciente")
 
 	const rules = computed(() => ({
@@ -40,7 +49,7 @@ export const useSignUpStore = defineStore("sign_up", () => {
 		match: password.value === confirmPassword.value && password.value.length > 0,
 	} as PasswordRules))
 
-	const isPasswordValid = computed(() => {
+	const isPasswordInvalid = computed(() => {
 		return Object.values(rules.value).includes(false)
 	})
 
@@ -51,10 +60,21 @@ export const useSignUpStore = defineStore("sign_up", () => {
 		confirmPassword.value = ""
 		phone.value = ""
 		cpf.value = ""
-		crm.value = ""
-		uf.value = ""
+		professionalData.value = {
+			crm: "",
+			uf: "",
+			localAtuacao: "",
+		}
+		patientData.value = {
+			peso: "",
+			altura: "",
+			tipoSanguineo: "",
+		}
 		userType.value = "paciente"
 	}
+
+	const isCpfInvalid = computed(() => !isCPF(cpf.value))
+	const isPhoneInvalid = computed(() => !isPhone(phone.value))
 
 	async function submitForm() {
 		const passwordStatus = await validatePassword(auth, password.value)
@@ -62,14 +82,14 @@ export const useSignUpStore = defineStore("sign_up", () => {
 			throw Error("Invalid password.")
 		}
 
-		const userData = {
+		const userData: UserData = {
 			name: name.value,
 			email: email.value,
 			phone: phone.value.replace(/[\(\)\-\s]/g, ""),
 			cpf: cpf.value.replace(/[.\-\s]/g, ""),
 			user_type: userType.value,
 			created_at: Timestamp.now()
-		} as UserData
+		}
 
 		const userCredential = await createUserWithEmailAndPassword(
 			auth,
@@ -82,24 +102,34 @@ export const useSignUpStore = defineStore("sign_up", () => {
 		console.log(`Successfuly created user of id ${user.uid}, see email sent to verify account.`)
 
 		if (userType.value == "profissional") {
-			createProfessional(user, {
+			await signupProfessional(user, {
 				...userData,
-				crm: crm.value,
-				uf: uf.value
-			} as ProfessionalData)
+				data_profissional : {
+					crm: professionalData.value.crm,
+					uf: professionalData.value.uf,
+					local_atuacao: professionalData.value.localAtuacao,
+				}
+			})
 		} else {
-			createPatient(user, userData)
+			await signUpPatient(user, {
+				...userData,
+				data_paciente: {
+					peso: parseFloat(patientData.value.peso),
+					altura: parseFloat(patientData.value.altura),
+					tipo_sanguineo: patientData.value.tipoSanguineo,
+				},
+			})
 		}
 	}
 
-	const createProfessional = async (user: User, userData: ProfessionalData) => {
-		const id = await createUserSignUpRequest(user.uid, userData)
+	const signupProfessional = async (user: User, userData: ProfessionalData) => {
+		const id = await createProfessionalSignUpRequest(user.uid, userData)
 		
 		console.log(`Successfuly requested signup of id ${id}`)
 	}
 
-	const createPatient = async (user: User, userData: UserData) => {
-		await createUser(user.uid, userData)
+	const signUpPatient = async (user: User, userData: PatientData) => {
+		await createPatient(user.uid, userData)
 
 		await sendEmailVerification(user)
 	}
@@ -110,12 +140,14 @@ export const useSignUpStore = defineStore("sign_up", () => {
 		confirmPassword,
 		name,
 		cpf,
-		crm,
-		uf,
+		professionalData,
+		patientData,
 		phone,
 		userType,
 		rules,
-		isValid: isPasswordValid,
+		isPasswordInvalid,
+		isCpfInvalid,
+		isPhoneInvalid,
 		clearForm,
 		submitForm,
 	}

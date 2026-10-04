@@ -11,6 +11,7 @@ export type User = {
 	email: string
 	phone: string
 	cpf: string
+	address?: string
 	user_type: UserType
 	photo_url: string | null
 	created_at: Timestamp
@@ -21,15 +22,28 @@ export type UserData = {
 	email?: string
 	phone?: string
 	cpf?: string
+	address?: string
 	user_type?: UserType
 	photo_url?: string | null
 	created_at?: FieldValue
 }
 
 export type ProfessionalData = UserData & {
-	crm?: string
-	uf?: string
+	data_profissional: {
+		crm?: string
+		uf?: string
+		local_atuacao?: string
+	}
 }
+
+export type PatientData = UserData & {
+	data_paciente: {
+		peso?: number
+		altura?: number
+		tipo_sanguineo?: string
+	}
+}
+
 
 export const getUserRef = (uid: string) => {
 	return doc(db, "users", uid)
@@ -61,7 +75,12 @@ export const deleteUser = async (uid: string) => {
 	await deleteDoc(getUserRef(uid))
 }
 
-export const createUserSignUpRequest = async (uid: string, data: UserData) => {
+export const createPatient = async (uid: string, data: PatientData) => {
+	data.created_at = serverTimestamp()
+	await setDoc(getUserRef(uid), data)
+}
+
+export const createProfessionalSignUpRequest = async (uid: string, data: ProfessionalData) => {
 	const requestDoc = doc(signUpRequestsRef.value, uid)
 	await setDoc(requestDoc, data)
 	
