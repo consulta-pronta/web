@@ -33,7 +33,7 @@ const Medicamentos = [
 		<main class="w-full h-full overflow-clip px-6 py-8">
 			<header class="mb-4 flex flex-col gap-6">
 				<h1 class="text-4xl text-textLight font-bold text-center lg:text-start">
-					Meus Exames
+					Meus Medicamentos
 				</h1>
 
 				<BaseInput
@@ -52,7 +52,7 @@ const Medicamentos = [
 
 						<div class="w-full text-center text-sm lg:text-sm">
 							<p>
-								Controle quais profissionais da saúde podem acessar seu histórico.
+								Marque a caixa após o uso do medicamento.
 							</p>
 						</div>
 					</section>
