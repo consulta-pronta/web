@@ -1,5 +1,5 @@
 <script setup lang="ts">
-export type UserType = "paciente" | "profissional"
+export type UserType = "paciente" | "profissional" | "admin"
 
 const status = defineModel<UserType>({ default: "paciente" })
 

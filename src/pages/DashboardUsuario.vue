@@ -7,18 +7,54 @@ import SymptomCard from "@/components/cards/SymptomCard.vue"
 import { type UserType } from "@/components/ToggleUser.vue"
 import { getAllSymptoms } from "@/services/symptomService"
 import type { Symptom } from "@/models/symptomModel"
+import { getSignUpRequests, getUserRef, signUpRequestsRef, type ProfessionalUser, type ProfessionalUserData } from "@/services/userService"
+import { formatToCPF } from "brazilian-values"
+import { doc, runTransaction, serverTimestamp } from "firebase/firestore"
+import { db } from "@/config/firebase"
 
 const authStore = useAuthStore()
 const userName = ref("")
 const userType = ref<UserType>()
 
 const symptoms = ref<Symptom[]>([])
+const signupRequests = ref<ProfessionalUser[]>()
+
+const approveRequest = async (requestId: string) => {
+	const ogRequest = signupRequests.value?.find(
+		(req) => req.id === requestId
+	)
+	if (!ogRequest) {
+		alert("Solicitação não encontrada")
+		return
+	}
+
+	const requestRef = doc(signUpRequestsRef.value, requestId)
+	const newUserData = {} as ProfessionalUserData
+	Object.assign(newUserData, ogRequest)
+	newUserData.approved_at = serverTimestamp()
+
+	try {
+		await runTransaction(db, async (transaction) => {
+			transaction.delete(requestRef)
+			transaction.set(getUserRef(ogRequest.id), newUserData)
+		})
+		const msg = `Successfuly approved professional of id ${requestId}`
+		console.log(msg)
+		alert(msg)
+	} catch (error) {
+		alert("Ocorreu um erro ao aprovar a solicitação.")
+		console.error(error)
+	}
+}
 
 authStore.onReady(async (data) => {
 	userName.value = data.name
 	userType.value = data.user_type
 
 	symptoms.value = await getAllSymptoms(data.id)
+	if (data.user_type === "admin") {
+		signupRequests.value = await getSignUpRequests()
+	}
 })
 </script>
 
@@ -27,7 +63,8 @@ authStore.onReady(async (data) => {
 		<NavBar />
 
 		<main
-			class="bg-background size-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-16 xl:grid-rows-5 gap-4 lg:gap-6 xl:gap-8 p-5 lg:p-7 xl:p-10 overflow-y-auto"
+			v-if="userType !== 'admin'"
+			class="size-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-16 xl:grid-rows-5 gap-4 lg:gap-6 xl:gap-8 p-5 lg:p-7 xl:p-10 overflow-y-auto"
 		>
 			<section
 				class="bg-primary rounded-2xl md:col-span-2 xl:col-span-10 xl:row-span-2 px-5 py-8 flex flex-col justify-between h-full gap-4"
@@ -90,7 +127,7 @@ authStore.onReady(async (data) => {
 				</div>
 			</section>
 			<section
-				v-else
+				v-else-if="userType === 'profissional'"
 				class="bg-primary rounded-2xl xl:col-span-6 xl:row-span-5 p-5 flex flex-col justify-between h-full"
 			>
 				<div class="flex flex-col h-full space-y-2">
@@ -121,7 +158,7 @@ authStore.onReady(async (data) => {
 				</BaseButton>
 			</section>
 			<section
-				v-else
+				v-else-if="userType === 'profissional'"
 				class="bg-primary rounded-2xl xl:col-span-6 xl:row-span-3 p-5 flex flex-col justify-between items-center h-full"
 			>
 				<p class="text-textLight font-bold text-xl">Triagens:</p>
@@ -152,7 +189,7 @@ authStore.onReady(async (data) => {
 				</BaseButton>
 			</section>
 			<section
-				v-else
+				v-else-if="userType === 'profissional'"
 				class="bg-primary rounded-2xl xl:col-span-4 xl:row-span-3 p-5 flex flex-col justify-between items-center h-full"
 			>
 				<p class="text-textLight font-bold text-xl">Relatórios:</p>
@@ -166,6 +203,59 @@ authStore.onReady(async (data) => {
 					Verificar relatórios
 				</BaseButton>
 			</section>
+		</main>
+
+		<main
+			v-else
+			class="size-full flex flex-col p-10 text-textLight gap-4 *:flex *:flex-col"
+		>
+			<header class="gap-1">
+				<h1 class="text-4xl font-bold">Dashboard</h1>
+				<p>Logado como {{ userName }}</p>
+			</header>
+
+			<section class="gap-2">
+				<h2 class="text-2xl font-semibold">Solicitações de registro</h2>
+				
+				<table class="w-full text-textDark *:*:*:p-3 rounded-xs overflow-clip">
+					<thead>
+						<tr class="bg-surface/80 *:text-start">
+							<th class="w-70">Nome</th>
+							<th class="w-100">Email</th>
+							<th class="w-40">CPF</th>
+							<th class="w-20">CRM</th>
+							<th class="w-100">Local de Atuação</th>
+							<th class="w-50">Ações</th>
+						</tr>
+					</thead>
+					<tbody>
+						<template v-for="request in signupRequests" :key="request.id">
+							<tr class="bg-surface border-b hover:brightness-90">
+								<td>{{ request.name }}</td>
+								<td>{{ request.email }}
+								</td>
+								<td>{{ formatToCPF(request.cpf) }}</td>
+								<td>{{ request.data_profissional.crm }}/{{ request.data_profissional.uf }}</td>
+								<td>{{ request.data_profissional.local_atuacao }}</td>
+								<td class="flex flex-row gap-3 *:w-full">
+									<BaseButton theme="primary" @click="approveRequest(request.id)">
+										Aprovar
+									</BaseButton>
+									<!-- <BaseButton theme="error" mode="transparent" @click="denyRequest(request.id)">
+										Negar
+									</BaseButton> -->
+								</td>
+							</tr>
+						</template>
+						<template v-if="signupRequests && signupRequests.length === 0">
+							<tr class="bg-surface">
+								<td colspan="6" class="text-center">Nenhuma solicitação de registro encontrada.</td>
+							</tr>
+						</template>
+					</tbody>
+				</table>
+			</section>
+
 		</main>
 	</div>
 </template>

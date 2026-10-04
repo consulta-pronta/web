@@ -32,7 +32,7 @@ const stepTitle = computed(() => {
 	}
 })
 
-watch(currentStep, (value, previous) => {
+watch(currentStep, async (value, previous) => {
 	if (value < previous) { return }
 	if (!form.value?.reportValidity()) {
 		currentStep.value = previous
@@ -57,7 +57,13 @@ watch(currentStep, (value, previous) => {
 			}
 			break
 		case 3:
-			submitForm()
+			try {
+				await submitForm()
+			} catch (error) {
+				alert("Erro ao criar conta. Por favor, tente novamente.")
+				console.error(error)
+				currentStep.value = previous
+			}
 			break
 	}
 })
@@ -69,7 +75,7 @@ const submitForm = async () => {
 		await signUpStore.submitForm()
 		router.push("dashboard")
 	} catch (error) {
-		console.error(error)
+		throw error
 	} finally {
 		buttonState.value = "enabled"
 	}
@@ -256,7 +262,7 @@ const sharedAttributes: Uhh = {
 						Voltar
 					</BaseButton>
 					<BaseButton
-						v-show="currentStep !== 3"
+						v-show="currentStep < 3"
 						type="button"
 						theme="accent"
 						@click="currentStep++"
@@ -265,7 +271,7 @@ const sharedAttributes: Uhh = {
 					</BaseButton>
 
 					<BaseButton
-						v-if="currentStep === 3"
+						v-if="currentStep >= 3"
 						type="submit"
 						theme="accent"
 						v-model:state="buttonState"
