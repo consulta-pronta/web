@@ -3,29 +3,40 @@ import { ref } from "vue"
 import { useNavbarStore } from "@/stores/navbarStore"
 import { useAuthStore } from "@/stores/authStore"
 import BaseLogo from "@/components/bases/BaseLogo.vue"
-import BaseButton from "@/components/bases/BaseButton.vue"
+import BaseButton, { type BaseButtonProps } from "@/components/bases/BaseButton.vue"
 import { auth } from "@/config/firebase"
 import { signOut } from "firebase/auth"
+import type { UserType } from "./ToggleUser.vue"
+import router from "@/router/index.ts"
 
 const navbarStore = useNavbarStore()
 const authStore = useAuthStore()
 
-const userType = ref("")
+const userType = ref<UserType | null>(null)
+const openedMobile = ref(false)
 
-// Weird syntax is for v-bind to recognize these as valid
-const sharedAttributes = <{ theme: "textLight"; mode: "transparent" }>{
+const sharedAttributes = <BaseButtonProps>{
 	theme: "textLight",
 	mode: "transparent",
+}
+
+const openMobile = () => {
+	openedMobile.value = !openedMobile.value
+}
+
+const logout = async () => {
+	try {
+		console.log(auth)
+		await signOut(auth)
+		router.push("/login")
+	} catch (error) {
+		console.error(error)
+	}
 }
 
 authStore.onReady((data) => {
 	userType.value = data.user_type
 })
-
-const openedMobile = ref(false)
-const openMobile = () => {
-	openedMobile.value = !openedMobile.value
-}
 </script>
 
 <template>
@@ -41,74 +52,115 @@ const openMobile = () => {
 	</button>
 
 	<aside
-		class="h-screen bg-primary flex-col items-center justify-between transition-[width] duration-500 shrink-0 py-4 lg:sticky z-49 shadow-[5px_0_10px_-2px_rgba(0,0,0,0.3)]"
+		class="h-screen bg-primary flex-col items-center justify-between transition-[width] duration-500 shrink-0 py-4 lg:sticky z-49 shadow-[5px_0_10px_-2px_rgba(0,0,0,0.3)] *:w-full *:flex *:flex-col"
 		:class="[
 			navbarStore.malfermita ? 'w-67' : 'w-17',
 			openedMobile ? 'absolute flex' : 'hidden lg:flex',
 		]"
 	>
-		<section class="w-full flex flex-col overflow-hidden">
+		<section>
 			<BaseLogo
 				class="mx-auto mt-10 lg:mt-0 transition-all object-cover duration-600 h-25"
 				:class="navbarStore.malfermita ? 'w-30 lg:w-50' : 'w-10'"
 			/>
-			<nav class="button:w-full flex flex-col gap-2">
+
+			<nav>
 				<BaseButton v-bind="sharedAttributes" icon="home" goto="/dashboard">
 					<p>Início</p>
 				</BaseButton>
 
-				<template v-if="userType === 'paciente'">
-					<BaseButton
-						v-bind="sharedAttributes"
-						icon="browse_activity"
-						goto="/historico-sintomas"
-					>
-						<p>Histórico</p>
-					</BaseButton>
+				<BaseButton
+					v-if="userType === 'paciente'"
+					v-bind="sharedAttributes"
+					icon="browse_activity"
+					goto="/historico-sintomas"
+				>
+					<p>Histórico</p>
+				</BaseButton>
+				<BaseButton
+					v-else-if="userType === 'profissional'"
+					v-bind="sharedAttributes"
+					icon="group"
+					goto="#"
+				>
+					<p>Pacientes</p>
+				</BaseButton>
+				
+				<BaseButton
+					v-if="userType === 'paciente'"
+					v-bind="sharedAttributes"
+					icon="pill"
+					goto="#"
+				>
+					<p>Medicamentos</p>
+				</BaseButton>
+				<BaseButton
+					v-else-if="userType === 'profissional'"
+					v-bind="sharedAttributes"
+					icon="pill"
+					goto="#"
+				>
+					<p>Farmácia</p>
+				</BaseButton>
 
-					<BaseButton v-bind="sharedAttributes" icon="home_health" goto="#">
-						<p>Hospitais</p>
-					</BaseButton>
-				</template>
-
-				<template v-else>
-					<BaseButton v-bind="sharedAttributes" icon="group" goto="#">
-						<p>Pacientes</p>
-					</BaseButton>
-					<BaseButton v-bind="sharedAttributes" icon="pill" goto="#">
-						<p>Farmácia</p>
-					</BaseButton>
-				</template>
-				<BaseButton v-bind="sharedAttributes" icon="settings" goto="#">
-					<p>Configurações</p>
+				<BaseButton
+					v-if="userType !== 'admin'"
+					v-bind="sharedAttributes"
+					icon="assignment"
+					goto="/relatorios"
+				>
+					<p>Relatórios</p>
 				</BaseButton>
 
 				<hr class="h-1 border-0 bg-primaryDark w-1/4 m-auto rounded-full opacity-70" />
 
-				<BaseButton v-bind="sharedAttributes" icon="stethoscope" goto="/exames">
+				<BaseButton
+					v-if="userType !== 'admin'"
+					v-bind="sharedAttributes"
+					icon="stethoscope"
+					goto="/exames"
+				>
 					<p>Exames</p>
 				</BaseButton>
+				
 				<BaseButton
+					v-if="userType !== 'admin'"
 					v-bind="sharedAttributes"
-					v-if="userType === 'paciente'"
+					icon="medical_services"
 					goto="#"
-					icon="pill"
 				>
-					<p>Medicamentos</p>
-				</BaseButton>
-				<BaseButton v-bind="sharedAttributes" v-else goto="#" icon="shelves">
-					<p>Recursos</p>
-				</BaseButton>
-				<BaseButton v-bind="sharedAttributes" goto="#" icon="medical_services">
 					<p>Consultas</p>
 				</BaseButton>
-				<BaseButton v-bind="sharedAttributes" goto="/relatorios" icon="assignment">
-					<p>Relatórios</p>
+
+				<BaseButton
+					v-if="userType === 'paciente'"
+					v-bind="sharedAttributes"
+					icon="home_health"
+					goto="#"
+				>
+					<p>Hospitais</p>
+				</BaseButton>
+				
+				<BaseButton
+					v-else-if="userType === 'profissional'"
+					v-bind="sharedAttributes"
+					goto="#"
+					icon="shelves"
+				>
+					<p>Recursos</p>
+				</BaseButton>
+
+				<BaseButton
+					v-bind="sharedAttributes"
+					goto="#"
+					icon="person"
+				>
+					<p>Perfil</p>
 				</BaseButton>
 			</nav>
 		</section>
 
-		<section class="w-full flex flex-col gap-2 bottom-0 relative">
+		<section class="relative">
 			<button
 				@click="navbarStore.malfermi()"
 				type="button"
@@ -120,13 +172,13 @@ const openMobile = () => {
 				</span>
 			</button>
 
-			<nav class="button:w-full flex flex-col gap-2 overflow-clip">
+			<nav>
 				<BaseButton v-bind="sharedAttributes" goto="#" icon="notifications">
 					<p>Notificações</p>
 				</BaseButton>
-
-				<BaseButton v-bind="sharedAttributes" icon="person" goto="#">
-					<p>Perfil</p>
+				
+				<BaseButton v-bind="sharedAttributes" icon="settings" goto="#">
+					<p>Configurações</p>
 				</BaseButton>
 
 				<BaseButton
@@ -134,7 +186,7 @@ const openMobile = () => {
 					mode="transparent"
 					icon="logout"
 					class="justify-start!"
-					@click="signOut(auth)"
+					@click="logout()"
 				>
 					<p>Sair</p>
 				</BaseButton>
@@ -148,5 +200,9 @@ const openMobile = () => {
 
 p {
 	@apply text-xl ml-8;
+}
+
+nav {
+	@apply w-full flex flex-col gap-2 [button]:w-full overflow-clip;
 }
 </style>
