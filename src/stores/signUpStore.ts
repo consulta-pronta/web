@@ -7,7 +7,7 @@ import {
 	type User,
 } from "firebase/auth"
 import { auth } from "@/config/firebase"
-import { createPatient, createProfessionalSignUpRequest, type PatientData, type ProfessionalData, type UserData } from "@/services/userService"
+import { createPatient, createProfessionalSignUpRequest, type PatientData, type ProfessionalUserData, type UserData } from "@/services/userService"
 import type { UserType } from "@/components/ToggleUser.vue"
 import { Timestamp } from "firebase/firestore"
 import { isCPF, isPhone } from "brazilian-values"
@@ -122,7 +122,7 @@ export const useSignUpStore = defineStore("sign_up", () => {
 		}
 	}
 
-	const signupProfessional = async (user: User, userData: ProfessionalData) => {
+	const signupProfessional = async (user: User, userData: ProfessionalUserData) => {
 		const id = await createProfessionalSignUpRequest(user.uid, userData)
 		
 		console.log(`Successfuly requested signup of id ${id}`)

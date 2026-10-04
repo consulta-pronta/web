@@ -35,7 +35,7 @@ export type UserData = {
 	created_at?: FieldValue
 }
 
-export type ProfessionalData = {
+export type ProfessionalUser = {
 	id: string
 	name: string
 	email: string
@@ -43,6 +43,22 @@ export type ProfessionalData = {
 	cpf: string
 	user_type: UserType
 	created_at: Timestamp
+	data_profissional: {
+		crm?: string
+		uf?: string
+		local_atuacao?: string
+	}
+}
+
+export type ProfessionalUserData = {
+	id?: string
+	name?: string
+	email?: string
+	phone?: string
+	cpf?: string
+	user_type?: UserType
+	created_at?: FieldValue
+	approved_at?: FieldValue
 	data_profissional: {
 		crm?: string
 		uf?: string
@@ -104,11 +120,25 @@ export const createPatient = async (uid: string, data: PatientData) => {
 	await setDoc(getUserRef(uid), data)
 }
 
-export const createProfessionalSignUpRequest = async (uid: string, data: ProfessionalData) => {
+export const createProfessional = async (uid: string, data: ProfessionalUserData) => {
+	data.created_at = serverTimestamp()
+	await setDoc(getUserRef(uid), data)
+}
+
+export const createProfessionalSignUpRequest = async (uid: string, data: ProfessionalUserData) => {
 	const requestDoc = doc(signUpRequestsRef.value, uid)
 	await setDoc(requestDoc, data)
 	
 	return requestDoc.id
+}
+
+export const getSignUpRequest = async (uid: string) => {
+	const requestSnap = await getDoc(doc(signUpRequestsRef.value, uid))
+	if (requestSnap.exists()) {
+		return { ...requestSnap.data(), id: uid } as ProfessionalUser
+	}
+	
+	return null
 }
 
 export const getSignUpRequests = async () => {
@@ -121,8 +151,12 @@ export const getSignUpRequests = async () => {
 		return {
 			id: document.id,
 			...document.data(),
-		} as ProfessionalData
+		} as ProfessionalUser
 	})
 
 	return documents
+}
+
+export const deleteSignUpRequest = async (uid: string) => {
+	await deleteDoc(doc(signUpRequestsRef.value, uid))
 }
