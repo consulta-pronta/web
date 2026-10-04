@@ -213,18 +213,26 @@ const sharedAttributes: Uhh = {
 						/>
 					</template>
 					<template v-else>
-						<BaseInput
-							v-bind="sharedAttributes"
-							placeholder="Peso"
-							icon="weight"
-							v-model="signUpStore.patientData.peso"
-						/>
-						<BaseInput
-							v-bind="sharedAttributes"
-							placeholder="Altura"
-							icon="height"
-							v-model="signUpStore.patientData.altura"
-						/>
+						<div class="flex flex-row gap-3 w-full *:min-w-0">
+							<BaseInput
+								v-bind="sharedAttributes"
+								placeholder="Peso"
+								icon="weight"
+								hint="kg"
+								type="custom-number"
+								number-mode="positive-decimal"
+								v-model="signUpStore.patientData.peso"
+							/>
+							<BaseInput
+								v-bind="sharedAttributes"
+								placeholder="Altura"
+								icon="height"
+								hint="cm"
+								type="custom-number"
+								number-mode="positive-integer"
+								v-model="signUpStore.patientData.altura"
+							/>
+						</div>
 						<BaseSelect
 							v-bind="sharedAttributes"
 							default-value="Tipo Sanguíneo"
