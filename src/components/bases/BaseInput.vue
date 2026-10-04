@@ -9,6 +9,7 @@ interface Props {
 		| "password"
 		| "email"
 		| "number"
+		| "custom-number"
 		| "tel"
 		| "date"
 		| "time"
@@ -18,9 +19,11 @@ interface Props {
 	theme?: "dark" | "light"
 	mode?: "outline" | "fill" | "transparent"
 	placeholder?: string
+	hint?: string
 	icon?: string
 	iconImage?: string
 	required?: boolean
+	numberMode?: "positive-integer" | "positive-decimal" | "signed-integer" | "signed-decimal"
 }
 export type {Props as BaseInputProps}
 
@@ -28,6 +31,7 @@ const props = withDefaults(defineProps<Props>(), {
 	type: "text",
 	theme: "light",
 	mode: "fill",
+	numberMode: "positive-decimal",
 })
 
 const value = defineModel<string>()
@@ -55,18 +59,41 @@ switch (props.mode) {
 		break
 }
 
-let realType = ""
+const realType = ref<string>()
 switch (props.type) {
 	case "cpf":
 	case "crm":
-		realType = "text"
+	case "custom-number":
+		realType.value = "text"
 		break
 	default:
-		realType = props.type
+		realType.value = props.type
 		break
 }
 
 const formatCRM = (raw: string): string => raw.replace(/\D/g, "")
+
+const formatCustomNumber = (raw: string): string => {
+	const numberMode = props.numberMode ?? "positive-decimal"
+
+	raw = raw.replace(/[^0-9.,-]/g, "")
+	let formattedNumber = ""
+
+	if (numberMode.startsWith("signed-") && raw.startsWith("-")) {
+		formattedNumber += "-"
+	}
+	if (numberMode.endsWith("-decimal")) {
+		const parts = raw.split(/[.,]/)
+		formattedNumber += parts[0]
+		if (parts.length > 1) {
+			formattedNumber += "." + parts[1]
+		}
+	} else {
+		formattedNumber += raw
+	}
+	
+	return formattedNumber
+}
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const formatValue = (event: any) => {
@@ -79,6 +106,11 @@ const formatValue = (event: any) => {
 			break
 		case "crm":
 			value.value = formatCRM(event.target.value)
+			break
+		case "custom-number": {
+			value.value = formatCustomNumber(event.target.value)
+			break
+		}
 	}
 }
 
@@ -87,6 +119,17 @@ const maxLengths = {
 	tel: 15,
 	crm: 6,
 	password: maxPasswordLength
+}
+
+const passwordToggleIcon = ref<string>("visibility")
+
+const togglePassword = () => {
+	if (props.type !== "password") { return }
+	const isVisible = realType.value === "password"
+
+	realType.value = isVisible ? "text" : "password"
+	passwordToggleIcon.value = isVisible ? "visibility_off" : "visibility"
+
 }
 
 onMounted(() => {
@@ -100,7 +143,7 @@ onMounted(() => {
 
 <template>
 	<label class="flex items-center rounded-md px-4 gap-2 cursor-text" :class="broski">
-		<span class="material-symbols-rounded pointer-events-none select-none" v-if="icon">
+		<span class="material-symbols-rounded pointer-events-none" v-if="icon">
 			{{ icon }}
 		</span>
 
@@ -117,7 +160,15 @@ onMounted(() => {
 			:required="required"
 			@input="formatValue"
 			v-model="value"
+			:inputmode="type === 'custom-number' ? 'decimal' : undefined"
 			ref="inputTag"
 		/>
+		
+		<span class="material-symbols-rounded text-xl! cursor-pointer" v-if="type === 'password'" @click="togglePassword">
+			{{ passwordToggleIcon }}
+		</span>
+		<span class="text-sm opacity-80" v-if="hint">
+			{{ hint }}
+		</span>
 	</label>
 </template>

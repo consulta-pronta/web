@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, type Ref } from "vue"
+import { computed, ref, useTemplateRef, watch } from "vue"
 import { useRouter } from "vue-router"
 
 import AuthBackground from "@/components/AuthBackground.vue"
@@ -10,12 +10,57 @@ import BaseSelect from "@/components/bases/BaseSelect.vue"
 import ToggleUser from "@/components/ToggleUser.vue"
 import { useSignUpStore } from "@/stores/signUpStore"
 import ufList from "@/assets/lista_uf.json" with { type: "json" }
+import PasswordRules from "@/components/cards/PasswordRules.vue"
 
 const router = useRouter()
 const signUpStore = useSignUpStore()
 
-const buttonState: Ref<ButtonState> = ref("enabled")
+const currentStep = ref(1)
+const buttonState = ref<ButtonState>("enabled")
 const showPasswordRules = ref(false)
+
+const form = useTemplateRef("form")
+
+const stepTitle = computed(() => {
+	switch (currentStep.value) {
+		case 1:
+			return "Informações de login"
+		case 2:
+			return "Informações pessoais"
+		default:
+			return "Informações do perfil"
+	}
+})
+
+watch(currentStep, (value, previous) => {
+	if (value < previous) { return }
+	if (!form.value?.reportValidity()) {
+		currentStep.value = previous
+		return
+	}
+
+	switch (previous) {
+		case 1:
+			if (signUpStore.isPasswordInvalid) {
+				alert("Senha inválida. Por favor, verifique os requisitos de senha.")
+				currentStep.value = previous
+			}
+			break
+		case 2:
+			if (signUpStore.isCpfInvalid) {
+				alert("CPF inválido. Por favor, verifique o CPF informado.")
+				currentStep.value = previous
+			}
+			else if (signUpStore.isPhoneInvalid) {
+				alert("Telefone inválido. Por favor, verifique o telefone informado.")
+				currentStep.value = previous
+			}
+			break
+		case 3:
+			submitForm()
+			break
+	}
+})
 
 const submitForm = async () => {
 	buttonState.value = "sync"
@@ -28,6 +73,16 @@ const submitForm = async () => {
 	} finally {
 		buttonState.value = "enabled"
 	}
+}
+
+const rulesAnchor = ref<"--default" | "--confirm">("--default")
+const setPasswordRulesAnchor = (anchor: null | "default" | "confirm") => {
+	if (!anchor) {
+		showPasswordRules.value = false
+		return
+	}
+	showPasswordRules.value = true
+	rulesAnchor.value = `--${anchor}`
 }
 
 interface Uhh extends BaseInputProps { class: string }
@@ -46,136 +101,181 @@ const sharedAttributes: Uhh = {
 				Crie uma Conta
 			</div>
 			<div class="text-lg sm:text-xl xl:text-2xl text-surface mb-3">
-				Preencha seus dados para começar.
+				{{ stepTitle }}
 			</div>
 
+			
 			<form
-				@submit.prevent="submitForm"
+				ref="form"
+				@submit.prevent="currentStep++"
+				@keydown.enter="currentStep++"
 				class="space-y-2 items-center justify-center flex flex-col p-4 w-100 sm:w-120 lg:w-120 xl:w-140"
 			>
+				<progress class="w-full mb-8" max="3" :value="currentStep">
+					{{ currentStep }} / 3
+				</progress>
 
-				<ToggleUser v-model="signUpStore.userType" class="mb-4" />
-
-				<BaseInput
-					v-bind="sharedAttributes"
-					type="text"
-					placeholder="Nome"
-					icon="person"
-					v-model="signUpStore.name"
-				/>
-				<BaseInput
-					v-bind="sharedAttributes"
-					type="cpf"
-					placeholder="CPF"
-					icon="article"
-					v-model="signUpStore.cpf"
-				/>
-				<BaseInput
-					v-bind="sharedAttributes"
-					type="email"
-					placeholder="E-Mail"
-					icon="email"
-					v-model="signUpStore.email"
-				/>
-				<BaseInput
-					v-bind="sharedAttributes"
-					type="tel"
-					placeholder="Telefone"
-					icon="phone"
-					v-model="signUpStore.phone"
-				/>
-
-				<fieldset
-					v-if="signUpStore.userType === 'profissional'"
-					class="w-full flex flex-row gap-3"
-					>
-
+				<template v-if="currentStep === 1">
 					<BaseInput
-						type="crm"
-						placeholder="CRM"
-						icon="assignment_ind"
-						theme="dark"
-						class="grow"
-						required
-						v-model="signUpStore.crm"
+						v-bind="sharedAttributes"
+						type="email"
+						placeholder="E-Mail"
+						icon="email"
+						v-model="signUpStore.email"
 					/>
-
-					<BaseSelect
-						theme="dark"
-						default-value="UF"
-						required
-						class="w-20"
-						v-model="signUpStore.uf"
-						>
-
-						<template v-for="uf in ufList" :key="uf">
-							<option :value="uf">{{ uf }}</option>
-						</template>
-					</BaseSelect>
-				</fieldset>
-				<div class="relative w-full">
 					<BaseInput
 						v-bind="sharedAttributes"
 						type="password"
 						placeholder="Senha"
 						icon="lock"
 						v-model="signUpStore.password"
-						@focusin="showPasswordRules = true"
-						@focusout="showPasswordRules = false"
+						@focusin="setPasswordRulesAnchor('default')"
+						@focusout="setPasswordRulesAnchor(null)"
+						style="anchor-name: --default;"
 					/>
-					<div
-						v-if="showPasswordRules"
-						class="absolute left-0 right-0 bottom-[130%] mx-auto w-64 bg-surface p-3"
-					>
-						<p
-							v-for="(value, key) in signUpStore.rules"
-							:key="key"
-							:class="value ? 'text-textDark' : 'text-error'"
-							class="flex items-center gap-2 text-sm py-0.5"
+					<BaseInput
+						v-bind="sharedAttributes"
+						type="password"
+						placeholder="Confirmar senha"
+						icon="lock"
+						v-model="signUpStore.confirmPassword"
+						@focusin="setPasswordRulesAnchor('confirm')"
+						@focusout="setPasswordRulesAnchor(null)"
+						style="anchor-name: --confirm;"
+					/>
+					<PasswordRules
+						v-show="showPasswordRules"
+						:rules="signUpStore.rules"
+						id="password-rules"
+						class="absolute w-64 bg-surface p-3 mb-4"
+					/>
+				</template>
+
+				<template v-else-if="currentStep === 2">
+					<BaseInput
+						v-bind="sharedAttributes"
+						type="text"
+						placeholder="Nome"
+						icon="person"
+						v-model="signUpStore.name"
+					/>
+					<BaseInput
+						v-bind="sharedAttributes"
+						type="cpf"
+						placeholder="CPF"
+						icon="article"
+						v-model="signUpStore.cpf"
+					/>
+					<BaseInput
+						v-bind="sharedAttributes"
+						type="tel"
+						placeholder="Telefone"
+						icon="phone"
+						v-model="signUpStore.phone"
+					/>
+				</template>
+
+				<template v-else>
+					<ToggleUser v-model="signUpStore.userType" class="mb-4" />
+					<template 
+						v-if="signUpStore.userType === 'profissional'">
+						<fieldset
+							class="w-full flex flex-row gap-3"
 						>
-							<span class="material-symbols-rounded">
-								{{ value ? "check_circle" : "cancel" }}
-							</span>
-							{{
-								key === "minLength"
-									? "Mínimo 8 caracteres"
-									: key === "hasNumber"
-										? "Pelo menos 1 número"
-										: key === "hasLowercase"
-											? "Pelo menos 1 letra minúscula"
-											: key === "hasUppercase"
-												? "Pelo menos 1 letra maiúscula"
-												: key === "match"
-													? "Senhas coincidem"
-													: key
-							}}
-						</p>
-						<span
-							class="w-4 h-4 bg-surface absolute -bottom-2 left-0 right-0 mx-auto rotate-45"
-						></span>
-					</div>
+							<BaseInput
+								type="crm"
+								placeholder="CRM"
+								icon="assignment_ind"
+								theme="dark"
+								class="grow"
+								required
+								v-model="signUpStore.professionalData.crm"
+							/>
+
+							<BaseSelect
+								theme="dark"
+								default-value="UF"
+								required
+								class="w-20"
+								v-model="signUpStore.professionalData.uf"
+							>
+								<template v-for="uf in ufList" :key="uf">
+									<option :value="uf">{{ uf }}</option>
+								</template>
+							</BaseSelect>
+						</fieldset>
+						<BaseInput
+							v-bind="sharedAttributes"
+							placeholder="Local de atuação"
+							icon="local_hospital"
+							required
+							v-model="signUpStore.professionalData.localAtuacao"
+						/>
+					</template>
+					<template v-else>
+						<div class="flex flex-row gap-3 w-full *:min-w-0">
+							<BaseInput
+								v-bind="sharedAttributes"
+								placeholder="Peso"
+								icon="weight"
+								hint="kg"
+								type="custom-number"
+								number-mode="positive-decimal"
+								v-model="signUpStore.patientData.peso"
+							/>
+							<BaseInput
+								v-bind="sharedAttributes"
+								placeholder="Altura"
+								icon="height"
+								hint="cm"
+								type="custom-number"
+								number-mode="positive-integer"
+								v-model="signUpStore.patientData.altura"
+							/>
+						</div>
+						<BaseSelect
+							v-bind="sharedAttributes"
+							default-value="Tipo Sanguíneo"
+							icon="bloodtype"
+							v-model="signUpStore.patientData.tipoSanguineo"
+						>
+							<template v-for="tipo in ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']" :key="tipo">
+								<option :value="tipo">{{ tipo }}</option>
+							</template>
+						</BaseSelect>
+					</template>
+				</template>
+
+				<div class="w-full flex gap-3 *:w-full mt-4">
+					<BaseButton
+						v-show="currentStep !== 1"
+						type="button"
+						theme="primary"
+						@click="currentStep--"
+					>
+						Voltar
+					</BaseButton>
+					<BaseButton
+						v-show="currentStep !== 3"
+						type="button"
+						theme="accent"
+						@click="currentStep++"
+					>
+						Continuar
+					</BaseButton>
+
+					<BaseButton
+						v-if="currentStep === 3"
+						type="submit"
+						theme="accent"
+						v-model:state="buttonState"
+					>
+						Criar Conta
+					</BaseButton>
 				</div>
 
-				<BaseInput
-					v-bind="sharedAttributes"
-					type="password"
-					placeholder="Confirmar senha"
-					icon="lock"
-					v-model="signUpStore.confirmPassword"
-				/>
-
-				<br />
-				<BaseButton
-					type="submit"
-					theme="accent"
-					class="w-full justify-center"
-					v-model:state="buttonState"
-				>
-					Criar Conta
-				</BaseButton>
-
 				<RouterLink to="login">
-					<p class="text-textLight">
+					<p v-if="currentStep === 1" class="text-textLight text-center">
 						Já possui conta? <a href="" class="text-accent">Fazer login</a>
 					</p>
 				</RouterLink>
@@ -183,3 +283,22 @@ const sharedAttributes: Uhh = {
 		</div>
 	</AuthBackground>
 </template>
+
+<style scoped>
+@reference "@/assets/main.css";
+
+progress {
+	@apply overflow-hidden rounded-full h-3
+		progress-unfilled:bg-primary
+		progress-filled:bg-accent
+		progress-filled:rounded-2xl
+		progress-filled:transition-all
+		progress-filled:duration-300
+}
+
+#password-rules {
+	position-anchor: v-bind(rulesAnchor);
+	bottom: anchor(top);
+}
+
+</style>
