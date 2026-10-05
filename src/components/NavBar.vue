@@ -75,7 +75,7 @@ const openMobile = () => {
 					<BaseButton v-bind="sharedAttributes" icon="group" goto="#">
 						<p>Pacientes</p>
 					</BaseButton>
-					<BaseButton v-bind="sharedAttributes" icon="pill" goto="#">
+					<BaseButton v-bind="sharedAttributes" icon="pill" goto="/farmacia">
 						<p>Farmácia</p>
 					</BaseButton>
 				</template>
@@ -91,7 +91,7 @@ const openMobile = () => {
 				<BaseButton
 					v-bind="sharedAttributes"
 					v-if="userType === 'paciente'"
-					goto="#"
+					goto="/medicamentos"
 					icon="pill"
 				>
 					<p>Medicamentos</p>
