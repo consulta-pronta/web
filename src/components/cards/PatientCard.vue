@@ -1,10 +1,19 @@
 <script setup lang="ts">
 import BaseButton from '@/components/bases/BaseButton.vue'
 
-interface Props {
-	patient: unknown //mudar
-	theme: "dark" | "light"
+interface Paciente {
+    id: string
+    nome: string
+    cpf: string
+    priority: number
+    proximaConsulta: string | null
 }
+
+interface Props {
+    patient: Paciente
+    theme: "dark" | "light"
+}
+
 const props = withDefaults(defineProps<Props>(), {
 	theme: "light",
 })
@@ -13,13 +22,16 @@ const colors =
 	props.theme === "light" ? { bg: "surface", text: "red" } : { bg: "primary", text: "textLight" }
 
 const ranges = [
-	{ min: 0, max: 4, color: "green" },
-	{ min: 5, max: 7, color: "orange" },
-	{ min: 8, max: 10, color: "red" },
+    { min: 0, max: 4, color: "green", label: "Baixa", icon: "check_circle" },
+    { min: 5, max: 7, color: "orange", label: "Média", icon: "warning" },
+    { min: 8, max: 10, color: "red", label: "Alta", icon: "error" },
 ]
-const priorityColor = ranges.find((r) => {
+
+const priority = ranges.find((r) => {
 	return props.patient.priority >= r.min && props.patient.priority <= r.max
-})?.color
+})
+
+const priorityColor = priority ? priority.color : "transparent"
 </script>
 
 <template>
@@ -27,31 +39,21 @@ const priorityColor = ranges.find((r) => {
 		<div class="flex items-center justify-between">
 			<div>
 				<p class="font-bold oneliner">
-					{{ "Nomeeeeeeeee" }}
+					{{ patient.nome }}
 				</p>
 
 				<p>
-					{{ "CPF: 000.000.000-00" }}
+					CPF: {{ patient.cpf }}
 				</p>
 			</div>
 
 			<div class="flex items-center text-center">
-				<p class="flex tenten py-1 px-3 rounded-2xl text-center">
+				<p class="flex tenten py-1 px-3 rounded-2xl text-center items-center">
 					<span class="material-symbols-rounded text-lg!">
-						warning
+						{{ priority?.icon ?? "-" }}
 					</span>
-					{{ patient.priority ?? "Média" }}
+					{{ priority?.label ?? "-" }}
 				</p>
-
-				<BaseButton
-					theme="primary"
-					mode="transparent"
-					class="p-0!"
-				>
-					<span class="material-symbols-rounded select-none text-shadow-md!">
-						edit_square
-					</span>
-				</BaseButton>
 			</div>
 		</div>
 
@@ -65,7 +67,7 @@ const priorityColor = ranges.find((r) => {
 				</p>
 
 				<p>
-					{{ "-" }}
+					{{ patient.proximaConsulta ?? "-" }}
 				</p>
 			</div>
 
