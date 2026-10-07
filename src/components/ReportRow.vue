@@ -56,7 +56,7 @@ const mostAffectedArea = computed(() => {
 onClickOutside(popup, () => { focused.value = false })
 
 authStore.onReady(async (data) => {
-	user.value = data
+	user.value = data as User
 	symptoms.value = await getSymptomsBetween(
 		data.id,
 		props.report.period_start!,

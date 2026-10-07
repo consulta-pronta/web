@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import type { Exam } from "@/models/examModel"
+import Exam from "@/models/exam.model"
+import { DATE_NOT_PROVIDED, toBrazilianLocaleDate } from "@/utils";
 import { computed } from "vue"
 
 const props = defineProps<{
@@ -19,7 +20,12 @@ const typeIcon = computed(() => {
 	}
 })
 
-const date = props.exam.date.toDate().toLocaleDateString()
+const date = computed(() => {
+	const date = props.exam.date?.toDate()
+	if (!date) return DATE_NOT_PROVIDED
+	
+	return toBrazilianLocaleDate(date)
+})
 
 const status = computed(() => {
 	switch (props.exam.status) {

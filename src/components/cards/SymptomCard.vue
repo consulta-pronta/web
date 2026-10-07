@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Symptom } from "@/services/symptomService"
+import type { Symptom } from "@/models/symptomModel"
 
 interface Props {
 	symptom: Symptom

@@ -130,8 +130,6 @@ export const useSignUpStore = defineStore("sign_up", () => {
 
 	const signUpPatient = async (user: User, userData: PatientData) => {
 		await createPatient(user.uid, userData)
-
-		await sendEmailVerification(user)
 	}
 
 	return {
