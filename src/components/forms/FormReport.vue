@@ -6,7 +6,7 @@ import { computed, ref, useTemplateRef } from "vue"
 import Report from "@/models/report.model"
 import { Timestamp } from "firebase/firestore"
 import { inputDateToDate } from "@/utils"
-import { getSymptomsBetween, type Symptom } from "@/services/symptomService"
+import Symptom from "@/models/symptom.model"
 import { useAuthStore } from "@/stores/authStore"
 import BaseDialog from "../bases/BaseDialog.vue"
 
@@ -34,7 +34,7 @@ const loadSymptoms = async () => {
 		return
 	}
 
-	symptoms.value = await getSymptomsBetween(id, periodStart.value, periodEnd.value)
+	symptoms.value = await Symptom.getBetween(periodStart.value, periodEnd.value, id)
 
 	dialogSymptoms.value?.show()
 }
@@ -46,7 +46,9 @@ const submitForm = async () => {
 	buttonState.value = "sync"
 
 	const data = reportRef.value.toMap()
-	await Report.set(data)
+	await authStore.onReady(async (user) => {
+		await Report.set(data, { scope: { userId: user.id } })
+	})
 
 	emit("handled-submit")
 	buttonState.value = "enabled"

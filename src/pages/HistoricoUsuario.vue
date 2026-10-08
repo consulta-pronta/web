@@ -7,12 +7,11 @@ import FormSintoma from "@/components/forms/FormSintoma.vue"
 import FilterOrd from "@/components/FilterOrd.vue"
 import SymptomCard from "@/components/cards/SymptomCard.vue"
 import { useAuthStore } from "@/stores/authStore"
-import { getAllSymptoms } from "@/services/symptomService"
+import Symptom from "@/models/symptom.model"
 import SymptomExtended from "@/components/SymptomExtended.vue"
 import BaseDialog from "@/components/bases/BaseDialog.vue"
 import { useRoute } from "vue-router"
 import router from "@/router"
-import type { Symptom } from "@/models/symptomModel"
 
 const route = useRoute()
 const authStore = useAuthStore()
@@ -28,7 +27,7 @@ let userId = ""
 
 const updateSymptoms = async () => {
 	symptoms.value = []
-	symptoms.value = await getAllSymptoms(userId)
+	symptoms.value = await Symptom.getAll({ scope: { userId } })
 }
 
 const viewSymptom = (symptomId: string) => {

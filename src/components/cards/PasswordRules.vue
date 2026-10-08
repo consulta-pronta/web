@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { PasswordRules } from "@/stores/signUpStore";
+import type { PasswordRules } from "@/stores/signUpStore"
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const props = defineProps<{
@@ -35,8 +35,6 @@ const getRuleLabel = (rule: string) => {
 			</span>
 			{{ getRuleLabel(key) }}
 		</p>
-		<span
-			class="w-4 h-4 bg-surface absolute -bottom-2 left-0 right-0 mx-auto rotate-45"
-		></span>
+		<span class="w-4 h-4 bg-surface absolute -bottom-2 left-0 right-0 mx-auto rotate-45"></span>
 	</article>
 </template>

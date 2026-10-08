@@ -2,9 +2,8 @@
 import { ref } from "vue"
 import NavBar from "@/components/NavBar.vue"
 import BaseInput from "@/components/bases/BaseInput.vue"
-import { type Exam } from "@/models/examModel"
+import Exam from "@/models/exam.model"
 import ExamRow from "@/components/ExamRow.vue"
-import { getExams } from "@/services/examService"
 import { useAuthStore } from "@/stores/authStore"
 
 const authStore = useAuthStore()
@@ -12,7 +11,7 @@ const authStore = useAuthStore()
 const exames = ref<Exam[]>([])
 
 authStore.onReady(async (user) => {
-	exames.value = await getExams(user.id)
+	exames.value = await Exam.getAll({ scope: { userId: user.id } })
 })
 </script>
 

@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import type { Symptom } from "@/services/symptomService"
+import type Symptom from "@/models/symptom.model"
+import { toCoolDate } from "@/utils"
 
 interface Props {
 	symptom: Symptom
@@ -26,7 +27,7 @@ const intensityColor = ranges.find((r) => {
 	<article class="rounded-md p-3" :class="`bg-${colors.bg} *:text-${colors.text}!`">
 		<p>
 			<span class="material-symbols-rounded text-sm!"> calendar_month </span>
-			{{ symptom?.date_time.toDate().toDateString() ?? "00/00/0000" }}
+			{{ toCoolDate(symptom.date_time?.toDate()) }}
 		</p>
 
 		<p class="font-bold oneliner">

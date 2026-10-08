@@ -6,7 +6,7 @@ import BaseLogo from "@/components/bases/BaseLogo.vue"
 import BaseButton, { type BaseButtonProps } from "@/components/bases/BaseButton.vue"
 import { auth } from "@/config/firebase"
 import { signOut } from "firebase/auth"
-import type { UserType } from "./ToggleUser.vue"
+import type { UserType } from "@/utils"
 import router from "@/router/index.ts"
 
 const navbarStore = useNavbarStore()
@@ -70,7 +70,7 @@ authStore.onReady((data) => {
 				</BaseButton>
 
 				<BaseButton
-					v-if="userType === 'paciente'"
+					v-if="userType === 'patient'"
 					v-bind="sharedAttributes"
 					icon="browse_activity"
 					goto="/historico-sintomas"
@@ -78,16 +78,16 @@ authStore.onReady((data) => {
 					<p>Histórico</p>
 				</BaseButton>
 				<BaseButton
-					v-else-if="userType === 'profissional'"
+					v-else-if="userType === 'professional'"
 					v-bind="sharedAttributes"
 					icon="group"
 					goto="#"
 				>
 					<p>Pacientes</p>
 				</BaseButton>
-				
+
 				<BaseButton
-					v-if="userType === 'paciente'"
+					v-if="userType === 'patient'"
 					v-bind="sharedAttributes"
 					icon="pill"
 					goto="#"
@@ -95,7 +95,7 @@ authStore.onReady((data) => {
 					<p>Medicamentos</p>
 				</BaseButton>
 				<BaseButton
-					v-else-if="userType === 'profissional'"
+					v-else-if="userType === 'professional'"
 					v-bind="sharedAttributes"
 					icon="pill"
 					goto="#"
@@ -122,7 +122,7 @@ authStore.onReady((data) => {
 				>
 					<p>Exames</p>
 				</BaseButton>
-				
+
 				<BaseButton
 					v-if="userType !== 'admin'"
 					v-bind="sharedAttributes"
@@ -133,16 +133,16 @@ authStore.onReady((data) => {
 				</BaseButton>
 
 				<BaseButton
-					v-if="userType === 'paciente'"
+					v-if="userType === 'patient'"
 					v-bind="sharedAttributes"
 					icon="home_health"
 					goto="#"
 				>
 					<p>Hospitais</p>
 				</BaseButton>
-				
+
 				<BaseButton
-					v-else-if="userType === 'profissional'"
+					v-else-if="userType === 'professional'"
 					v-bind="sharedAttributes"
 					goto="#"
 					icon="shelves"
@@ -150,11 +150,7 @@ authStore.onReady((data) => {
 					<p>Recursos</p>
 				</BaseButton>
 
-				<BaseButton
-					v-bind="sharedAttributes"
-					goto="#"
-					icon="person"
-				>
+				<BaseButton v-bind="sharedAttributes" goto="#" icon="person">
 					<p>Perfil</p>
 				</BaseButton>
 			</nav>
@@ -176,7 +172,7 @@ authStore.onReady((data) => {
 				<BaseButton v-bind="sharedAttributes" goto="#" icon="notifications">
 					<p>Notificações</p>
 				</BaseButton>
-				
+
 				<BaseButton v-bind="sharedAttributes" icon="settings" goto="#">
 					<p>Configurações</p>
 				</BaseButton>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { Symptom } from "@/models/symptomModel"
-import { getSymptom } from "@/services/symptomService"
+import Symptom from "@/models/symptom.model"
 import { useAuthStore } from "@/stores/authStore"
+import { toBrazilianLocaleDate, toCoolDate } from "@/utils"
 import { ref, watch } from "vue"
 
 const symptomId = defineModel<string>()
@@ -20,7 +20,13 @@ watch(symptomId, async (value) => {
 
 	isFetching.value = true
 
-	const symptom = await getSymptom(authStore.user!.uid, value)
+	const symptom = await Symptom.get(value, {
+		scope: { userId: authStore.user!.uid },
+	})
+	if (!symptom) {
+		isFetching.value = false
+		return
+	}
 	list.value = [symptom]
 	if (symptom.historic) {
 		list.value = list.value.concat(symptom.historic)
@@ -51,13 +57,13 @@ watch(symptomId, async (value) => {
 
 				<section class="text-sm italic text-right">
 					<p>ID: {{ symptom.id }}</p>
-					<p>Registrado em: {{ symptom.created_at.toDate().toLocaleString() }}</p>
+					<p>Registrado em: {{ toBrazilianLocaleDate(symptom.created_at?.toDate()) }}</p>
 				</section>
 			</details>
 
 			<p class="flex items-center text mt-1">
 				<span class="material-symbols-rounded text-base!"> calendar_month </span>
-				{{ symptom?.date_time.toDate().toDateString() ?? "00/00/0000" }}
+				{{ toCoolDate(symptom.date_time?.toDate()) }}
 			</p>
 
 			<hr class="mx-8 my-2" />

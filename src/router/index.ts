@@ -1,4 +1,4 @@
-import type { UserType } from "@/components/ToggleUser.vue"
+import type { UserType } from "@/utils"
 import { auth } from "@/config/firebase"
 import { useAuthStore } from "@/stores/authStore"
 import { createRouter, createWebHistory } from "vue-router"
@@ -55,7 +55,7 @@ const router = createRouter({
 			name: "dashboard",
 			component: () => import("@/pages/DashboardUsuario.vue"),
 			meta: {
-				roles: ["paciente", "profissional"],
+				roles: ["patient", "professional"],
 			},
 		},
 		{
@@ -63,7 +63,7 @@ const router = createRouter({
 			name: "exames",
 			component: () => import("@/pages/ExamesUsuario.vue"),
 			meta: {
-				roles: ["paciente"],
+				roles: ["patient"],
 			},
 		},
 		{
@@ -72,7 +72,7 @@ const router = createRouter({
 			alias: ["/historico", "/sintomas"],
 			component: () => import("@/pages/HistoricoUsuario.vue"),
 			meta: {
-				roles: ["paciente"],
+				roles: ["patient"],
 			},
 		},
 		{
@@ -85,7 +85,7 @@ const router = createRouter({
 			name: "relatorios",
 			component: () => import("@/pages/RelatoriosUsuario.vue"),
 			meta: {
-				roles: ["paciente"],
+				roles: ["patient"],
 			},
 		},
 	],

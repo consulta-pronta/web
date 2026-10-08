@@ -22,7 +22,6 @@ const mostrarSMS = ref(false)
 const mostrarWhatsapp = ref(false)
 const mostrarTelegram = ref(false)
 
-
 //Não está verificando se os campos dos forms estão vazios.
 
 const submitForm = async () => {
@@ -43,7 +42,9 @@ const submitForm = async () => {
 	<AuthBackground>
 		<BaseLogo text complete />
 
-		<div class="lg:w-1/2 box-border items-center justify-center flex flex-col gap-6 lg:relative">
+		<div
+			class="lg:w-1/2 box-border items-center justify-center flex flex-col gap-6 lg:relative"
+		>
 			<BaseButton
 				theme="textLight"
 				mode="transparent"
@@ -65,13 +66,14 @@ const submitForm = async () => {
 				@submit.prevent="submitForm"
 				class="space-y-2 items-center justify-center flex flex-col p-4 w-100 sm:w-120 lg:w-120 xl:w-140"
 			>
-
 				<article class="flex flex-col w-full rounded-md px-3 cursor-pointer">
 					<section>
-						<input type="checkbox" class="h-4 w-4 appearance-none rounded border border-textLight bg-transparent checked:bg-textLight checked:border-textLight" v-model="mostrarEmail"/>
-						<span class="text-textLight text-xl font-bold">
-							Email
-						</span>
+						<input
+							type="checkbox"
+							class="h-4 w-4 appearance-none rounded border border-textLight bg-transparent checked:bg-textLight checked:border-textLight"
+							v-model="mostrarEmail"
+						/>
+						<span class="text-textLight text-xl font-bold"> Email </span>
 					</section>
 					<BaseInput
 						v-if="mostrarEmail"
@@ -87,10 +89,12 @@ const submitForm = async () => {
 
 				<article class="flex flex-col w-full rounded-md px-3 cursor-pointer">
 					<section>
-						<input type="checkbox" class="h-4 w-4 appearance-none rounded border border-textLight bg-transparent checked:bg-textLight checked:border-textLight" v-model="mostrarSMS"/>
-						<span class="text-textLight text-xl font-bold">
-							SMS
-						</span>
+						<input
+							type="checkbox"
+							class="h-4 w-4 appearance-none rounded border border-textLight bg-transparent checked:bg-textLight checked:border-textLight"
+							v-model="mostrarSMS"
+						/>
+						<span class="text-textLight text-xl font-bold"> SMS </span>
 					</section>
 					<BaseInput
 						v-if="mostrarSMS"
@@ -104,13 +108,14 @@ const submitForm = async () => {
 					/>
 				</article>
 
-
 				<article class="flex flex-col w-full rounded-md px-3 cursor-pointer">
 					<section>
-						<input type="checkbox" class="h-4 w-4 appearance-none rounded border border-textLight bg-transparent checked:bg-textLight checked:border-textLight" v-model="mostrarWhatsapp"/>
-						<span class="text-textLight text-xl font-bold">
-							Whatsapp
-						</span>
+						<input
+							type="checkbox"
+							class="h-4 w-4 appearance-none rounded border border-textLight bg-transparent checked:bg-textLight checked:border-textLight"
+							v-model="mostrarWhatsapp"
+						/>
+						<span class="text-textLight text-xl font-bold"> Whatsapp </span>
 					</section>
 					<BaseInput
 						v-if="mostrarWhatsapp"
@@ -126,10 +131,12 @@ const submitForm = async () => {
 
 				<article class="flex flex-col w-full rounded-md px-3 cursor-pointer">
 					<section>
-						<input type="checkbox" class="h-4 w-4 appearance-none rounded border border-textLight bg-transparent checked:bg-textLight checked:border-textLight" v-model="mostrarTelegram"/>
-						<span class="text-textLight text-xl font-bold">
-							Telegram
-						</span>
+						<input
+							type="checkbox"
+							class="h-4 w-4 appearance-none rounded border border-textLight bg-transparent checked:bg-textLight checked:border-textLight"
+							v-model="mostrarTelegram"
+						/>
+						<span class="text-textLight text-xl font-bold"> Telegram </span>
 					</section>
 					<BaseInput
 						v-if="mostrarTelegram"

@@ -9,7 +9,7 @@ import BaseInput, { type BaseInputProps } from "@/components/bases/BaseInput.vue
 import BaseSelect from "@/components/bases/BaseSelect.vue"
 import ToggleUser from "@/components/ToggleUser.vue"
 import { useSignUpStore } from "@/stores/signUpStore"
-import ufList from "@/assets/lista_uf.json" with { type: "json" }
+import { bloodTypes, federalUnits } from "@/utils"
 import PasswordRules from "@/components/cards/PasswordRules.vue"
 
 const router = useRouter()
@@ -33,7 +33,9 @@ const stepTitle = computed(() => {
 })
 
 watch(currentStep, async (value, previous) => {
-	if (value < previous) { return }
+	if (value < previous) {
+		return
+	}
 	if (!form.value?.reportValidity()) {
 		currentStep.value = previous
 		return
@@ -50,8 +52,7 @@ watch(currentStep, async (value, previous) => {
 			if (signUpStore.isCpfInvalid) {
 				alert("CPF inválido. Por favor, verifique o CPF informado.")
 				currentStep.value = previous
-			}
-			else if (signUpStore.isPhoneInvalid) {
+			} else if (signUpStore.isPhoneInvalid) {
 				alert("Telefone inválido. Por favor, verifique o telefone informado.")
 				currentStep.value = previous
 			}
@@ -91,7 +92,9 @@ const setPasswordRulesAnchor = (anchor: null | "default" | "confirm") => {
 	rulesAnchor.value = `--${anchor}`
 }
 
-interface Uhh extends BaseInputProps { class: string }
+interface Uhh extends BaseInputProps {
+	class: string
+}
 const sharedAttributes: Uhh = {
 	theme: "dark",
 	required: true,
@@ -110,7 +113,6 @@ const sharedAttributes: Uhh = {
 				{{ stepTitle }}
 			</div>
 
-			
 			<form
 				ref="form"
 				@submit.prevent="currentStep++"
@@ -137,7 +139,7 @@ const sharedAttributes: Uhh = {
 						v-model="signUpStore.password"
 						@focusin="setPasswordRulesAnchor('default')"
 						@focusout="setPasswordRulesAnchor(null)"
-						style="anchor-name: --default;"
+						style="anchor-name: --default"
 					/>
 					<BaseInput
 						v-bind="sharedAttributes"
@@ -147,7 +149,7 @@ const sharedAttributes: Uhh = {
 						v-model="signUpStore.confirmPassword"
 						@focusin="setPasswordRulesAnchor('confirm')"
 						@focusout="setPasswordRulesAnchor(null)"
-						style="anchor-name: --confirm;"
+						style="anchor-name: --confirm"
 					/>
 					<PasswordRules
 						v-show="showPasswordRules"
@@ -183,11 +185,8 @@ const sharedAttributes: Uhh = {
 
 				<template v-else>
 					<ToggleUser v-model="signUpStore.userType" class="mb-4" />
-					<template 
-						v-if="signUpStore.userType === 'profissional'">
-						<fieldset
-							class="w-full flex flex-row gap-3"
-						>
+					<template v-if="signUpStore.userType === 'professional'">
+						<fieldset class="w-full flex flex-row gap-3">
 							<BaseInput
 								type="crm"
 								placeholder="CRM"
@@ -205,7 +204,7 @@ const sharedAttributes: Uhh = {
 								class="w-20"
 								v-model="signUpStore.professionalData.uf"
 							>
-								<template v-for="uf in ufList" :key="uf">
+								<template v-for="uf in federalUnits" :key="uf">
 									<option :value="uf">{{ uf }}</option>
 								</template>
 							</BaseSelect>
@@ -215,7 +214,7 @@ const sharedAttributes: Uhh = {
 							placeholder="Local de atuação"
 							icon="local_hospital"
 							required
-							v-model="signUpStore.professionalData.localAtuacao"
+							v-model="signUpStore.professionalData.operation_area"
 						/>
 					</template>
 					<template v-else>
@@ -227,7 +226,7 @@ const sharedAttributes: Uhh = {
 								hint="kg"
 								type="custom-number"
 								number-mode="positive-decimal"
-								v-model="signUpStore.patientData.peso"
+								v-model="signUpStore.patientData.weight"
 							/>
 							<BaseInput
 								v-bind="sharedAttributes"
@@ -236,16 +235,16 @@ const sharedAttributes: Uhh = {
 								hint="cm"
 								type="custom-number"
 								number-mode="positive-integer"
-								v-model="signUpStore.patientData.altura"
+								v-model="signUpStore.patientData.height"
 							/>
 						</div>
 						<BaseSelect
 							v-bind="sharedAttributes"
 							default-value="Tipo Sanguíneo"
 							icon="bloodtype"
-							v-model="signUpStore.patientData.tipoSanguineo"
+							v-model="signUpStore.patientData.blood_type"
 						>
-							<template v-for="tipo in ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']" :key="tipo">
+							<template v-for="tipo in bloodTypes" :key="tipo">
 								<option :value="tipo">{{ tipo }}</option>
 							</template>
 						</BaseSelect>
@@ -299,12 +298,11 @@ progress {
 		progress-filled:bg-accent
 		progress-filled:rounded-2xl
 		progress-filled:transition-all
-		progress-filled:duration-300
+		progress-filled:duration-300;
 }
 
 #password-rules {
 	position-anchor: v-bind(rulesAnchor);
 	bottom: anchor(top);
 }
-
 </style>
