@@ -1,9 +1,9 @@
 import { getDoc, serverTimestamp, setDoc, type Timestamp } from "firebase/firestore"
 import BaseDocument, { type DocumentData, type FormData } from "./baseDocument"
 import type { UserType } from "@/utils"
-import Admin from "./admin.model"
-import Patient from "./patient.model"
-import Professional from "./professional.model"
+import type Admin from "./admin.model"
+import type Patient from "./patient.model"
+import type Professional from "./professional.model"
 
 export type { UserType } from "@/utils"
 
@@ -38,18 +38,27 @@ export default class User extends BaseDocument {
 		const snapshot = await getDoc(this.ref(id))
 		if (snapshot.exists()) {
 			switch (snapshot.data().user_type) {
-				case "patient": {
-					return Patient.fromDocument(snapshot) as Patient
+				case "patient":
+				case "paciente": {
+					const { default: PatientModel } = await import("./patient.model")
+					return PatientModel.fromDocument(snapshot) as Patient
 				}
-				case "professional": {
-					return Professional.fromDocument(snapshot) as Professional
+				case "professional":
+				case "profissional": {
+					const { default: ProfessionalModel } = await import("./professional.model")
+					return ProfessionalModel.fromDocument(snapshot) as Professional
+				}
+				case "admin": {
+					const { default: AdminModel } = await import("./admin.model")
+					return AdminModel.fromDocument(snapshot) as Admin
 				}
 				default:
 					return this.fromDocument(snapshot) as User
 			}
 		}
 
-		return Admin.get(id)
+		const { default: AdminModel } = await import("./admin.model")
+		return AdminModel.get(id)
 	}
 
 	static async create(id: string, data: FormData) {
