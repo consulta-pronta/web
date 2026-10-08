@@ -1,21 +1,25 @@
 import type { User as AuthUser } from "firebase/auth"
-import { getUser, type Admin, type User as AppUser } from "@/services/userService"
+import Admin from "@/models/admin.model"
+import Patient from "@/models/patient.model"
+import Professional from "@/models/professional.model"
+import User from "@/models/user.model"
 import { defineStore } from "pinia"
 import { ref, watch } from "vue"
 import { until } from "@vueuse/core"
 
 type arglessCallback = () => void
-type userCallback = (data: AppUser | Admin) => void
+type AppUser = User | Patient | Professional | Admin
+type userCallback = (data: AppUser) => void
 
 export const useAuthStore = defineStore("auth", () => {
 	const authUser = ref<AuthUser | null>(null)
-	const appUser = ref<AppUser | Admin | null>(null)
+	const appUser = ref<AppUser | null>(null)
 
 	watch(
 		authUser,
 		async (newUser) => {
 			if (newUser) {
-				appUser.value = await getUser(newUser.uid)
+				appUser.value = await User.get(newUser.uid)
 			} else {
 				appUser.value = null
 			}

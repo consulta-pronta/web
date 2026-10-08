@@ -1,7 +1,7 @@
 <script setup lang="ts">
-export type UserType = "paciente" | "profissional" | "admin"
+import type { UserType } from "@/utils"
 
-const status = defineModel<UserType>({ default: "paciente" })
+const status = defineModel<UserType>({ default: "patient" })
 
 const toggleStatus = (newStatus: UserType) => {
 	status.value = newStatus
@@ -12,23 +12,23 @@ const toggleStatus = (newStatus: UserType) => {
 	<div class="flex flex-row bg-primaryDark p-1 gap-4 rounded-lg relative">
 		<div
 			class="boogieman absolute bg-accent z-0"
-			:class="status === 'paciente' ? 'left-1' : 'left-[calc(100%-0.25rem-10rem)]'"
+			:class="status === 'patient' ? 'left-1' : 'left-[calc(100%-0.25rem-10rem)]'"
 		></div>
 
 		<button
 			type="button"
-			@click="toggleStatus('paciente')"
+			@click="toggleStatus('patient')"
 			class="boogieman"
-			:class="status === 'paciente' ? 'active' : ''"
+			:class="status === 'patient' ? 'active' : ''"
 		>
 			Paciente
 		</button>
 
 		<button
 			type="button"
-			@click="toggleStatus('profissional')"
+			@click="toggleStatus('professional')"
 			class="boogieman"
-			:class="status === 'profissional' ? 'active' : ''"
+			:class="status === 'professional' ? 'active' : ''"
 		>
 			Profissional
 		</button>

@@ -9,7 +9,7 @@ import BaseInput, { type BaseInputProps } from "@/components/bases/BaseInput.vue
 import BaseSelect from "@/components/bases/BaseSelect.vue"
 import ToggleUser from "@/components/ToggleUser.vue"
 import { useSignUpStore } from "@/stores/signUpStore"
-import ufList from "@/assets/lista_uf.json" with { type: "json" }
+import { bloodTypes, federalUnits } from "@/utils"
 import PasswordRules from "@/components/cards/PasswordRules.vue"
 
 const router = useRouter()
@@ -184,7 +184,7 @@ const sharedAttributes: Uhh = {
 				<template v-else>
 					<ToggleUser v-model="signUpStore.userType" class="mb-4" />
 					<template 
-						v-if="signUpStore.userType === 'profissional'">
+						v-if="signUpStore.userType === 'professional'">
 						<fieldset
 							class="w-full flex flex-row gap-3"
 						>
@@ -205,7 +205,7 @@ const sharedAttributes: Uhh = {
 								class="w-20"
 								v-model="signUpStore.professionalData.uf"
 							>
-								<template v-for="uf in ufList" :key="uf">
+								<template v-for="uf in federalUnits" :key="uf">
 									<option :value="uf">{{ uf }}</option>
 								</template>
 							</BaseSelect>
@@ -215,7 +215,7 @@ const sharedAttributes: Uhh = {
 							placeholder="Local de atuação"
 							icon="local_hospital"
 							required
-							v-model="signUpStore.professionalData.localAtuacao"
+							v-model="signUpStore.professionalData.operation_area"
 						/>
 					</template>
 					<template v-else>
@@ -227,7 +227,7 @@ const sharedAttributes: Uhh = {
 								hint="kg"
 								type="custom-number"
 								number-mode="positive-decimal"
-								v-model="signUpStore.patientData.peso"
+								v-model="signUpStore.patientData.weight"
 							/>
 							<BaseInput
 								v-bind="sharedAttributes"
@@ -236,16 +236,16 @@ const sharedAttributes: Uhh = {
 								hint="cm"
 								type="custom-number"
 								number-mode="positive-integer"
-								v-model="signUpStore.patientData.altura"
+								v-model="signUpStore.patientData.height"
 							/>
 						</div>
 						<BaseSelect
 							v-bind="sharedAttributes"
 							default-value="Tipo Sanguíneo"
 							icon="bloodtype"
-							v-model="signUpStore.patientData.tipoSanguineo"
+							v-model="signUpStore.patientData.blood_type"
 						>
-							<template v-for="tipo in ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']" :key="tipo">
+							<template v-for="tipo in bloodTypes" :key="tipo">
 								<option :value="tipo">{{ tipo }}</option>
 							</template>
 						</BaseSelect>

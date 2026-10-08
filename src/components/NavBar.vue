@@ -6,7 +6,7 @@ import BaseLogo from "@/components/bases/BaseLogo.vue"
 import BaseButton, { type BaseButtonProps } from "@/components/bases/BaseButton.vue"
 import { auth } from "@/config/firebase"
 import { signOut } from "firebase/auth"
-import type { UserType } from "./ToggleUser.vue"
+import type { UserType } from "@/utils"
 import router from "@/router/index.ts"
 
 const navbarStore = useNavbarStore()
@@ -70,7 +70,7 @@ authStore.onReady((data) => {
 				</BaseButton>
 
 				<BaseButton
-					v-if="userType === 'paciente'"
+					v-if="userType === 'patient'"
 					v-bind="sharedAttributes"
 					icon="browse_activity"
 					goto="/historico-sintomas"
@@ -78,7 +78,7 @@ authStore.onReady((data) => {
 					<p>Histórico</p>
 				</BaseButton>
 				<BaseButton
-					v-else-if="userType === 'profissional'"
+					v-else-if="userType === 'professional'"
 					v-bind="sharedAttributes"
 					icon="group"
 					goto="#"
@@ -87,7 +87,7 @@ authStore.onReady((data) => {
 				</BaseButton>
 				
 				<BaseButton
-					v-if="userType === 'paciente'"
+					v-if="userType === 'patient'"
 					v-bind="sharedAttributes"
 					icon="pill"
 					goto="#"
@@ -95,7 +95,7 @@ authStore.onReady((data) => {
 					<p>Medicamentos</p>
 				</BaseButton>
 				<BaseButton
-					v-else-if="userType === 'profissional'"
+					v-else-if="userType === 'professional'"
 					v-bind="sharedAttributes"
 					icon="pill"
 					goto="#"
@@ -133,7 +133,7 @@ authStore.onReady((data) => {
 				</BaseButton>
 
 				<BaseButton
-					v-if="userType === 'paciente'"
+					v-if="userType === 'patient'"
 					v-bind="sharedAttributes"
 					icon="home_health"
 					goto="#"
@@ -142,7 +142,7 @@ authStore.onReady((data) => {
 				</BaseButton>
 				
 				<BaseButton
-					v-else-if="userType === 'profissional'"
+					v-else-if="userType === 'professional'"
 					v-bind="sharedAttributes"
 					goto="#"
 					icon="shelves"

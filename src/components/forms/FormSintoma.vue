@@ -7,7 +7,6 @@ import { useAuthStore } from "@/stores/authStore.ts"
 import Symptom from "@/models/symptom.model"
 import { toInputValue } from "@feelinglovelynow/datetime-local"
 import { Timestamp } from "firebase/firestore"
-import type { SymptomData } from "@/models/symptom.model"
 
 const props = defineProps<{
 	symptomId?: string
@@ -32,7 +31,7 @@ const symptomData = ref({
 		}
 		this.title = symptom.title
 		this.description = symptom.description
-		this.date_time = toInputValue(symptom.date_time.toDate())
+		this.date_time = toInputValue(symptom.date_time?.toDate() ?? new Date())
 		this.place = symptom.place
 		this.intensity = symptom.intensity
 	},
@@ -56,13 +55,14 @@ const registrarSintoma = async () => {
 	if (authStore.user) {
 		const id = authStore.user.uid
 		const { title, description, date_time, place, intensity } = symptomData.value
-		const data: SymptomData = {
+		const data = new Symptom(
+			"",
 			title,
 			description,
-			date_time: Timestamp.fromDate(new Date(date_time)),
+			Timestamp.fromDate(new Date(date_time)),
 			place,
 			intensity,
-		}
+		).toMap()
 
 		const options = { scope: { userId: id } }
 		if (props.symptomId) {

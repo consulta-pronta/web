@@ -12,6 +12,7 @@ import {
 	type QueryConstraint,
 } from "firebase/firestore"
 
+export type DocumentData = Record<string, undefined>
 export type FormData = Record<string, unknown>
 export type CollectionScope = Record<string, string>
 
@@ -64,12 +65,8 @@ export default abstract class BaseDocument {
 		}
 		return this.documentConverter(doc.id, doc.data()) as T
 	}
-	protected static documentConverter(
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		id: string,
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		data: Record<string, undefined>,
-	): BaseDocument {
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	protected static documentConverter(id: string, data: DocumentData): BaseDocument {
 		throw new Error("implement this >:(")
 	}
 
@@ -106,18 +103,10 @@ export default abstract class BaseDocument {
 		data: FormData,
 		options: CollectionOptions = {},
 	) {
-		updateDoc(this.ref(id, options), data)
+		await updateDoc(this.ref(id, options), data)
 	}
 
 	static async delete(id: string, options: CollectionOptions = {}) {
-		deleteDoc(this.ref(id, options))
+		await deleteDoc(this.ref(id, options))
 	}
-}
-
-export class User extends BaseDocument {
-	constructor(public readonly id: string = "") {
-		super()
-	}
-
-	static readonly collectionName = "users"
 }

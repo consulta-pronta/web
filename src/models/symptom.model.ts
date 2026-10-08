@@ -1,22 +1,13 @@
-import { runTransaction, serverTimestamp, Timestamp, type FieldValue } from "firebase/firestore"
+import { runTransaction, serverTimestamp, Timestamp } from "firebase/firestore"
 import { orderBy, where } from "firebase/firestore"
 import BaseDocument, {
 	type CollectionOptions,
 	type CollectionScope,
 	type FormData,
 	type QueryOptions,
-	User,
 } from "./baseDocument"
 import { db } from "@/config/firebase"
-
-export type SymptomData = {
-	title?: string
-	description?: string
-	date_time?: Timestamp
-	place?: string
-	intensity?: number
-	created_at?: Timestamp | FieldValue
-}
+import User from "./user.model"
 
 export type SymptomOptions = CollectionOptions & {
 	deep?: boolean
@@ -31,11 +22,11 @@ export default class Symptom extends BaseDocument {
 		public readonly id: string = "",
 		public title: string = "",
 		public description: string = "",
-		public date_time: Timestamp = Timestamp.now(),
+		public date_time: Timestamp | null = null,
 		public place: string = "",
 		public intensity: number = 0,
-		public created_at: Timestamp = Timestamp.now(),
-		public historic?: Symptom[],
+		public created_at: Timestamp | null = null,
+		public historic: Symptom[] | null = null,
 	) {
 		super()
 	}
@@ -122,16 +113,18 @@ export default class Symptom extends BaseDocument {
 			)
 		)
 
-		return [...parentSymptoms, ...historicSymptoms.flat()].sort(
-			(a, b) => b.date_time.toMillis() - a.date_time.toMillis(),
-		)
+		return [...parentSymptoms, ...historicSymptoms.flat()]
+			.filter((item) => item.date_time !== null)
+			.sort(
+				(a, b) => b.date_time!.toMillis() - a.date_time!.toMillis(),
+			)
 	}
 
 	static async set(data: FormData, options: CollectionOptions = {}) {
 		return super.set(data, options)
 	}
 
-	static async update(id: string, data: SymptomData, options: CollectionOptions = {}) {
+	static async update(id: string, data: FormData, options: CollectionOptions = {}) {
 		const previous = await this.get(id, options)
 		if (!previous) {
 			throw new Error(`Symptom ${id} was not found`)

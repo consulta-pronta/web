@@ -7,7 +7,7 @@ import type Report from "@/models/report.model"
 import { onClickOutside } from "@vueuse/core"
 import { useAuthStore } from "@/stores/authStore"
 import { timestampDiffDays, toCoolDate } from "@/utils.ts"
-import type { User } from "@/services/userService.ts"
+import User from "@/models/user.model"
 import { formatToPhone } from "brazilian-values"
 import IntensityChip from "./IntensityChip.vue"
 import Symptom from "@/models/symptom.model"
@@ -59,7 +59,7 @@ authStore.onReady(async (data) => {
 	symptoms.value = await Symptom.getBetween(
 		props.report.period_start!,
 		props.report.period_end!,
-		{ scope: { userId: data.id } },
+		data.id,
 	)
 })
 </script>
@@ -157,7 +157,7 @@ authStore.onReady(async (data) => {
 					<p>{{ Math.floor(timestampDiffDays(report.period_start!!, report.period_end!!)) }} dias</p>
 				</span>
 
-				<section class="flex just" v-if="user?.user_type === 'profissional'">
+				<section class="flex just" v-if="user?.user_type === 'professional'">
 					<!-- <UserPhoto/> -->
 					<article class="flex flex-col text-textLight text-xs justify-center">
 						<p class="text-base font-bold">{{ user.name }}</p>
@@ -212,7 +212,7 @@ authStore.onReady(async (data) => {
 					<section class="bg-surface text-textDark rounded-lg p-3 grow mb-2">
 						<div class="flex flex-row justify-between items-center">
 							<h3 class="grow">{{ symptom.title }}</h3>
-							<p class="text-sm">{{ toCoolDate(symptom.date_time.toDate()) }}</p>
+							<p class="text-sm">{{ toCoolDate(symptom.date_time?.toDate()) }}</p>
 						</div>
 						<p>Intensidade: {{ symptom.intensity }}/10</p>
 						<p class="text-sm">"{{ symptom.description }}"</p>

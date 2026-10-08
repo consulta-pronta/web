@@ -34,10 +34,7 @@ const loadSymptoms = async () => {
 		return
 	}
 
-	symptoms.value = await Symptom.getBetween(periodStart.value, periodEnd.value, {
-		scope: { userId: id },
-		deep: false,
-	})
+	symptoms.value = await Symptom.getBetween(periodStart.value, periodEnd.value, id)
 
 	dialogSymptoms.value?.show()
 }

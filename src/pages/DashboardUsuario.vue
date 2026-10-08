@@ -4,11 +4,12 @@ import { useAuthStore } from "@/stores/authStore"
 import NavBar from "@/components/NavBar.vue"
 import BaseButton from "@/components/bases/BaseButton.vue"
 import SymptomCard from "@/components/cards/SymptomCard.vue"
-import { type UserType } from "@/components/ToggleUser.vue"
+import type { UserType } from "@/utils"
 import Symptom from "@/models/symptom.model"
-import { getSignUpRequests, getUserRef, signUpRequestsRef, type ProfessionalUser, type ProfessionalUserData } from "@/services/userService"
+import Professional from "@/models/professional.model"
+import User from "@/models/user.model"
 import { formatToCPF } from "brazilian-values"
-import { doc, runTransaction, serverTimestamp } from "firebase/firestore"
+import { runTransaction, serverTimestamp } from "firebase/firestore"
 import { db } from "@/config/firebase"
 
 const authStore = useAuthStore()
@@ -16,7 +17,7 @@ const userName = ref("")
 const userType = ref<UserType>()
 
 const symptoms = ref<Symptom[]>([])
-const signupRequests = ref<ProfessionalUser[]>()
+const signupRequests = ref<Professional[]>()
 
 const approveRequest = async (requestId: string) => {
 	const ogRequest = signupRequests.value?.find(
@@ -27,15 +28,15 @@ const approveRequest = async (requestId: string) => {
 		return
 	}
 
-	const requestRef = doc(signUpRequestsRef.value, requestId)
-	const newUserData = {} as ProfessionalUserData
-	Object.assign(newUserData, ogRequest)
+	const requestRef = Professional.requestRef(requestId)
+	const newUserData = ogRequest.toMap()
+	newUserData.created_at = ogRequest.created_at ?? serverTimestamp()
 	newUserData.approved_at = serverTimestamp()
 
 	try {
 		await runTransaction(db, async (transaction) => {
 			transaction.delete(requestRef)
-			transaction.set(getUserRef(ogRequest.id), newUserData)
+			transaction.set(User.ref(ogRequest.id), newUserData)
 		})
 		const msg = `Successfuly approved professional of id ${requestId}`
 		console.log(msg)
@@ -52,7 +53,7 @@ authStore.onReady(async (data) => {
 
 	symptoms.value = await Symptom.getAll({ scope: { userId: data.id } })
 	if (data.user_type === "admin") {
-		signupRequests.value = await getSignUpRequests()
+		signupRequests.value = await Professional.getRequests()
 	}
 })
 </script>
@@ -72,13 +73,13 @@ authStore.onReady(async (data) => {
 				<div class="text-textLight font-bold flex flex-col space-y-1">
 					<p class="text-2xl md:text-3xl lg:text-4xl">Bem vindo,</p>
 					<p class="text-accent text-3xl md:text-4xl lg:text-5xl">{{ userName }}</p>
-					<p v-if="userType === 'paciente'" class="font-normal">
+					<p v-if="userType === 'patient'" class="font-normal">
 						Você está sentindo algum desconforto hoje? Registre!
 					</p>
 					<p v-else class="font-normal">Alguma consulta marcada? Verifique!</p>
 				</div>
 				<BaseButton
-					v-if="userType === 'paciente'"
+					v-if="userType === 'patient'"
 					goto="historico-sintomas"
 					theme="textLight"
 					mode="outline"
@@ -99,7 +100,7 @@ authStore.onReady(async (data) => {
 			</section>
 
 			<section
-				v-if="userType === 'paciente'"
+				v-if="userType === 'patient'"
 				class="bg-primary rounded-2xl md:col-span-2 xl:col-span-6 xl:row-span-5 p-5 flex flex-col justify-between h-full"
 			>
 				<div class="flex flex-col h-full space-y-2">
@@ -126,7 +127,7 @@ authStore.onReady(async (data) => {
 				</div>
 			</section>
 			<section
-				v-else-if="userType === 'profissional'"
+				v-else-if="userType === 'professional'"
 				class="bg-primary rounded-2xl xl:col-span-6 xl:row-span-5 p-5 flex flex-col justify-between h-full"
 			>
 				<div class="flex flex-col h-full space-y-2">
@@ -142,7 +143,7 @@ authStore.onReady(async (data) => {
 			</section>
 
 			<section
-				v-if="userType === 'paciente'"
+				v-if="userType === 'patient'"
 				class="bg-primary rounded-2xl xl:col-span-5 xl:row-span-3 p-5 flex flex-col justify-between items-center h-full"
 			>
 				<p class="text-textLight font-bold text-xl">Informações de saúde:</p>
@@ -157,7 +158,7 @@ authStore.onReady(async (data) => {
 				</BaseButton>
 			</section>
 			<section
-				v-else-if="userType === 'profissional'"
+				v-else-if="userType === 'professional'"
 				class="bg-primary rounded-2xl xl:col-span-6 xl:row-span-3 p-5 flex flex-col justify-between items-center h-full"
 			>
 				<p class="text-textLight font-bold text-xl">Triagens:</p>
@@ -173,7 +174,7 @@ authStore.onReady(async (data) => {
 			</section>
 
 			<section
-				v-if="userType === 'paciente'"
+				v-if="userType === 'patient'"
 				class="bg-primary rounded-2xl xl:col-span-5 xl:row-span-3 p-5 flex flex-col justify-between items-center h-full"
 			>
 				<p class="text-textLight font-bold text-xl">Permissões médicas:</p>
@@ -188,7 +189,7 @@ authStore.onReady(async (data) => {
 				</BaseButton>
 			</section>
 			<section
-				v-else-if="userType === 'profissional'"
+				v-else-if="userType === 'professional'"
 				class="bg-primary rounded-2xl xl:col-span-4 xl:row-span-3 p-5 flex flex-col justify-between items-center h-full"
 			>
 				<p class="text-textLight font-bold text-xl">Relatórios:</p>
@@ -234,8 +235,8 @@ authStore.onReady(async (data) => {
 								<td>{{ request.email }}
 								</td>
 								<td>{{ formatToCPF(request.cpf) }}</td>
-								<td>{{ request.data_profissional.crm }}/{{ request.data_profissional.uf }}</td>
-								<td>{{ request.data_profissional.local_atuacao }}</td>
+								<td>{{ request.professional_data?.crm }}/{{ request.professional_data?.uf }}</td>
+								<td>{{ request.professional_data?.operation_area }}</td>
 								<td class="flex flex-row gap-3 *:w-full">
 									<BaseButton theme="primary" @click="approveRequest(request.id)">
 										Aprovar

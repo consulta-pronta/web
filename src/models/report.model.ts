@@ -3,8 +3,8 @@ import BaseDocument, {
 	type CollectionOptions,
 	type CollectionScope,
 	type QueryOptions,
-	User,
 } from "./baseDocument"
+import User from "./user.model"
 
 export default class Report extends BaseDocument {
 	constructor(
