@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Exam from "@/models/exam.model"
-import { DATE_NOT_PROVIDED, toBrazilianLocaleDate } from "@/utils";
+import { DATE_NOT_PROVIDED, toBrazilianLocaleDate } from "@/utils"
 import { computed } from "vue"
 
 const props = defineProps<{
@@ -23,7 +23,7 @@ const typeIcon = computed(() => {
 const date = computed(() => {
 	const date = props.exam.date?.toDate()
 	if (!date) return DATE_NOT_PROVIDED
-	
+
 	return toBrazilianLocaleDate(date)
 })
 

@@ -20,9 +20,7 @@ const symptoms = ref<Symptom[]>([])
 const signupRequests = ref<Professional[]>()
 
 const approveRequest = async (requestId: string) => {
-	const ogRequest = signupRequests.value?.find(
-		(req) => req.id === requestId
-	)
+	const ogRequest = signupRequests.value?.find((req) => req.id === requestId)
 	if (!ogRequest) {
 		alert("Solicitação não encontrada")
 		return
@@ -205,10 +203,7 @@ authStore.onReady(async (data) => {
 			</section>
 		</main>
 
-		<main
-			v-else
-			class="size-full flex flex-col p-10 text-textLight gap-4 *:flex *:flex-col"
-		>
+		<main v-else class="size-full flex flex-col p-10 text-textLight gap-4 *:flex *:flex-col">
 			<header class="gap-1">
 				<h1 class="text-4xl font-bold">Dashboard</h1>
 				<p>Logado como {{ userName }}</p>
@@ -216,7 +211,7 @@ authStore.onReady(async (data) => {
 
 			<section class="gap-2">
 				<h2 class="text-2xl font-semibold">Solicitações de registro</h2>
-				
+
 				<table class="w-full text-textDark *:*:*:p-3 rounded-xs overflow-clip">
 					<thead>
 						<tr class="bg-surface/80 *:text-start">
@@ -232,10 +227,13 @@ authStore.onReady(async (data) => {
 						<template v-for="request in signupRequests" :key="request.id">
 							<tr class="bg-surface border-b hover:brightness-90">
 								<td>{{ request.name }}</td>
-								<td>{{ request.email }}
-								</td>
+								<td>{{ request.email }}</td>
 								<td>{{ formatToCPF(request.cpf) }}</td>
-								<td>{{ request.professional_data?.crm }}/{{ request.professional_data?.uf }}</td>
+								<td>
+									{{ request.professional_data?.crm }}/{{
+										request.professional_data?.uf
+									}}
+								</td>
 								<td>{{ request.professional_data?.operation_area }}</td>
 								<td class="flex flex-row gap-3 *:w-full">
 									<BaseButton theme="primary" @click="approveRequest(request.id)">
@@ -249,13 +247,14 @@ authStore.onReady(async (data) => {
 						</template>
 						<template v-if="signupRequests && signupRequests.length === 0">
 							<tr class="bg-surface">
-								<td colspan="6" class="text-center">Nenhuma solicitação de registro encontrada.</td>
+								<td colspan="6" class="text-center">
+									Nenhuma solicitação de registro encontrada.
+								</td>
 							</tr>
 						</template>
 					</tbody>
 				</table>
 			</section>
-
 		</main>
 	</div>
 </template>

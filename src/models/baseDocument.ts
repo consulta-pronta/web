@@ -28,17 +28,13 @@ export default abstract class BaseDocument {
 	readonly id: string = ""
 
 	static readonly collectionName: string = ""
-	
+
 	getCollectionName() {
 		const constructor = this.constructor as typeof BaseDocument
 		return constructor.collectionName
 	}
 
-	static resolvePath(
-		thisId: string,
-		nextCollection: string,
-		scope: CollectionScope = {},
-	) {
+	static resolvePath(thisId: string, nextCollection: string, scope: CollectionScope = {}) {
 		return [this.getCollectionPath(scope), thisId, nextCollection].join("/")
 	}
 
@@ -80,12 +76,9 @@ export default abstract class BaseDocument {
 	}
 
 	static async getAll(options: QueryOptions = {}) {
-		const collectionQuery = query(
-			this.collection(options),
-			...(options.constraints ?? []),
-		)
+		const collectionQuery = query(this.collection(options), ...(options.constraints ?? []))
 		const snapshot = await getDocs(collectionQuery)
-		
+
 		const documents = snapshot.docs
 			.map((doc) => this.fromDocument(doc))
 			.filter((item) => item !== null)
@@ -98,11 +91,7 @@ export default abstract class BaseDocument {
 		return doc.id
 	}
 
-	static async update(
-		id: string,
-		data: FormData,
-		options: CollectionOptions = {},
-	) {
+	static async update(id: string, data: FormData, options: CollectionOptions = {}) {
 		await updateDoc(this.ref(id, options), data)
 	}
 

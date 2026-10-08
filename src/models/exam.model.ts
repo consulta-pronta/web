@@ -18,13 +18,13 @@ export default class Exam extends BaseDocument {
 		public place: string = "",
 		public date: Timestamp | null = null,
 		public status: ExamStatus = "solicitado",
-		public created_at: Timestamp | null = null
+		public created_at: Timestamp | null = null,
 	) {
 		super()
 	}
 
 	static readonly collectionName = "exams"
-		
+
 	protected static getCollectionPath(scope?: CollectionScope): string {
 		const userId = scope?.userId
 		if (!userId) {

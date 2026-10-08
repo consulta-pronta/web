@@ -37,22 +37,28 @@ const toggle = () => {
 const mostAffectedArea = computed(() => {
 	const areas = Object.groupBy(symptoms.value, (item) => item.place)
 	const entries = Object.entries(areas)
-	
-	const [area, maxSymptoms] = entries.reduce((max, item) => {
-		return item[1]!.length > max.length ? item : max
-	}, ["", []])
+
+	const [area, maxSymptoms] = entries.reduce(
+		(max, item) => {
+			return item[1]!.length > max.length ? item : max
+		},
+		["", []],
+	)
 	const amount = maxSymptoms?.length ?? 0
 
 	let intensity = 0.0
-	const sum = maxSymptoms!.reduce((sum, item) => {
-		return sum + Number(item.intensity)
-	}, 0) ?? 0
+	const sum =
+		maxSymptoms!.reduce((sum, item) => {
+			return sum + Number(item.intensity)
+		}, 0) ?? 0
 	intensity = sum / amount
 
-	return {area, amount, intensity}
+	return { area, amount, intensity }
 })
 
-onClickOutside(popup, () => { focused.value = false })
+onClickOutside(popup, () => {
+	focused.value = false
+})
 
 authStore.onReady(async (data) => {
 	user.value = data as User
@@ -140,21 +146,30 @@ authStore.onReady(async (data) => {
 	</tr>
 
 	<BaseDialog :title="report.title" ref="viewReport">
-		<form class="flex flex-col gap-2 overflow-y-auto max-h-[80vh] text-textLight scrollbar-track-transparent scrollbar-thumb-accent">
+		<form
+			class="flex flex-col gap-2 overflow-y-auto max-h-[80vh] text-textLight scrollbar-track-transparent scrollbar-thumb-accent"
+		>
 			<section class="*:flex *:gap-1 *:*:first:font-semibold mb-2">
 				<p class="font-light italic">Relatório: {{ report.id }}</p>
 
 				<span>
 					<p>Período:</p>
 					<p>
-						{{ toCoolDate(report.period_end!!.toDate())}}
+						{{ toCoolDate(report.period_end!!.toDate()) }}
 						a
-						{{ toCoolDate(report.period_start!!.toDate())}}
+						{{ toCoolDate(report.period_start!!.toDate()) }}
 					</p>
 				</span>
 				<span>
 					<p>Duração:</p>
-					<p>{{ Math.floor(timestampDiffDays(report.period_start!!, report.period_end!!)) }} dias</p>
+					<p>
+						{{
+							Math.floor(
+								timestampDiffDays(report.period_start!!, report.period_end!!),
+							)
+						}}
+						dias
+					</p>
 				</span>
 
 				<section class="flex just" v-if="user?.user_type === 'professional'">
@@ -175,7 +190,11 @@ authStore.onReady(async (data) => {
 						<small>Área mais afetada</small>
 						<h3>{{ mostAffectedArea.area }}</h3>
 						<h6 class="text-sm font-medium">{{ mostAffectedArea.amount }} registros</h6>
-						<IntensityChip :intensity="mostAffectedArea.intensity" custom-message="Média:" class="mt-3"/>
+						<IntensityChip
+							:intensity="mostAffectedArea.intensity"
+							custom-message="Média:"
+							class="mt-3"
+						/>
 					</article>
 
 					<!-- TODO: se não tem gráfico no frontend, não tem como fazer o back -->
@@ -200,13 +219,22 @@ authStore.onReady(async (data) => {
 
 			<section class="flex flex-col max-h-full">
 				<h2>Cronologia do Sintoma</h2>
-				
-				<article class="flex flex-row gap-2 *:flex *:flex-col" v-for="(symptom, index) in symptoms" :key="symptom.id">
+
+				<article
+					class="flex flex-row gap-2 *:flex *:flex-col"
+					v-for="(symptom, index) in symptoms"
+					:key="symptom.id"
+				>
 					<div class="items-center">
-						<span class="material-symbols-rounded bg-primaryLight text-background rounded-full p-1">
+						<span
+							class="material-symbols-rounded bg-primaryLight text-background rounded-full p-1"
+						>
 							vital_signs
 						</span>
-						<hr class="flex-1 w-0.5 bg-textLight border-0" v-if="index + 1 !== symptoms.length" />
+						<hr
+							class="flex-1 w-0.5 bg-textLight border-0"
+							v-if="index + 1 !== symptoms.length"
+						/>
 					</div>
 
 					<section class="bg-surface text-textDark rounded-lg p-3 grow mb-2">
@@ -219,7 +247,7 @@ authStore.onReady(async (data) => {
 					</section>
 				</article>
 			</section>
-			
+
 			<!-- TODO: uhhh, change how symptoms are store so that they can be groped together -->
 			<section v-if="false">
 				<p class="text-textLight text-xl font-bold mb-2">Visão Geral</p>
@@ -304,5 +332,4 @@ h2 {
 h3 {
 	@apply font-semibold text-lg;
 }
-
 </style>

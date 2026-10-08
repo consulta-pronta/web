@@ -37,11 +37,14 @@ export default class Patient extends User {
 	}
 
 	private static getPatientData(data: DocumentData): PatientData {
-		return data.patient_data ?? <PatientData>{
-			weight: data.data_paciente.peso,
-			height: data.data_paciente.altura,
-			blood_type: data.data_paciente.tipo_sanguineo,
-		}
+		return (
+			data.patient_data ??
+			<PatientData>{
+				weight: data.data_paciente.peso,
+				height: data.data_paciente.altura,
+				blood_type: data.data_paciente.tipo_sanguineo,
+			}
+		)
 	}
 
 	toMap(): FormData {

@@ -85,7 +85,7 @@ authStore.onReady((data) => {
 				>
 					<p>Pacientes</p>
 				</BaseButton>
-				
+
 				<BaseButton
 					v-if="userType === 'patient'"
 					v-bind="sharedAttributes"
@@ -122,7 +122,7 @@ authStore.onReady((data) => {
 				>
 					<p>Exames</p>
 				</BaseButton>
-				
+
 				<BaseButton
 					v-if="userType !== 'admin'"
 					v-bind="sharedAttributes"
@@ -140,7 +140,7 @@ authStore.onReady((data) => {
 				>
 					<p>Hospitais</p>
 				</BaseButton>
-				
+
 				<BaseButton
 					v-else-if="userType === 'professional'"
 					v-bind="sharedAttributes"
@@ -150,11 +150,7 @@ authStore.onReady((data) => {
 					<p>Recursos</p>
 				</BaseButton>
 
-				<BaseButton
-					v-bind="sharedAttributes"
-					goto="#"
-					icon="person"
-				>
+				<BaseButton v-bind="sharedAttributes" goto="#" icon="person">
 					<p>Perfil</p>
 				</BaseButton>
 			</nav>
@@ -176,7 +172,7 @@ authStore.onReady((data) => {
 				<BaseButton v-bind="sharedAttributes" goto="#" icon="notifications">
 					<p>Notificações</p>
 				</BaseButton>
-				
+
 				<BaseButton v-bind="sharedAttributes" icon="settings" goto="#">
 					<p>Configurações</p>
 				</BaseButton>

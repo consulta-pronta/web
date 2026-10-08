@@ -19,7 +19,7 @@ export default class Report extends BaseDocument {
 	}
 
 	static readonly collectionName = "reports"
-	
+
 	protected static getCollectionPath(scope?: CollectionScope): string {
 		const userId = scope?.userId
 		if (!userId) {

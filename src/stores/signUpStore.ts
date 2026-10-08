@@ -13,11 +13,11 @@ import { isCPF, isPhone } from "brazilian-values"
 import type { UserType } from "@/utils"
 
 export type PasswordRules = {
-		minLength: boolean,
-		hasNumber: boolean,
-		hasLowercase: boolean,
-		hasUppercase: boolean,
-		match: boolean,
+	minLength: boolean
+	hasNumber: boolean
+	hasLowercase: boolean
+	hasUppercase: boolean
+	match: boolean
 }
 export const minPasswordLength = 8
 export const maxPasswordLength = 4096
@@ -36,13 +36,16 @@ export const useSignUpStore = defineStore("sign_up", () => {
 	const patientData = ref(emptyPatientData())
 	const userType = ref<UserType>("patient")
 
-	const rules = computed(() => ({
-		minLength: password.value.length >= minPasswordLength,
-		hasNumber: /\d/.test(password.value),
-		hasLowercase: /[a-z]/.test(password.value),
-		hasUppercase: /[A-Z]/.test(password.value),
-		match: password.value === confirmPassword.value && password.value.length > 0,
-	} as PasswordRules))
+	const rules = computed(
+		() =>
+			({
+				minLength: password.value.length >= minPasswordLength,
+				hasNumber: /\d/.test(password.value),
+				hasLowercase: /[a-z]/.test(password.value),
+				hasUppercase: /[A-Z]/.test(password.value),
+				match: password.value === confirmPassword.value && password.value.length > 0,
+			}) as PasswordRules,
+	)
 
 	const isPasswordInvalid = computed(() => {
 		return Object.values(rules.value).includes(false)
@@ -75,7 +78,7 @@ export const useSignUpStore = defineStore("sign_up", () => {
 			phone: phone.value.replace(/[\(\)\-\s]/g, ""),
 			cpf: cpf.value.replace(/[.\-\s]/g, ""),
 			user_type: userType.value,
-			created_at: Timestamp.now()
+			created_at: Timestamp.now(),
 		}
 
 		const userCredential = await createUserWithEmailAndPassword(
@@ -84,7 +87,7 @@ export const useSignUpStore = defineStore("sign_up", () => {
 			password.value,
 		)
 		const user = userCredential.user
-		
+
 		await sendEmailVerification(user)
 		console.log(`Successfuly created user of id ${user.uid}, see email sent to verify account.`)
 

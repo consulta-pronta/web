@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type Symptom from "@/models/symptom.model"
-import { toCoolDate } from "@/utils";
+import { toCoolDate } from "@/utils"
 
 interface Props {
 	symptom: Symptom

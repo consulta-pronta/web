@@ -35,9 +35,9 @@ export const useAuthStore = defineStore("auth", () => {
 		await until(appUser).toBeTruthy()
 
 		if (callback.length === 1 && appUser.value) {
-			(callback as userCallback)(appUser.value)
+			;(callback as userCallback)(appUser.value)
 		} else {
-			(callback as arglessCallback)()
+			;(callback as arglessCallback)()
 		}
 	}
 

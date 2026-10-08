@@ -71,7 +71,7 @@ export default class Symptom extends BaseDocument {
 	}
 
 	static async get(id: string, options: SymptomOptions = {}): Promise<Symptom | null> {
-		const symptom = await super.get(id, options) as Symptom | null
+		const symptom = (await super.get(id, options)) as Symptom | null
 		if (symptom && options.deep) {
 			symptom.historic = await this.getAll({
 				scope: options.scope,
@@ -92,7 +92,7 @@ export default class Symptom extends BaseDocument {
 		start: Timestamp,
 		end: Timestamp,
 		userId: string,
-		deep = false
+		deep = false,
 	): Promise<Symptom[]> {
 		const parentSymptoms = await this.getAll({
 			scope: { userId },
@@ -100,24 +100,22 @@ export default class Symptom extends BaseDocument {
 				where("date_time", ">=", start),
 				where("date_time", "<=", end),
 				orderBy("date_time", "desc"),
-			]
+			],
 		})
 
 		if (!deep) {
 			return parentSymptoms
 		}
-		
+
 		const historicSymptoms = await Promise.all(
-			parentSymptoms.map(symptom => 
-				this.getAll({ scope: { userId: userId, symptomId: symptom.id } })
-			)
+			parentSymptoms.map((symptom) =>
+				this.getAll({ scope: { userId: userId, symptomId: symptom.id } }),
+			),
 		)
 
 		return [...parentSymptoms, ...historicSymptoms.flat()]
 			.filter((item) => item.date_time !== null)
-			.sort(
-				(a, b) => b.date_time!.toMillis() - a.date_time!.toMillis(),
-			)
+			.sort((a, b) => b.date_time!.toMillis() - a.date_time!.toMillis())
 	}
 
 	static async set(data: FormData, options: CollectionOptions = {}) {
@@ -134,7 +132,7 @@ export default class Symptom extends BaseDocument {
 		previousData.created_at = previous.created_at
 
 		const historicRef = this.ref(id, {
-			scope: { userId: id, symptomId: previous.id }
+			scope: { userId: id, symptomId: previous.id },
 		})
 		await runTransaction(db, async (transaction) => {
 			transaction.set(historicRef, data)

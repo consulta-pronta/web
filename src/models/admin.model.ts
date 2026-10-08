@@ -14,12 +14,7 @@ export default class Admin extends BaseDocument {
 	static readonly collectionName = "admins"
 
 	protected static documentConverter(id: string, data: DocumentData): Admin {
-		return new Admin(
-			id,
-			data.email,
-			data.name,
-			"admin",
-		)
+		return new Admin(id, data.email, data.name, "admin")
 	}
 
 	static async get(id: string): Promise<Admin | null> {

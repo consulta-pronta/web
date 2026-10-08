@@ -62,11 +62,14 @@ export default class Professional extends User {
 	}
 
 	private static getProfessionalData(data: DocumentData): ProfessionalData {
-		return data.professional_data ?? <ProfessionalData>{
-			crm: data.data_profissional.crm,
-			uf: data.data_profissional.uf,
-			operation_area: data.data_profissional.local_atuacao,
-		}
+		return (
+			data.professional_data ??
+			<ProfessionalData>{
+				crm: data.data_profissional.crm,
+				uf: data.data_profissional.uf,
+				operation_area: data.data_profissional.local_atuacao,
+			}
+		)
 	}
 
 	toMap(): FormData {

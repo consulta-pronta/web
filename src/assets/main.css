@@ -25,9 +25,13 @@
 
 /* Jeito normal (que nem o do progress_unfiled não funcionou */
 @custom-variant progress-filled {
-	&::-webkit-progress-value { @slot; }
-	&::-moz-progress-bar { @slot; }
-};
+	&::-webkit-progress-value {
+		@slot;
+	}
+	&::-moz-progress-bar {
+		@slot;
+	}
+}
 @custom-variant progress-unfilled (&::-webkit-progress-bar, &);
 
 .material-symbols-rounded {

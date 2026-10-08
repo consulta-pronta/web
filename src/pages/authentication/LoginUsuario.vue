@@ -9,7 +9,6 @@ import BaseLogo from "@/components/bases/BaseLogo.vue"
 
 import { useSignInStore } from "@/stores/signInStore"
 
-
 const signInStore = useSignInStore()
 const buttonState: Ref<ButtonState> = ref("enabled")
 const router = useRouter()
