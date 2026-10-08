@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Symptom } from "@/models/symptomModel"
+import type Symptom from "@/models/symptom.model"
 
 interface Props {
 	symptom: Symptom

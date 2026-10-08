@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import type { Symptom } from "@/models/symptomModel"
-import { getSymptom } from "@/services/symptomService"
+import Symptom from "@/models/symptom.model"
 import { useAuthStore } from "@/stores/authStore"
 import { ref, watch } from "vue"
 
@@ -20,7 +19,13 @@ watch(symptomId, async (value) => {
 
 	isFetching.value = true
 
-	const symptom = await getSymptom(authStore.user!.uid, value)
+	const symptom = await Symptom.get(value, {
+		scope: { userId: authStore.user!.uid },
+	})
+	if (!symptom) {
+		isFetching.value = false
+		return
+	}
 	list.value = [symptom]
 	if (symptom.historic) {
 		list.value = list.value.concat(symptom.historic)

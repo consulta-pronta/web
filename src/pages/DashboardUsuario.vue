@@ -5,8 +5,7 @@ import NavBar from "@/components/NavBar.vue"
 import BaseButton from "@/components/bases/BaseButton.vue"
 import SymptomCard from "@/components/cards/SymptomCard.vue"
 import { type UserType } from "@/components/ToggleUser.vue"
-import { getAllSymptoms } from "@/services/symptomService"
-import type { Symptom } from "@/models/symptomModel"
+import Symptom from "@/models/symptom.model"
 import { getSignUpRequests, getUserRef, signUpRequestsRef, type ProfessionalUser, type ProfessionalUserData } from "@/services/userService"
 import { formatToCPF } from "brazilian-values"
 import { doc, runTransaction, serverTimestamp } from "firebase/firestore"
@@ -51,7 +50,7 @@ authStore.onReady(async (data) => {
 	userName.value = data.name
 	userType.value = data.user_type
 
-	symptoms.value = await getAllSymptoms(data.id)
+	symptoms.value = await Symptom.getAll({ scope: { userId: data.id } })
 	if (data.user_type === "admin") {
 		signupRequests.value = await getSignUpRequests()
 	}

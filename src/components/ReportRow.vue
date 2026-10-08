@@ -7,11 +7,10 @@ import type Report from "@/models/report.model"
 import { onClickOutside } from "@vueuse/core"
 import { useAuthStore } from "@/stores/authStore"
 import { timestampDiffDays, toCoolDate } from "@/utils.ts"
-import { getSymptomsBetween } from "@/services/symptomService.ts"
 import type { User } from "@/services/userService.ts"
 import { formatToPhone } from "brazilian-values"
 import IntensityChip from "./IntensityChip.vue"
-import type { Symptom } from "@/models/symptomModel.ts"
+import Symptom from "@/models/symptom.model"
 
 const props = defineProps<{
 	report: Report
@@ -57,11 +56,10 @@ onClickOutside(popup, () => { focused.value = false })
 
 authStore.onReady(async (data) => {
 	user.value = data as User
-	symptoms.value = await getSymptomsBetween(
-		data.id,
+	symptoms.value = await Symptom.getBetween(
 		props.report.period_start!,
 		props.report.period_end!,
-		true,
+		{ scope: { userId: data.id } },
 	)
 })
 </script>

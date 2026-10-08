@@ -6,8 +6,7 @@ import { computed, ref, useTemplateRef } from "vue"
 import Report from "@/models/report.model"
 import { Timestamp } from "firebase/firestore"
 import { inputDateToDate } from "@/utils"
-import { getSymptomsBetween } from "@/services/symptomService"
-import type { Symptom } from "@/models/symptomModel"
+import Symptom from "@/models/symptom.model"
 import { useAuthStore } from "@/stores/authStore"
 import BaseDialog from "../bases/BaseDialog.vue"
 
@@ -35,7 +34,10 @@ const loadSymptoms = async () => {
 		return
 	}
 
-	symptoms.value = await getSymptomsBetween(id, periodStart.value, periodEnd.value)
+	symptoms.value = await Symptom.getBetween(periodStart.value, periodEnd.value, {
+		scope: { userId: id },
+		deep: false,
+	})
 
 	dialogSymptoms.value?.show()
 }
