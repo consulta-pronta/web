@@ -17,11 +17,13 @@ const authStore = useAuthStore()
 
 const handleSubmit = async () => {
 	formRegister.value?.hide()
-	relatorios.value = await Report.getAll()
+	await authStore.onReady(async (user) => {
+		relatorios.value = await Report.getAll({ scope: { userId: user.id } })
+	})
 }
 
-authStore.onReady(async () => {
-	relatorios.value = await Report.getAll()
+authStore.onReady(async (user) => {
+	relatorios.value = await Report.getAll({ scope: { userId: user.id } })
 })
 </script>
 

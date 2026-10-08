@@ -10,8 +10,8 @@ const authStore = useAuthStore()
 
 const exames = ref<Exam[]>([])
 
-authStore.onReady(async () => {
-	exames.value = await Exam.getAll()
+authStore.onReady(async (user) => {
+	exames.value = await Exam.getAll({ scope: { userId: user.id } })
 })
 </script>
 

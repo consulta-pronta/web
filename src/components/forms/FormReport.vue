@@ -47,7 +47,9 @@ const submitForm = async () => {
 	buttonState.value = "sync"
 
 	const data = reportRef.value.toMap()
-	await Report.set(data)
+	await authStore.onReady(async (user) => {
+		await Report.set(data, { scope: { userId: user.id } })
+	})
 
 	emit("handled-submit")
 	buttonState.value = "enabled"

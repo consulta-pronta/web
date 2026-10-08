@@ -1,6 +1,10 @@
 import { serverTimestamp, Timestamp } from "firebase/firestore"
-import BaseDocument, { User } from "./baseDocument"
-import { auth } from "@/config/firebase"
+import BaseDocument, {
+	type CollectionOptions,
+	type CollectionScope,
+	type QueryOptions,
+	User,
+} from "./baseDocument"
 
 export type ExamCategory = "laboratorial" | "imagem" | "funcional" | "preventivo"
 export type ExamStatus = "solicitado" | "triagem" | "liberado" | "pendente"
@@ -19,10 +23,15 @@ export default class Exam extends BaseDocument {
 		super()
 	}
 
-	static readonly collectionName: string = User.getCollectionPath(
-		"exams",
-		auth.currentUser!.uid
-	)
+	static readonly collectionName = "exams"
+		
+	protected static getCollectionPath(scope?: CollectionScope): string {
+		const userId = scope?.userId
+		if (!userId) {
+			throw new Error("Exam requires scope.userId")
+		}
+		return User.resolvePath(userId, this.collectionName)
+	}
 
 	protected static documentConverter(id: string, data: Record<string, undefined>): Exam {
 		return new Exam(
@@ -49,15 +58,15 @@ export default class Exam extends BaseDocument {
 		}
 	}
 
-	static async get(id: string) {
-		return super.get(id) as Promise<Exam | null>
+	static async get(id: string, options: CollectionOptions = {}) {
+		return super.get(id, options) as Promise<Exam | null>
 	}
 
-	static async getAll() {
-		return super.getAll() as Promise<Exam[]>
+	static async getAll(options: QueryOptions = {}) {
+		return super.getAll(options) as Promise<Exam[]>
 	}
 
-	static async set(data: Record<string, unknown>) {
-		return super.set(data)
+	static async set(data: Record<string, unknown>, options: CollectionOptions = {}) {
+		return super.set(data, options)
 	}
 }

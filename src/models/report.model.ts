@@ -1,7 +1,10 @@
 import { serverTimestamp, type Timestamp } from "firebase/firestore"
-import BaseDocument from "./baseDocument"
-import { User } from "./baseDocument"
-import { auth } from "@/config/firebase"
+import BaseDocument, {
+	type CollectionOptions,
+	type CollectionScope,
+	type QueryOptions,
+	User,
+} from "./baseDocument"
 
 export default class Report extends BaseDocument {
 	constructor(
@@ -15,10 +18,15 @@ export default class Report extends BaseDocument {
 		super()
 	}
 
-	static readonly collectionName: string = User.getCollectionPath(
-		"reports",
-		auth.currentUser!.uid,
-	)
+	static readonly collectionName = "reports"
+	
+	protected static getCollectionPath(scope?: CollectionScope): string {
+		const userId = scope?.userId
+		if (!userId) {
+			throw new Error("Report requires scope.userId")
+		}
+		return User.resolvePath(userId, this.collectionName)
+	}
 
 	protected static documentConverter(id: string, data: Record<string, undefined>): Report {
 		return new Report(
@@ -41,11 +49,11 @@ export default class Report extends BaseDocument {
 		}
 	}
 
-	static async get(id: string) {
-		return super.get(id) as Promise<Report | null>
+	static async get(id: string, options: CollectionOptions = {}) {
+		return super.get(id, options) as Promise<Report | null>
 	}
 
-	static async getAll() {
-		return super.getAll() as Promise<Report[]>
+	static async getAll(options: QueryOptions = {}) {
+		return super.getAll(options) as Promise<Report[]>
 	}
 }
