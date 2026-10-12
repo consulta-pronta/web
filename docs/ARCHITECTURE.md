@@ -9,7 +9,7 @@ ConsultaPronta é uma aplicação web de página única (SPA) construída com Vu
 - `src/main.ts` inicializa o Vue, registra Pinia e o router, acompanha mudanças no estado de autenticação do Firebase e monta a aplicação.
 - `src/App.vue` é o componente raiz que contém todo o conteúdo da pagina.
 - `src/router/index.ts` declara as rotas e os respectivos controles de acesso.
-- `src/pages/` contém todas as páginas, incluindo telas de autenticação, dashboard, exames, histórico e relatórios.
+- `src/pages/` contém as páginas implementadas; as telas de autenticação ficam em `auth/`, e páginas ainda não implementadas ou verificadas ficam em `drafts/`.
 - `src/components/` contém componentes reutilizáveis, organizados por função em subpastas como `bases/`, `cards/` e `forms/`.
 - `src/stores/` contém stores do Pinia para autenticação, navegação e cadastro/login.
 - `src/database/` contém os modelos dos documentos do banco de dados e inicializa o Firebase. `BaseDocument` reúne operações comuns do Firestore; os modelos específicos definem os dados e comportamentos das entidades.
