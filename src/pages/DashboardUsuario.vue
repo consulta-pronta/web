@@ -5,12 +5,12 @@ import NavBar from "@/components/NavBar.vue"
 import BaseButton from "@/components/bases/BaseButton.vue"
 import SymptomCard from "@/components/cards/SymptomCard.vue"
 import type { UserType } from "@/utils"
-import Symptom from "@/models/symptom.model"
-import Professional from "@/models/professional.model"
-import User from "@/models/user.model"
+import Symptom from "@/database/symptom.model"
+import Professional from "@/database/professional.model"
+import User from "@/database/user.model"
 import { formatToCPF } from "brazilian-values"
 import { runTransaction, serverTimestamp } from "firebase/firestore"
-import { db } from "@/config/firebase"
+import { db } from "@/database/firebase"
 
 const authStore = useAuthStore()
 const userName = ref("")

@@ -12,8 +12,7 @@ ConsultaPronta é uma aplicação web de página única (SPA) construída com Vu
 - `src/pages/` contém todas as páginas, incluindo telas de autenticação, dashboard, exames, histórico e relatórios.
 - `src/components/` contém componentes reutilizáveis, organizados por função em subpastas como `bases/`, `cards/` e `forms/`.
 - `src/stores/` contém stores do Pinia para autenticação, navegação e cadastro/login.
-- `src/config/firebase.ts` inicializa o Firebase e exporta as instâncias de Authentication e Firestore usadas pela aplicação.
-- `src/models/` contém os modelos dos documentos do banco de dados. `BaseDocument` reúne operações comuns do Firestore; os modelos específicos definem os dados e comportamentos das entidades.
+- `src/database/` contém os modelos dos documentos do banco de dados e inicializa o Firebase. `BaseDocument` reúne operações comuns do Firestore; os modelos específicos definem os dados e comportamentos das entidades.
 - `src/assets/` e `public/` contém outros recursos usados na aplicação, como o css antes da build e arquivos estáticos.
 
 ## Navegação e autenticação
@@ -24,7 +23,7 @@ Além disso, `src/main.ts` observa alterações subsequentes de autenticação e
 
 ## Dados
 
-Os modelos em `src/models/` encapsulam operações sobre documentos e coleções do Firestore, reutilizando as operações de `BaseDocument` quando aplicável. A instância do Firestore é inicializada junto com o Firebase em `src/config/firebase.ts`. Os stores e componentes utilizam esses modelos para ler e alterar os dados apresentados nas páginas.
+Os modelos em `src/database/` encapsulam operações sobre documentos e coleções do Firestore, reutilizando as operações de `BaseDocument` quando aplicável. As instâncias do Firebase Authentication e Cloud Firestore são inicializadas em `src/database/firebase.ts`. Os stores e componentes utilizam esses modelos para ler e alterar os dados apresentados nas páginas.
 
 ## Desenvolvimento e testes
 

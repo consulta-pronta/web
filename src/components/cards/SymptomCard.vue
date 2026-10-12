@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type Symptom from "@/models/symptom.model"
+import type Symptom from "@/database/symptom.model"
 import { toCoolDate } from "@/utils"
 
 interface Props {

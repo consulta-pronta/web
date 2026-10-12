@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Symptom from "@/models/symptom.model"
+import Symptom from "@/database/symptom.model"
 import { useAuthStore } from "@/stores/authStore"
 import { toBrazilianLocaleDate, toCoolDate } from "@/utils"
 import { ref, watch } from "vue"

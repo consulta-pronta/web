@@ -4,7 +4,7 @@ import BaseInput from "@/components/bases/BaseInput.vue"
 import BaseButton, { type ButtonState } from "@/components/bases/BaseButton.vue"
 import BaseSelect from "@/components/bases/BaseSelect.vue"
 import { useAuthStore } from "@/stores/authStore.ts"
-import Symptom from "@/models/symptom.model"
+import Symptom from "@/database/symptom.model"
 import { toInputValue } from "@feelinglovelynow/datetime-local"
 import { Timestamp } from "firebase/firestore"
 

@@ -2,7 +2,7 @@
 import { ref } from "vue"
 import NavBar from "@/components/NavBar.vue"
 import BaseInput from "@/components/bases/BaseInput.vue"
-import Exam from "@/models/exam.model"
+import Exam from "@/database/exam.model"
 import ExamRow from "@/components/ExamRow.vue"
 import { useAuthStore } from "@/stores/authStore"
 

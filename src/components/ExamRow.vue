@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Exam from "@/models/exam.model"
+import Exam from "@/database/exam.model"
 import { DATE_NOT_PROVIDED, toBrazilianLocaleDate } from "@/utils"
 import { computed } from "vue"
 

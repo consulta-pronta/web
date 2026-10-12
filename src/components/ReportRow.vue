@@ -3,14 +3,14 @@ import { computed, ref, useTemplateRef } from "vue"
 import BaseDialog from "@/components/bases/BaseDialog.vue"
 import BaseButton from "@/components/bases/BaseButton.vue"
 import BaseInput from "@/components/bases/BaseInput.vue"
-import type Report from "@/models/report.model"
+import type Report from "@/database/report.model"
 import { onClickOutside } from "@vueuse/core"
 import { useAuthStore } from "@/stores/authStore"
 import { timestampDiffDays, toCoolDate } from "@/utils.ts"
-import User from "@/models/user.model"
+import User from "@/database/user.model"
 import { formatToPhone } from "brazilian-values"
 import IntensityChip from "./IntensityChip.vue"
-import Symptom from "@/models/symptom.model"
+import Symptom from "@/database/symptom.model"
 
 const props = defineProps<{
 	report: Report

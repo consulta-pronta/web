@@ -6,7 +6,7 @@ import BaseDocument, {
 	type FormData,
 	type QueryOptions,
 } from "./baseDocument"
-import { db } from "@/config/firebase"
+import { db } from "@/database/firebase"
 import User from "./user.model"
 
 export type SymptomOptions = CollectionOptions & {

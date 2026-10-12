@@ -7,7 +7,7 @@ import BaseDialog from "@/components/bases/BaseDialog.vue"
 import { ref, useTemplateRef } from "vue"
 import FormReport from "@/components/forms/FormReport.vue"
 import { useAuthStore } from "@/stores/authStore"
-import Report from "@/models/report.model"
+import Report from "@/database/report.model"
 
 const formRegister = useTemplateRef("formRegister")
 

@@ -5,9 +5,9 @@ import {
 	sendEmailVerification,
 	validatePassword,
 } from "firebase/auth"
-import { auth } from "@/config/firebase"
-import Patient from "@/models/patient.model"
-import Professional from "@/models/professional.model"
+import { auth } from "@/database/firebase"
+import Patient from "@/database/patient.model"
+import Professional from "@/database/professional.model"
 import { Timestamp } from "firebase/firestore"
 import { isCPF, isPhone } from "brazilian-values"
 import type { UserType } from "@/utils"

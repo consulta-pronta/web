@@ -1,5 +1,5 @@
 import type { UserType } from "@/utils"
-import { auth } from "@/config/firebase"
+import { auth } from "@/database/firebase"
 import { useAuthStore } from "@/stores/authStore"
 import { createRouter, createWebHistory } from "vue-router"
 
