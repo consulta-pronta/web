@@ -4,20 +4,20 @@ import { useAuthStore } from "@/stores/authStore"
 import NavBar from "@/components/NavBar.vue"
 import BaseButton from "@/components/bases/BaseButton.vue"
 import SymptomCard from "@/components/cards/SymptomCard.vue"
+import ProfessionalSignupRequestRow from "@/components/ProfessionalSignupRequestRow.vue"
 import type { UserType } from "@/utils"
-import Symptom from "@/models/symptom.model"
-import Professional from "@/models/professional.model"
-import User from "@/models/user.model"
-import { formatToCPF } from "brazilian-values"
+import Symptom from "@/database/symptom.model"
+import Professional from "@/database/professional.model"
+import User from "@/database/user.model"
 import { runTransaction, serverTimestamp } from "firebase/firestore"
-import { db } from "@/config/firebase"
+import { db } from "@/database/firebase"
 
 const authStore = useAuthStore()
 const userName = ref("")
 const userType = ref<UserType>()
 
 const symptoms = ref<Symptom[]>([])
-const signupRequests = ref<Professional[]>()
+const signupRequests = ref<Professional[]>([])
 
 const approveRequest = async (requestId: string) => {
 	const ogRequest = signupRequests.value?.find((req) => req.id === requestId)
@@ -224,34 +224,17 @@ authStore.onReady(async (data) => {
 						</tr>
 					</thead>
 					<tbody>
-						<template v-for="request in signupRequests" :key="request.id">
-							<tr class="bg-surface border-b hover:brightness-90">
-								<td>{{ request.name }}</td>
-								<td>{{ request.email }}</td>
-								<td>{{ formatToCPF(request.cpf) }}</td>
-								<td>
-									{{ request.professional_data?.crm }}/{{
-										request.professional_data?.uf
-									}}
-								</td>
-								<td>{{ request.professional_data?.operation_area }}</td>
-								<td class="flex flex-row gap-3 *:w-full">
-									<BaseButton theme="primary" @click="approveRequest(request.id)">
-										Aprovar
-									</BaseButton>
-									<!-- <BaseButton theme="error" mode="transparent" @click="denyRequest(request.id)">
-										Negar
-									</BaseButton> -->
-								</td>
-							</tr>
-						</template>
-						<template v-if="signupRequests && signupRequests.length === 0">
-							<tr class="bg-surface">
-								<td colspan="6" class="text-center">
-									Nenhuma solicitação de registro encontrada.
-								</td>
-							</tr>
-						</template>
+						<ProfessionalSignupRequestRow
+							v-for="request in signupRequests"
+							:key="request.id"
+							:request="request"
+							@approve="approveRequest"
+						/>
+						<tr v-if="signupRequests.length === 0" class="bg-surface">
+							<td colspan="6" class="text-center">
+								Nenhuma solicitação de registro encontrada.
+							</td>
+						</tr>
 					</tbody>
 				</table>
 			</section>

@@ -2,7 +2,7 @@
 import { ref } from "vue"
 import NavBar from "@/components/NavBar.vue"
 import BaseInput from "@/components/bases/BaseInput.vue"
-import Exam from "@/models/exam.model"
+import Exam from "@/database/exam.model"
 import ExamRow from "@/components/ExamRow.vue"
 import { useAuthStore } from "@/stores/authStore"
 
@@ -35,18 +35,19 @@ authStore.onReady(async (user) => {
 			<table class="text-textDark w-full *:*:*:p-3 rounded-xs overflow-clip">
 				<thead>
 					<tr class="bg-surface/80 *:text-start">
-						<!-- <th><input type="checkbox" name="" id=""></th> Selecionar -->
 						<th>Exame</th>
 						<th>Local</th>
 						<th>Data</th>
 						<th>Status</th>
-						<!-- <th>&nbsp;</th> Mais -->
 					</tr>
 				</thead>
 				<tbody>
-					<template v-for="exame in exames" :key="exame.id">
-						<ExamRow :exam="exame" class="bg-surface border-b hover:brightness-90" />
-					</template>
+					<ExamRow
+						v-for="exam in exames"
+						:key="exam.id"
+						:exam="exam"
+						class="bg-surface border-b hover:brightness-90"
+					/>
 				</tbody>
 			</table>
 		</main>

@@ -12,7 +12,7 @@ import {
 	type Timestamp,
 } from "firebase/firestore"
 import type { FormData } from "./baseDocument"
-import { db } from "@/config/firebase"
+import { db } from "@/database/firebase"
 
 export type ProfessionalData = {
 	crm: string

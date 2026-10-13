@@ -1,5 +1,5 @@
 import type { UserType } from "@/utils"
-import { auth } from "@/config/firebase"
+import { auth } from "@/database/firebase"
 import { useAuthStore } from "@/stores/authStore"
 import { createRouter, createWebHistory } from "vue-router"
 
@@ -20,16 +20,7 @@ const router = createRouter({
 		{
 			path: "/cadastro",
 			name: "cadastro",
-			component: () => import("@/pages/authentication/CadastroUsuario.vue"),
-			meta: {
-				roles: [],
-			},
-		},
-		{
-			path: "/cadastroContatos",
-			name: "cadastroContatos",
-			alias: ["/contatos", "/cadastroContatos"],
-			component: () => import("@/pages/authentication/CadastroContatos.vue"),
+			component: () => import("@/pages/auth/SignUpPage.vue"),
 			meta: {
 				roles: [],
 			},
@@ -37,7 +28,7 @@ const router = createRouter({
 		{
 			path: "/login",
 			name: "login",
-			component: () => import("@/pages/authentication/LoginUsuario.vue"),
+			component: () => import("@/pages/auth/LoginPage.vue"),
 			meta: {
 				roles: [],
 			},
@@ -45,7 +36,7 @@ const router = createRouter({
 		{
 			path: "/recuperar-senha",
 			name: "recuperar-senha",
-			component: () => import("@/pages/authentication/RecuperarSenha.vue"),
+			component: () => import("@/pages/auth/PasswordRecoveryPage.vue"),
 			meta: {
 				roles: [],
 			},
@@ -53,7 +44,7 @@ const router = createRouter({
 		{
 			path: "/dashboard",
 			name: "dashboard",
-			component: () => import("@/pages/DashboardUsuario.vue"),
+			component: () => import("@/pages/DashboardPage.vue"),
 			meta: {
 				roles: ["patient", "professional"],
 			},
@@ -61,7 +52,7 @@ const router = createRouter({
 		{
 			path: "/exames",
 			name: "exames",
-			component: () => import("@/pages/ExamesUsuario.vue"),
+			component: () => import("@/pages/ExamsPage.vue"),
 			meta: {
 				roles: ["patient"],
 			},
@@ -70,7 +61,15 @@ const router = createRouter({
 			path: "/historico-sintomas/:id?",
 			name: "historico-sintomas",
 			alias: ["/historico", "/sintomas"],
-			component: () => import("@/pages/HistoricoUsuario.vue"),
+			component: () => import("@/pages/SymptomHistoryPage.vue"),
+			meta: {
+				roles: ["patient"],
+			},
+		},
+		{
+			path: "/relatorios",
+			name: "relatorios",
+			component: () => import("@/pages/ReportsPage.vue"),
 			meta: {
 				roles: ["patient"],
 			},
@@ -78,15 +77,7 @@ const router = createRouter({
 		{
 			path: "/:catchAll(.*)",
 			name: "not-found",
-			component: () => import("@/pages/NotFound.vue"),
-		},
-		{
-			path: "/relatorios",
-			name: "relatorios",
-			component: () => import("@/pages/RelatoriosUsuario.vue"),
-			meta: {
-				roles: ["patient"],
-			},
+			component: () => import("@/pages/NotFoundPage.vue"),
 		},
 	],
 })

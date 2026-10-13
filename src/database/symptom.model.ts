@@ -6,8 +6,9 @@ import BaseDocument, {
 	type FormData,
 	type QueryOptions,
 } from "./baseDocument"
-import { db } from "@/config/firebase"
+import { db } from "@/database/firebase"
 import User from "./user.model"
+import type { SymptomPlace } from "@/utils"
 
 export type SymptomOptions = CollectionOptions & {
 	deep?: boolean
@@ -23,7 +24,7 @@ export default class Symptom extends BaseDocument {
 		public title: string = "",
 		public description: string = "",
 		public date_time: Timestamp | null = null,
-		public place: string = "",
+		public place: SymptomPlace | null = null,
 		public intensity: number = 0,
 		public created_at: Timestamp | null = null,
 		public historic: Symptom[] | null = null,

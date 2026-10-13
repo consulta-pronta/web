@@ -5,7 +5,7 @@ import AuthBackground from "@/components/AuthBackground.vue"
 import BaseButton, { type ButtonState } from "@/components/bases/BaseButton.vue"
 import BaseInput from "@/components/bases/BaseInput.vue"
 import BaseLogo from "@/components/bases/BaseLogo.vue"
-import { auth } from "@/config/firebase"
+import { auth } from "@/database/firebase"
 import { sendPasswordResetEmail } from "firebase/auth"
 import validator from "validator"
 

@@ -3,7 +3,6 @@ import { ref } from "vue"
 import NavBar from "@/components/NavBar.vue"
 import ExamsTable from "@/components/ExamsTable.vue"
 import BaseButton from "@/components/BaseButton.vue"
-import FilterOrd from "@/components/deprecated/FilterOrd.vue"
 
 const solicitacao = ref(false)
 const dropdownExameAberto = ref(false)
@@ -129,10 +128,6 @@ function selecionarExame() {
 									<option value="2">The Robert</option>
 								</select>
 							</div>
-
-							<span class="mt-3 w-full">
-								<FilterOrd :order="false" status="typing" class="absolute left" />
-							</span>
 
 							<p class="text-textLight text-base text-semibold mt-2 w-full">
 								Pesquisar e Selecionar exames

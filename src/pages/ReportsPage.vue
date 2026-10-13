@@ -7,7 +7,7 @@ import BaseDialog from "@/components/bases/BaseDialog.vue"
 import { ref, useTemplateRef } from "vue"
 import FormReport from "@/components/forms/FormReport.vue"
 import { useAuthStore } from "@/stores/authStore"
-import Report from "@/models/report.model"
+import Report from "@/database/report.model"
 
 const formRegister = useTemplateRef("formRegister")
 
@@ -66,11 +66,12 @@ authStore.onReady(async (user) => {
 							<th>Horário</th>
 						</tr>
 					</thead>
-
 					<tbody>
-						<template v-for="relatorio in relatorios" :key="relatorio.id">
-							<ReportRow :report="relatorio" />
-						</template>
+						<ReportRow
+							v-for="report in relatorios"
+							:key="report.id"
+							:report="report"
+						/>
 					</tbody>
 				</table>
 			</div>
@@ -86,13 +87,6 @@ authStore.onReady(async (user) => {
 
 <style scoped>
 @reference "@/assets/main.css";
-
-.dialog {
-	@apply absolute inset-0 w-full h-full
-			bg-black/80
-			flex justify-center place-items-center
-			z-50;
-}
 
 td,
 th {
