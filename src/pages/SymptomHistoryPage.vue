@@ -3,20 +3,27 @@ import { ref, useTemplateRef, watch } from "vue"
 import NavBar from "@/components/NavBar.vue"
 import BaseButton from "@/components/bases/BaseButton.vue"
 import BaseInput from "@/components/bases/BaseInput.vue"
-import FormSintoma from "@/components/forms/FormSintoma.vue"
-import FilterOrd from "@/components/FilterOrd.vue"
+import FormSymptom from "@/components/forms/FormSymptom.vue"
 import SymptomCard from "@/components/cards/SymptomCard.vue"
+import BaseFilter, { type FilterOption } from "@/components/bases/BaseFilter.vue"
+import BaseSort, {
+	type SortOption,
+} from "@/components/bases/BaseSort.vue"
 import { useAuthStore } from "@/stores/authStore"
 import Symptom from "@/database/symptom.model"
 import SymptomExtended from "@/components/SymptomExtended.vue"
 import BaseDialog from "@/components/bases/BaseDialog.vue"
 import { useRoute } from "vue-router"
 import router from "@/router"
+import { symptomPlaces, type SortDirection } from "@/utils"
 
 const route = useRoute()
 const authStore = useAuthStore()
 
 const symptoms = ref<Symptom[]>([])
+const selectedPlace = ref<string | null>(null)
+const sortField = ref("date_time")
+const sortDirection = ref<SortDirection	>("desc")
 const currentSymptomId = ref<string>("")
 const formRegister = useTemplateRef("formRegister")
 const formUpdate = useTemplateRef("formUpdate")
@@ -24,6 +31,14 @@ const formUpdate = useTemplateRef("formUpdate")
 const rootPath = "/" + route.path.split("/")[1]
 
 let userId = ""
+
+const filterOptions = symptomPlaces.map<FilterOption>(
+	(place) => ({value: place, label: place})
+)
+const sortOptions = <SortOption[]>[
+	{ value: "date_time", label: "Data de início" },
+	{ value: "intensity", label: "Intensidade" },
+]
 
 const updateSymptoms = async () => {
 	symptoms.value = []
@@ -90,8 +105,18 @@ authStore.onReady(async (data) => {
 							Registrar Sintoma
 						</BaseButton>
 					</section>
-					<!--Sliders-->
-					<FilterOrd class="mb-3" />
+					<div class="mb-3 flex flex-col gap-2">
+						<BaseFilter
+							v-model="selectedPlace"
+							:options="filterOptions"
+							label="Filtrar por local"
+						/>
+						<BaseSort
+							v-model="sortField"
+							v-model:direction="sortDirection"
+							:options="sortOptions"
+						/>
+					</div>
 				</header>
 
 				<br />
@@ -166,11 +191,11 @@ authStore.onReady(async (data) => {
 
 				<!-- Forms -->
 				<BaseDialog title="Registrar Sintoma" ref="formRegister">
-					<FormSintoma @handled-submit="handleSubmit" />
+					<FormSymptom @handled-submit="handleSubmit" />
 				</BaseDialog>
 
 				<BaseDialog title="Atualizar Sintoma" ref="formUpdate">
-					<FormSintoma @handled-submit="handleSubmit" :symptomId="currentSymptomId" />
+					<FormSymptom @handled-submit="handleSubmit" :symptomId="currentSymptomId" />
 				</BaseDialog>
 			</div>
 		</main>

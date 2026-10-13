@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from "vue"
+import { computed, ref, watch } from "vue"
 import BaseInput from "@/components/bases/BaseInput.vue"
 import BaseButton, { type ButtonState } from "@/components/bases/BaseButton.vue"
 import BaseSelect from "@/components/bases/BaseSelect.vue"
@@ -7,6 +7,7 @@ import { useAuthStore } from "@/stores/authStore.ts"
 import Symptom from "@/database/symptom.model"
 import { toInputValue } from "@feelinglovelynow/datetime-local"
 import { Timestamp } from "firebase/firestore"
+import { symptomPlaces } from "@/utils"
 
 const props = defineProps<{
 	symptomId?: string
@@ -15,54 +16,31 @@ const props = defineProps<{
 const authStore = useAuthStore()
 
 const buttonState = ref<ButtonState>("enabled")
-const symptomData = ref({
-	title: "",
-	description: "",
-	date_time: "",
-	place: "",
-	intensity: 0,
+const symptomData = ref(new Symptom())
 
-	async loadFrom(symptomId: string) {
-		const symptom = await Symptom.get(symptomId, {
-			scope: { userId: authStore.user!.uid },
-		})
-		if (!symptom) {
-			return
-		}
-		this.title = symptom.title
-		this.description = symptom.description
-		this.date_time = toInputValue(symptom.date_time?.toDate() ?? new Date())
-		this.place = symptom.place
-		this.intensity = symptom.intensity
+const dateTimeInput = computed({
+	get: () =>
+		symptomData.value.date_time
+			? toInputValue(symptomData.value.date_time.toDate())
+			: "",
+	set: (value) => {
+		symptomData.value.date_time = value ? Timestamp.fromDate(new Date(value)) : null
 	},
-
-	clear() {
-		this.title = ""
-		this.description = ""
-		this.date_time = ""
-		this.place = ""
-		this.intensity = 0
+})
+const placeInput = computed({
+	get: () => symptomData.value.place ?? "",
+	set: (value) => {
+		symptomData.value.place = symptomPlaces.find((place) => place === value) ?? null
 	},
 })
 
-const emit = defineEmits(["handled-submit"])
-
-const locais = ["Abdomen", "Barriga", "Cabeça", "Costas", "Olhos", "Pés", "Pescoço"]
 
 const registrarSintoma = async () => {
 	buttonState.value = "sync"
 
 	if (authStore.user) {
 		const id = authStore.user.uid
-		const { title, description, date_time, place, intensity } = symptomData.value
-		const data = new Symptom(
-			"",
-			title,
-			description,
-			Timestamp.fromDate(new Date(date_time)),
-			place,
-			intensity,
-		).toMap()
+		const data = symptomData.value.toMap()
 
 		const options = { scope: { userId: id } }
 		if (props.symptomId) {
@@ -80,14 +58,24 @@ const registrarSintoma = async () => {
 
 watch(
 	() => props.symptomId,
-	(value) => {
-		if (value) {
-			symptomData.value.loadFrom(value)
-		} else {
-			symptomData.value.clear()
+	async (newId) => {
+		if (!newId) {
+			symptomData.value = new Symptom()
+			return
 		}
+
+		const symptom = await Symptom.get(newId, {
+			scope: { userId: authStore.user!.uid },
+		})
+		if (symptom) {
+			symptomData.value = symptom
+		}
+		
 	},
 )
+
+
+const emit = defineEmits(["handled-submit"])
 </script>
 
 <template>
@@ -119,7 +107,7 @@ watch(
 			<p>Quando começou?</p>
 			<fieldset class="flex gap-4 w-full">
 				<BaseInput
-					v-model="symptomData.date_time"
+					v-model="dateTimeInput"
 					type="datetime-local"
 					theme="light"
 					class="grow"
@@ -131,13 +119,13 @@ watch(
 			<p>Em qual parte do corpo?</p>
 
 			<BaseSelect
-				v-model="symptomData.place"
+				v-model="placeInput"
 				icon="location_on"
 				theme="light"
 				defaultValue="Localização"
 				required
 			>
-				<template v-for="value in locais" :key="value">
+				<template v-for="value in symptomPlaces" :key="value">
 					<option :value="value">{{ value }}</option>
 				</template>
 			</BaseSelect>

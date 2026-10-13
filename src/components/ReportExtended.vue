@@ -29,7 +29,7 @@ const reportDuration = computed(() => {
 })
 
 const mostAffectedArea = computed(() => {
-	const areas = Object.groupBy(symptoms.value, (item) => item.place)
+	const areas = Object.groupBy(symptoms.value, (item) => item.place ?? "")
 	const entries = Object.entries(areas)
 
 	const [area, maxSymptoms] = entries.reduce(
