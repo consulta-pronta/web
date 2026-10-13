@@ -7,7 +7,7 @@ import "./assets/main.css"
 import "material-symbols/rounded.css"
 import { useAuthStore } from "./stores/authStore.ts"
 import { onAuthStateChanged } from "firebase/auth"
-import { auth } from "./config/firebase.ts"
+import { auth } from "./database/firebase.ts"
 
 const app = createApp(App)
 
