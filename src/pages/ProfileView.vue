@@ -7,19 +7,20 @@ import FormProfile from '@/components/forms/FormProfile.vue'
 
 import { ref, useTemplateRef } from "vue"
 import { useAuthStore } from "@/stores/authStore"
-import { type UserType } from "@/components/ToggleUser.vue"
+import Patient from '@/database/patient.model'
+import Professional from '@/database/professional.model'
+import { formatToCPF, formatToNumber, formatToPhone } from 'brazilian-values'
+import { formatCRM } from '@/utils'
 
 const authStore = useAuthStore()
-const userName = ref("")
-const userType = ref<UserType>()
 const formPersonal = useTemplateRef("formPersonal")
 const formContacts = useTemplateRef("formContacts")
 const formHealth = useTemplateRef("formHealth")
 const formProfessional = useTemplateRef("formProfessional")
 
+const user = ref<Patient | Professional>(new Patient())
 authStore.onReady(async (data) => {
-	userName.value = data.name
-	userType.value = data.user_type
+	user.value = data as Patient | Professional
 })
 </script>
 
@@ -39,8 +40,8 @@ authStore.onReady(async (data) => {
 					<div class="flex gap-2">
 						<UserPhoto />
 						<div class="flex flex-col justify-center">
-							<p class="text-2xl text-textLight font-bold">{{ userName }}</p>
-							<p class="text-xl text-textLight font-medium opacity-80">Email</p>
+							<p class="text-2xl text-textLight font-bold">{{ user.name }}</p>
+							<p class="text-xl text-textLight font-medium opacity-80">{{ user.email }}</p>
 						</div>
 					</div>
 
@@ -56,27 +57,27 @@ authStore.onReady(async (data) => {
 
 								<div class="grid grid-cols-2 gap-5">
 									<div class="grid col-span-1">
-										<p>{{ userName }} anos</p>
+										<p>{{ user.age }} anos</p>
 										<p class="font-normal opacity-70">Idade</p>
 									</div>
 									<div class="grid col-span-1">
-										<p>{{ userName }}</p>
+										<p>{{ user.birth_date }}</p>
 										<p class="font-normal opacity-70">Data de nascimento</p>
 									</div>
 									<div class="grid col-span-1">
-										<p>{{ userName }}</p>
+										<p>{{ user.gender }}</p>
 										<p class="font-normal opacity-70">Gênero</p>
 									</div>
 									<div class="grid col-span-1">
-										<p>{{ userName }}</p>
+										<p>{{ user.biological_sex }}</p>
 										<p class="font-normal opacity-70">Sexo biológico</p>
 									</div>
 									<div class="grid col-span-1">
-										<p>{{ userName }}</p>
+										<p>{{ formatToCPF(user.cpf) }}</p>
 										<p class="font-normal opacity-70">CPF</p>
 									</div>
 									<div class="grid col-span-1">
-										<p>{{ userName }}</p>
+										<p>{{ user.address }}</p>
 										<p class="font-normal opacity-70">Endereço</p>
 									</div>
 								</div>
@@ -89,46 +90,38 @@ authStore.onReady(async (data) => {
 								</div>
 								<div class="flex flex-col gap-5">
 									<div>
-										<p>{{ userName }}</p>
+										<p>{{ formatToPhone(user.phone) }}</p>
 										<p class="font-normal opacity-70">Telefone</p>
 									</div>
 									<div>
-										<p>{{ userName }}</p>
+										<p>{{ user.email }}</p>
 										<p class="font-normal opacity-70">Email</p>
-									</div>
-
-									<hr v-if="bruh" class="h-0.5 border-0 bg-textLight w-full m-auto rounded-full opacity-70" />
-
-									<p v-if="bruh">Aplicativos conectados</p>
-									<div v-for="bruh in bruhs" :key="bruh">
-										<p>{{ userName }}</p>
-										<p class="font-normal opacity-70">Whatsapp</p>
 									</div>
 								</div>
 							</div>
 						</div>
 
-						<div v-if="userType === 'paciente'" class="bg-primary rounded-2xl md:col-span-2 p-5 flex flex-col justify-between h-full gap-4 text-textLight">
+						<div v-if="user instanceof Patient" class="bg-primary rounded-2xl md:col-span-2 p-5 flex flex-col justify-between h-full gap-4 text-textLight">
 							<div class="flex justify-between">
 								<p class="text-xl font-bold">Informações de saúde</p>
 								<BaseButton type="button" theme="textLight" mode="transparent" icon="edit_square" @click="formHealth?.toggle()" />
 							</div>
 							<div class="grid grid-cols-3 gap-5">
 								<div class="grid col-span-1">
-									<p>{{ userName }}</p>
+									<p>{{ user.patient_data?.blood_type }}</p>
 									<p class="font-normal opacity-70">Tipo sanguíneo</p>
 								</div>
 								<div class="grid col-span-1">
-									<p>{{ userName }}</p>
+									<p>{{ formatToNumber((user.patient_data?.height || 0) / 100) }}m</p>
 									<p class="font-normal opacity-70">Altura</p>
 								</div>
 								<div class="grid col-span-1">
-									<p>{{ userName }}</p>
+									<p>{{ user.patient_data?.weight }}kg</p>
 									<p class="font-normal opacity-70">Peso</p>
 								</div>
 							</div>
 
-							<hr class="h-0.5 border-0 bg-textLight w-full m-auto rounded-full opacity-70" />
+							<!-- <hr class="h-0.5 border-0 bg-textLight w-full m-auto rounded-full opacity-70" />
 
 							<div class="grid grid-cols-2 gap-5">
 								<div class="grid col-span-1">
@@ -143,25 +136,25 @@ authStore.onReady(async (data) => {
 									<p>{{ userName }}: {{ userName }}</p>
 									<p class="font-normal opacity-70">Histórico familiar</p>
 								</div>
-							</div>
+							</div> -->
 						</div>
 
-						<div v-else class="bg-primary rounded-2xl md:col-span-2 p-5 flex flex-col justify-between h-full gap-4 text-textLight">
+						<div v-if="user instanceof Professional" class="bg-primary rounded-2xl md:col-span-2 p-5 flex flex-col justify-between h-full gap-4 text-textLight">
 							<div class="flex justify-between">
 								<p class="text-xl">Dados profissionais</p>
 								<BaseButton type="button" theme="textLight" mode="transparent" icon="edit_square" @click="formProfessional?.toggle()" />
 							</div>
 							<div class="grid grid-cols-3 gap-5">
 								<div class="grid col-span-1">
-									<p>{{ userName }}</p>
+									<p>{{ `${formatCRM(user.professional_data?.crm || '')}/${user.professional_data?.uf}` }}</p>
 									<p class="font-normal opacity-70">CRM</p>
 								</div>
 								<div class="grid col-span-1">
-									<p>{{ userName }}</p>
-									<p class="font-normal opacity-70">Pediatria</p>
+									<p>{{ user.professional_data?.specialty }}</p>
+									<p class="font-normal opacity-70">Especialidade</p>
 								</div>
 								<div class="grid col-span-1">
-									<p>{{ userName }}</p>
+									<p>{{ user.professional_data?.operation_area }}</p>
 									<p class="font-normal opacity-70">Local</p>
 								</div>
 							</div>

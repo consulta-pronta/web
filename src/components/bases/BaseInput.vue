@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { maxPasswordLength } from "@/stores/signUpStore"
+import { formatCRM } from "@/utils"
 import { formatToCPF, formatToPhone } from "brazilian-values"
 import { onMounted, ref } from "vue"
 
@@ -71,7 +72,6 @@ switch (props.type) {
 		break
 }
 
-const formatCRM = (raw: string): string => raw.replace(/\D/g, "")
 
 const formatCustomNumber = (raw: string): string => {
 	const numberMode = props.numberMode ?? "positive-decimal"
