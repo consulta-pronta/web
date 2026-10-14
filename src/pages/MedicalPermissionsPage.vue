@@ -6,8 +6,13 @@ import PermissionCard from "@/components/cards/PermissionCard.vue"
 import { ref } from "vue"
 import Professional from "@/database/professional.model"
 import { Timestamp } from "firebase/firestore"
+import BaseButton from "@/components/bases/BaseButton.vue"
+import BaseDialog from "@/components/bases/BaseDialog.vue"
+import FormAddProfessional from "@/components/forms/FormAddProfessional.vue"
+import { useTemplateRef } from "vue"
 
 const authStore = useAuthStore()
+const addProfessionalDialog = useTemplateRef("addProfessionalDialog")
 
 const profissionais = ref([
 	new Professional("1", "profissional@email.coma", "Cláudia Silva", "12121212121", "12312312312", "professional", { crm: "123123", uf: "ES", operation_area: "Meridional"}, Timestamp.now()),
@@ -31,11 +36,23 @@ authStore.onReady(async () => {
 					Permissões médicas
 				</h1>
 
-				<BaseInput
-					placeholder="Pesquisar"
-					icon="search"
-					class="place-self-center w-full md:w-120"
-				/>
+				<section class="flex flex-row justify-center gap-2 *:h-[stretch]">
+					<BaseButton
+						type="button"
+						theme="accent"
+						icon="person_add"
+						class="rounded-2xl gap-2"
+						@click="addProfessionalDialog?.show()"
+					>
+						<span class="hidden lg:block">Adicionar profissional</span>
+					</BaseButton>
+
+					<BaseInput
+						placeholder="Pesquisar"
+						icon="search"
+						class="place-self-center w-full md:w-120"
+					/>
+				</section>
 			</header>
 
 			<section class="flex flex-col items-center gap-4 flex-1 min-h-0 overflow-y-auto scrollbar-hide">
@@ -64,5 +81,9 @@ authStore.onReady(async () => {
 				</div>
 			</section>
 		</main>
+
+		<BaseDialog title="Adicionar profissional" ref="addProfessionalDialog">
+			<FormAddProfessional @handled-submit="addProfessionalDialog?.hide()" />
+		</BaseDialog>
 	</div>
 </template>

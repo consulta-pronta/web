@@ -1,5 +1,10 @@
 import { serverTimestamp, type Timestamp } from "firebase/firestore"
-import BaseDocument, { type CollectionScope, type DocumentData, type FormData } from "./baseDocument"
+import BaseDocument, {
+	type CollectionOptions,
+	type CollectionScope,
+	type DocumentData,
+	type FormData,
+} from "./baseDocument"
 import User from "./user.model"
 import Professional from "./professional.model"
 
@@ -10,7 +15,7 @@ export type MedicalPermissions = {
 	request_appointments: boolean
 }
 
-export type MedicalAccessStatus = "active" | "revoked"
+export type MedicalAccessStatus = "pending" | "active" | "revoked"
 
 export default class MedicalPermission extends BaseDocument {
 	constructor(
@@ -57,9 +62,27 @@ export default class MedicalPermission extends BaseDocument {
 			permissions: this.permissions,
 			created_at: serverTimestamp(),
 			granted_at: this.status === "active" ? serverTimestamp() : null,
+			revoked_at: this.status === "revoked" ? serverTimestamp() : null,
 		}
 	}
 
+	static async createRequest(professionalId: string, patientId: string) {
+		const options = { scope: { patientId } }
+
+		const existingRequest = await this.get(professionalId, options)
+		if (existingRequest) { return false }
+
+		const request = new MedicalPermission(professionalId, "pending")
+		await this.set(request.toMap(), { scope: {
+			patientId, id: professionalId
+		}})
+		return true
+	}
+	
+	static async get(id: string, options: CollectionOptions = {}) {
+		return super.get(id, options) as Promise<MedicalPermission | null>
+	}
+	
 	grant() { this.status = "active" }
 	revoke() { this.status = "revoked" }
 	toggleAcess() { this.status = this.canAcess() ? "revoked" : "active" }
