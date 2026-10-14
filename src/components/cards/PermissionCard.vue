@@ -1,11 +1,14 @@
-```vue
 <script setup lang="ts">
 import UserPhoto from "@/components/UserPhoto.vue"
 import BaseButton from "@/components/bases/BaseButton.vue"
+import type Professional from "@/database/professional.model";
+import { ref } from "vue";
 
 defineProps<{
-	nome: string
+	professional: Professional
 }>()
+
+const permissionsVisible = ref(false)
 </script>
 
 <template>
@@ -15,7 +18,7 @@ defineProps<{
 
 			<div class="flex flex-col items-center ml-6">
 				<p class="text-xs md:text-xl text-textLight mt-2">
-					{{ nome }}
+					{{ professional.name }}
 				</p>
 
 				<div class="grid grid-cols-2 mt-1">
@@ -60,18 +63,18 @@ defineProps<{
 			<div class="flex justify-center items-center">
 				<button
 					type="button"
-					@click="toggleVisuperm()"
+					@click="permissionsVisible = !permissionsVisible"
 					class="absolute right cursor-pointer"
 				>
 					<span class="material-symbols-rounded text-textLight text-4xl!">
-						{{ VisuPermissao ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}
+						{{ permissionsVisible ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}
 					</span>
 				</button>
 			</div>
 		</section>
 
 		<article
-			v-if="VisuPermissao"
+			v-if="permissionsVisible"
 			class="grid grid-cols-3 col-span-9 pt-5"
 		>
 			<section class="grid text-surface text-base md:text-xl font-bold">
@@ -159,4 +162,3 @@ defineProps<{
 		</article>
 	</div>
 </template>
-```

@@ -46,7 +46,7 @@ const router = createRouter({
 			name: "dashboard",
 			component: () => import("@/pages/DashboardPage.vue"),
 			meta: {
-				roles: ["patient", "professional"],
+				roles: ["patient", "professional", "admin"],
 			},
 		},
 		{
@@ -75,17 +75,18 @@ const router = createRouter({
 			},
 		},
 		{
+			path: "/permissoes-medicas",
+			name: "medical-permissions",
+			alias: ["/permissoes"],
+			component: () => import("@/pages/MedicalPermissionsPage.vue"),
+			meta: {
+				roles: ["patient"],
+			},
+		},
+		{
 			path: "/:catchAll(.*)",
 			name: "not-found",
 			component: () => import("@/pages/NotFoundPage.vue"),
-		},
-		{
-			path: "/permissoes",
-			name: "permissões-médicas",
-			component: () => import("@/pages/PermissoesMedicas.vue"),
-			meta: {
-				roles: ["paciente"],
-			},
 		},
 	],
 })
@@ -102,16 +103,27 @@ router.beforeEach(async (to) => {
 	const authStore = useAuthStore()
 	authStore.setUser(user)
 
-	const needsAuth = roles.length !== 0
 	const isAuthenticated = user !== null
+	const needsAuth = roles.length !== 0
 
 	if (needsAuth && !isAuthenticated) {
 		return "/login"
 	} else if (!needsAuth && isAuthenticated) {
 		return "/dashboard"
-	} else {
-		return
 	}
+
+	if (needsAuth) {
+		let userType: UserType | undefined
+		await authStore.onReady((data) => {
+			userType = data.user_type
+		})
+
+		if (!userType || !roles.includes(userType)) {
+			return "/dashboard"
+		}
+	}
+
+	return
 })
 
 export default router

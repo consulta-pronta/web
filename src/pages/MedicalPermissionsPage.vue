@@ -1,26 +1,20 @@
 <script setup lang="ts">
-import { ref } from "vue"
 import NavBar from "@/components/NavBar.vue"
 import BaseInput from "@/components/bases/BaseInput.vue"
-import { type Exam } from "@/models/examModel"
-import { getExams } from "@/services/examService"
 import { useAuthStore } from "@/stores/authStore"
 import PermissionCard from "@/components/cards/PermissionCard.vue"
+import { ref } from "vue"
+import Professional from "@/database/professional.model"
 
 const authStore = useAuthStore()
 
-const exames = ref<Exam[]>([])
+const profissionais = ref([
+	new Professional("", "", "Cláudia Silva"),
+	new Professional("", "", "Fernanda Silva"),
+])
 
-const profissionais = [
-	{ id: 1, nome: "Cláudia Silva" },
-	{ id: 2, nome: "Fernando Silva" },
-	{ id: 3, nome: "Fernando Silva" },
-	{ id: 3, nome: "Fernando Silva" },
-	{ id: 3, nome: "Fernando Silva" },
-]
-
-authStore.onReady(async (user) => {
-	exames.value = await getExams(user.id)
+authStore.onReady(async () => {
+	// get professionals
 })
 </script>
 
@@ -31,7 +25,7 @@ authStore.onReady(async (user) => {
 		<main class="w-full h-full overflow-hidden px-6 py-8 flex flex-col">
 			<header class="mb-4 flex flex-col gap-8">
 				<h1 class="text-4xl text-textLight font-bold text-center lg:text-start">
-					Meus Exames
+					Permissões médicas
 				</h1>
 
 				<BaseInput
@@ -61,7 +55,7 @@ authStore.onReady(async (user) => {
 				<PermissionCard
 					v-for="profissional in profissionais"
 					:key="profissional.id"
-					:nome="profissional.nome"
+					:professional="profissional"
 				/>
 			</article>
 		</main>
