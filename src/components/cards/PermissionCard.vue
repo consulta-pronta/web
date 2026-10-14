@@ -2,11 +2,35 @@
 import BaseButton from "@/components/bases/BaseButton.vue"
 import type Professional from "@/database/professional.model"
 import { formatToPhone } from "brazilian-values"
+import BaseDialog from "@/components/bases/BaseDialog.vue"
+import { useTemplateRef } from "vue"
+import MedicalPermission from "@/database/medicalPermission.model"
+import type {
+	MedicalAccessStatus,
+	MedicalPermissions,
+} from "@/database/medicalPermission.model"
+import FormMedicalPermission from "@/components/forms/FormMedicalPermission.vue"
 
 defineProps<{
 	professional: Professional
 }>()
 
+const managePermissionsVisible = useTemplateRef("managePermissionsDialog")
+const medicalPermission = new MedicalPermission("professional-id", "active", {
+	read_records: true,
+	prescribe_medications: false,
+	request_exam: true,
+	request_appointments: false,
+})
+
+const handlePermissionSubmit = (updatedPermission: {
+	status: MedicalAccessStatus
+	permissions: MedicalPermissions
+}) => {
+	medicalPermission.status = updatedPermission.status
+	medicalPermission.permissions = updatedPermission.permissions
+	managePermissionsVisible.value?.hide()
+}
 </script>
 
 <template>
@@ -55,10 +79,20 @@ defineProps<{
 				: `${4} permissões ativas`
 			}} </p>
 
-			<BaseButton mode="outline">
+			<BaseButton mode="outline" @click="managePermissionsVisible?.toggle()">
 				<i class="material-symbols-rounded text-primary text!">lock_open</i>
 				Gerenciar permissões
 			</BaseButton>
 		</section>
 	</article>
+	
+
+	<Teleport to="body">
+		<BaseDialog ref="managePermissionsDialog" :title="'Permissões de ' + professional.name">
+			<FormMedicalPermission
+				:medical-permission="medicalPermission"
+				@handled-submit="handlePermissionSubmit"
+			/>
+		</BaseDialog>
+	</Teleport>
 </template>

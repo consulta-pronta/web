@@ -10,14 +10,19 @@ export type MedicalPermissions = {
 	request_appointments: boolean
 }
 
-export type MedicalAcessStatus = "active" | "revoked"
+export type MedicalAccessStatus = "active" | "revoked"
 
 export default class MedicalPermission extends BaseDocument {
 	constructor(
 		public readonly id: string = "", // id of professional
 		// public readonly patient_id: string = "",
-		public status: MedicalAcessStatus = "revoked",
-		public permissions: MedicalPermission | null = null,
+		public status: MedicalAccessStatus = "revoked",
+		public permissions: MedicalPermissions = {
+			read_records: false,
+			prescribe_medications: false,
+			request_exam: false,
+			request_appointments: false,
+		},
 		public created_at: Timestamp | null = null,
 		public granted_at: Timestamp | null = null,
 		public revoked_at: Timestamp | null = null,
