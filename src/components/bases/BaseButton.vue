@@ -4,7 +4,7 @@ import { useRouter, useRoute } from "vue-router"
 
 export type ButtonState = "enabled" | "disabled" | "sync"
 
-interface Props {
+export interface BaseButtonProps {
 	type?: "button" | "submit" | "reset"
 	theme?: "accent" | "primary" | "primaryLight" | "primaryDark" | "textLight" | "error"
 	mode?: "outline" | "fill" | "transparent"
@@ -13,7 +13,7 @@ interface Props {
 	goto?: string
 }
 
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<BaseButtonProps>(), {
 	type: "button",
 	theme: "primary",
 	mode: "fill",

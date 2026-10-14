@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import type { Exam } from "@/models/examModel"
+import Exam from "@/database/exam.model"
+import { DATE_NOT_PROVIDED, toBrazilianLocaleDate } from "@/utils"
 import { computed } from "vue"
 
 const props = defineProps<{
@@ -19,7 +20,12 @@ const typeIcon = computed(() => {
 	}
 })
 
-const date = props.exam.date.toDate().toLocaleDateString()
+const date = computed(() => {
+	const date = props.exam.date?.toDate()
+	if (!date) return DATE_NOT_PROVIDED
+
+	return toBrazilianLocaleDate(date)
+})
 
 const status = computed(() => {
 	switch (props.exam.status) {
@@ -53,19 +59,23 @@ const statusIcon = computed(() => {
 
 <template>
 	<tr>
-		<td class="flex gap-2">
-			<span class="material-symbols-rounded select-none">
-				{{ typeIcon }}
-			</span>
-			<p>{{ exam.name }}</p>
+		<td>
+			<div class="flex gap-2">
+				<span class="material-symbols-rounded select-none">
+					{{ typeIcon }}
+				</span>
+				<p>{{ exam.name }}</p>
+			</div>
 		</td>
 		<td>{{ exam.place }}</td>
 		<td>{{ date }}</td>
-		<td class="flex gap-2">
-			<p>{{ status }}</p>
-			<span class="material-symbols-rounded select-none">
-				{{ statusIcon }}
-			</span>
+		<td>
+			<div class="flex gap-2">
+				<p>{{ status }}</p>
+				<span class="material-symbols-rounded select-none">
+					{{ statusIcon }}
+				</span>
+			</div>
 		</td>
 	</tr>
 </template>
