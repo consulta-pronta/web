@@ -1,164 +1,64 @@
 <script setup lang="ts">
-import UserPhoto from "@/components/UserPhoto.vue"
 import BaseButton from "@/components/bases/BaseButton.vue"
-import type Professional from "@/database/professional.model";
-import { ref } from "vue";
+import type Professional from "@/database/professional.model"
+import { formatToPhone } from "brazilian-values"
 
 defineProps<{
 	professional: Professional
 }>()
 
-const permissionsVisible = ref(false)
 </script>
 
 <template>
-	<div class="grid grid-cols-9 w-full lg:w-[75%] border border-textLight rounded-lg px-6 py-2 items-center">
-		<section class="flex col-span-3">
-			<UserPhoto />
-
-			<div class="flex flex-col items-center ml-6">
-				<p class="text-xs md:text-xl text-textLight mt-2">
-					{{ professional.name }}
-				</p>
-
-				<div class="grid grid-cols-2 mt-1">
-					<section class="flex flex-col text-accent items-center">
-						<span class="material-symbols-rounded pointer-events-none text-base!">
-							chat
-						</span>
-
-						<p class="text-[8px]">
-							Mensagens
-						</p>
-					</section>
-
-					<section class="flex flex-col text-accent items-center">
-						<span class="material-symbols-rounded pointer-events-none text-base!">
-							mail
-						</span>
-
-						<p class="text-[8px]">
-							E-mail
-						</p>
-					</section>
-				</div>
+	<article class="bg-surface min-w-fit rounded-lg overflow-clip">
+		<div class="w-full bg-primaryLight flex justify-between items-center p-3 mb-2">
+			{{ "TODO TODO" }}
+			<div class="material-symbols-rounded bg-surface p-0.5 rounded-lg h-fit shadow hover:-translate-0.5 duration-100 hover:brightness-95 cursor-pointer">
+				more_horiz
 			</div>
-		</section>
+		</div>
+		<section class="px-3 pb-3 flex flex-col gap-3">
+			<header>
+				<h1 class="text-lg font-medium">{{ professional.name }}</h1>
+				<h2>{{ `${professional.professional_data?.crm}/${professional.professional_data?.uf}` }}</h2>
+			</header>
 
-		<section class="grid grid-cols-10 col-span-5 gap-1">
-			<BaseButton class="col-span-5">
-				<p class="text-base text-textLight">
-					Consultas
+			<div class="grid grid-cols-2 *:flex *:gap-2 [&_a]:hover:underline">
+				<p>
+					<i class="material-symbols-rounded">phone</i>
+					Telefone:
 				</p>
-			</BaseButton>
-
-			<BaseButton class="col-span-5">
-				<p class="text-base text-textLight">
-					Prontuario
+				<p>
+					<a :href="'tel:+' + professional.phone">
+						{{ formatToPhone(professional.phone) }}
+					</a>
 				</p>
-			</BaseButton>
-		</section>
-
-		<section class="relative">
-			<div class="flex justify-center items-center">
-				<button
-					type="button"
-					@click="permissionsVisible = !permissionsVisible"
-					class="absolute right cursor-pointer"
-				>
-					<span class="material-symbols-rounded text-textLight text-4xl!">
-						{{ permissionsVisible ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}
-					</span>
-				</button>
+				<p>
+					<i class="material-symbols-rounded">email</i>
+					Email:
+				</p>
+				<p>
+					<a :href="'mailto:' + professional.email">
+						{{ professional.email }}
+					</a>
+				</p>
+				<p>
+					<i class="material-symbols-rounded">home_health</i>
+					Local de atuação:
+				</p>
+				<p>{{ professional.professional_data?.operation_area }}</p>
 			</div>
+
+			<p>{{
+				(true)
+				? "Todas as permissões ativas"
+				: `${4} permissões ativas`
+			}} </p>
+
+			<BaseButton mode="outline">
+				<i class="material-symbols-rounded text-primary text!">lock_open</i>
+				Gerenciar permissões
+			</BaseButton>
 		</section>
-
-		<article
-			v-if="permissionsVisible"
-			class="grid grid-cols-3 col-span-9 pt-5"
-		>
-			<section class="grid text-surface text-base md:text-xl font-bold">
-				<p class="text-center">
-					Dados Profissionais
-				</p>
-
-				<div class="font-medium text-normal">
-					<p>
-						CRM:
-						<span class="font-normal text-sm">
-							lorem ipsum
-						</span>
-					</p>
-
-					<p>
-						Função:
-						<span class="font-normal text-sm">
-							lorem ipsum
-						</span>
-					</p>
-
-					<p>
-						Pediátria:
-						<span class="font-normal text-sm">
-							lorem ipsum
-						</span>
-					</p>
-
-					<p>
-						Local:
-						<span class="font-normal text-sm">
-							lorem ipsum
-						</span>
-					</p>
-				</div>
-			</section>
-
-			<section class="grid text-surface text-xl font-bold">
-				<p class="text-center">
-					Meios de contato
-				</p>
-
-				<div class="font-medium text-sm">
-					<p>
-						<span class="material-symbols-rounded text-textLight text-xl!">
-							call
-						</span>
-						lorem ipsum
-					</p>
-
-					<p>
-						<span class="material-symbols-rounded text-textLight text-xl!">
-							email
-						</span>
-						lorem ipsum
-					</p>
-				</div>
-			</section>
-
-			<section class="grid text-surface text-xl font-bold">
-				<p class="text-center">
-					Permissões
-				</p>
-
-				<section class="font-medium text-sm">
-					<div class="grid grid-cols-3">
-						<div class="flex col-span-2">
-							<span class="material-symbols-rounded text-textLight text-xl! pr-1">
-								text_fields
-							</span>
-
-							<p>
-								Permissões para...:
-							</p>
-						</div>
-
-						<input
-							type="checkbox"
-							class="h-4 w-4 appearance-none rounded border border-textLight bg-transparent checked:bg-textLight checked:border-textLight"
-						/>
-					</div>
-				</section>
-			</section>
-		</article>
-	</div>
+	</article>
 </template>

@@ -5,13 +5,16 @@ import { useAuthStore } from "@/stores/authStore"
 import PermissionCard from "@/components/cards/PermissionCard.vue"
 import { ref } from "vue"
 import Professional from "@/database/professional.model"
+import { Timestamp } from "firebase/firestore"
 
 const authStore = useAuthStore()
 
 const profissionais = ref([
-	new Professional("", "", "Cláudia Silva"),
-	new Professional("", "", "Fernanda Silva"),
+	new Professional("1", "profissional@email.coma", "Cláudia Silva", "12121212121", "12312312312", "professional", { crm: "123123", uf: "ES", operation_area: "Meridional"}, Timestamp.now()),
+	new Professional("2", "profissional@email.coma", "Cláudia Silva", "12121212121", "12312312312", "professional", { crm: "123123", uf: "ES", operation_area: "Meridional"}, Timestamp.now()),
+	new Professional("3", "profissional@email.coma", "Cláudia Silva", "12121212121", "12312312312", "professional", { crm: "123123", uf: "ES", operation_area: "Meridional"}, Timestamp.now()),
 ])
+
 
 authStore.onReady(async () => {
 	// get professionals
@@ -22,8 +25,8 @@ authStore.onReady(async () => {
 	<div class="flex h-screen">
 		<NavBar />
 
-		<main class="w-full h-full overflow-hidden px-6 py-8 flex flex-col">
-			<header class="mb-4 flex flex-col gap-8">
+		<main class="w-full h-full overflow-hidden px-6 py-8 flex flex-col gap-4">
+			<header class="flex flex-col gap-8">
 				<h1 class="text-4xl text-textLight font-bold text-center lg:text-start">
 					Permissões médicas
 				</h1>
@@ -33,8 +36,10 @@ authStore.onReady(async () => {
 					icon="search"
 					class="place-self-center w-full md:w-120"
 				/>
+			</header>
 
-				<article class="w-full flex justify-center">
+			<section class="flex flex-col items-center gap-4 flex-1 min-h-0 overflow-y-auto scrollbar-hide">
+				<!-- <article class="w-full flex justify-center">
 					<section
 						class="relative flex w-[85%] md:w-[70%] lg:w-[45%] min-h-11 items-center border border-textLight text-sm text-textLight rounded-[15px]"
 					>
@@ -48,16 +53,16 @@ authStore.onReady(async () => {
 							</p>
 						</div>
 					</section>
-				</article>
-			</header>
-
-			<article class="flex flex-col items-center gap-4 flex-1 min-h-0 overflow-y-auto scrollbar-hide">
-				<PermissionCard
-					v-for="profissional in profissionais"
-					:key="profissional.id"
-					:professional="profissional"
-				/>
-			</article>
+				</article> -->
+				
+				<div class="w-full grid gap-4 grid-cols-[repeat(auto-fit,minmax(20em,1fr))]">
+					<PermissionCard
+						v-for="profissional in profissionais"
+						:key="profissional.id"
+						:professional="profissional"
+					/>
+				</div>
+			</section>
 		</main>
 	</div>
 </template>

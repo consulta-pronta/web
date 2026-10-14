@@ -1,6 +1,7 @@
 import { serverTimestamp, type Timestamp } from "firebase/firestore"
-import BaseDocument, { type CollectionScope, type DocumentData } from "./baseDocument"
+import BaseDocument, { type CollectionScope, type DocumentData, type FormData } from "./baseDocument"
 import User from "./user.model"
+import Professional from "./professional.model"
 
 export type MedicalPermissions = {
 	read_records: boolean
@@ -58,4 +59,8 @@ export default class MedicalPermission extends BaseDocument {
 	revoke() { this.status = "revoked" }
 	toggleAcess() { this.status = this.canAcess() ? "revoked" : "active" }
 	canAcess() { return this.status === "active" }
+
+	async getProfessional() {
+		return await Professional.get(this.id)
+	}
 }
