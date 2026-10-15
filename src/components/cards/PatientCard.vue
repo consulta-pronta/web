@@ -18,8 +18,8 @@ const props = withDefaults(defineProps<Props>(), {
 	theme: "light",
 })
 
-const colors =
-	props.theme === "light" ? { bg: "surface", text: "red" } : { bg: "primary", text: "textLight" }
+// const colors =
+// 	props.theme === "light" ? { bg: "surface", text: "red" } : { bg: "primary", text: "textLight" }
 
 const ranges = [
     { min: 0, max: 4, color: "green", label: "Baixa", icon: "check_circle" },

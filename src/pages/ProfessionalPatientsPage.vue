@@ -25,7 +25,7 @@ const currentPatientId = ref<string>("")
 
 const rootPath = "/" + route.path.split("/")[1]
 
-let userId = ""
+// let userId = ""
 
 const updatePatients = async () => {
 	patients.value = []
@@ -44,8 +44,8 @@ watch(currentPatientId, (value) => {
 	}
 })
 
-authStore.onReady(async (data) => {
-	userId = data.id
+authStore.onReady(async () => {
+	// userId = data.id
 	currentPatientId.value = route.params.id as string
 
 	updatePatients()
@@ -105,8 +105,8 @@ const pacientes: Paciente[] = [
 					<!-- List -->
 					<ul
 						v-if="pacientes.length"
-						class="w-full lg:w-max max-h-full overflow-hidden flex flex-col gap-2 overflow-y-auto"
-						:class="[!currentPatientId ? '' : 'hidden lg:flex']"
+						class="w-full md:flex-1 max-h-full overflow-hidden grid grid-cols-[repeat(auto-fill,minmax(20em,1fr))] gap-4 overflow-y-auto"
+						:class="[!currentPatientId ? '' : 'hidden md:flex md:flex-col md:min-w-80']"
 					>
 						<template v-for="paciente in pacientes" :key="paciente.id">
 							<PatientCard

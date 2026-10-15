@@ -86,7 +86,7 @@ const router = createRouter({
 		{
 			path: "/pacientes/:id?",
 			name: "pacientes",
-			component: () => import("@/pages/PacientesProfissional.vue"),
+			component: () => import("@/pages/ProfessionalPatientsPage.vue"),
 			meta: {
 				roles: ["professional"],
 			},
