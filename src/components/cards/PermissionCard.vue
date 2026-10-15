@@ -3,7 +3,7 @@ import BaseButton from "@/components/bases/BaseButton.vue"
 import Professional from "@/database/professional.model"
 import { formatToPhone } from "brazilian-values"
 import BaseDialog from "@/components/bases/BaseDialog.vue"
-import { computed, useTemplateRef } from "vue"
+import { computed, ref, useTemplateRef } from "vue"
 import MedicalPermission from "@/database/medicalPermission.model"
 import type {
 	MedicalAccessStatus,
@@ -21,31 +21,48 @@ const authStore = useAuthStore()
 
 const managePermissionsVisible = useTemplateRef("managePermissionsDialog")
 
-const permissions = computed(() => props.medicalPermission.permissions)
+const status = ref(props.medicalPermission.status)
+const permissions = ref(props.medicalPermission.permissions)
+
 const professional = computedAsync(
 	async () => await Professional.get(props.medicalPermission.id) as Professional,
 	new Professional(),
 )
 
-const handlePermissionSubmit = async (updatedPermission: {
+const handleSubmit = async (updatedPermission: {
 	status: MedicalAccessStatus
 	permissions: MedicalPermissions
 }) => {
-	await authStore.onReady(async (data) => {
+	status.value = updatedPermission.status
+	permissions.value = updatedPermission.permissions
+
+	const data = props.medicalPermission.status === "pending"
+		? { permissions: permissions.value }
+		: { status: status.value, permissions: permissions.value }
+	await authStore.onReady(async (user) => {
 		MedicalPermission.update(
 			props.medicalPermission.id,
-			{
-				status: updatedPermission.status,
-				permissions: updatedPermission.permissions
-			},
-			{ scope: { patientId: data.id} }
+			data,
+			{ scope: { patientId: user.id} }
 		)
 	})
 	managePermissionsVisible.value?.hide()
 }
 
+const headHeaderStyle = computed(() => {
+	switch (status.value) {
+		case "pending":
+			return "bg-gray-300"
+		case "active":
+			return "bg-sucess/70"
+		case "revoked":
+			return "bg-error/70"
+		default:
+			return "bg-black/70 text-textLight"
+	}
+})
 const statusLabel = computed(() => {
-	switch (props.medicalPermission.status) {
+	switch (status.value) {
 		case "pending":
 			return "Solicitação pendente"
 		case "active":
@@ -62,13 +79,15 @@ const amountOfPermissionsLabel = computed(() => {
 	return (omgSoTrue.length === 3)
 		? "Todas as permissões ativas"
 		: `${omgSoTrue.length} permissões ativas`
-
 })
 </script>
 
 <template>
 	<article class="bg-surface min-w-fit rounded-lg overflow-clip text-textDark">
-		<div class="w-full bg-primaryLight flex justify-between items-center p-3 mb-2">
+		<div
+			class="w-full flex justify-between items-center p-3 mb-2"
+			:class="headHeaderStyle"
+		>
 			{{ statusLabel }}
 				<!-- <div class="material-symbols-rounded bg-surface p-0.5 rounded-lg h-fit shadow hover:-translate-0.5 duration-100 hover:brightness-95 cursor-pointer">
 					more_horiz
@@ -123,7 +142,7 @@ const amountOfPermissionsLabel = computed(() => {
 		<BaseDialog ref="managePermissionsDialog" :title="'Permissões de ' + professional.name">
 			<FormMedicalPermission
 				:medical-permission="medicalPermission"
-				@handled-submit="(updatedPermission) => handlePermissionSubmit(updatedPermission)"
+				@handled-submit="handleSubmit"
 			/>
 		</BaseDialog>
 	</Teleport>
