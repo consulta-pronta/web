@@ -6,8 +6,10 @@ import {
 	doc,
 	getDoc,
 	getDocs,
+	or,
 	serverTimestamp,
 	setDoc,
+	where,
 	type DocumentData,
 	type Timestamp,
 } from "firebase/firestore"
@@ -35,6 +37,22 @@ export default class Professional extends User {
 	}
 
 	static readonly requestsCollectionName = "signupRequests"
+
+	static async getByEmail(email: string) {
+		const snapshot = await Professional.getAll({
+			constraints: [
+				where("email", "==", email.trim()),
+			],
+			compositeConstraints: [
+				or(
+					where("user_type", "==", "professional"),
+					where("user_type", "==", "profissional"),
+				),
+			],
+		})
+
+		return (snapshot.length === 0) ? null : snapshot[0] as Professional
+	}
 
 	static get requestCollection() {
 		return collection(db, this.requestsCollectionName)

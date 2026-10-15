@@ -71,14 +71,14 @@ const borderColor = computed(() => {
 			return "border-textDark"
 	}
 })
-const backgroundColor = props.mode === "fill" ? props.theme : "transparent"
+const backgroundColor = computed(() => props.mode === "fill" ? props.theme : "transparent")
 
-const dynamicStyle = [
-	`bg-${backgroundColor} ${textColor.value}`,
+const dynamicStyle = computed(() => [
+	`bg-${backgroundColor.value} ${textColor.value}`,
 	props.mode === "outline" ? `border-2 ${borderColor.value}` : "",
 	props.goto?.length ? "justify-start" : "justify-center",
 	props.iconPosition === "right" ? "flex-row-reverse" : "flex-row",
-]
+])
 
 const redirect = () => {
 	if (props.goto?.length) {

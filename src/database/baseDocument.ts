@@ -5,10 +5,12 @@ import {
 	doc,
 	getDoc,
 	getDocs,
+	and,
 	query,
 	setDoc,
 	updateDoc,
 	type DocumentSnapshot,
+	type QueryCompositeFilterConstraint,
 	type QueryConstraint,
 } from "firebase/firestore"
 
@@ -22,6 +24,7 @@ export type CollectionOptions = {
 
 export type QueryOptions = CollectionOptions & {
 	constraints?: QueryConstraint[]
+	compositeConstraints?: QueryCompositeFilterConstraint[]
 }
 
 export default abstract class BaseDocument {
@@ -76,8 +79,17 @@ export default abstract class BaseDocument {
 	}
 
 	static async getAll(options: QueryOptions = {}) {
-		const collectionQuery = query(this.collection(options), ...(options.constraints ?? []))
-		const snapshot = await getDocs(collectionQuery)
+		const collectionQuery = query(
+			this.collection(options),
+			...(options.constraints ?? []),
+		)
+		const compositeConstraints = options.compositeConstraints ?? []
+		const constrainedQuery =
+			compositeConstraints.length > 0
+				? query(collectionQuery, and(...compositeConstraints))
+				: collectionQuery
+
+		const snapshot = await getDocs(constrainedQuery)
 
 		const documents = snapshot.docs
 			.map((doc) => this.fromDocument(doc))
@@ -86,7 +98,10 @@ export default abstract class BaseDocument {
 	}
 
 	static async set(data: FormData, options: CollectionOptions = {}) {
-		const doc = this.emptyRef(options)
+		const existingId = options.scope?.id
+		const doc = (existingId)
+			? this.ref(existingId, options)
+			: this.emptyRef(options)
 		await setDoc(doc, data)
 		return doc.id
 	}

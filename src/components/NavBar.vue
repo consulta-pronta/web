@@ -124,6 +124,15 @@ authStore.onReady((data) => {
 				</BaseButton>
 
 				<BaseButton
+					v-if="userType === 'patient'"
+					v-bind="sharedAttributes"
+					icon="how_to_reg"
+					goto="permissoes"
+				>
+					<p>Permissões</p>
+				</BaseButton>
+
+				<BaseButton
 					v-if="userType !== 'admin'"
 					v-bind="sharedAttributes"
 					icon="medical_services"

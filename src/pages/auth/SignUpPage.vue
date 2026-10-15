@@ -9,8 +9,9 @@ import BaseInput, { type BaseInputProps } from "@/components/bases/BaseInput.vue
 import BaseSelect from "@/components/bases/BaseSelect.vue"
 import ToggleUser from "@/components/ToggleUser.vue"
 import { useSignUpStore } from "@/stores/signUpStore"
-import { bloodTypes, federalUnits } from "@/utils"
+import { bloodTypes, federalUnits, type UserType } from "@/utils"
 import PasswordRules from "@/components/cards/PasswordRules.vue"
+import BaseSwitch from "@/components/bases/BaseSwitch.vue"
 
 const router = useRouter()
 const signUpStore = useSignUpStore()
@@ -184,6 +185,13 @@ const sharedAttributes: Uhh = {
 				</template>
 
 				<template v-else>
+					<BaseSwitch
+						label1="Paciente"
+						label2="Profissional"
+						:value1="<UserType>'patient'"
+						:value2="<UserType>'professional'"
+						v-model="signUpStore.userType"
+					/>
 					<ToggleUser v-model="signUpStore.userType" class="mb-4" />
 					<template v-if="signUpStore.userType === 'professional'">
 						<fieldset class="w-full flex flex-row gap-3">
