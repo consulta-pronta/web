@@ -1,45 +1,77 @@
 <script setup lang="ts">
 import BaseButton from "@/components/bases/BaseButton.vue"
-import type Professional from "@/database/professional.model"
+import Professional from "@/database/professional.model"
 import { formatToPhone } from "brazilian-values"
 import BaseDialog from "@/components/bases/BaseDialog.vue"
-import { useTemplateRef } from "vue"
+import { computed, useTemplateRef } from "vue"
 import MedicalPermission from "@/database/medicalPermission.model"
 import type {
 	MedicalAccessStatus,
 	MedicalPermissions,
 } from "@/database/medicalPermission.model"
 import FormMedicalPermission from "@/components/forms/FormMedicalPermission.vue"
+import { computedAsync } from "@vueuse/core"
+import { useAuthStore } from "@/stores/authStore"
 
-defineProps<{
-	professional: Professional
+const props = defineProps<{
+	medicalPermission: MedicalPermission
 }>()
 
-const managePermissionsVisible = useTemplateRef("managePermissionsDialog")
-const medicalPermission = new MedicalPermission("professional-id", "active", {
-	read_records: true,
-	prescribe_medications: false,
-	request_exam: true,
-	request_appointments: false,
-})
+const authStore = useAuthStore()
 
-const handlePermissionSubmit = (updatedPermission: {
+const managePermissionsVisible = useTemplateRef("managePermissionsDialog")
+
+const professional = computedAsync(
+	async () => await Professional.get(props.medicalPermission.id) as Professional,
+	new Professional(),
+)
+
+const handlePermissionSubmit = async (updatedPermission: {
 	status: MedicalAccessStatus
 	permissions: MedicalPermissions
 }) => {
-	medicalPermission.status = updatedPermission.status
-	medicalPermission.permissions = updatedPermission.permissions
+	await authStore.onReady(async (data) => {
+		MedicalPermission.update(
+			props.medicalPermission.id,
+			{
+				status: updatedPermission.status,
+				permissions: updatedPermission.permissions
+			},
+			{ scope: { patientId: data.id} }
+		)
+	})
 	managePermissionsVisible.value?.hide()
 }
+
+const statusLabel = computed(() => {
+	switch (props.medicalPermission.status) {
+		case "pending":
+			return "Solicitação pendente"
+		case "active":
+			return "Permissões ativas"
+		case "revoked":
+			return "Permissões revogadas"
+		default:
+			return "Permissões desconhecidas"
+	}
+})
+const amountOfPermissionsLabel = computed(() => {
+	const omgSoTrue = Object.values(props.medicalPermission.permissions).filter((item) => item)
+	// not harcoding would be cool
+	return (omgSoTrue.length === 3)
+		? "Todas as permissões ativas"
+		: `${omgSoTrue.length} permissões ativas`
+
+})
 </script>
 
 <template>
-	<article class="bg-surface min-w-fit rounded-lg overflow-clip">
+	<article class="bg-surface min-w-fit rounded-lg overflow-clip text-textDark">
 		<div class="w-full bg-primaryLight flex justify-between items-center p-3 mb-2">
-			{{ "TODO TODO" }}
-			<div class="material-symbols-rounded bg-surface p-0.5 rounded-lg h-fit shadow hover:-translate-0.5 duration-100 hover:brightness-95 cursor-pointer">
-				more_horiz
-			</div>
+			{{ statusLabel }}
+				<!-- <div class="material-symbols-rounded bg-surface p-0.5 rounded-lg h-fit shadow hover:-translate-0.5 duration-100 hover:brightness-95 cursor-pointer">
+					more_horiz
+				</div> -->
 		</div>
 		<section class="px-3 pb-3 flex flex-col gap-3">
 			<header>
@@ -62,7 +94,10 @@ const handlePermissionSubmit = (updatedPermission: {
 					Email:
 				</p>
 				<p>
-					<a :href="'mailto:' + professional.email">
+					<a
+						:href="'mailto:' + professional.email"
+						class="wrap-anywhere"
+					>
 						{{ professional.email }}
 					</a>
 				</p>
@@ -73,11 +108,7 @@ const handlePermissionSubmit = (updatedPermission: {
 				<p>{{ professional.professional_data?.operation_area }}</p>
 			</div>
 
-			<p>{{
-				(true)
-				? "Todas as permissões ativas"
-				: `${4} permissões ativas`
-			}} </p>
+			<p>{{ amountOfPermissionsLabel }} </p>
 
 			<BaseButton mode="outline" @click="managePermissionsVisible?.toggle()">
 				<i class="material-symbols-rounded text-primary text!">lock_open</i>
@@ -91,7 +122,7 @@ const handlePermissionSubmit = (updatedPermission: {
 		<BaseDialog ref="managePermissionsDialog" :title="'Permissões de ' + professional.name">
 			<FormMedicalPermission
 				:medical-permission="medicalPermission"
-				@handled-submit="handlePermissionSubmit"
+				@handled-submit="(updatedPermission) => handlePermissionSubmit(updatedPermission)"
 			/>
 		</BaseDialog>
 	</Teleport>

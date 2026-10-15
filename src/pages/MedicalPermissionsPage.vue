@@ -4,25 +4,50 @@ import BaseInput from "@/components/bases/BaseInput.vue"
 import { useAuthStore } from "@/stores/authStore"
 import PermissionCard from "@/components/cards/PermissionCard.vue"
 import { ref } from "vue"
-import Professional from "@/database/professional.model"
-import { Timestamp } from "firebase/firestore"
+import MedicalPermission from "@/database/medicalPermission.model"
 import BaseButton from "@/components/bases/BaseButton.vue"
 import BaseDialog from "@/components/bases/BaseDialog.vue"
 import FormAddProfessional from "@/components/forms/FormAddProfessional.vue"
 import { useTemplateRef } from "vue"
 
 const authStore = useAuthStore()
+
 const addProfessionalDialog = useTemplateRef("addProfessionalDialog")
 
-const profissionais = ref([
-	new Professional("1", "profissional@email.coma", "Cláudia Silva", "12121212121", "12312312312", "professional", { crm: "123123", uf: "ES", operation_area: "Meridional"}, Timestamp.now()),
-	new Professional("2", "profissional@email.coma", "Cláudia Silva", "12121212121", "12312312312", "professional", { crm: "123123", uf: "ES", operation_area: "Meridional"}, Timestamp.now()),
-	new Professional("3", "profissional@email.coma", "Cláudia Silva", "12121212121", "12312312312", "professional", { crm: "123123", uf: "ES", operation_area: "Meridional"}, Timestamp.now()),
-])
+const medicalPermissions = ref<MedicalPermission[]>([])
+const loading = ref(true)
+const loadMessage = ref("Carregando permissões...")
 
+const loadPermissions = async () => {
+	loading.value = true
+	loadMessage.value = "Carregando permissões..."
+
+	try {
+		await authStore.onReady(async (patient) => {
+			medicalPermissions.value = (await MedicalPermission.getAll({
+				scope: { patientId: patient.id },
+			})) as MedicalPermission[]
+			
+			loadMessage.value = medicalPermissions.value.length === 0
+				? "Não há nenhum médico registrado."
+				: ""
+		})
+
+	} catch (error) {
+		console.error("Failed to load medical permissions.", error)
+		loadMessage.value = "Não foi possível carregar as permissões médicas."
+	} finally {
+		loading.value = false
+	}
+}
+
+const handleRequestSubmitted = async () => {
+	addProfessionalDialog.value?.hide()
+	await loadPermissions()
+}
 
 authStore.onReady(async () => {
-	// get professionals
+	await loadPermissions()
 })
 </script>
 
@@ -30,9 +55,9 @@ authStore.onReady(async () => {
 	<div class="flex h-screen">
 		<NavBar />
 
-		<main class="w-full h-full overflow-hidden px-6 py-8 flex flex-col gap-4">
+		<main class="w-full h-full overflow-hidden px-6 py-8 flex flex-col gap-4 text-textLight">
 			<header class="flex flex-col gap-8">
-				<h1 class="text-4xl text-textLight font-bold text-center lg:text-start">
+				<h1 class="text-4xl font-bold text-center lg:text-start">
 					Permissões médicas
 				</h1>
 
@@ -72,18 +97,22 @@ authStore.onReady(async () => {
 					</section>
 				</article> -->
 				
-				<div class="w-full grid gap-4 grid-cols-[repeat(auto-fit,minmax(20em,1fr))]">
+				<div class="w-full grid gap-4 grid-cols-[repeat(auto-fill,minmax(25em,1fr))]">
 					<PermissionCard
-						v-for="profissional in profissionais"
-						:key="profissional.id"
-						:professional="profissional"
+						v-for="permission in medicalPermissions"
+						:key="permission.id"
+						:medical-permission="permission"
 					/>
 				</div>
+				<i v-if="loading" class="animate-spin">loop</i>
+				<p v-if="loadMessage">
+					{{ loadMessage }}
+				</p>
 			</section>
 		</main>
 
 		<BaseDialog title="Adicionar profissional" ref="addProfessionalDialog">
-			<FormAddProfessional @handled-submit="addProfessionalDialog?.hide()" />
+			<FormAddProfessional @handled-submit="handleRequestSubmitted" />
 		</BaseDialog>
 	</div>
 </template>
