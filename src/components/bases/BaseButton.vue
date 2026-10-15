@@ -4,7 +4,7 @@ import { useRouter, useRoute } from "vue-router"
 
 export type ButtonState = "enabled" | "disabled" | "sync"
 
-interface Props {
+export interface BaseButtonProps {
 	type?: "button" | "submit" | "reset"
 	theme?: "accent" | "primary" | "primaryLight" | "primaryDark" | "textLight" | "error"
 	mode?: "outline" | "fill" | "transparent"
@@ -13,7 +13,7 @@ interface Props {
 	goto?: string
 }
 
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<BaseButtonProps>(), {
 	type: "button",
 	theme: "primary",
 	mode: "fill",
@@ -71,14 +71,14 @@ const borderColor = computed(() => {
 			return "border-textDark"
 	}
 })
-const backgroundColor = props.mode === "fill" ? props.theme : "transparent"
+const backgroundColor = computed(() => props.mode === "fill" ? props.theme : "transparent")
 
-const dynamicStyle = [
-	`bg-${backgroundColor} ${textColor.value}`,
+const dynamicStyle = computed(() => [
+	`bg-${backgroundColor.value} ${textColor.value}`,
 	props.mode === "outline" ? `border-2 ${borderColor.value}` : "",
 	props.goto?.length ? "justify-start" : "justify-center",
 	props.iconPosition === "right" ? "flex-row-reverse" : "flex-row",
-]
+])
 
 const redirect = () => {
 	if (props.goto?.length) {

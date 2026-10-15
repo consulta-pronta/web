@@ -7,7 +7,6 @@ interface Props {
 	defaultValue?: string
 }
 const props = withDefaults(defineProps<Props>(), {
-	type: "text",
 	theme: "light",
 	mode: "fill",
 	defaultValue: "",
@@ -48,7 +47,7 @@ value.value = ""
 
 		<select
 			class="absolute inset-0 w-full grow py-3 outline-0 cursor-pointer appearance-none *:text-textDark"
-			:class="icon? 'px-12' : 'px-3'"
+			:class="icon ? 'px-12' : 'px-3'"
 			:required="required"
 			v-model="value"
 		>
