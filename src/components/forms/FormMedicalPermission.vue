@@ -6,6 +6,7 @@ import type {
 	MedicalAccessStatus,
 	MedicalPermissions,
 } from "@/database/medicalPermission.model"
+import BaseSwitch from "../bases/BaseSwitch.vue";
 
 const props = defineProps<{
 	medicalPermission: MedicalPermission
@@ -32,13 +33,17 @@ const submitForm = () => {
 	<form class="flex flex-col gap-4" @submit.prevent="submitForm">
 		<label class="flex flex-col gap-1 text-textLight">
 			<span class="font-medium">Status do acesso</span>
-			<select
-				v-model="permission.status"
-				class="rounded-md bg-surface px-3 py-2 text-textDark outline-none focus:ring-2 focus:ring-accent"
-			>
-				<option value="active">Ativo</option>
-				<option value="revoked">Revogado</option>
-			</select>
+			<BaseSwitch
+				label1="Ativo"
+				label2="Revogado"
+				:value1="<MedicalAccessStatus>'active'"
+				:value2="<MedicalAccessStatus>'pending'"
+				:disabled="medicalPermission.isPending()"
+				class="m-auto"
+			/>
+			<p class="m-auto text-error" v-if="medicalPermission.isPending()">
+				Status pendente, não há como mudar o acesso
+			</p>
 		</label>
 
 		<fieldset class="flex flex-col gap-3">

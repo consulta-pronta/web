@@ -5,18 +5,23 @@ const props = defineProps<{
 	label1: string,
 	value2: unknown,
 	label2: string,
+	disabled?: boolean
 }>()
 
 const status = defineModel<unknown>()
 
 const isFirst = () => status.value === props.value1
 const toggle = () => {
+	if (props.disabled) { return }
 	status.value = isFirst() ? props.value2 : props.value1
 }
 </script>
 
 <template>
-	<div class="flex flex-row bg-primaryDark p-1 gap-4 rounded-lg relative w-fit">
+	<div
+		class="flex flex-row bg-primaryDark p-1 gap-4 rounded-lg relative w-fit"
+		:class="disabled ? 'opacity-80 **:cursor-no-drop!' : ''"
+	>
 		<div
 			class="boogieman absolute bg-accent z-0"
 			:class="isFirst() ? 'left-1' : 'left-[calc(100%-0.25rem-10rem)]'"

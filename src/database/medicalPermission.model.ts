@@ -87,6 +87,7 @@ export default class MedicalPermission extends BaseDocument {
 	revoke() { this.status = "revoked" }
 	toggleAcess() { this.status = this.canAcess() ? "revoked" : "active" }
 	canAcess() { return this.status === "active" }
+	isPending() { return this.status === "pending" }
 
 	async getProfessional() {
 		return await Professional.get(this.id)

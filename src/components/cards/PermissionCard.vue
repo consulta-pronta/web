@@ -21,6 +21,7 @@ const authStore = useAuthStore()
 
 const managePermissionsVisible = useTemplateRef("managePermissionsDialog")
 
+const permissions = computed(() => props.medicalPermission.permissions)
 const professional = computedAsync(
 	async () => await Professional.get(props.medicalPermission.id) as Professional,
 	new Professional(),
@@ -56,7 +57,7 @@ const statusLabel = computed(() => {
 	}
 })
 const amountOfPermissionsLabel = computed(() => {
-	const omgSoTrue = Object.values(props.medicalPermission.permissions).filter((item) => item)
+	const omgSoTrue = Object.values(permissions.value).filter((item) => item)
 	// not harcoding would be cool
 	return (omgSoTrue.length === 3)
 		? "Todas as permissões ativas"
