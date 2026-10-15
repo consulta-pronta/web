@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { computed, onMounted } from "vue"
-import { useRouter, useRoute } from "vue-router"
+import { computed, watch } from "vue"
+import { useRoute } from "vue-router"
+import router from "@/router/index.ts"
 
 export type ButtonState = "enabled" | "disabled" | "sync"
 
@@ -23,7 +24,6 @@ const stateModel = defineModel<ButtonState>("state", {
 	default: "enabled",
 })
 
-const router = useRouter()
 const route = useRoute()
 
 const isDisabled = computed(() => stateModel.value !== "enabled")
@@ -86,11 +86,11 @@ const redirect = () => {
 	}
 }
 
-onMounted(() => {
-	if (props.goto === "#") {
+watch(() => props.goto, (value) => {
+	if (value === "#") {
 		stateModel.value = "disabled"
 	}
-})
+}, { immediate: true })
 </script>
 
 <template>

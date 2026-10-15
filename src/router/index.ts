@@ -54,7 +54,7 @@ const router = createRouter({
 			name: "exames",
 			component: () => import("@/pages/ExamsPage.vue"),
 			meta: {
-				roles: ["patient"],
+				roles: ["patient", "professional"],
 			},
 		},
 		{
@@ -71,7 +71,7 @@ const router = createRouter({
 			name: "relatorios",
 			component: () => import("@/pages/ReportsPage.vue"),
 			meta: {
-				roles: ["patient"],
+				roles: ["patient", "professional"],
 			},
 		},
 		{
@@ -84,17 +84,17 @@ const router = createRouter({
 			},
 		},
 		{
-			path: "/:catchAll(.*)",
-			name: "not-found",
-			component: () => import("@/pages/NotFoundPage.vue"),
-		},
-		{
-			path: "/pacientes",
+			path: "/pacientes/:id?",
 			name: "pacientes",
 			component: () => import("@/pages/PacientesProfissional.vue"),
 			meta: {
-				roles: ["profissional"],
+				roles: ["professional"],
 			},
+		},
+		{
+			path: "/:catchAll(.*)",
+			name: "not-found",
+			component: () => import("@/pages/NotFoundPage.vue"),
 		},
 	],
 })
@@ -125,7 +125,6 @@ router.beforeEach(async (to) => {
 		await authStore.onReady((data) => {
 			userType = data.user_type
 		})
-
 		if (!userType || !roles.includes(userType)) {
 			return "/dashboard"
 		}
