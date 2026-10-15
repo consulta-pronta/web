@@ -2,6 +2,11 @@
 import BaseInput from '@/components/bases/BaseInput.vue'
 import BaseSelect from '@/components/bases/BaseSelect.vue'
 import BaseButton from '@/components/bases/BaseButton.vue'
+import { useAuthStore } from '@/stores/authStore'
+import { type ButtonState } from '@/components/bases/BaseButton.vue'
+import { ref } from 'vue'
+import User from '@/database/user.model'
+import { formatToPhone } from 'brazilian-values'
 
 interface Props {
 	type?: "personal" | "contacts" | "health" | "professional"
@@ -10,6 +15,40 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
 	type: "personal"
 })
+
+const authStore = useAuthStore()
+
+const email = ref('')
+const phone = ref('')
+const buttonState = ref<ButtonState>("enabled")
+
+const emit = defineEmits(["handled-submit"])
+
+const submitForm = async () => {
+	buttonState.value = "sync"
+
+	await authStore.onReady(async (user) => {
+		if (props.type === 'contacts') {
+			await User.update(user.id, { email: email.value, phone: (phone.value.replace(/[\(\)\-\s]/g, "")) })
+		}
+	})
+
+	emit("handled-submit")
+	buttonState.value = "enabled"
+}
+
+const reset = async () => {
+	await authStore.onReady(async (user) => {
+		if (user instanceof User) {
+			email.value = user.email
+			phone.value = formatToPhone(user.phone)
+		}
+	})
+}
+
+defineExpose({ reset })
+
+reset()
 </script>
 
 <template>
@@ -45,12 +84,14 @@ const props = withDefaults(defineProps<Props>(), {
 		</BaseButton>
 	</form>
 
-	<form v-if="type === 'contacts'" @submit.prevent class="flex flex-col gap-4 z-48">
+	<form v-if="type === 'contacts'" @submit.prevent="submitForm()" class="flex flex-col gap-4 z-48">
 		<label>
 			<p>Telefone</p>
 			<BaseInput
 				type="tel"
+				placeholder="Digite seu telefone"
 				theme="light"
+				v-model="phone"
 				required
 			/>
 		</label>
@@ -59,8 +100,9 @@ const props = withDefaults(defineProps<Props>(), {
 			<p>E-mail</p>
 			<BaseInput
 				type="email"
-				placeholder="Digite seu endereço"
+				placeholder="Digite seu endereço de e-mail"
 				theme="light"
+				v-model="email"
 				required
 			/>
 		</label>

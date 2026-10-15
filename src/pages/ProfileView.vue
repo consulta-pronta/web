@@ -5,7 +5,7 @@ import BaseButton from '@/components/bases/BaseButton.vue'
 import BaseDialog from '@/components/bases/BaseDialog.vue'
 import FormProfile from '@/components/forms/FormProfile.vue'
 
-import { ref, useTemplateRef } from "vue"
+import { computed, ref, useTemplateRef } from "vue"
 import { useAuthStore } from "@/stores/authStore"
 import Patient from '@/database/patient.model'
 import Professional from '@/database/professional.model'
@@ -13,15 +13,44 @@ import { formatToCPF, formatToNumber, formatToPhone } from 'brazilian-values'
 import { formatCRM } from '@/utils'
 
 const authStore = useAuthStore()
-const formPersonal = useTemplateRef("formPersonal")
-const formContacts = useTemplateRef("formContacts")
-const formHealth = useTemplateRef("formHealth")
-const formProfessional = useTemplateRef("formProfessional")
+const dialogForm = useTemplateRef("dialogForm")
+const formProfile = useTemplateRef("formProfile")
 
 const user = ref<Patient | Professional>(new Patient())
+const formType = ref<"personal" | "contacts" | "health" | "professional">()
+
+const formTitle = computed(() => {
+	switch (formType.value) {
+		case "personal":
+			return "Atualizar dados pessoais"
+		case "contacts":
+			return "Atualizar meios de contato"
+		case "health":
+			return "Atualizar informações de saúde"
+		case "professional":
+			return "Atualizar informações profissionais"
+		default:
+			return ""
+	}
+})
+
 authStore.onReady(async (data) => {
 	user.value = data as Patient | Professional
 })
+
+const openForm = (type: "personal" | "contacts" | "health" | "professional") => {
+	formType.value = type
+	formProfile.value?.reset()
+	dialogForm.value?.toggle()
+}
+
+const handleSubmit = async () => {
+	dialogForm.value?.hide()
+	await authStore.reloadUser()
+	await authStore.onReady(async (data) => {
+		user.value = data as Patient | Professional
+	})
+}
 </script>
 
 <template>
@@ -52,7 +81,7 @@ authStore.onReady(async (data) => {
 							<div class="bg-primary w-full rounded-2xl md:col-span-1 p-5 flex flex-col h-full gap-4 text-textLight font-bold">
 								<div class="flex justify-between">
 									<p class="text-xl">Dados pessoais</p>
-									<BaseButton type="button" theme="textLight" mode="transparent" icon="edit_square" @click="formPersonal?.toggle()" />
+									<BaseButton type="button" theme="textLight" mode="transparent" icon="edit_square" @click="openForm('personal')" />
 								</div>
 
 								<div class="grid grid-cols-2 gap-5">
@@ -86,7 +115,7 @@ authStore.onReady(async (data) => {
 							<div class="bg-primary w-full rounded-2xl md:col-span-1 p-5 flex flex-col h-full gap-4 text-textLight font-bold">
 								<div class="flex justify-between">
 									<p class="text-xl">Meios de contato</p>
-									<BaseButton type="button" theme="textLight" mode="transparent" icon="edit_square" @click="formContacts?.toggle()" />
+									<BaseButton type="button" theme="textLight" mode="transparent" icon="edit_square" @click="openForm('contacts')" />
 								</div>
 								<div class="flex flex-col gap-5">
 									<div>
@@ -104,7 +133,7 @@ authStore.onReady(async (data) => {
 						<div v-if="user instanceof Patient" class="bg-primary rounded-2xl md:col-span-2 p-5 flex flex-col justify-between h-full gap-4 text-textLight">
 							<div class="flex justify-between">
 								<p class="text-xl font-bold">Informações de saúde</p>
-								<BaseButton type="button" theme="textLight" mode="transparent" icon="edit_square" @click="formHealth?.toggle()" />
+								<BaseButton type="button" theme="textLight" mode="transparent" icon="edit_square" @click="openForm('health')" />
 							</div>
 							<div class="grid grid-cols-3 gap-5">
 								<div class="grid col-span-1">
@@ -142,7 +171,7 @@ authStore.onReady(async (data) => {
 						<div v-if="user instanceof Professional" class="bg-primary rounded-2xl md:col-span-2 p-5 flex flex-col justify-between h-full gap-4 text-textLight">
 							<div class="flex justify-between">
 								<p class="text-xl">Dados profissionais</p>
-								<BaseButton type="button" theme="textLight" mode="transparent" icon="edit_square" @click="formProfessional?.toggle()" />
+								<BaseButton type="button" theme="textLight" mode="transparent" icon="edit_square" @click="openForm('professional')" />
 							</div>
 							<div class="grid grid-cols-3 gap-5">
 								<div class="grid col-span-1">
@@ -164,20 +193,8 @@ authStore.onReady(async (data) => {
 			</article>
 
 			<!-- Forms -->
-			<BaseDialog title="Atualizar dados pessoais" ref="formPersonal">
-				<FormProfile />
-			</BaseDialog>
-
-			<BaseDialog title="Atualizar meios de contato" ref="formContacts">
-				<FormProfile type="contacts" />
-			</BaseDialog>
-
-			<BaseDialog title="Atualizar informações de saúde" ref="formHealth">
-				<FormProfile type="health" />
-			</BaseDialog>
-
-			<BaseDialog title="Atualizar dados profissionais" ref="formProfessional">
-				<FormProfile type="professional" />
+			<BaseDialog :title="formTitle" ref="dialogForm">
+				<FormProfile :type="formType" ref="formProfile" @handled-submit="handleSubmit"/>
 			</BaseDialog>
 		</main>
 	</div>
