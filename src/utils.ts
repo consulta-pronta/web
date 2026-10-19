@@ -72,3 +72,5 @@ export const timestampDiffSeconds = (start: Timestamp, end: Timestamp) =>
 
 export const timestampDiffDays = (start: Timestamp, end: Timestamp) =>
 	timestampDiffSeconds(start, end) / (60 * 60 * 24)
+
+export const formatCRM = (crm: string, uf: string) => `${crm}/${uf}`

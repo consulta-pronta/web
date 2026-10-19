@@ -6,12 +6,14 @@ import {
 	getDoc,
 	getDocs,
 	and,
+	collectionGroup,
 	query,
 	setDoc,
 	updateDoc,
 	type DocumentSnapshot,
 	type QueryCompositeFilterConstraint,
 	type QueryConstraint,
+	type Query,
 } from "firebase/firestore"
 
 export type DocumentData = Record<string, undefined>
@@ -50,6 +52,10 @@ export default abstract class BaseDocument {
 		return collection(db, this.getCollectionPath(options.scope))
 	}
 
+	static collectionGroup() {
+		return collectionGroup(db, this.collectionName)
+	}
+
 	static emptyRef(options: CollectionOptions = {}) {
 		return doc(this.collection(options))
 	}
@@ -58,14 +64,20 @@ export default abstract class BaseDocument {
 		return doc(this.collection(options), id)
 	}
 
-	static fromDocument<T extends BaseDocument>(doc: DocumentSnapshot) {
-		if (!doc.exists()) {
+	static fromDocument<T extends BaseDocument>(snapshot: DocumentSnapshot) {
+		if (!snapshot.exists()) {
 			return null
 		}
-		return this.documentConverter(doc.id, doc.data()) as T
+		return this.documentConverter(snapshot.id, snapshot.data(), snapshot) as T
 	}
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	protected static documentConverter(id: string, data: DocumentData): BaseDocument {
+	
+	protected static documentConverter(
+		id: string,
+		data: DocumentData,
+		snapshot?: DocumentSnapshot,
+	): BaseDocument {
+		// apenas para sumir o erro
+		console.log(id, data, snapshot)
 		throw new Error("implement this >:(")
 	}
 
@@ -79,18 +91,21 @@ export default abstract class BaseDocument {
 	}
 
 	static async getAll(options: QueryOptions = {}) {
-		const collectionQuery = query(
-			this.collection(options),
-			...(options.constraints ?? []),
-		)
+		return this.getAllFromQuery(this.collection(options), options)
+	}
+
+	static async getAllFromCollectionGroup(options: QueryOptions = {}) {
+		return this.getAllFromQuery(this.collectionGroup(), options)
+	}
+
+	private static async getAllFromQuery(target: Query, options: QueryOptions) {
+		const collectionQuery = query(target, ...(options.constraints ?? []))
 		const compositeConstraints = options.compositeConstraints ?? []
 		const constrainedQuery =
 			compositeConstraints.length > 0
 				? query(collectionQuery, and(...compositeConstraints))
 				: collectionQuery
-
 		const snapshot = await getDocs(constrainedQuery)
-
 		const documents = snapshot.docs
 			.map((doc) => this.fromDocument(doc))
 			.filter((item) => item !== null)

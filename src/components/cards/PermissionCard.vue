@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import BaseButton from "@/components/bases/BaseButton.vue"
 import Professional from "@/database/professional.model"
-import { formatToPhone } from "brazilian-values"
+import Patient from "@/database/patient.model"
+import { formatToCPF, formatToPhone } from "brazilian-values"
 import BaseDialog from "@/components/bases/BaseDialog.vue"
 import { computed, ref, useTemplateRef } from "vue"
 import MedicalPermission from "@/database/medicalPermission.model"
@@ -10,7 +11,6 @@ import type {
 	MedicalPermissions,
 } from "@/database/medicalPermission.model"
 import FormMedicalPermission from "@/components/forms/FormMedicalPermission.vue"
-import { computedAsync } from "@vueuse/core"
 import { useAuthStore } from "@/stores/authStore"
 
 const props = defineProps<{
@@ -24,12 +24,9 @@ const managePermissionsVisible = useTemplateRef("managePermissionsDialog")
 const status = ref(props.medicalPermission.status)
 const permissions = ref(props.medicalPermission.permissions)
 
-const professional = computedAsync(
-	async () => await Professional.get(props.medicalPermission.id) as Professional,
-	new Professional(),
-)
+const user = ref<Patient | Professional | null>(null)
 
-const handleSubmit = async (updatedPermission: {
+const updatePermissions = async (updatedPermission: {
 	status: MedicalAccessStatus
 	permissions: MedicalPermissions
 }) => {
@@ -40,13 +37,22 @@ const handleSubmit = async (updatedPermission: {
 		? { permissions: permissions.value }
 		: { status: status.value, permissions: permissions.value }
 	await authStore.onReady(async (user) => {
-		MedicalPermission.update(
+		await MedicalPermission.update(
 			props.medicalPermission.id,
 			data,
-			{ scope: { patientId: user.id} }
+			{ scope: { patientId: props.medicalPermission.patient_id || user.id } },
 		)
 	})
 	managePermissionsVisible.value?.hide()
+}
+
+const acceptRequest = async () => {
+	try {
+		await props.medicalPermission.acceptRequest()
+		status.value = "active"
+	} catch (error) {
+		console.error("Failed to accept medical permission request.", error)
+	}
 }
 
 const headHeaderStyle = computed(() => {
@@ -60,6 +66,16 @@ const headHeaderStyle = computed(() => {
 		default:
 			return "bg-black/70 text-textLight"
 	}
+})
+const subtitleLabel = computed(() => {
+	if (user.value instanceof Patient) {
+		return formatToCPF(user.value.cpf)
+	}
+	if (user.value instanceof Professional) {
+		return user.value.getFormattedCRM()
+	}
+
+	return "error!"
 })
 const statusLabel = computed(() => {
 	switch (status.value) {
@@ -80,6 +96,14 @@ const amountOfPermissionsLabel = computed(() => {
 		? "Todas as permissões ativas"
 		: `${omgSoTrue.length} permissões ativas`
 })
+
+authStore.onReady(async (data) => {
+	user.value = await (
+		data.user_type === "patient"
+		? Professional.get(props.medicalPermission.id)
+		: Patient.get(props.medicalPermission.patient_id)
+	)
+})
 </script>
 
 <template>
@@ -89,14 +113,20 @@ const amountOfPermissionsLabel = computed(() => {
 			:class="headHeaderStyle"
 		>
 			{{ statusLabel }}
-				<!-- <div class="material-symbols-rounded bg-surface p-0.5 rounded-lg h-fit shadow hover:-translate-0.5 duration-100 hover:brightness-95 cursor-pointer">
-					more_horiz
-				</div> -->
+			<BaseButton
+				v-if="user instanceof Patient && status === 'pending'"
+				theme="primary"
+				icon="check"
+				class="px-3"
+				@click="acceptRequest"
+			>
+				Aceitar
+			</BaseButton>
 		</div>
 		<section class="px-3 pb-3 flex flex-col gap-3">
 			<header>
-				<h1 class="text-lg font-medium">{{ professional.name }}</h1>
-				<h2>{{ `${professional.professional_data?.crm}/${professional.professional_data?.uf}` }}</h2>
+				<h1 class="text-lg font-medium">{{ user?.name }}</h1>
+				<h2>{{ subtitleLabel }}</h2>
 			</header>
 
 			<div class="grid grid-cols-2 *:flex *:gap-2 [&_a]:hover:underline">
@@ -105,8 +135,8 @@ const amountOfPermissionsLabel = computed(() => {
 					Telefone:
 				</p>
 				<p>
-					<a :href="'tel:+' + professional.phone">
-						{{ formatToPhone(professional.phone) }}
+					<a :href="'tel:+' + user?.phone">
+						{{ user?.phone ? formatToPhone(user.phone) : "" }}
 					</a>
 				</p>
 				<p>
@@ -115,22 +145,36 @@ const amountOfPermissionsLabel = computed(() => {
 				</p>
 				<p>
 					<a
-						:href="'mailto:' + professional.email"
+						:href="'mailto:' + user?.email"
 						class="wrap-anywhere"
 					>
-						{{ professional.email }}
+						{{ user?.email }}
 					</a>
 				</p>
-				<p>
-					<i class="material-symbols-rounded">home_health</i>
-					Local de atuação:
-				</p>
-				<p>{{ professional.professional_data?.operation_area }}</p>
+				<template v-if="user instanceof Professional || false">
+					<p>
+						<i class="material-symbols-rounded">home_health</i>
+						Local de atuação:
+					</p>
+					<p>{{ user.professional_data?.operation_area }}</p>
+				</template>
 			</div>
 
 			<p>{{ amountOfPermissionsLabel }} </p>
 
-			<BaseButton mode="outline" @click="managePermissionsVisible?.toggle()">
+			<BaseButton
+				v-if="user instanceof Patient || false"
+				mode="outline"
+				@click="managePermissionsVisible?.toggle()"
+			>
+				<i class="material-symbols-rounded text-primary text!">lock_open</i>
+				Visualizar permissões
+			</BaseButton>
+			<BaseButton
+				v-else
+				mode="outline"
+				@click="managePermissionsVisible?.toggle()"
+			>
 				<i class="material-symbols-rounded text-primary text!">lock_open</i>
 				Gerenciar permissões
 			</BaseButton>
@@ -139,10 +183,10 @@ const amountOfPermissionsLabel = computed(() => {
 	
 
 	<Teleport to="body">
-		<BaseDialog ref="managePermissionsDialog" :title="'Permissões de ' + professional.name">
+		<BaseDialog ref="managePermissionsDialog" :title="'Permissões de ' + user?.name">
 			<FormMedicalPermission
 				:medical-permission="medicalPermission"
-				@handled-submit="handleSubmit"
+				@handled-submit="updatePermissions"
 			/>
 		</BaseDialog>
 	</Teleport>

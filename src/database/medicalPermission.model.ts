@@ -1,4 +1,8 @@
-import { serverTimestamp, type Timestamp } from "firebase/firestore"
+import {
+	serverTimestamp,
+	type DocumentSnapshot,
+	type Timestamp,
+} from "firebase/firestore"
 import BaseDocument, {
 	type CollectionOptions,
 	type CollectionScope,
@@ -19,8 +23,8 @@ export type MedicalAccessStatus = "pending" | "active" | "revoked"
 
 export default class MedicalPermission extends BaseDocument {
 	constructor(
-		public readonly id: string = "", // id of professional
-		// public readonly patient_id: string = "",
+		public readonly id: string = "",
+		public readonly patient_id: string = "",
 		public status: MedicalAccessStatus = "revoked",
 		public permissions: MedicalPermissions = {
 			read_records: false,
@@ -40,14 +44,19 @@ export default class MedicalPermission extends BaseDocument {
 	protected static getCollectionPath(scope?: CollectionScope): string {
 		const patientId = scope?.patientId
 		if (!patientId) {
-			throw new Error("MedicalPermission requires scope.userId")
+			throw new Error("MedicalPermission requires scope.patientId")
 		}
 		return User.resolvePath(patientId, this.collectionName)
 	}
 
-	protected static documentConverter(id: string, data: DocumentData): MedicalPermission {
+	protected static documentConverter(
+		id: string,
+		data: DocumentData,
+		snapshot: DocumentSnapshot,
+	): MedicalPermission {
 		return new MedicalPermission(
 			id,
+			snapshot.ref.parent.parent?.id,
 			data.status,
 			data.permissions,
 			data.created_at,
@@ -72,7 +81,7 @@ export default class MedicalPermission extends BaseDocument {
 		const existingRequest = await this.get(professionalId, options)
 		if (existingRequest) { return false }
 
-		const request = new MedicalPermission(professionalId, "pending")
+		const request = new MedicalPermission(professionalId, patientId, "pending")
 		await this.set(request.toMap(), { scope: {
 			patientId, id: professionalId
 		}})
@@ -88,6 +97,22 @@ export default class MedicalPermission extends BaseDocument {
 	toggleAcess() { this.status = this.canAcess() ? "revoked" : "active" }
 	canAcess() { return this.status === "active" }
 	isPending() { return this.status === "pending" }
+
+	async acceptRequest() {
+		if (!this.isPending()) {
+			return
+		}
+
+		await MedicalPermission.update(
+			this.id,
+			{
+				status: <MedicalAccessStatus>"active",
+				granted_at: serverTimestamp(),
+				revoked_at: null,
+			},
+			{ scope: { patientId: this.patient_id } },
+		)
+	}	
 
 	async getProfessional() {
 		return await Professional.get(this.id)
