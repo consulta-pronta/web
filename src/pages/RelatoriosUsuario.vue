@@ -74,11 +74,9 @@ authStore.onReady(async () => {
 			</div>
 		</main>
 
-		<!--Form Registro-->
 		<BaseDialog title="Gerar Relatório" ref="formRegister">
 			<FormReport @handled-submit="handleSubmit" />
 		</BaseDialog>
-		<!--Fim Form Registro-->
 	</div>
 </template>
 

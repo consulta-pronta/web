@@ -1,9 +1,19 @@
 <script setup lang="ts">
-import { ref } from "vue"
+import { ref, useTemplateRef } from "vue"
 import NavBar from "@/components/NavBar.vue"
-import FilterOrd from "@/components/FilterOrd.vue";
-import BaseButton from "@/components/bases/BaseButton.vue";
+import FilterOrd from "@/components/FilterOrd.vue"
+import BaseButton from "@/components/bases/BaseButton.vue"
+import BaseDialog from "@/components/bases/BaseDialog.vue"
+import FormConsulta from "@/components/forms/FormConsulta.vue"
+import FormInformacoes from "@/components/forms/FormInformacoes.vue"
 
+const formPropor = useTemplateRef("formPropor")
+const formInformacoes = useTemplateRef("formInformacoes")
+
+const handleSubmit = async () => {
+	formPropor.value?.hide()
+	formInformacoes.value?.hide()
+}
 </script>
 
 <template>
@@ -84,6 +94,7 @@ import BaseButton from "@/components/bases/BaseButton.vue";
 
 										<button
 											class="flex-shrink-0 border border-textLight text-textLight text-sm rounded-full px-5 py-1.5 hover:bg-white/10 transition-colors"
+											@click="formInformacoes?.toggle()"
 										>
 											Visualizar
 										</button>
@@ -146,6 +157,7 @@ import BaseButton from "@/components/bases/BaseButton.vue";
 								icon="add_circle_outline"
 								icon-position="right"
 								class="h-7 rounded-full! border px-3 text-base mt-3"
+								@click="formPropor?.toggle()"
 							>
 								Propor nova consulta
 							</BaseButton>
@@ -154,5 +166,27 @@ import BaseButton from "@/components/bases/BaseButton.vue";
 				</section>
 			</article>
 		</main>
+		<BaseDialog title="Propor Nova Consulta" ref="formPropor" theme="dark">
+			<FormConsulta @handled-submit="handleSubmit" />
+		</BaseDialog>
+		<BaseDialog title="Propor Nova Consulta" ref="formInformacoes" theme="dark">
+			<FormInformacoes @handled-submit="handleSubmit" />
+		</BaseDialog>
 	</div>
 </template>
+
+<style scoped>
+	@reference "@/assets/main.css";
+
+	.dialog {
+		@apply absolute inset-0 w-full h-full
+				bg-black/80
+				flex justify-center place-items-center
+				z-50;
+	}
+
+	td,
+	th {
+		@apply p-3 text-center;
+	}
+</style>
