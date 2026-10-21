@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import BaseButton from "@/components/bases/BaseButton.vue"
-import { ref } from "vue"
+import { computed, ref } from "vue"
 import type MedicalPermission from "@/database/medicalPermission.model"
 import type {
 	MedicalAccessStatus,
@@ -21,11 +21,16 @@ const permission = ref({
 	permissions: { ...props.medicalPermission.permissions },
 })
 
+const isSwitchDisabled = computed(() => permission.value.status === "pending")
+
 const submitForm = () => {
-	emit("handled-submit", {
-		status: permission.value.status,
-		permissions: { ...permission.value.permissions },
-	})
+	const permissions = { ...permission.value.permissions }
+	const thing = props.medicalPermission.isPending()
+		? { status: <MedicalAccessStatus>"pending", permissions }
+		: { status: permission.value.status, permissions }
+	
+	emit("handled-submit", thing)
+	permission.value = thing
 }
 </script>
 
@@ -37,11 +42,12 @@ const submitForm = () => {
 				label1="Ativo"
 				label2="Revogado"
 				:value1="<MedicalAccessStatus>'active'"
-				:value2="<MedicalAccessStatus>'pending'"
-				:disabled="medicalPermission.isPending()"
+				:value2="<MedicalAccessStatus>'revoked'"
+				:disabled="isSwitchDisabled"
+				v-model="permission.status"
 				class="m-auto"
 			/>
-			<p class="m-auto text-error" v-if="medicalPermission.isPending()">
+			<p class="m-auto text-error" v-if="isSwitchDisabled">
 				Status pendente, não há como mudar o acesso
 			</p>
 		</label>
