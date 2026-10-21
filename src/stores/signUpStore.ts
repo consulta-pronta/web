@@ -22,7 +22,7 @@ export type PasswordRules = {
 export const minPasswordLength = 8
 export const maxPasswordLength = 4096
 
-const emptyProfessionalData = () => ({ crm: "", uf: "", operation_area: "" })
+const emptyProfessionalData = () => ({ crm: "", uf: "", operation_area: "", specialty: "" })
 const emptyPatientData = () => ({ weight: "", height: "", blood_type: "" })
 
 export const useSignUpStore = defineStore("sign_up", () => {
@@ -35,6 +35,10 @@ export const useSignUpStore = defineStore("sign_up", () => {
 	const professionalData = ref(emptyProfessionalData())
 	const patientData = ref(emptyPatientData())
 	const userType = ref<UserType>("patient")
+	const birth_date = ref("")
+	const gender = ref("")
+	const biological_sex = ref("")
+	const address = ref("")
 
 	const rules = computed(
 		() =>
@@ -61,6 +65,10 @@ export const useSignUpStore = defineStore("sign_up", () => {
 		professionalData.value = emptyProfessionalData()
 		patientData.value = emptyPatientData()
 		userType.value = "patient"
+		birth_date.value = ""
+		gender.value = ""
+		biological_sex.value = ""
+		address.value = ""
 	}
 
 	const isCpfInvalid = computed(() => !isCPF(cpf.value))
@@ -79,6 +87,10 @@ export const useSignUpStore = defineStore("sign_up", () => {
 			cpf: cpf.value.replace(/[.\-\s]/g, ""),
 			user_type: userType.value,
 			created_at: Timestamp.now(),
+			birth_date: birth_date.value,
+			gender: gender.value,
+			biological_sex: biological_sex.value,
+			address: address.value,
 		}
 
 		const userCredential = await createUserWithEmailAndPassword(
@@ -113,6 +125,10 @@ export const useSignUpStore = defineStore("sign_up", () => {
 		professionalData,
 		patientData,
 		phone,
+		birth_date,
+		gender,
+		biological_sex,
+		address,
 		userType,
 		rules,
 		isPasswordInvalid,

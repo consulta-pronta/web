@@ -16,6 +16,10 @@ export default class User extends BaseDocument {
 		public cpf: string = "",
 		public user_type: UserType = "patient",
 		public created_at: Timestamp | null = null,
+		public birth_date: string = "",
+		public gender: string = "",
+		public biological_sex: string = "",
+		public address: string = "",
 	) {
 		super()
 	}
@@ -31,6 +35,10 @@ export default class User extends BaseDocument {
 			data.cpf,
 			data.user_type,
 			data.created_at,
+			data.birth_date,
+			data.gender,
+			data.biological_sex,
+			data.address,
 		)
 	}
 
@@ -76,6 +84,10 @@ export default class User extends BaseDocument {
 			cpf: this.cpf,
 			user_type: this.user_type,
 			created_at: serverTimestamp(),
+			birth_date: this.birth_date,
+			gender: this.gender,
+			biological_sex: this.biological_sex,
+			address: this.address,
 		}
 	}
 }

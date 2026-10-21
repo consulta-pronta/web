@@ -7,6 +7,8 @@ import { type ButtonState } from '@/components/bases/BaseButton.vue'
 import { ref } from 'vue'
 import User from '@/database/user.model'
 import { formatToPhone } from 'brazilian-values'
+import { bloodTypes } from '@/utils'
+import Patient from '@/database/patient.model'
 
 interface Props {
 	type?: "personal" | "contacts" | "health" | "professional"
@@ -20,6 +22,9 @@ const authStore = useAuthStore()
 
 const email = ref('')
 const phone = ref('')
+const height = ref('')
+const weight = ref('')
+const blood_type = ref('')
 const buttonState = ref<ButtonState>("enabled")
 
 const emit = defineEmits(["handled-submit"])
@@ -30,6 +35,8 @@ const submitForm = async () => {
 	await authStore.onReady(async (user) => {
 		if (props.type === 'contacts') {
 			await User.update(user.id, { email: email.value, phone: (phone.value.replace(/[\(\)\-\s]/g, "")) })
+		} else if (props.type === 'health') {
+			await Patient.update(user.id, { patient_data: { blood_type: blood_type.value, height: height.value, weight: weight.value } })
 		}
 	})
 
@@ -42,6 +49,11 @@ const reset = async () => {
 		if (user instanceof User) {
 			email.value = user.email
 			phone.value = formatToPhone(user.phone)
+		}
+		if (user instanceof Patient) {
+			blood_type.value = user.patient_data?.blood_type ? user.patient_data.blood_type : ''
+			height.value = user.patient_data?.height ? user.patient_data.height.toString() : ''
+			weight.value = user.patient_data?.weight ? user.patient_data.weight.toString() : ''
 		}
 	})
 }
@@ -112,13 +124,14 @@ reset()
 		</BaseButton>
 	</form>
 
-	<form v-if="type === 'health'" @submit.prevent class="flex flex-col gap-4 z-48">
+	<form v-if="type === 'health'" @submit.prevent="submitForm()" class="flex flex-col gap-4 z-48">
 		<label>
 			<p>Peso</p>
 			<BaseInput
 				type="text"
-				placeholder="Digite seu peso em quilogramas"
+				placeholder="Peso em quilogramas"
 				theme="light"
+				v-model="weight"
 				required
 			/>
 		</label>
@@ -126,28 +139,26 @@ reset()
 		<label>
 			<p>Altura</p>
 			<BaseInput
-				type="number"
-				placeholder="Digite sua altura em centímetros"
+				type="text"
+				placeholder="Altura em centímetros"
 				theme="light"
+				v-model="height"
 				required
 			/>
 		</label>
 
 		<label>
 			<p>Típo sanguíneo</p>
-			<BaseSelect defaultValue="Selecione o tipo sanguíneo" required>
-				<option>A</option>
-				<option>B</option>
-				<option>AB</option>
-				<option>O</option>
-			</BaseSelect>
-		</label>
-
-		<label>
-			<p>Rh</p>
-			<BaseSelect defaultValue="Selecione o Rh" required>
-				<option>+</option>
-				<option>-</option>
+			<BaseSelect
+				default-value="Tipo Sanguíneo"
+				icon="bloodtype"
+				theme="light"
+				v-model="blood_type"
+				required
+			>
+				<template v-for="tipo in bloodTypes" :key="tipo">
+					<option :value="tipo">{{ tipo }}</option>
+				</template>
 			</BaseSelect>
 		</label>
 

@@ -49,6 +49,8 @@ export const symptomPlaces = [
 	"Vagina",
 	"Pênis",
 ] as const
+export const sexTypes = ["Masculino", "Feminino", "Intersexo", "Prefiro não informar"] as const
+export const genderTypes = ["Homem cisgênero", "Mulher cisgênero", "Homem transexual", "Mulher transexual", "Pessoa não binária", "Prefiro não informar"]
 export const bloodTypes = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"] as const
 export const userTypes = ["patient", "professional", "admin"] as const
 export const DATE_NOT_PROVIDED = "Data não informada"

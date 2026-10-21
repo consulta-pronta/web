@@ -19,6 +19,10 @@ export default class Patient extends User {
 		public user_type: UserType = "patient",
 		public patient_data: PatientData | null = null,
 		public created_at: Timestamp | null = null,
+		public birth_date: string = "",
+		public gender: string = "",
+		public biological_sex: string = "",
+		public address: string = "",
 	) {
 		super()
 	}
@@ -33,6 +37,10 @@ export default class Patient extends User {
 			"patient",
 			this.getPatientData(data),
 			data.created_at,
+			data.birth_date,
+			data.gender,
+			data.biological_sex,
+			data.address,
 		)
 	}
 
@@ -56,6 +64,10 @@ export default class Patient extends User {
 			user_type: this.user_type,
 			patient_data: this.patient_data,
 			created_at: serverTimestamp(),
+			birth_date: this.birth_date,
+			gender: this.gender,
+			biological_sex: this.biological_sex,
+			address: this.address,
 		}
 	}
 }
