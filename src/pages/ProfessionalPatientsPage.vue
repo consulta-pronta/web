@@ -2,34 +2,40 @@
 import { ref, watch } from "vue"
 import NavBar from "@/components/NavBar.vue"
 import BaseInput from "@/components/bases/BaseInput.vue"
-import PatientCard from "@/components/cards/PatientCard.vue"
+import PermissionCard from "@/components/cards/PermissionCard.vue"
 import { useAuthStore } from "@/stores/authStore"
-//import { getAllPatients } from "@/services/symptomService" // tem que criar isso aqui
+import MedicalPermission from "@/database/medicalPermission.model"
 import PatientExtended from "@/components/PatientExtended.vue"
 import { useRoute } from "vue-router"
 import router from "@/router"
 
-interface Paciente {
-    id: string
-    nome: string
-    cpf: string
-    priority: number
-    proximaConsulta: string | null
-}
-
 const route = useRoute()
 const authStore = useAuthStore()
 
-const patients = ref<Paciente[]>([])
+const medicalPermissions = ref<MedicalPermission[]>([])
+const loading = ref(true)
+const loadMessage = ref("")
 const currentPatientId = ref<string>("")
 
 const rootPath = "/" + route.path.split("/")[1]
 
-// let userId = ""
-
 const updatePatients = async () => {
-	patients.value = []
-	//patients.value = await getAllPatients(userId)
+	loading.value = true
+	loadMessage.value = ""
+
+	try {
+		await authStore.onReady(async (professional) => {
+			medicalPermissions.value = await MedicalPermission.getAllForProfessional(professional.id)
+		})
+		if (medicalPermissions.value.length === 0) {
+			loadMessage.value = "Nenhum paciente com permissão médica encontrado."
+		}
+	} catch (error) {
+		console.error("Failed to load professional's medical permissions.", error)
+		loadMessage.value = "Não foi possível carregar os pacientes."
+	} finally {
+		loading.value = false
+	}
 }
 
 const viewPatient = (patientId: string) => {
@@ -45,24 +51,10 @@ watch(currentPatientId, (value) => {
 })
 
 authStore.onReady(async () => {
-	// userId = data.id
 	currentPatientId.value = route.params.id as string
 
-	updatePatients()
+	await updatePatients()
 })
-
-const pacientes: Paciente[] = [
-    { id: '1', nome: 'Cláudio Silva', cpf: '321.654.987-01', priority: 9, proximaConsulta: '07/10/2026 às 09:00' },
-    { id: '2', nome: 'Joana Neto', cpf: '458.712.630-55', priority: 3, proximaConsulta: '12/10/2026 às 14:30' },
-    { id: '3', nome: 'Marcos Oliveira', cpf: '902.317.884-20', priority: 6, proximaConsulta: null },
-    { id: '4', nome: 'Fernanda Souza', cpf: '187.449.253-76', priority: 8, proximaConsulta: '06/10/2026 às 16:00' },
-    { id: '5', nome: 'Rafael Almeida', cpf: '574.093.118-39', priority: 1, proximaConsulta: '20/10/2026 às 10:15' },
-    { id: '6', nome: 'Patrícia Lima', cpf: '263.581.907-64', priority: 5, proximaConsulta: null },
-    { id: '7', nome: 'Ana Costa', cpf: '719.826.340-18', priority: 10, proximaConsulta: '05/10/2026 às 08:30' },
-    { id: '8', nome: 'Pedro Lima', cpf: '630.254.791-82', priority: 4, proximaConsulta: '15/10/2026 às 11:00' },
-    { id: '9', nome: 'Maria Oliveira', cpf: '845.173.026-47', priority: 7, proximaConsulta: '09/10/2026 às 13:45' },
-    { id: '10', nome: 'Carlos Souza', cpf: '396.708.512-93', priority: 2, proximaConsulta: null },
-]
 </script>
 
 <template>
@@ -94,7 +86,7 @@ const pacientes: Paciente[] = [
 					class="text-textLight text-2xl"
 					:class="[!currentPatientId ? '' : 'hidden lg:flex']"
 				>
-					{{ pacientes.length }} Pacientes
+					{{ medicalPermissions.length }} Pacientes
 				</p>
 				<br />
 
@@ -104,26 +96,30 @@ const pacientes: Paciente[] = [
 				>
 					<!-- List -->
 					<ul
-						v-if="pacientes.length"
+						v-if="medicalPermissions.length"
 						class="w-full md:flex-1 max-h-full overflow-hidden grid grid-cols-[repeat(auto-fill,minmax(20em,1fr))] gap-4 overflow-y-auto"
 						:class="[!currentPatientId ? '' : 'hidden md:flex md:flex-col md:min-w-80']"
 					>
-						<template v-for="paciente in pacientes" :key="paciente.id">
-							<PatientCard
-								:patient="paciente"
-								theme="light"
-								class="w-full cursor-pointer"
-								@click="viewPatient(paciente.id)"
+						<template
+							v-for="permission in medicalPermissions"
+							:key="permission.patient_id"
+						>
+							<PermissionCard
+								:medical-permission="permission"
+								class="w-full"
 							/>
 						</template>
 					</ul>
-					<template v-else>
+					<p v-else-if="loading" class="text-textLight m-auto">
 						<span
 							class="material-symbols-rounded animate-spin text-accent w-fit m-auto"
 						>
 							sync
 						</span>
-					</template>
+					</p>
+					<p v-else-if="loadMessage" class="text-textLight m-auto">
+						{{ loadMessage }}
+					</p>
 
 					<!-- Details -->
 					<section

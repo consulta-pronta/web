@@ -91,6 +91,11 @@ export default class MedicalPermission extends BaseDocument {
 	static async get(id: string, options: CollectionOptions = {}) {
 		return super.get(id, options) as Promise<MedicalPermission | null>
 	}
+
+	static async getAllForProfessional(professionalId: string) {
+		const permissions = (await this.getAllFromCollectionGroup()) as MedicalPermission[]
+		return permissions.filter((permission) => permission.id === professionalId)
+	}
 	
 	grant() { this.status = "active" }
 	revoke() { this.status = "revoked" }
