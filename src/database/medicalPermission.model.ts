@@ -1,5 +1,6 @@
 import {
 	serverTimestamp,
+	where,
 	type DocumentSnapshot,
 	type Timestamp,
 } from "firebase/firestore"
@@ -8,6 +9,7 @@ import BaseDocument, {
 	type CollectionScope,
 	type DocumentData,
 	type FormData,
+	type QueryOptions,
 } from "./baseDocument"
 import User from "./user.model"
 import Professional from "./professional.model"
@@ -25,6 +27,7 @@ export default class MedicalPermission extends BaseDocument {
 	constructor(
 		public readonly id: string = "",
 		public readonly patient_id: string = "",
+		public readonly professional_id: string = "",
 		public status: MedicalAccessStatus = "revoked",
 		public permissions: MedicalPermissions = {
 			read_records: false,
@@ -57,6 +60,7 @@ export default class MedicalPermission extends BaseDocument {
 		return new MedicalPermission(
 			id,
 			snapshot.ref.parent.parent?.id,
+			data.professional_id,
 			data.status,
 			data.permissions,
 			data.created_at,
@@ -68,6 +72,7 @@ export default class MedicalPermission extends BaseDocument {
 	toMap(): FormData {
 		return {
 			status: this.status,
+			professional_id: this.professional_id,
 			permissions: this.permissions,
 			created_at: serverTimestamp(),
 			granted_at: this.status === "active" ? serverTimestamp() : null,
@@ -92,9 +97,17 @@ export default class MedicalPermission extends BaseDocument {
 		return super.get(id, options) as Promise<MedicalPermission | null>
 	}
 
+	static async getAllFromCollectionGroup(options?: QueryOptions) {
+		return await super.getAllFromCollectionGroup(options) as MedicalPermission[]
+	}
+
 	static async getAllForProfessional(professionalId: string) {
-		const permissions = (await this.getAllFromCollectionGroup()) as MedicalPermission[]
-		return permissions.filter((permission) => permission.id === professionalId)
+		const permissions = await this.getAllFromCollectionGroup({
+			constraints: [
+				where("professional_id", "==", professionalId),
+			]
+		})
+		return permissions
 	}
 	
 	grant() { this.status = "active" }

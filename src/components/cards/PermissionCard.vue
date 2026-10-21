@@ -108,6 +108,7 @@ authStore.onReady(async (data) => {
 
 <template>
 	<article class="bg-surface min-w-fit rounded-lg overflow-clip text-textDark">
+		
 		<div
 			class="w-full flex justify-between items-center p-3 mb-2"
 			:class="headHeaderStyle"
@@ -128,7 +129,6 @@ authStore.onReady(async (data) => {
 				<h1 class="text-lg font-medium">{{ user?.name }}</h1>
 				<h2>{{ subtitleLabel }}</h2>
 			</header>
-
 			<div class="grid grid-cols-2 *:flex *:gap-2 [&_a]:hover:underline">
 				<p>
 					<i class="material-symbols-rounded">phone</i>
@@ -159,35 +159,31 @@ authStore.onReady(async (data) => {
 					<p>{{ user.professional_data?.operation_area }}</p>
 				</template>
 			</div>
-
 			<p>{{ amountOfPermissionsLabel }} </p>
-
 			<BaseButton
-				v-if="user instanceof Patient || false"
 				mode="outline"
 				@click="managePermissionsVisible?.toggle()"
 			>
-				<i class="material-symbols-rounded text-primary text!">lock_open</i>
-				Visualizar permissões
-			</BaseButton>
-			<BaseButton
-				v-else
-				mode="outline"
-				@click="managePermissionsVisible?.toggle()"
-			>
-				<i class="material-symbols-rounded text-primary text!">lock_open</i>
-				Gerenciar permissões
+				<i class="material-symbols-rounded text-primary text!">
+					{{ user instanceof Patient ? "visibility" : "lock_open" }}
+				</i>
+				{{ (user instanceof Patient ? "Visualizar" : "Gerenciar") + " permissões" }}
 			</BaseButton>
 		</section>
-	</article>
 	
-
-	<Teleport to="body">
-		<BaseDialog ref="managePermissionsDialog" :title="'Permissões de ' + user?.name">
-			<FormMedicalPermission
-				:medical-permission="medicalPermission"
-				@handled-submit="updatePermissions"
-			/>
-		</BaseDialog>
-	</Teleport>
+		<Teleport to="body">
+			<BaseDialog ref="managePermissionsDialog" :title="'Permissões de ' + user?.name">
+				<FormMedicalPermission
+					v-if="user instanceof Professional || false"
+					:medical-permission="medicalPermission"
+					@handled-submit="updatePermissions"
+				/>
+				<div
+					v-else
+				>
+					<p>Não vai</p>
+				</div>
+			</BaseDialog>
+		</Teleport>
+	</article>
 </template>

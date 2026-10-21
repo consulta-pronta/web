@@ -97,7 +97,7 @@ authStore.onReady(async () => {
 					<!-- List -->
 					<ul
 						v-if="medicalPermissions.length"
-						class="w-full md:flex-1 max-h-full overflow-hidden grid grid-cols-[repeat(auto-fill,minmax(20em,1fr))] gap-4 overflow-y-auto"
+						class="w-full md:flex-1 max-h-full overflow-hidden grid grid-cols-[repeat(auto-fill,minmax(25em,1fr))] gap-4 overflow-y-auto"
 						:class="[!currentPatientId ? '' : 'hidden md:flex md:flex-col md:min-w-80']"
 					>
 						<template
