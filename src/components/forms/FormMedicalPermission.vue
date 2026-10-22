@@ -7,6 +7,7 @@ import type {
 	MedicalPermissions,
 } from "@/database/medicalPermission.model"
 import BaseSwitch from "../bases/BaseSwitch.vue";
+import BaseCardCheck from "../bases/BaseCardCheck.vue";
 
 const props = defineProps<{
 	medicalPermission: MedicalPermission
@@ -70,32 +71,17 @@ const submitForm = () => {
 				</span>
 			</label> -->
 
-			<label class="flex cursor-pointer items-center gap-3 rounded-md bg-surface p-3 text-textDark">
-				<input
-					v-model="permission.permissions.prescribe_medications"
-					type="checkbox"
-					class="accent-primary"
-				/>
-				<span>Prescrever medicamentos</span>
-			</label>
+			<BaseCardCheck v-model="permission.permissions.prescribe_medications">
+				Prescrever medicamentos
+			</BaseCardCheck>
 
-			<label class="flex cursor-pointer items-center gap-3 rounded-md bg-surface p-3 text-textDark">
-				<input
-					v-model="permission.permissions.request_exam"
-					type="checkbox"
-					class="accent-primary"
-				/>
-				<span>Solicitar exames</span>
-			</label>
+			<BaseCardCheck v-model="permission.permissions.request_exam">
+				Solicitar exames
+			</BaseCardCheck>
 
-			<label class="flex cursor-pointer items-center gap-3 rounded-md bg-surface p-3 text-textDark">
-				<input
-					v-model="permission.permissions.request_appointments"
-					type="checkbox"
-					class="accent-primary"
-				/>
-				<span>Solicitar consultas</span>
-			</label>
+			<BaseCardCheck v-model="permission.permissions.request_appointments">
+				Solicitar consultas
+			</BaseCardCheck>
 		</fieldset>
 
 		<BaseButton type="submit" theme="accent">

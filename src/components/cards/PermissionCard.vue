@@ -12,6 +12,7 @@ import type {
 } from "@/database/medicalPermission.model"
 import FormMedicalPermission from "@/components/forms/FormMedicalPermission.vue"
 import { useAuthStore } from "@/stores/authStore"
+import ProfessionalPermissionExtended from "../ProfessionalPermissionExtended.vue"
 
 const props = defineProps<{
 	medicalPermission: MedicalPermission
@@ -182,11 +183,10 @@ authStore.onReady(async (data) => {
 					:medical-permission="medicalPermission"
 					@handled-submit="updatePermissions"
 				/>
-				<div
+				<ProfessionalPermissionExtended
 					v-else
-				>
-					<p>Não vai</p>
-				</div>
+					:permission="medicalPermission"
+				/>
 			</BaseDialog>
 		</Teleport>
 	</article>
