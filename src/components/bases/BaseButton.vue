@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { computed, onMounted } from "vue"
-import { useRouter, useRoute } from "vue-router"
+import { computed, watch } from "vue"
+import { useRoute } from "vue-router"
+import router from "@/router/index.ts"
 
 export type ButtonState = "enabled" | "disabled" | "sync"
 
-interface Props {
+export interface BaseButtonProps {
 	type?: "button" | "submit" | "reset"
 	theme?: "accent" | "primary" | "primaryLight" | "primaryDark" | "textLight" | "error"
 	mode?: "outline" | "fill" | "transparent"
@@ -13,7 +14,7 @@ interface Props {
 	goto?: string
 }
 
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<BaseButtonProps>(), {
 	type: "button",
 	theme: "primary",
 	mode: "fill",
@@ -23,13 +24,12 @@ const stateModel = defineModel<ButtonState>("state", {
 	default: "enabled",
 })
 
-const router = useRouter()
 const route = useRoute()
 
 const isDisabled = computed(() => stateModel.value !== "enabled")
 
 const textColor = computed(() => {
-	if (props.goto === route.path) {
+	if (props.goto === route.path || props.goto === "/" + route.path.split("/")[1]) {
 		return "text-accent"
 	}
 
@@ -71,14 +71,14 @@ const borderColor = computed(() => {
 			return "border-textDark"
 	}
 })
-const backgroundColor = props.mode === "fill" ? props.theme : "transparent"
+const backgroundColor = computed(() => props.mode === "fill" ? props.theme : "transparent")
 
-const dynamicStyle = [
-	`bg-${backgroundColor} ${textColor.value}`,
+const dynamicStyle = computed(() => [
+	`bg-${backgroundColor.value} ${textColor.value}`,
 	props.mode === "outline" ? `border-2 ${borderColor.value}` : "",
 	props.goto?.length ? "justify-start" : "justify-center",
 	props.iconPosition === "right" ? "flex-row-reverse" : "flex-row",
-]
+])
 
 const redirect = () => {
 	if (props.goto?.length) {
@@ -86,11 +86,11 @@ const redirect = () => {
 	}
 }
 
-onMounted(() => {
-	if (props.goto === "#") {
+watch(() => props.goto, (value) => {
+	if (value === "#") {
 		stateModel.value = "disabled"
 	}
-})
+}, { immediate: true })
 </script>
 
 <template>
