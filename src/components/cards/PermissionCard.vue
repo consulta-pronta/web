@@ -107,9 +107,9 @@ authStore.onReady(async (data) => {
 </script>
 
 <template>
-	<article class="bg-surface min-w-fit rounded-lg overflow-clip text-textDark">
+	<article class="bg-surface min-w-fit rounded-lg overflow-clip text-textDark flex flex-col">
 		
-		<div
+		<header
 			class="w-full flex justify-between items-center p-3 mb-2"
 			:class="headHeaderStyle"
 		>
@@ -123,52 +123,56 @@ authStore.onReady(async (data) => {
 			>
 				Aceitar
 			</BaseButton>
-		</div>
-		<section class="px-3 pb-3 flex flex-col gap-3">
-			<header>
+		</header>
+		<section class="px-3 pb-3 flex flex-col gap-3 justify-between">
+			<div>
 				<h1 class="text-lg font-medium">{{ user?.name }}</h1>
-				<h2>{{ subtitleLabel }}</h2>
-			</header>
-			<div class="grid grid-cols-2 *:flex *:gap-2 [&_a]:hover:underline">
-				<p>
-					<i class="material-symbols-rounded">phone</i>
-					Telefone:
-				</p>
-				<p>
-					<a :href="'tel:+' + user?.phone">
-						{{ user?.phone ? formatToPhone(user.phone) : "" }}
-					</a>
-				</p>
-				<p>
-					<i class="material-symbols-rounded">email</i>
-					Email:
-				</p>
-				<p>
-					<a
-						:href="'mailto:' + user?.email"
-						class="wrap-anywhere"
-					>
-						{{ user?.email }}
-					</a>
-				</p>
-				<template v-if="user instanceof Professional || false">
+				<h2 class="mb-3">{{ subtitleLabel }}</h2>
+
+				<div class="grid grid-cols-2 *:flex *:gap-2 [&_a]:hover:underline">
 					<p>
-						<i class="material-symbols-rounded">home_health</i>
-						Local de atuação:
+						<i class="material-symbols-rounded">phone</i>
+						Telefone:
 					</p>
-					<p>{{ user.professional_data?.operation_area }}</p>
-				</template>
+					<p>
+						<a :href="'tel:+' + user?.phone">
+							{{ user?.phone ? formatToPhone(user.phone) : "" }}
+						</a>
+					</p>
+					<p>
+						<i class="material-symbols-rounded">email</i>
+						Email:
+					</p>
+					<p>
+						<a
+							:href="'mailto:' + user?.email"
+							class="wrap-anywhere"
+						>
+							{{ user?.email }}
+						</a>
+					</p>
+					<template v-if="user instanceof Professional || false">
+						<p>
+							<i class="material-symbols-rounded">home_health</i>
+							Local de atuação:
+						</p>
+						<p>{{ user.professional_data?.operation_area }}</p>
+					</template>
+				</div>
 			</div>
-			<p>{{ amountOfPermissionsLabel }} </p>
-			<BaseButton
-				mode="outline"
-				@click="managePermissionsVisible?.toggle()"
-			>
-				<i class="material-symbols-rounded text-primary text!">
-					{{ user instanceof Patient ? "visibility" : "lock_open" }}
-				</i>
-				{{ (user instanceof Patient ? "Visualizar" : "Gerenciar") + " permissões" }}
-			</BaseButton>
+
+			<footer class="flex flex-col gap-2">
+				<p>{{ amountOfPermissionsLabel }} </p>
+				<BaseButton
+					mode="outline"
+					@click="managePermissionsVisible?.toggle()"
+				>
+					<i class="material-symbols-rounded text-primary text!">
+						{{ user instanceof Patient ? "visibility" : "lock_open" }}
+					</i>
+					{{ (user instanceof Patient ? "Visualizar" : "Gerenciar") + " permissões" }}
+				</BaseButton>
+			</footer>
 		</section>
 	
 		<Teleport to="body">
