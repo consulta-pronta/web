@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import BaseButton from "@/components/bases/BaseButton.vue"
-import { ref } from "vue"
+import { computed, ref } from "vue"
 import type MedicalPermission from "@/database/medicalPermission.model"
 import type {
 	MedicalAccessStatus,
 	MedicalPermissions,
 } from "@/database/medicalPermission.model"
 import BaseSwitch from "../bases/BaseSwitch.vue";
+import BaseCardCheck from "../bases/BaseCardCheck.vue";
 
 const props = defineProps<{
 	medicalPermission: MedicalPermission
@@ -21,11 +22,16 @@ const permission = ref({
 	permissions: { ...props.medicalPermission.permissions },
 })
 
+const isSwitchDisabled = computed(() => permission.value.status === "pending")
+
 const submitForm = () => {
-	emit("handled-submit", {
-		status: permission.value.status,
-		permissions: { ...permission.value.permissions },
-	})
+	const permissions = { ...permission.value.permissions }
+	const thing = props.medicalPermission.isPending()
+		? { status: <MedicalAccessStatus>"pending", permissions }
+		: { status: permission.value.status, permissions }
+	
+	emit("handled-submit", thing)
+	permission.value = thing
 }
 </script>
 
@@ -37,11 +43,12 @@ const submitForm = () => {
 				label1="Ativo"
 				label2="Revogado"
 				:value1="<MedicalAccessStatus>'active'"
-				:value2="<MedicalAccessStatus>'pending'"
-				:disabled="medicalPermission.isPending()"
+				:value2="<MedicalAccessStatus>'revoked'"
+				:disabled="isSwitchDisabled"
+				v-model="permission.status"
 				class="m-auto"
 			/>
-			<p class="m-auto text-error" v-if="medicalPermission.isPending()">
+			<p class="m-auto text-error" v-if="isSwitchDisabled">
 				Status pendente, não há como mudar o acesso
 			</p>
 		</label>
@@ -64,32 +71,17 @@ const submitForm = () => {
 				</span>
 			</label> -->
 
-			<label class="flex cursor-pointer items-center gap-3 rounded-md bg-surface p-3 text-textDark">
-				<input
-					v-model="permission.permissions.prescribe_medications"
-					type="checkbox"
-					class="accent-primary"
-				/>
-				<span>Prescrever medicamentos</span>
-			</label>
+			<BaseCardCheck v-model="permission.permissions.prescribe_medications">
+				Prescrever medicamentos
+			</BaseCardCheck>
 
-			<label class="flex cursor-pointer items-center gap-3 rounded-md bg-surface p-3 text-textDark">
-				<input
-					v-model="permission.permissions.request_exam"
-					type="checkbox"
-					class="accent-primary"
-				/>
-				<span>Solicitar exames</span>
-			</label>
+			<BaseCardCheck v-model="permission.permissions.request_exam">
+				Solicitar exames
+			</BaseCardCheck>
 
-			<label class="flex cursor-pointer items-center gap-3 rounded-md bg-surface p-3 text-textDark">
-				<input
-					v-model="permission.permissions.request_appointments"
-					type="checkbox"
-					class="accent-primary"
-				/>
-				<span>Solicitar consultas</span>
-			</label>
+			<BaseCardCheck v-model="permission.permissions.request_appointments">
+				Solicitar consultas
+			</BaseCardCheck>
 		</fieldset>
 
 		<BaseButton type="submit" theme="accent">

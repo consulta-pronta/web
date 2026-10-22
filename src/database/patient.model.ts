@@ -58,4 +58,8 @@ export default class Patient extends User {
 			created_at: serverTimestamp(),
 		}
 	}
+	
+	static async get(id: string) {
+		return super.get(id) as Promise<Patient | null>
+	}
 }

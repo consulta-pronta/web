@@ -54,7 +54,7 @@ const router = createRouter({
 			name: "exames",
 			component: () => import("@/pages/ExamsPage.vue"),
 			meta: {
-				roles: ["patient"],
+				roles: ["patient", "professional"],
 			},
 		},
 		{
@@ -71,7 +71,7 @@ const router = createRouter({
 			name: "relatorios",
 			component: () => import("@/pages/ReportsPage.vue"),
 			meta: {
-				roles: ["patient"],
+				roles: ["patient", "professional"],
 			},
 		},
 		{
@@ -81,6 +81,14 @@ const router = createRouter({
 			component: () => import("@/pages/MedicalPermissionsPage.vue"),
 			meta: {
 				roles: ["patient"],
+			},
+		},
+		{
+			path: "/pacientes/:id?",
+			name: "pacientes",
+			component: () => import("@/pages/ProfessionalPatientsPage.vue"),
+			meta: {
+				roles: ["professional"],
 			},
 		},
 		{
@@ -117,7 +125,6 @@ router.beforeEach(async (to) => {
 		await authStore.onReady((data) => {
 			userType = data.user_type
 		})
-
 		if (!userType || !roles.includes(userType)) {
 			return "/dashboard"
 		}

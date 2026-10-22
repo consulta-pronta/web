@@ -1,9 +1,15 @@
-import { serverTimestamp, type Timestamp } from "firebase/firestore"
+import {
+	serverTimestamp,
+	where,
+	type DocumentSnapshot,
+	type Timestamp,
+} from "firebase/firestore"
 import BaseDocument, {
 	type CollectionOptions,
 	type CollectionScope,
 	type DocumentData,
 	type FormData,
+	type QueryOptions,
 } from "./baseDocument"
 import User from "./user.model"
 import Professional from "./professional.model"
@@ -19,8 +25,9 @@ export type MedicalAccessStatus = "pending" | "active" | "revoked"
 
 export default class MedicalPermission extends BaseDocument {
 	constructor(
-		public readonly id: string = "", // id of professional
-		// public readonly patient_id: string = "",
+		public readonly id: string = "",
+		public readonly patient_id: string = "",
+		public readonly professional_id: string = "",
 		public status: MedicalAccessStatus = "revoked",
 		public permissions: MedicalPermissions = {
 			read_records: false,
@@ -40,14 +47,20 @@ export default class MedicalPermission extends BaseDocument {
 	protected static getCollectionPath(scope?: CollectionScope): string {
 		const patientId = scope?.patientId
 		if (!patientId) {
-			throw new Error("MedicalPermission requires scope.userId")
+			throw new Error("MedicalPermission requires scope.patientId")
 		}
 		return User.resolvePath(patientId, this.collectionName)
 	}
 
-	protected static documentConverter(id: string, data: DocumentData): MedicalPermission {
+	protected static documentConverter(
+		id: string,
+		data: DocumentData,
+		snapshot: DocumentSnapshot,
+	): MedicalPermission {
 		return new MedicalPermission(
 			id,
+			snapshot.ref.parent.parent?.id,
+			data.professional_id,
 			data.status,
 			data.permissions,
 			data.created_at,
@@ -59,6 +72,7 @@ export default class MedicalPermission extends BaseDocument {
 	toMap(): FormData {
 		return {
 			status: this.status,
+			professional_id: this.professional_id,
 			permissions: this.permissions,
 			created_at: serverTimestamp(),
 			granted_at: this.status === "active" ? serverTimestamp() : null,
@@ -72,7 +86,7 @@ export default class MedicalPermission extends BaseDocument {
 		const existingRequest = await this.get(professionalId, options)
 		if (existingRequest) { return false }
 
-		const request = new MedicalPermission(professionalId, "pending")
+		const request = new MedicalPermission(professionalId, patientId, "pending")
 		await this.set(request.toMap(), { scope: {
 			patientId, id: professionalId
 		}})
@@ -82,12 +96,41 @@ export default class MedicalPermission extends BaseDocument {
 	static async get(id: string, options: CollectionOptions = {}) {
 		return super.get(id, options) as Promise<MedicalPermission | null>
 	}
+
+	static async getAllFromCollectionGroup(options?: QueryOptions) {
+		return await super.getAllFromCollectionGroup(options) as MedicalPermission[]
+	}
+
+	static async getAllForProfessional(professionalId: string) {
+		const permissions = await this.getAllFromCollectionGroup({
+			constraints: [
+				where("professional_id", "==", professionalId),
+			]
+		})
+		return permissions
+	}
 	
 	grant() { this.status = "active" }
 	revoke() { this.status = "revoked" }
 	toggleAcess() { this.status = this.canAcess() ? "revoked" : "active" }
 	canAcess() { return this.status === "active" }
 	isPending() { return this.status === "pending" }
+
+	async acceptRequest() {
+		if (!this.isPending()) {
+			return
+		}
+
+		await MedicalPermission.update(
+			this.id,
+			{
+				status: <MedicalAccessStatus>"active",
+				granted_at: serverTimestamp(),
+				revoked_at: null,
+			},
+			{ scope: { patientId: this.patient_id } },
+		)
+	}	
 
 	async getProfessional() {
 		return await Professional.get(this.id)

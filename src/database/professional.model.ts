@@ -1,4 +1,4 @@
-import type { FederalUnit, UserType } from "@/utils"
+import { formatCRM, type FederalUnit, type UserType } from "@/utils"
 import User from "./user.model"
 import {
 	collection,
@@ -102,6 +102,10 @@ export default class Professional extends User {
 		}
 	}
 
+	static async get(id: string) {
+		return super.get(id) as Promise<Professional | null>
+	}
+
 	static async createRequest(id: string, data: FormData) {
 		await setDoc(this.requestRef(id), data)
 		return id
@@ -121,5 +125,13 @@ export default class Professional extends User {
 
 	static async deleteRequest(id: string) {
 		await deleteDoc(this.requestRef(id))
+	}
+
+	getFormattedCRM() {
+		if (!this.professional_data) {
+			return ""
+		}
+	
+		return formatCRM(this.professional_data.crm, this.professional_data.uf)
 	}
 }

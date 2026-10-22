@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import BaseButton from "@/components/bases/BaseButton.vue"
 import Professional from "@/database/professional.model"
-import { formatToPhone } from "brazilian-values"
+import Patient from "@/database/patient.model"
+import { formatToCPF, formatToPhone } from "brazilian-values"
 import BaseDialog from "@/components/bases/BaseDialog.vue"
 import { computed, ref, useTemplateRef } from "vue"
 import MedicalPermission from "@/database/medicalPermission.model"
@@ -10,8 +11,8 @@ import type {
 	MedicalPermissions,
 } from "@/database/medicalPermission.model"
 import FormMedicalPermission from "@/components/forms/FormMedicalPermission.vue"
-import { computedAsync } from "@vueuse/core"
 import { useAuthStore } from "@/stores/authStore"
+import ProfessionalPermissionExtended from "../ProfessionalPermissionExtended.vue"
 
 const props = defineProps<{
 	medicalPermission: MedicalPermission
@@ -24,12 +25,9 @@ const managePermissionsVisible = useTemplateRef("managePermissionsDialog")
 const status = ref(props.medicalPermission.status)
 const permissions = ref(props.medicalPermission.permissions)
 
-const professional = computedAsync(
-	async () => await Professional.get(props.medicalPermission.id) as Professional,
-	new Professional(),
-)
+const user = ref<Patient | Professional | null>(null)
 
-const handleSubmit = async (updatedPermission: {
+const updatePermissions = async (updatedPermission: {
 	status: MedicalAccessStatus
 	permissions: MedicalPermissions
 }) => {
@@ -40,13 +38,22 @@ const handleSubmit = async (updatedPermission: {
 		? { permissions: permissions.value }
 		: { status: status.value, permissions: permissions.value }
 	await authStore.onReady(async (user) => {
-		MedicalPermission.update(
+		await MedicalPermission.update(
 			props.medicalPermission.id,
 			data,
-			{ scope: { patientId: user.id} }
+			{ scope: { patientId: props.medicalPermission.patient_id || user.id } },
 		)
 	})
 	managePermissionsVisible.value?.hide()
+}
+
+const acceptRequest = async () => {
+	try {
+		await props.medicalPermission.acceptRequest()
+		status.value = "active"
+	} catch (error) {
+		console.error("Failed to accept medical permission request.", error)
+	}
 }
 
 const headHeaderStyle = computed(() => {
@@ -60,6 +67,16 @@ const headHeaderStyle = computed(() => {
 		default:
 			return "bg-black/70 text-textLight"
 	}
+})
+const subtitleLabel = computed(() => {
+	if (user.value instanceof Patient) {
+		return formatToCPF(user.value.cpf)
+	}
+	if (user.value instanceof Professional) {
+		return user.value.getFormattedCRM()
+	}
+
+	return "error!"
 })
 const statusLabel = computed(() => {
 	switch (status.value) {
@@ -80,70 +97,97 @@ const amountOfPermissionsLabel = computed(() => {
 		? "Todas as permissões ativas"
 		: `${omgSoTrue.length} permissões ativas`
 })
+
+authStore.onReady(async (data) => {
+	user.value = await (
+		data.user_type === "patient"
+		? Professional.get(props.medicalPermission.id)
+		: Patient.get(props.medicalPermission.patient_id)
+	)
+})
 </script>
 
 <template>
-	<article class="bg-surface min-w-fit rounded-lg overflow-clip text-textDark">
-		<div
+	<article class="bg-surface min-w-fit rounded-lg overflow-clip text-textDark flex flex-col">
+		
+		<header
 			class="w-full flex justify-between items-center p-3 mb-2"
 			:class="headHeaderStyle"
 		>
 			{{ statusLabel }}
-				<!-- <div class="material-symbols-rounded bg-surface p-0.5 rounded-lg h-fit shadow hover:-translate-0.5 duration-100 hover:brightness-95 cursor-pointer">
-					more_horiz
-				</div> -->
-		</div>
-		<section class="px-3 pb-3 flex flex-col gap-3">
-			<header>
-				<h1 class="text-lg font-medium">{{ professional.name }}</h1>
-				<h2>{{ `${professional.professional_data?.crm}/${professional.professional_data?.uf}` }}</h2>
-			</header>
+			<BaseButton
+				v-if="user instanceof Patient && status === 'pending'"
+				theme="primary"
+				icon="check"
+				class="px-3"
+				@click="acceptRequest"
+			>
+				Aceitar
+			</BaseButton>
+		</header>
+		<section class="px-3 pb-3 flex flex-col gap-3 justify-between">
+			<div>
+				<h1 class="text-lg font-medium">{{ user?.name }}</h1>
+				<h2 class="mb-3">{{ subtitleLabel }}</h2>
 
-			<div class="grid grid-cols-2 *:flex *:gap-2 [&_a]:hover:underline">
-				<p>
-					<i class="material-symbols-rounded">phone</i>
-					Telefone:
-				</p>
-				<p>
-					<a :href="'tel:+' + professional.phone">
-						{{ formatToPhone(professional.phone) }}
-					</a>
-				</p>
-				<p>
-					<i class="material-symbols-rounded">email</i>
-					Email:
-				</p>
-				<p>
-					<a
-						:href="'mailto:' + professional.email"
-						class="wrap-anywhere"
-					>
-						{{ professional.email }}
-					</a>
-				</p>
-				<p>
-					<i class="material-symbols-rounded">home_health</i>
-					Local de atuação:
-				</p>
-				<p>{{ professional.professional_data?.operation_area }}</p>
+				<div class="grid grid-cols-2 *:flex *:gap-2 [&_a]:hover:underline">
+					<p>
+						<i class="material-symbols-rounded">phone</i>
+						Telefone:
+					</p>
+					<p>
+						<a :href="'tel:+' + user?.phone">
+							{{ user?.phone ? formatToPhone(user.phone) : "" }}
+						</a>
+					</p>
+					<p>
+						<i class="material-symbols-rounded">email</i>
+						Email:
+					</p>
+					<p>
+						<a
+							:href="'mailto:' + user?.email"
+							class="wrap-anywhere"
+						>
+							{{ user?.email }}
+						</a>
+					</p>
+					<template v-if="user instanceof Professional || false">
+						<p>
+							<i class="material-symbols-rounded">home_health</i>
+							Local de atuação:
+						</p>
+						<p>{{ user.professional_data?.operation_area }}</p>
+					</template>
+				</div>
 			</div>
 
-			<p>{{ amountOfPermissionsLabel }} </p>
-
-			<BaseButton mode="outline" @click="managePermissionsVisible?.toggle()">
-				<i class="material-symbols-rounded text-primary text!">lock_open</i>
-				Gerenciar permissões
-			</BaseButton>
+			<footer class="flex flex-col gap-2">
+				<p>{{ amountOfPermissionsLabel }} </p>
+				<BaseButton
+					mode="outline"
+					@click="managePermissionsVisible?.toggle()"
+				>
+					<i class="material-symbols-rounded text-primary text!">
+						{{ user instanceof Patient ? "visibility" : "lock_open" }}
+					</i>
+					{{ (user instanceof Patient ? "Visualizar" : "Gerenciar") + " permissões" }}
+				</BaseButton>
+			</footer>
 		</section>
-	</article>
 	
-
-	<Teleport to="body">
-		<BaseDialog ref="managePermissionsDialog" :title="'Permissões de ' + professional.name">
-			<FormMedicalPermission
-				:medical-permission="medicalPermission"
-				@handled-submit="handleSubmit"
-			/>
-		</BaseDialog>
-	</Teleport>
+		<Teleport to="body">
+			<BaseDialog ref="managePermissionsDialog" :title="'Permissões de ' + user?.name">
+				<FormMedicalPermission
+					v-if="user instanceof Professional || false"
+					:medical-permission="medicalPermission"
+					@handled-submit="updatePermissions"
+				/>
+				<ProfessionalPermissionExtended
+					v-else
+					:permission="medicalPermission"
+				/>
+			</BaseDialog>
+		</Teleport>
+	</article>
 </template>
