@@ -2,6 +2,7 @@ import type { BloodType, UserType } from "@/utils"
 import User from "./user.model"
 import { serverTimestamp, type DocumentData, type Timestamp } from "firebase/firestore"
 import type { FormData } from "./baseDocument"
+import MedicalPermission from "./medicalPermission.model"
 
 export type PatientData = {
 	weight: number
@@ -61,5 +62,19 @@ export default class Patient extends User {
 	
 	static async get(id: string) {
 		return super.get(id) as Promise<Patient | null>
+	}
+
+	async getMedicalPermissions() {
+		return await MedicalPermission.getAll({
+			scope: { patientId: this.id }
+		}) as MedicalPermission[]
+	}
+
+	async getProfessionals(onlyActive = true) {
+		return (await Promise.all(
+			(await this.getMedicalPermissions())
+				.filter((item) => !onlyActive || item.status === "active")
+				.map(async (item) => await item.getProfessional())
+		)).filter((item) => item != null)
 	}
 }

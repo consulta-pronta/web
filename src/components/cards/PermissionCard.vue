@@ -125,7 +125,7 @@ authStore.onReady(async (data) => {
 				Aceitar
 			</BaseButton>
 		</header>
-		<section class="px-3 pb-3 flex flex-col gap-3 justify-between">
+		<section class="px-3 pb-3 flex flex-col grow gap-3 justify-between">
 			<div>
 				<h1 class="text-lg font-medium">{{ user?.name }}</h1>
 				<h2 class="mb-3">{{ subtitleLabel }}</h2>

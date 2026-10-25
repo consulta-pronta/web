@@ -9,6 +9,8 @@ import BaseButton from "@/components/bases/BaseButton.vue"
 import BaseDialog from "@/components/bases/BaseDialog.vue"
 import FormAddProfessional from "@/components/forms/FormAddProfessional.vue"
 import { useTemplateRef } from "vue"
+import Patient from "@/database/patient.model"
+import router from "@/router"
 
 const authStore = useAuthStore()
 
@@ -24,15 +26,16 @@ const loadPermissions = async () => {
 
 	try {
 		await authStore.onReady(async (patient) => {
-			medicalPermissions.value = (await MedicalPermission.getAll({
-				scope: { patientId: patient.id },
-			})) as MedicalPermission[]
+			if (!(patient instanceof Patient)) {
+				router.back()
+				return
+			}
+			medicalPermissions.value = await patient.getMedicalPermissions()
 			
 			loadMessage.value = medicalPermissions.value.length === 0
 				? "Não há nenhum médico registrado."
 				: ""
 		})
-
 	} catch (error) {
 		console.error("Failed to load medical permissions.", error)
 		loadMessage.value = "Não foi possível carregar as permissões médicas."

@@ -7,8 +7,11 @@ import Report from "@/database/report.model"
 import { Timestamp } from "firebase/firestore"
 import { inputDateToDate } from "@/utils"
 import Symptom from "@/database/symptom.model"
+import MedicalPermission from "@/database/medicalPermission.model"
+import Professional from "@/database/professional.model"
 import { useAuthStore } from "@/stores/authStore"
 import BaseDialog from "../bases/BaseDialog.vue"
+import Patient from "@/database/patient.model.ts"
 
 const authStore = useAuthStore()
 
@@ -19,6 +22,9 @@ const periodStartInput = ref("")
 const periodEndInput = ref("")
 const symptoms = ref<Symptom[]>([])
 const buttonState = ref<ButtonState>("enabled")
+const professionals = ref<Professional[]>([])
+const selectedProfessionalId = ref("")
+const professionalsError = ref("")
 
 const periodStart = computed(() => Timestamp.fromDate(inputDateToDate(periodStartInput.value)))
 const periodEnd = computed(() => Timestamp.fromDate(inputDateToDate(periodEndInput.value)))
@@ -42,6 +48,9 @@ const loadSymptoms = async () => {
 const submitForm = async () => {
 	reportRef.value.period_start = periodStart.value
 	reportRef.value.period_end = periodEnd.value
+	reportRef.value.professionals = selectedProfessionalId.value
+		? [selectedProfessionalId.value]
+		: []
 
 	buttonState.value = "sync"
 
@@ -53,6 +62,33 @@ const submitForm = async () => {
 	emit("handled-submit")
 	buttonState.value = "enabled"
 }
+
+authStore.onReady(async (patient) => {
+	try {
+		await authStore.onReady(async (patient) => {
+			if (!(patient instanceof Patient)) {
+				return
+			}
+			professionals.value = await patient.getProfessionals()
+		})
+
+		const permissions = (await MedicalPermission.getAll({
+			scope: { patientId: patient.id },
+		})) as MedicalPermission[]
+		const readablePermissions = permissions.filter(
+			(permission) => permission.status === "active"
+		)
+		const loadedProfessionals = await Promise.all(
+			readablePermissions.map((permission) => permission.getProfessional()),
+		)
+		professionals.value = loadedProfessionals.filter(
+			(professional): professional is Professional => professional !== null,
+		)
+	} catch (error) {
+		console.error("Failed to load professionals for the report.", error)
+		professionalsError.value = "Não foi possível carregar os profissionais."
+	}
+})
 </script>
 
 <template>
@@ -88,14 +124,26 @@ const submitForm = async () => {
 		</fieldset>
 
 		<BaseSelect
+			v-model="selectedProfessionalId"
 			theme="light"
 			icon="person"
 			defaultValue="Profissionais que podem visualizar"
-			class="hidden"
+			required
 		>
-			<!-- required -->
-			<!-- TODO: Add this functionality when that shit is implemented -->
+			<option
+				v-for="professional in professionals"
+				:key="professional.id"
+				:value="professional.id"
+			>
+				{{ professional.name }}
+			</option>
+			<option value="" v-if="professionals.length === 0" disabled>
+				Nenhum profissional encontrado
+			</option>
 		</BaseSelect>
+		<p v-if="professionalsError" class="text-error text-sm">
+			{{ professionalsError }}
+		</p>
 
 		<BaseButton type="button" theme="accent" mode="transparent" @click="loadSymptoms">
 			Visualizar sintomas incluídos
