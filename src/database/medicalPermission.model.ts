@@ -13,6 +13,7 @@ import BaseDocument, {
 } from "./baseDocument"
 import User from "./user.model"
 import Professional from "./professional.model"
+import Patient from "./patient.model"
 
 export type MedicalPermissions = {
 	read_records: boolean
@@ -132,7 +133,6 @@ export default class MedicalPermission extends BaseDocument {
 		)
 	}	
 
-	async getProfessional() {
-		return await Professional.get(this.id)
-	}
+	async getPatient() { return await Patient.get(this.patient_id) }
+	async getProfessional() { return await Professional.get(this.id) }
 }

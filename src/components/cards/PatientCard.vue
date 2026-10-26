@@ -1,39 +1,32 @@
 <script setup lang="ts">
-interface Patient {
-	name: string
-	cpf: string
-	photoUrl?: string
-}
+import type Patient from "@/database/patient.model";
+
 
 defineProps<{
-	patients: Patient[]
+	patient: Patient
 }>()
 
 const emit = defineEmits<{
-	select: [patient: Patient]
+	selected: [patient: Patient]
 }>()
 </script>
 
 <template>
-	<li v-for="patient in patients" :key="patient.cpf">
-		<button
-			type="button"
-			@click="emit('select', patient)"
-			class="w-full flex rounded-md p-3 bg-textLight text-primaryDark items-center"
-		>
-			<UserPhoto />
+	<button
+		type="button"
+		@click="emit('selected', patient)"
+		class="w-full flex rounded-md p-3 bg-textLight text-primaryDark items-center"
+	>
+		<section class="flex flex-col w-full text-start pl-6">
+			<p class="font-bold text-2xl oneliner">
+				{{ patient.name }}
+			</p>
 
-			<section class="flex flex-col w-full text-start pl-6">
-				<p class="font-bold text-2xl oneliner">
-					{{ patient.name }}
-				</p>
-
-				<p class="oneliner text-base">
-					CPF: {{ patient.cpf }}
-				</p>
-			</section>
-		</button>
-	</li>
+			<p class="oneliner text-base">
+				CPF: {{ patient.cpf }}
+			</p>
+		</section>
+	</button>
 </template>
 
 <style scoped>
