@@ -1,19 +1,16 @@
 <script setup lang="ts">
 import BaseButton from "@/components/bases/BaseButton.vue"
-
-interface Report {
-	id: string
-	title: string
-	startDate: string
-	endDate: string
-	description: string
-}
+import type Report from "@/database/report.model"
 
 interface Props {
 	report: Report
 }
 
 defineProps<Props>()
+
+function formatDate(date: Report["period_start"]) {
+	return date?.toDate().toLocaleDateString("pt-BR") ?? "—"
+}
 
 const emit = defineEmits<{
 	select: []
@@ -38,11 +35,11 @@ const emit = defineEmits<{
 		<article class="w-full flex items-center justify-center gap-1">
 
 			<p class="oneliner text-sm">
-				{{ report.startDate }}
+				{{ formatDate(report.period_start) }}
 			</p>
 
 			<p class="oneliner text-sm">
-				a {{ report.endDate }}
+				a {{ formatDate(report.period_end) }}
 			</p>
 
 		</article>

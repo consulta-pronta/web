@@ -1,13 +1,6 @@
 <script setup lang="ts">
 import ReportCard from "@/components/cards/ReportCard.vue"
-
-interface Report {
-	id: string
-	title: string
-	startDate: string
-	endDate: string
-	description: string
-}
+import type Report from "@/database/report.model"
 
 interface Props {
 	reports: Report[]
@@ -22,7 +15,6 @@ const emit = defineEmits<{
 
 <template>
 	<ul class="w-full flex flex-col gap-2">
-
 		<ReportCard
 			v-for="report in reports"
 			:key="report.id"

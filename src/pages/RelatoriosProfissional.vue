@@ -5,97 +5,19 @@ import NavBar from "@/components/NavBar.vue"
 import BaseInput from "@/components/bases/BaseInput.vue"
 import { useAuthStore } from "@/stores/authStore"
 import UserPhoto from "@/components/UserPhoto.vue"
-import PatientList from "@/components/cards/PatientCard.vue"
+import PatientList from "@/components/cards/PatientList.vue"
 import ReportList from "@/components/cards/ReportList.vue"
+import Professional from "@/database/professional.model"
+import type Patient from "@/database/patient.model"
+import Report from "@/database/report.model"
 
 const authStore = useAuthStore()
 
-interface LoggedUser {
-	name: string
-	cpf: string
-	photoUrl?: string
-}
-
-interface Report {
-	id: string
-	title: string
-	startDate: string
-	endDate: string
-	description: string
-}
-
-interface Patient {
-	name: string
-	cpf: string
-	photoUrl?: string
-	reports: Report[]
-}
-
-const user = ref<LoggedUser | null>(null)
 const currentUser = ref(false)
+const loadError = ref("")
 
-const patients = ref<Patient[]>([
-	{
-		name: "Cláudio Silva",
-		cpf: "133243",
-		reports: [
-			{
-				id: "ID51966",
-				title: "Dor Constante",
-				startDate: "18/06/2024",
-				endDate: "26/06/2024",
-				description: "Relatório referente ao acompanhamento do sintoma de dor constante."
-			},
-			{
-				id: "ID51967",
-				title: "Dor de cabeça",
-				startDate: "02/07/2024",
-				endDate: "08/07/2024",
-				description: "Relatório referente ao acompanhamento de dores de cabeça."
-			},
-			{
-				id: "ID51968",
-				title: "Dor nas costas",
-				startDate: "10/07/2024",
-				endDate: "20/07/2024",
-				description: "Relatório referente ao acompanhamento de dores nas costas."
-			}
-		]
-	},
-	{
-		name: "Gabriel Silva",
-		cpf: "123456",
-		reports: [
-			{
-				id: "ID51969",
-				title: "Dor no braço",
-				startDate: "04/08/2024",
-				endDate: "10/08/2024",
-				description: "Relatório referente ao acompanhamento da dor no braço."
-			},
-			{
-				id: "ID51970",
-				title: "Dor de cabeça",
-				startDate: "15/08/2024",
-				endDate: "21/08/2024",
-				description: "Relatório referente ao acompanhamento da dor de cabeça."
-			}
-		]
-	},
-	{
-		name: "Fernando Silva",
-		cpf: "654321",
-		reports: [
-			{
-				id: "ID51971",
-				title: "Dor abdominal",
-				startDate: "01/09/2024",
-				endDate: "07/09/2024",
-				description: "Relatório referente ao acompanhamento da dor abdominal."
-			}
-		]
-	}
-])
+const patients = ref<Patient[]>([])
+const reportsByPatient = ref<Record<string, Report[]>>({})
 
 const currentPatient = ref<Patient | null>(null)
 const currentReport = ref<Report | null>(null)
@@ -120,11 +42,28 @@ function closeReport() {
 	currentReport.value = null
 }
 
-authStore.onReady(async (data) => {
-	user.value = {
-		name: data.name,
-		cpf: data.cpf,
-		photoUrl: data.photoUrl
+authStore.onReady(async (user) => {
+	if (!(user instanceof Professional)) {
+		loadError.value = "Não foi possível carregar os dados do profissional."
+		return
+	}
+
+	try {
+		const professionalPatients = await user.getPatients()
+		const patientReports = await Promise.all(
+			professionalPatients.map(async (patient) => {
+				const reports = await Report.getAll({
+					scope: { userId: patient.id },
+				})
+
+				return [patient.id, reports] as const
+			}),
+		)
+		patients.value = professionalPatients
+		reportsByPatient.value = Object.fromEntries(patientReports)
+	} catch (error) {
+		console.error("Failed to load professional's patients and reports.", error)
+		loadError.value = "Não foi possível carregar os pacientes e relatórios."
 	}
 })
 </script>
@@ -164,9 +103,17 @@ authStore.onReady(async (data) => {
 							</p>
 						</article>
 
+						<p
+							v-if="loadError"
+							class="text-error text-center"
+						>
+							{{ loadError }}
+						</p>
+
 						<PatientList
 							:patients="patients"
-							@select="viewPatient"
+							v-else
+						@select="viewPatient"
 						/>
 					</ul>
 
@@ -208,7 +155,7 @@ authStore.onReady(async (data) => {
 								class="w-full h-full overflow-y-auto scrollbar-hide"
 							>
 								<ReportList
-									:reports="currentPatient?.reports ?? []"
+								:reports="currentPatient ? reportsByPatient[currentPatient.id] ?? [] : []"
 									@select="viewReport"
 								/>
 							</section>
@@ -254,7 +201,8 @@ authStore.onReady(async (data) => {
 						</p>
 
 						<p class="text-textLight text-base font-normal">
-							{{ currentReport.startDate }} a {{ currentReport.endDate }}
+							{{ currentReport.period_start?.toDate().toLocaleDateString("pt-BR") ?? "—" }} a
+							{{ currentReport.period_end?.toDate().toLocaleDateString("pt-BR") ?? "—" }}
 						</p>
 					</span>
 
@@ -320,7 +268,7 @@ authStore.onReady(async (data) => {
 								</p>
 
 								<p class="text-base font-normal">
-									{{ currentReport.startDate }}
+									{{ currentReport.period_start?.toDate().toLocaleDateString("pt-BR") ?? "—" }}
 								</p>
 							</span>
 
@@ -330,7 +278,7 @@ authStore.onReady(async (data) => {
 								</p>
 
 								<p class="text-base font-normal">
-									{{ currentReport.endDate }}
+									{{ currentReport.period_end?.toDate().toLocaleDateString("pt-BR") ?? "—" }}
 								</p>
 							</span>
 
@@ -366,11 +314,7 @@ authStore.onReady(async (data) => {
 								</p>
 
 								<p class="text-sm font-medium">
-									({{ currentReport.startDate }})
-								</p>
-
-								<p class="text-sm font-medium">
-									- {{ currentReport.description }}
+									({{ currentReport.period_start?.toDate().toLocaleDateString("pt-BR") ?? "—" }})
 								</p>
 
 							</article>
@@ -398,7 +342,7 @@ authStore.onReady(async (data) => {
 								</p>
 
 								<p class="text-sm font-medium">
-									({{ currentReport.endDate }})
+									({{ currentReport.period_end?.toDate().toLocaleDateString("pt-BR") ?? "—" }})
 								</p>
 
 								<p class="text-sm font-medium">
