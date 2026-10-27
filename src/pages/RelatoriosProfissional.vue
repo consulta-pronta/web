@@ -111,9 +111,9 @@ authStore.onReady(async (user) => {
 						</p>
 
 						<PatientList
-							:patients="patients"
 							v-else
-						@select="viewPatient"
+							:patients="patients"
+							@selected="viewPatient"
 						/>
 					</ul>
 

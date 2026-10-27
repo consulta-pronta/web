@@ -87,7 +87,12 @@ export default class MedicalPermission extends BaseDocument {
 		const existingRequest = await this.get(professionalId, options)
 		if (existingRequest) { return false }
 
-		const request = new MedicalPermission(professionalId, patientId, "pending")
+		const request = new MedicalPermission(
+			professionalId,
+			patientId,
+			professionalId,
+			"pending"
+		)
 		await this.set(request.toMap(), { scope: {
 			patientId, id: professionalId
 		}})
