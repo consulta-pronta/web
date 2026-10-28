@@ -4,15 +4,26 @@ import {
 	createUserWithEmailAndPassword,
 	sendEmailVerification,
 	validatePassword,
-	type User,
 } from "firebase/auth"
-import { auth } from "@/config/firebase"
-import { createUser, createUserSignUpRequest, type ProfessionalData, type UserData } from "@/services/userService"
-import type { UserType } from "@/components/ToggleUser.vue"
+import { auth } from "@/database/firebase"
+import Patient from "@/database/patient.model"
+import Professional from "@/database/professional.model"
 import { Timestamp } from "firebase/firestore"
+import { isCPF, isPhone } from "brazilian-values"
+import type { UserType } from "@/utils"
 
+export type PasswordRules = {
+	minLength: boolean
+	hasNumber: boolean
+	hasLowercase: boolean
+	hasUppercase: boolean
+	match: boolean
+}
 export const minPasswordLength = 8
 export const maxPasswordLength = 4096
+
+const emptyProfessionalData = () => ({ crm: "", uf: "", operation_area: "" })
+const emptyPatientData = () => ({ weight: "", height: "", blood_type: "" })
 
 export const useSignUpStore = defineStore("sign_up", () => {
 	const name = ref("")
@@ -21,19 +32,22 @@ export const useSignUpStore = defineStore("sign_up", () => {
 	const confirmPassword = ref("")
 	const phone = ref("")
 	const cpf = ref("")
-	const crm = ref("")
-	const uf = ref("")
-	const userType = ref<UserType>("paciente")
+	const professionalData = ref(emptyProfessionalData())
+	const patientData = ref(emptyPatientData())
+	const userType = ref<UserType>("patient")
 
-	const rules = computed(() => ({
-		minLength: password.value.length >= minPasswordLength,
-		hasNumber: /\d/.test(password.value),
-		hasLowercase: /[a-z]/.test(password.value),
-		hasUppercase: /[A-Z]/.test(password.value),
-		match: password.value === confirmPassword.value && password.value.length > 0,
-	}))
+	const rules = computed(
+		() =>
+			({
+				minLength: password.value.length >= minPasswordLength,
+				hasNumber: /\d/.test(password.value),
+				hasLowercase: /[a-z]/.test(password.value),
+				hasUppercase: /[A-Z]/.test(password.value),
+				match: password.value === confirmPassword.value && password.value.length > 0,
+			}) as PasswordRules,
+	)
 
-	const isPasswordValid = computed(() => {
+	const isPasswordInvalid = computed(() => {
 		return Object.values(rules.value).includes(false)
 	})
 
@@ -44,10 +58,13 @@ export const useSignUpStore = defineStore("sign_up", () => {
 		confirmPassword.value = ""
 		phone.value = ""
 		cpf.value = ""
-		crm.value = ""
-		uf.value = ""
-		userType.value = "paciente"
+		professionalData.value = emptyProfessionalData()
+		patientData.value = emptyPatientData()
+		userType.value = "patient"
 	}
+
+	const isCpfInvalid = computed(() => !isCPF(cpf.value))
+	const isPhoneInvalid = computed(() => !isPhone(phone.value))
 
 	async function submitForm() {
 		const passwordStatus = await validatePassword(auth, password.value)
@@ -61,8 +78,8 @@ export const useSignUpStore = defineStore("sign_up", () => {
 			phone: phone.value.replace(/[\(\)\-\s]/g, ""),
 			cpf: cpf.value.replace(/[.\-\s]/g, ""),
 			user_type: userType.value,
-			created_at: Timestamp.now()
-		} as UserData
+			created_at: Timestamp.now(),
+		}
 
 		const userCredential = await createUserWithEmailAndPassword(
 			auth,
@@ -70,29 +87,21 @@ export const useSignUpStore = defineStore("sign_up", () => {
 			password.value,
 		)
 		const user = userCredential.user
-		console.log(`Successfuly created user of id ${user.uid}`)
-
-		if (userType.value == "profissional") {
-			createProfessional(user, {
-				...userData,
-				crm: crm.value,
-				uf: uf.value
-			} as ProfessionalData)
-		} else {
-			createPatient(user, userData)
-		}
-	}
-
-	const createProfessional = async (user: User, userData: ProfessionalData) => {
-		const id = await createUserSignUpRequest(user.uid, userData)
-		
-		console.log(`Successfuly requested signup of id ${id}`)
-	}
-
-	const createPatient = async (user: User, userData: UserData) => {
-		await createUser(user.uid, userData)
 
 		await sendEmailVerification(user)
+		console.log(`Successfuly created user of id ${user.uid}, see email sent to verify account.`)
+
+		if (userType.value === "professional") {
+			await Professional.createRequest(user.uid, {
+				...userData,
+				professional_data: professionalData.value,
+			})
+		} else {
+			await Patient.create(user.uid, {
+				...userData,
+				patient_data: patientData.value,
+			})
+		}
 	}
 
 	return {
@@ -101,12 +110,14 @@ export const useSignUpStore = defineStore("sign_up", () => {
 		confirmPassword,
 		name,
 		cpf,
-		crm,
-		uf,
+		professionalData,
+		patientData,
 		phone,
 		userType,
 		rules,
-		isValid: isPasswordValid,
+		isPasswordInvalid,
+		isCpfInvalid,
+		isPhoneInvalid,
 		clearForm,
 		submitForm,
 	}
