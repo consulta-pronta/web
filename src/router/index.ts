@@ -96,14 +96,6 @@ const router = createRouter({
 			name: "not-found",
 			component: () => import("@/pages/NotFoundPage.vue"),
 		},
-		{
-			path: "/relatoriosPro",
-			name: "relatoriosPro",
-			component: () => import("@/pages/RelatoriosProfissional.vue"),
-			meta: {
-				roles: ["professional"],
-			},
-		},
 	],
 })
 
