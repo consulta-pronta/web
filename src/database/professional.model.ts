@@ -15,6 +15,7 @@ import {
 } from "firebase/firestore"
 import type { FormData } from "./baseDocument"
 import { db } from "@/database/firebase"
+import MedicalPermission from "./medicalPermission.model"
 
 export type ProfessionalData = {
 	crm: string
@@ -133,5 +134,17 @@ export default class Professional extends User {
 		}
 	
 		return formatCRM(this.professional_data.crm, this.professional_data.uf)
+	}
+
+	async getMedicalPermissions() {
+		return await MedicalPermission.getAllForProfessional(this.id)
+	}
+
+	async getPatients(onlyActive = true) {
+		return (await Promise.all(
+			(await this.getMedicalPermissions())
+				.filter((item) => !onlyActive || item.status === "active")
+				.map(async (item) => await item.getPatient())
+		)).filter((item) => item != null)
 	}
 }

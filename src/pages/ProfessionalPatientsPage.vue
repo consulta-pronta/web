@@ -8,6 +8,7 @@ import MedicalPermission from "@/database/medicalPermission.model"
 import PatientExtended from "@/components/PatientExtended.vue"
 import { useRoute } from "vue-router"
 import router from "@/router"
+import Professional from "@/database/professional.model"
 
 const route = useRoute()
 const authStore = useAuthStore()
@@ -25,7 +26,10 @@ const updatePatients = async () => {
 
 	try {
 		await authStore.onReady(async (professional) => {
-			medicalPermissions.value = await MedicalPermission.getAllForProfessional(professional.id)
+			if (!(professional instanceof Professional)) {
+				return
+			}
+			medicalPermissions.value = await professional.getMedicalPermissions()
 		})
 		if (medicalPermissions.value.length === 0) {
 			loadMessage.value = "Nenhum paciente com permissão médica encontrado."
