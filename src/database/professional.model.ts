@@ -16,11 +16,17 @@ import {
 import type { FormData } from "./baseDocument"
 import { db } from "@/database/firebase"
 import MedicalPermission from "./medicalPermission.model"
+import Patient from "./patient.model"
 
 export type ProfessionalData = {
 	crm: string
 	uf: FederalUnit
 	operation_area: string
+}
+
+export type PatientWithProfessionalPermission = {
+	patient: Patient,
+	permissions: MedicalPermission
 }
 
 export default class Professional extends User {
@@ -146,5 +152,23 @@ export default class Professional extends User {
 				.filter((item) => !onlyActive || item.status === "active")
 				.map(async (item) => await item.getPatient())
 		)).filter((item) => item != null)
+	}
+	
+
+	async getPatientsWithPermissions() {
+		const permissions = await this.getMedicalPermissions()
+		
+		return (await Promise.all(
+			(permissions)
+				.filter((item) => item.status === "active")
+				.map(async (item) =>
+					({
+						patient: await item.getPatient(),
+						permissions: item,
+					}) as PatientWithProfessionalPermission
+				)
+		)).filter((item) =>
+			item != null && item.patient != null && item.permissions != null
+		)
 	}
 }
