@@ -48,10 +48,10 @@ export default class Exam extends BaseDocument {
 
 	toMap(): Record<string, unknown> {
 		return {
-			name: this.name,
+			name: this.name.trim(),
 			category: this.category,
 			type: this.type,
-			place: this.place,
+			place: this.place.trim(),
 			date: this.date,
 			status: this.status,
 			created_at: serverTimestamp(),

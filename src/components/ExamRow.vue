@@ -15,8 +15,20 @@ const typeIcon = computed(() => {
 			return "radiology"
 		case "urina":
 			return "colorize"
-		default:
-			return "broken_image"
+		default: {
+			switch (props.exam.category) {
+				case "laboratorial":
+					return "bloodtype"
+				case "imagem":
+					return "radiology"
+				case "funcional":
+					return "monitor_heart"
+				case "preventivo":
+					return "health_and_safety"
+				default:
+					return "broken_image"
+			}
+		}
 	}
 })
 
@@ -27,7 +39,7 @@ const date = computed(() => {
 const status = computed(() => {
 	switch (props.exam.status) {
 		case "solicitado":
-			return "Agendado"
+			return "Solicitado"
 		case "triagem":
 			return "Em andamento"
 		case "liberado":
