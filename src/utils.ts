@@ -65,7 +65,7 @@ export const toCoolDate = (date: Date | null | undefined) =>
 	date ? formatDate(date, "DD MMM YYYY") : DATE_NOT_PROVIDED
 
 export const toBrazilianLocaleDate = (date: Date | null | undefined) =>
-	date ? formatDate(date, "d 'de' MMM 'de' yyyy") : DATE_NOT_PROVIDED
+	date ? formatDate(date, "D [de] MMM [de] YYYY") : DATE_NOT_PROVIDED
 
 export const timestampDiffSeconds = (start: Timestamp, end: Timestamp) =>
 	(end.toMillis() - start.toMillis()) / 1000
