@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue"
 import { useAuthStore } from "@/stores/authStore"
-import NavBar from "@/components/NavBar.vue"
 import BaseButton from "@/components/bases/BaseButton.vue"
 import SymptomCard from "@/components/cards/SymptomCard.vue"
 import ProfessionalSignupRequestRow from "@/components/ProfessionalSignupRequestRow.vue"
@@ -11,6 +10,7 @@ import Professional from "@/database/professional.model"
 import User from "@/database/user.model"
 import { runTransaction, serverTimestamp } from "firebase/firestore"
 import { db } from "@/database/firebase"
+import PageWrapper from "@/components/wrappers/PageWrapper.vue"
 
 const authStore = useAuthStore()
 const userName = ref("")
@@ -57,9 +57,7 @@ authStore.onReady(async (data) => {
 </script>
 
 <template>
-	<div class="flex h-screen overflow-hidden">
-		<NavBar />
-
+	<PageWrapper custom>
 		<main
 			v-if="userType !== 'admin'"
 			class="size-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-16 xl:grid-rows-5 gap-4 lg:gap-6 xl:gap-8 p-5 lg:p-7 xl:p-10 overflow-y-auto"
@@ -239,5 +237,5 @@ authStore.onReady(async (data) => {
 				</table>
 			</section>
 		</main>
-	</div>
+	</PageWrapper>
 </template>

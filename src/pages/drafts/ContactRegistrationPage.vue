@@ -2,7 +2,7 @@
 import { ref, type Ref } from "vue"
 import { useRouter } from "vue-router"
 
-import AuthBackground from "@/components/AuthBackground.vue"
+import AuthWrapper from "@/components/wrappers/AuthPageWrapper.vue"
 import BaseButton, { type ButtonState } from "@/components/bases/BaseButton.vue"
 import BaseLogo from "@/components/bases/BaseLogo.vue"
 import BaseInput from "@/components/bases/BaseInput.vue"
@@ -39,7 +39,7 @@ const submitForm = async () => {
 }
 </script>
 <template>
-	<AuthBackground>
+	<AuthWrapper>
 		<BaseLogo text complete />
 
 		<div
@@ -166,5 +166,5 @@ const submitForm = async () => {
 				</BaseButton>
 			</form>
 		</div>
-	</AuthBackground>
+	</AuthWrapper>
 </template>

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import NavBar from "@/components/NavBar.vue"
 import BaseInput from "@/components/bases/BaseInput.vue"
 import { useAuthStore } from "@/stores/authStore"
 import PermissionCard from "@/components/cards/PermissionCard.vue"
@@ -11,6 +10,8 @@ import FormAddProfessional from "@/components/forms/FormAddProfessional.vue"
 import { useTemplateRef } from "vue"
 import Patient from "@/database/patient.model"
 import router from "@/router"
+import PageWrapper from "@/components/wrappers/PageWrapper.vue"
+import HeaderWrapper from "@/components/wrappers/HeaderWrapper.vue"
 
 const authStore = useAuthStore()
 
@@ -55,15 +56,9 @@ authStore.onReady(async () => {
 </script>
 
 <template>
-	<div class="flex h-screen">
-		<NavBar />
-
+	<PageWrapper custom>
 		<main class="w-full h-full overflow-hidden px-6 py-8 flex flex-col gap-4 text-textLight">
-			<header class="flex flex-col gap-8">
-				<h1 class="text-4xl font-bold text-center lg:text-start">
-					Permissões médicas
-				</h1>
-
+			<HeaderWrapper title="Permissões médicas">
 				<section class="flex flex-row justify-center gap-2 *:h-[stretch]">
 					<BaseButton
 						type="button"
@@ -81,7 +76,7 @@ authStore.onReady(async () => {
 						class="place-self-center w-full md:w-120"
 					/>
 				</section>
-			</header>
+			</HeaderWrapper>
 
 			<section class="flex flex-col items-center gap-4 flex-1 min-h-0 overflow-y-auto scrollbar-hide">
 				<!-- <article class="w-full flex justify-center">
@@ -117,5 +112,5 @@ authStore.onReady(async () => {
 		<BaseDialog title="Adicionar profissional" ref="addProfessionalDialog">
 			<FormAddProfessional @handled-submit="handleRequestSubmitted" />
 		</BaseDialog>
-	</div>
+	</PageWrapper>
 </template>

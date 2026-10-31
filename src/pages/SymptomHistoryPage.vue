@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, useTemplateRef, watch } from "vue"
-import NavBar from "@/components/NavBar.vue"
 import BaseButton from "@/components/bases/BaseButton.vue"
 import BaseInput from "@/components/bases/BaseInput.vue"
 import FormSymptom from "@/components/forms/FormSymptom.vue"
@@ -16,6 +15,8 @@ import BaseDialog from "@/components/bases/BaseDialog.vue"
 import { useRoute } from "vue-router"
 import router from "@/router"
 import { symptomPlaces, type SortDirection } from "@/utils"
+import PageWrapper from "@/components/wrappers/PageWrapper.vue"
+import DefaultContentWrapper from "@/components/wrappers/DefaultContentWrapper.vue"
 
 const route = useRoute()
 const authStore = useAuthStore()
@@ -72,10 +73,7 @@ authStore.onReady(async (data) => {
 </script>
 
 <template>
-	<!-- Screen -->
-	<div class="flex h-screen">
-		<NavBar />
-
+	<PageWrapper custom>
 		<main
 			class="bg-background w-full h-full flex justify-center items-center gap-4 lg:gap-6 xl:gap-8 p-5 lg:p-7 xl:p-10 overflow-hidden"
 		>
@@ -129,8 +127,8 @@ authStore.onReady(async (data) => {
 				<br />
 
 				<!-- Content -->
-				<section
-					class="max-h-full overflow-hidden flex gap-8 scrollbar-track-transparent scrollbar-thumb-accent"
+				<DefaultContentWrapper
+					class="max-h-full overflow-hidden scrollbar-track-transparent scrollbar-thumb-accent"
 				>
 					<!-- List -->
 					<ul
@@ -187,7 +185,7 @@ authStore.onReady(async (data) => {
 							class="w-full"
 						/>
 					</section>
-				</section>
+				</DefaultContentWrapper>
 
 				<!-- Forms -->
 				<BaseDialog title="Registrar Sintoma" ref="formRegister">
@@ -199,5 +197,5 @@ authStore.onReady(async (data) => {
 				</BaseDialog>
 			</div>
 		</main>
-	</div>
+	</PageWrapper>
 </template>
