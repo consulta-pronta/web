@@ -3,7 +3,7 @@ import BaseButton from "@/components/bases/BaseButton.vue"
 import BaseInput from "@/components/bases/BaseInput.vue"
 import ReportRow from "@/components/ReportRow.vue"
 import BaseDialog from "@/components/bases/BaseDialog.vue"
-import { computed, ref, useTemplateRef } from "vue"
+import { computed, ref, useTemplateRef, watch } from "vue"
 import FormReport from "@/components/forms/FormReport.vue"
 import { useAuthStore } from "@/stores/authStore"
 import Report from "@/database/report.model"
@@ -13,6 +13,11 @@ import PatientCard from "@/components/cards/PatientCard.vue"
 import PageWrapper from "@/components/wrappers/PageWrapper.vue"
 import HeaderWrapper from "@/components/wrappers/HeaderWrapper.vue"
 import DefaultContentWrapper from "@/components/wrappers/DefaultContentWrapper.vue"
+import router from "@/router"
+import { useRoute } from "vue-router"
+
+const route = useRoute()
+const authStore = useAuthStore()
 
 const currentUser = ref<Patient | Professional | null>(null)
 const patients = ref<Patient[]>([])
@@ -21,8 +26,6 @@ const currentPatient = ref<Patient | null>(null)
 const loadError = ref("")
 
 const formRegister = useTemplateRef("formRegister")
-
-const authStore = useAuthStore()
 
 const userType = computed(() => currentUser.value?.user_type)
 const pageTitle = computed(() =>
@@ -48,6 +51,17 @@ const selectPatient = async (patient: Patient) => {
 	})
 }
 
+watch(currentPatient, (value) => {
+	if (value) {
+		router.replace({
+			name: route.name,
+			params: {id: value.id},
+		})
+	} else {
+		router.replace({ name: route.name })
+	}
+})
+
 authStore.onReady(async (user) => {
 	if (!(user instanceof Patient || user instanceof Professional)) {
 		return
@@ -59,6 +73,12 @@ authStore.onReady(async (user) => {
 	} else if (user instanceof Professional) {
 		try {
 			patients.value = await user.getPatients()
+			if (route.params.id) {
+				selectPatient(patients.value.find(
+					(item) => item.id === route.params.id
+				))
+
+			}
 		} catch (error) {
 			console.error("Failed to load professional's patients.", error)
 			loadError.value = "Não foi possível carregar os pacientes."

@@ -29,8 +29,6 @@ const currentSymptomId = ref<string>("")
 const formRegister = useTemplateRef("formRegister")
 const formUpdate = useTemplateRef("formUpdate")
 
-const rootPath = "/" + route.path.split("/")[1]
-
 let userId = ""
 
 const filterOptions = symptomPlaces.map<FilterOption>(
@@ -58,9 +56,12 @@ const handleSubmit = () => {
 
 watch(currentSymptomId, (value) => {
 	if (value) {
-		router.replace(`${rootPath}/${value}`)
+		router.replace({
+			name: route.name,
+			params: {id: value},
+		})
 	} else {
-		router.replace(rootPath)
+		router.replace({ name: route.name })
 	}
 })
 

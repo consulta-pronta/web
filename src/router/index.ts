@@ -67,7 +67,7 @@ const router = createRouter({
 			},
 		},
 		{
-			path: "/relatorios",
+			path: "/relatorios/:id?",
 			name: "relatorios",
 			component: () => import("@/pages/ReportsPage.vue"),
 			meta: {
