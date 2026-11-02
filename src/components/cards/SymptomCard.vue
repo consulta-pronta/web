@@ -30,11 +30,11 @@ const intensityColor = ranges.find((r) => {
 			{{ toCoolDate(symptom.date_time?.toDate()) }}
 		</p>
 
-		<p class="font-bold oneliner">
+		<p class="font-bold twoliner">
 			{{ symptom.title ?? "Titulo" }}
 		</p>
 
-		<p class="italic oneliner">
+		<p class="italic twoliner h-[2lh]">
 			{{ symptom.description ?? "Descrição AAAAAAAAAAAAAAAAAAAA" }}
 		</p>
 
@@ -59,8 +59,8 @@ const intensityColor = ranges.find((r) => {
 <style scoped>
 @reference "@/assets/main.css";
 
-.oneliner {
-	@apply whitespace-nowrap overflow-hidden text-ellipsis;
+.twoliner {
+	@apply line-clamp-2 overflow-hidden text-ellipsis;
 }
 
 .tenten {

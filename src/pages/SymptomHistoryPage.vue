@@ -17,6 +17,7 @@ import router from "@/router"
 import { symptomPlaces, type SortDirection } from "@/utils"
 import PageWrapper from "@/components/wrappers/PageWrapper.vue"
 import DefaultContentWrapper from "@/components/wrappers/DefaultContentWrapper.vue"
+import HeaderWrapper from "@/components/wrappers/HeaderWrapper.vue"
 
 const route = useRoute()
 const authStore = useAuthStore()
@@ -74,129 +75,117 @@ authStore.onReady(async (data) => {
 </script>
 
 <template>
-	<PageWrapper custom>
-		<main
-			class="bg-background w-full h-full flex justify-center items-center gap-4 lg:gap-6 xl:gap-8 p-5 lg:p-7 xl:p-10 overflow-hidden"
-		>
-			<!-- Fernando Wrapper -->
-			<div class="size-full bg-primary rounded-3xl py-8 px-5 flex flex-col min-h-0">
-				<header>
-					<section
-						class="flex flex-col md:flex-row justify-center place-items-center relative gap-6 mb-3"
-					>
-						<!--Barra de pesquisa-->
-						<BaseInput
-							placeholder="Pesquisar"
-							icon="search"
-							theme="light"
-							class="w-full md:w-2xl"
-						></BaseInput>
+	<PageWrapper>
+		<HeaderWrapper title="Histórico de Sintomas">
+			<div
+				class="flex flex-col md:flex-row justify-center place-items-center relative gap-6"
+			>
+				<BaseInput
+					placeholder="Pesquisar"
+					icon="search"
+					theme="light"
+					class="w-full md:w-2xl"
+				/>
 
-						<!--Botão de registrar sintoma-->
-						<BaseButton
-							theme="accent"
-							type="button"
-							icon="add"
-							iconPosition="right"
-							class="rounded-4xl!"
-							@click="formRegister?.toggle()"
-						>
-							Registrar Sintoma
-						</BaseButton>
-					</section>
-					<div class="mb-3 flex flex-col gap-2">
-						<BaseFilter
-							v-model="selectedPlace"
-							:options="filterOptions"
-							label="Filtrar por local"
-						/>
-						<BaseSort
-							v-model="sortField"
-							v-model:direction="sortDirection"
-							:options="sortOptions"
-						/>
-					</div>
-				</header>
-
-				<br />
-				<p
-					class="text-textLight text-2xl"
-					:class="[!currentSymptomId ? '' : 'hidden lg:flex']"
+				<BaseButton
+					theme="accent"
+					type="button"
+					icon="add"
+					iconPosition="right"
+					class=" min-w-52"
+					@click="formRegister?.toggle()"
 				>
-					{{ symptoms.length }} sintomas registrados
-				</p>
-				<br />
+					Registrar Sintoma
+				</BaseButton>
+			</div>
 
-				<!-- Content -->
-				<DefaultContentWrapper
-					class="max-h-full overflow-hidden scrollbar-track-transparent scrollbar-thumb-accent"
+		</HeaderWrapper>
+
+		<DefaultContentWrapper class="flex-col">
+			<div class="flex flex-col gap-2">
+				<BaseFilter
+					v-model="selectedPlace"
+					:options="filterOptions"
+					label="Filtrar por local"
+				/>
+				<BaseSort
+					v-model="sortField"
+					v-model:direction="sortDirection"
+					:options="sortOptions"
+				/>
+			</div>
+	
+			<div class="flex flex-row gap-4">
+				<ul
+					v-if="symptoms.length"
+					class="w-full max-h-full overflow-hidden grid grid-cols-1 sm:grid-cols-[repeat(auto-fill,minmax(30em,1fr))] gap-2 overflow-y-auto"
+					:class="[!currentSymptomId ? '' : 'hidden lg:grid lg:grid-cols-1 lg:w-120']"
 				>
-					<!-- List -->
-					<ul
-						v-if="symptoms.length"
-						class="w-full lg:w-max max-h-full overflow-hidden flex flex-col gap-2 overflow-y-auto"
+					<p
+						class="text-textLight text-2xl col-span-full"
 						:class="[!currentSymptomId ? '' : 'hidden lg:flex']"
 					>
-						<template v-for="symptom in symptoms" :key="symptom.id">
-							<SymptomCard
-								:symptom="symptom"
-								theme="light"
-								class="w-full cursor-pointer"
-								@click="viewSymptom(symptom.id)"
-							/>
-						</template>
-					</ul>
-					<template v-else>
-						<span
-							class="material-symbols-rounded animate-spin text-accent w-fit m-auto"
-						>
-							sync
-						</span>
-					</template>
+						{{ symptoms.length }} sintomas registrados
+					</p>
 
-					<!-- Details -->
-					<section
-						class="grow h-full flex flex-col items-start"
-						v-show="currentSymptomId"
-					>
-						<header class="w-full flex flex-row justify-between">
-							<button
-								type="button"
-								class="cursor-pointer text-textLight"
-								@click="viewSymptom('')"
-							>
-								<span class="material-symbols-rounded text-3xl!"> arrow_back </span>
-							</button>
-
-							<BaseButton
-								theme="accent"
-								icon="edit_document"
-								class="gap-3"
-								@click.prevent="formUpdate!.show()"
-							>
-								<p>Atualizar sintoma</p>
-							</BaseButton>
-						</header>
-
-						<br />
-
-						<SymptomExtended
-							v-model="currentSymptomId"
-							ref="areaDescription"
-							class="w-full"
+					<template v-for="symptom in symptoms" :key="symptom.id">
+						<SymptomCard
+							:symptom="symptom"
+							theme="light"
+							class="w-full cursor-pointer"
+							@click="viewSymptom(symptom.id)"
 						/>
-					</section>
-				</DefaultContentWrapper>
+					</template>
+				</ul>
+				<span
+					v-else
+					class="material-symbols-rounded animate-spin text-accent w-fit m-auto"
+				>
+					sync
+				</span>
 
-				<!-- Forms -->
-				<BaseDialog title="Registrar Sintoma" ref="formRegister">
-					<FormSymptom @handled-submit="handleSubmit" />
-				</BaseDialog>
+				<!-- Details -->
+				<section
+					class="grow h-full flex flex-col items-start"
+					v-show="currentSymptomId"
+				>
+					<header class="w-full flex flex-row justify-between">
+						<button
+							type="button"
+							class="cursor-pointer text-textLight"
+							@click="viewSymptom('')"
+						>
+							<span class="material-symbols-rounded text-3xl!"> arrow_back </span>
+						</button>
 
-				<BaseDialog title="Atualizar Sintoma" ref="formUpdate">
-					<FormSymptom @handled-submit="handleSubmit" :symptomId="currentSymptomId" />
-				</BaseDialog>
+						<BaseButton
+							theme="accent"
+							icon="edit_document"
+							class="gap-3"
+							@click.prevent="formUpdate!.show()"
+						>
+							<p>Atualizar sintoma</p>
+						</BaseButton>
+					</header>
+
+					<br />
+
+					<SymptomExtended
+						v-model="currentSymptomId"
+						ref="areaDescription"
+						class="w-full"
+					/>
+				</section>
 			</div>
-		</main>
+		</DefaultContentWrapper>
+
+		<!-- Forms -->
+		<BaseDialog title="Registrar Sintoma" ref="formRegister">
+			<FormSymptom @handled-submit="handleSubmit" />
+		</BaseDialog>
+
+		<BaseDialog title="Atualizar Sintoma" ref="formUpdate">
+			<FormSymptom @handled-submit="handleSubmit" :symptomId="currentSymptomId" />
+		</BaseDialog>
 	</PageWrapper>
 </template>
