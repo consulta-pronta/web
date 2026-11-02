@@ -18,6 +18,7 @@ const medicalPermissions = ref<MedicalPermission[]>([])
 const loading = ref(true)
 const loadMessage = ref("")
 const currentPatientId = ref<string>("")
+const searchQuery = ref("")
 
 const rootPath = "/" + route.path.split("/")[1]
 
@@ -75,6 +76,7 @@ authStore.onReady(async () => {
 					>
 						<!--Barra de pesquisa-->
 						<BaseInput
+							v-model="searchQuery"
 							placeholder="Pesquisar"
 							icon="search"
 							theme="light"
@@ -108,6 +110,7 @@ authStore.onReady(async () => {
 						>
 							<PermissionCard
 								:medical-permission="permission"
+								:search-query="searchQuery"
 								class="w-full"
 							/>
 						</template>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, useTemplateRef, watch } from "vue"
+import { computed, ref, useTemplateRef, watch } from "vue"
 import BaseButton from "@/components/bases/BaseButton.vue"
 import BaseInput from "@/components/bases/BaseInput.vue"
 import FormSymptom from "@/components/forms/FormSymptom.vue"
@@ -14,7 +14,11 @@ import SymptomExtended from "@/components/SymptomExtended.vue"
 import BaseDialog from "@/components/bases/BaseDialog.vue"
 import { useRoute } from "vue-router"
 import router from "@/router"
-import { symptomPlaces, type SortDirection } from "@/utils"
+import {
+	searchDocuments,
+	symptomPlaces,
+	type SortDirection,
+} from "@/utils"
 import PageWrapper from "@/components/wrappers/PageWrapper.vue"
 import DefaultContentWrapper from "@/components/wrappers/DefaultContentWrapper.vue"
 import HeaderWrapper from "@/components/wrappers/HeaderWrapper.vue"
@@ -23,6 +27,9 @@ const route = useRoute()
 const authStore = useAuthStore()
 
 const symptoms = ref<Symptom[]>([])
+const searchQuery = ref("")
+const symptomsLoaded = ref(false)
+const loadError = ref("")
 const selectedPlace = ref<string | null>(null)
 const sortField = ref("date_time")
 const sortDirection = ref<SortDirection	>("desc")
@@ -40,9 +47,28 @@ const sortOptions = <SortOption[]>[
 	{ value: "intensity", label: "Intensidade" },
 ]
 
+const filteredSymptoms = computed(() => {
+	return searchDocuments(
+		symptoms.value.filter(
+			(i) => !selectedPlace.value || i.place === selectedPlace.value
+		),
+		searchQuery.value,
+	) as Symptom[]
+})
+
 const updateSymptoms = async () => {
-	symptoms.value = []
-	symptoms.value = await Symptom.getAll({ scope: { userId } })
+	loadError.value = ""
+	symptomsLoaded.value = false
+	try {
+		symptoms.value = await Symptom.getAll({ scope: { userId } })
+		
+		symptoms.value.forEach((exam) => console.log(exam.toString()))
+	} catch (error) {
+		console.error("Failed to load symptoms.", error)
+		loadError.value = "Não foi possível carregar os sintomas."
+	} finally {
+		symptomsLoaded.value = true
+	}
 }
 
 const viewSymptom = (symptomId: string) => {
@@ -81,6 +107,7 @@ authStore.onReady(async (data) => {
 				class="flex flex-col md:flex-row justify-center place-items-center relative gap-6"
 			>
 				<BaseInput
+					v-model="searchQuery"
 					placeholder="Pesquisar"
 					icon="search"
 					theme="light"
@@ -117,7 +144,7 @@ authStore.onReady(async (data) => {
 	
 			<div class="flex flex-row gap-4">
 				<ul
-					v-if="symptoms.length"
+					v-if="filteredSymptoms.length"
 					class="w-full max-h-full overflow-hidden grid grid-cols-1 sm:grid-cols-[repeat(auto-fill,minmax(30em,1fr))] gap-2 overflow-y-auto"
 					:class="[!currentSymptomId ? '' : 'hidden lg:grid lg:grid-cols-1 lg:w-120']"
 				>
@@ -125,10 +152,10 @@ authStore.onReady(async (data) => {
 						class="text-textLight text-2xl col-span-full"
 						:class="[!currentSymptomId ? '' : 'hidden lg:flex']"
 					>
-						{{ symptoms.length }} sintomas registrados
+						{{ filteredSymptoms.length }} sintomas registrados
 					</p>
 
-					<template v-for="symptom in symptoms" :key="symptom.id">
+					<template v-for="symptom in filteredSymptoms" :key="symptom.id">
 						<SymptomCard
 							:symptom="symptom"
 							theme="light"
@@ -137,12 +164,19 @@ authStore.onReady(async (data) => {
 						/>
 					</template>
 				</ul>
-				<span
-					v-else
-					class="material-symbols-rounded animate-spin text-accent w-fit m-auto"
-				>
-					sync
-				</span>
+				<p v-else-if="!symptomsLoaded" class="text-textLight m-auto">
+					<span
+						class="material-symbols-rounded animate-spin text-accent w-fit m-auto"
+					>
+						sync
+					</span>
+				</p>
+				<p v-else-if="loadError" class="text-error m-auto">
+					{{ loadError }}
+				</p>
+				<p v-else class="text-textLight m-auto">
+					{{ symptoms.length ? "Nenhum sintoma encontrado." : "Nenhum sintoma registrado." }}
+				</p>
 
 				<!-- Details -->
 				<section

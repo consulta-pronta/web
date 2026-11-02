@@ -16,6 +16,7 @@ import ProfessionalPermissionExtended from "../ProfessionalPermissionExtended.vu
 
 const props = defineProps<{
 	medicalPermission: MedicalPermission
+	searchQuery?: string
 }>()
 
 const authStore = useAuthStore()
@@ -26,6 +27,7 @@ const status = ref(props.medicalPermission.status)
 const permissions = ref(props.medicalPermission.permissions)
 
 const user = ref<Patient | Professional | null>(null)
+const matchesSearch = computed(() => props.medicalPermission.search(props.searchQuery ?? ""))
 
 const updatePermissions = async (updatedPermission: {
 	status: MedicalAccessStatus
@@ -108,7 +110,10 @@ authStore.onReady(async (data) => {
 </script>
 
 <template>
-	<article class="bg-surface min-w-fit rounded-lg overflow-clip text-textDark flex flex-col">
+	<article
+		v-if="matchesSearch"
+		class="bg-surface min-w-fit rounded-lg overflow-clip text-textDark flex flex-col"
+	>
 		
 		<header
 			class="w-full flex justify-between items-center p-3 mb-2"

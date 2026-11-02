@@ -14,6 +14,7 @@ import MedicalPermission from "@/database/medicalPermission.model"
 import PageWrapper from "@/components/wrappers/PageWrapper.vue"
 import HeaderWrapper from "@/components/wrappers/HeaderWrapper.vue"
 import DefaultContentWrapper from "@/components/wrappers/DefaultContentWrapper.vue"
+import { searchDocuments } from "@/utils"
 
 const authStore = useAuthStore()
 
@@ -23,9 +24,22 @@ const currentPermission = ref<MedicalPermission | null>(null)
 const forProfessionalData = ref<PatientWithProfessionalPermission[]>([])
 const currentPatient = ref<Patient | null>(null)
 const loadError = ref("")
+const searchQuery = ref("")
 const formRegister = useTemplateRef("formRegister")
 
 const userType = computed(() => currentUser.value?.user_type)
+const filteredProfessionalData = computed(() => {
+	const matchingPatientIds = new Set(
+		searchDocuments(
+			forProfessionalData.value.map(({ patient }) => patient),
+			searchQuery.value,
+		).map((patient) => patient.id),
+	)
+	return forProfessionalData.value.filter(({ patient }) =>
+		matchingPatientIds.has(patient.id),
+	)
+})
+const filteredExams = computed(() => searchDocuments(exames.value, searchQuery.value) as Exam[])
 const pageTitle = computed(() =>
 	userType.value === "patient"
 		? "Meus Exames"
@@ -51,6 +65,7 @@ const handleSubmit = async () => {
 const selectPatient = async (item: PatientWithProfessionalPermission) => {
 	currentPatient.value = item.patient
 	currentPermission.value = item.permissions
+	searchQuery.value = ""
 	exames.value = await Exam.getAll({ scope: { userId: item.patient.id } })
 }
 
@@ -78,6 +93,7 @@ authStore.onReady(async (user) => {
 	<PageWrapper>
 		<HeaderWrapper :title="pageTitle">
 			<BaseInput
+				v-model="searchQuery"
 				placeholder="Pesquisar"
 				icon="search"
 				class="place-self-center w-full md:w-120"
@@ -88,7 +104,7 @@ authStore.onReady(async (user) => {
 			<div
 				v-if="userType === 'professional'"
 				class="w-full lg:w-96 shrink-0 max-h-full overflow-hidden flex flex-col gap-2 overflow-y-auto scrollbar-hide"
-				:class="[currentUser ? 'hidden lg:flex' : '']"
+				:class="[currentPatient ? 'hidden lg:flex' : '']"
 			>
 				<article class="flex text-textLight items-center">
 					<span class="material-symbols-rounded text-3xl!">
@@ -109,7 +125,7 @@ authStore.onReady(async (user) => {
 
 				<ul class="w-full flex flex-col gap-2">
 					<li
-						v-for="item in forProfessionalData"
+						v-for="item in filteredProfessionalData"
 						:key="item.patient.id"
 					>
 						<PatientCard
@@ -146,10 +162,15 @@ authStore.onReady(async (user) => {
 						</thead>
 						<tbody>
 							<ExamRow
-								v-for="exam in exames"
+								v-for="exam in filteredExams"
 								:key="exam.id"
 								:exam="exam"
 							/>
+							<tr v-if="exames.length && filteredExams.length === 0">
+								<td colspan="4" class="p-3 text-center">
+									Nenhum exame encontrado.
+								</td>
+							</tr>
 						</tbody>
 					</table>
 				</div>

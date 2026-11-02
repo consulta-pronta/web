@@ -20,6 +20,7 @@ const addProfessionalDialog = useTemplateRef("addProfessionalDialog")
 const medicalPermissions = ref<MedicalPermission[]>([])
 const loading = ref(true)
 const loadMessage = ref("Carregando permissões...")
+const searchQuery = ref("")
 
 const loadPermissions = async () => {
 	loading.value = true
@@ -71,6 +72,7 @@ authStore.onReady(async () => {
 					</BaseButton>
 
 					<BaseInput
+						v-model="searchQuery"
 						placeholder="Pesquisar"
 						icon="search"
 						class="place-self-center w-full md:w-120"
@@ -100,6 +102,7 @@ authStore.onReady(async () => {
 						v-for="permission in medicalPermissions"
 						:key="permission.id"
 						:medical-permission="permission"
+						:search-query="searchQuery"
 					/>
 				</div>
 				<i v-if="loading" class="animate-spin">loop</i>

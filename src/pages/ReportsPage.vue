@@ -15,19 +15,30 @@ import HeaderWrapper from "@/components/wrappers/HeaderWrapper.vue"
 import DefaultContentWrapper from "@/components/wrappers/DefaultContentWrapper.vue"
 import router from "@/router"
 import { useRoute } from "vue-router"
+import { normalizeString, searchDocuments } from "@/utils"
 
 const route = useRoute()
 const authStore = useAuthStore()
 
 const currentUser = ref<Patient | Professional | null>(null)
 const patients = ref<Patient[]>([])
-const reports = ref<Report[]>()
+const reports = ref<Report[]>([])
 const currentPatient = ref<Patient | null>(null)
 const loadError = ref("")
+const searchQuery = ref("")
 
 const formRegister = useTemplateRef("formRegister")
 
 const userType = computed(() => currentUser.value?.user_type)
+const filteredPatients = computed(() => {
+	const query = normalizeString(searchQuery.value)
+	return patients.value.filter((patient) =>
+		normalizeString(`${patient.name} ${patient.cpf} ${patient.email} ${patient.phone}`).includes(query),
+	)
+})
+const filteredReports = computed(() =>
+	searchDocuments(reports.value, searchQuery.value) as Report[]
+)
 const pageTitle = computed(() =>
 	userType.value === "patient"
 		? "Meus Relatórios"
@@ -45,6 +56,7 @@ const handleSubmit = async () => {
 
 const selectPatient = async (patient: Patient) => {
 	currentPatient.value = patient
+	searchQuery.value = ""
 
 	reports.value = await Report.getAll({
 		scope: { userId: patient.id },
@@ -74,10 +86,14 @@ authStore.onReady(async (user) => {
 		try {
 			patients.value = await user.getPatients()
 			if (route.params.id) {
-				selectPatient(patients.value.find(
-					(item) => item.id === route.params.id
-				))
-
+				const patient = patients.value.find(
+					(item) => item.id === route.params.id,
+				)
+				if (patient) {
+					await selectPatient(patient)
+				} else {
+					loadError.value = "Paciente não encontrado."
+				}
 			}
 		} catch (error) {
 			console.error("Failed to load professional's patients.", error)
@@ -103,6 +119,7 @@ authStore.onReady(async (user) => {
 					</BaseButton>
 
 					<BaseInput
+						v-model="searchQuery"
 						placeholder="Pesquisar"
 						icon="search"
 						class="place-self-center w-full md:w-120"
@@ -114,7 +131,7 @@ authStore.onReady(async (user) => {
 			<div
 				v-if="userType === 'professional'"
 				class="w-full lg:w-96 shrink-0 max-h-full overflow-hidden flex flex-col gap-2 overflow-y-auto scrollbar-hide"
-				:class="[currentUser ? 'hidden lg:flex' : '']"
+				:class="[currentPatient ? 'hidden lg:flex' : '']"
 			>
 				<article class="flex text-textLight items-center">
 					<span class="material-symbols-rounded text-3xl!">
@@ -135,7 +152,7 @@ authStore.onReady(async (user) => {
 
 				<ul class="w-full flex flex-col gap-2">
 					<li
-						v-for="patient in patients"
+						v-for="patient in filteredPatients"
 						:key="patient.cpf"
 					>
 						<PatientCard
@@ -159,10 +176,15 @@ authStore.onReady(async (user) => {
 					</thead>
 					<tbody>
 						<ReportRow
-							v-for="report in reports"
+							v-for="report in filteredReports"
 							:key="report.id"
 							:report="report"
 						/>
+						<tr v-if="reports && filteredReports.length === 0">
+							<td colspan="4" class="p-3 text-center">
+								{{ reports.length ? "Nenhum relatório encontrado." : "Nenhum relatório disponível." }}
+							</td>
+						</tr>
 					</tbody>
 				</table>
 			</div>
