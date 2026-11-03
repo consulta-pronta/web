@@ -78,8 +78,8 @@ export const normalizeString = (value: string) =>
 		.toLocaleLowerCase()
 		.trim()
 
-export const timestampDiffSeconds = (start: Timestamp, end: Timestamp) =>
-	(end.toMillis() - start.toMillis()) / 1000
+export const timestampDiffSeconds = (start: Timestamp, end: Timestamp, reversed = false) =>
+	(end.toMillis() - start.toMillis()) / 1000 * (reversed ? -1 : 1)
 
 export const timestampDiffDays = (start: Timestamp, end: Timestamp) =>
 	timestampDiffSeconds(start, end) / (60 * 60 * 24)

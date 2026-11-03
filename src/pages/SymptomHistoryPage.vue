@@ -17,6 +17,7 @@ import router from "@/router"
 import {
 	searchDocuments,
 	symptomPlaces,
+	timestampDiffSeconds,
 	type SortDirection,
 } from "@/utils"
 import PageWrapper from "@/components/wrappers/PageWrapper.vue"
@@ -31,7 +32,7 @@ const searchQuery = ref("")
 const symptomsLoaded = ref(false)
 const loadError = ref("")
 const selectedPlace = ref<string | null>(null)
-const sortField = ref("date_time")
+const sortField = ref<(typeof sortOptions)[number]["value"]>("date_time")
 const sortDirection = ref<SortDirection	>("desc")
 const currentSymptomId = ref<string>("")
 const formRegister = useTemplateRef("formRegister")
@@ -42,18 +43,41 @@ let userId = ""
 const filterOptions = symptomPlaces.map<FilterOption>(
 	(place) => ({value: place, label: place})
 )
-const sortOptions = <SortOption[]>[
+const sortOptions = [
 	{ value: "date_time", label: "Data de início" },
 	{ value: "intensity", label: "Intensidade" },
-]
+] as const satisfies SortOption[]
 
 const filteredSymptoms = computed(() => {
-	return searchDocuments(
+	const filtered = searchDocuments(
 		symptoms.value.filter(
 			(i) => !selectedPlace.value || i.place === selectedPlace.value
 		),
 		searchQuery.value,
 	) as Symptom[]
+
+	
+	const shouldReverse = sortDirection.value === "desc"
+	switch (sortField.value) {
+		case "date_time":
+			filtered.sort((a, b) =>
+				timestampDiffSeconds(
+					a.date_time!,
+					b.date_time!,
+					shouldReverse
+				)
+			)
+			break
+		case "intensity":
+			filtered.sort((a, b) => 
+				shouldReverse
+				? a.intensity - b.intensity
+				: b.intensity - a.intensity
+			)
+			break
+	}
+	
+	return filtered
 })
 
 const updateSymptoms = async () => {
@@ -61,8 +85,6 @@ const updateSymptoms = async () => {
 	symptomsLoaded.value = false
 	try {
 		symptoms.value = await Symptom.getAll({ scope: { userId } })
-		
-		symptoms.value.forEach((exam) => console.log(exam.toString()))
 	} catch (error) {
 		console.error("Failed to load symptoms.", error)
 		loadError.value = "Não foi possível carregar os sintomas."
