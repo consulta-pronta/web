@@ -5,7 +5,7 @@ import type Report from "@/database/report.model"
 import Symptom from "@/database/symptom.model"
 import User from "@/database/user.model"
 import { useAuthStore } from "@/stores/authStore"
-import { timestampDiffDays, toCoolDate } from "@/utils"
+import { toCoolDate } from "@/utils"
 import { formatToPhone } from "brazilian-values"
 import IntensityChip from "@/components/IntensityChip.vue"
 
@@ -21,34 +21,10 @@ const symptoms = ref<Symptom[]>([])
 
 const authStore = useAuthStore()
 
-const reportDuration = computed(() => {
-	const { period_start, period_end } = props.report
-	if (!(period_start && period_end)) return 0
+const reportDuration = computed(() => props.report.getDurationDays() ?? "-")
 
-	return Math.floor(timestampDiffDays(period_start, period_end))
-})
-
-const mostAffectedArea = computed(() => {
-	const areas = Object.groupBy(symptoms.value, (item) => item.place ?? "")
-	const entries = Object.entries(areas)
-
-	const [area, maxSymptoms] = entries.reduce(
-		(max, item) => {
-			return item[1]!.length > max.length ? item : max
-		},
-		["", []],
-	)
-	const amount = maxSymptoms?.length ?? 0
-
-	let intensity = 0.0
-	const sum =
-		maxSymptoms!.reduce((sum, item) => {
-			return sum + Number(item.intensity)
-		}, 0) ?? 0
-	intensity = sum / amount
-
-	return { area, amount, intensity }
-})
+const mostAffectedArea = computed(() => Symptom.getMostAffectedArea(symptoms.value))
+const averageIntensity = computed(() => Symptom.getAverageIntensity(symptoms.value))
 
 authStore.onReady(async (data) => {
 	user.value = data as User
@@ -101,10 +77,10 @@ defineExpose({ show, toggle })
 				<div class="flex gap-3 text-textDark *:bg-surface *:grow *:p-3 *:rounded-xl">
 					<article>
 						<small>Área mais afetada</small>
-						<h3>{{ mostAffectedArea.area }}</h3>
-						<h6 class="text-sm font-medium">{{ mostAffectedArea.amount }} registros</h6>
+						<h3>{{ mostAffectedArea?.area ?? "—" }}</h3>
+						<h6 class="text-sm font-medium">{{ mostAffectedArea?.amount ?? 0 }} registros</h6>
 						<IntensityChip
-							:intensity="mostAffectedArea.intensity"
+							:intensity="averageIntensity ?? 0"
 							custom-message="Média:"
 							class="mt-3"
 						/>
