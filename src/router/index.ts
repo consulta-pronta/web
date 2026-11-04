@@ -1,5 +1,5 @@
-import type { UserType } from "@/components/ToggleUser.vue"
-import { auth } from "@/config/firebase"
+import { changeTitle, type UserType } from "@/utils"
+import { auth } from "@/database/firebase"
 import { useAuthStore } from "@/stores/authStore"
 import { createRouter, createWebHistory } from "vue-router"
 
@@ -8,6 +8,7 @@ meta.roles values explained:
 	- undefined: doesn't need auth
 	- null: must not be authenticated
 	- UserType[]: must be authenticated as one of the values of the list
+meta.title @ means the app name
 */
 const router = createRouter({
 	history: createWebHistory(import.meta.env.BASE_URL),
@@ -20,72 +21,92 @@ const router = createRouter({
 		{
 			path: "/cadastro",
 			name: "cadastro",
-			component: () => import("@/pages/authentication/CadastroUsuario.vue"),
+			component: () => import("@/pages/auth/SignUpPage.vue"),
 			meta: {
 				roles: [],
-			},
-		},
-		{
-			path: "/cadastroContatos",
-			name: "cadastroContatos",
-			alias: ["/contatos", "/cadastroContatos"],
-			component: () => import("@/pages/authentication/CadastroContatos.vue"),
-			meta: {
-				roles: [],
+				title: "Cadastro - @",
 			},
 		},
 		{
 			path: "/login",
 			name: "login",
-			component: () => import("@/pages/authentication/LoginUsuario.vue"),
+			component: () => import("@/pages/auth/LoginPage.vue"),
 			meta: {
 				roles: [],
+				title: "Login - @",
 			},
 		},
 		{
 			path: "/recuperar-senha",
 			name: "recuperar-senha",
-			component: () => import("@/pages/authentication/RecuperarSenha.vue"),
+			component: () => import("@/pages/auth/PasswordRecoveryPage.vue"),
 			meta: {
 				roles: [],
+				title: "Recuperar Senha - @",
 			},
 		},
 		{
 			path: "/dashboard",
 			name: "dashboard",
-			component: () => import("@/pages/DashboardUsuario.vue"),
+			component: () => import("@/pages/DashboardPage.vue"),
 			meta: {
-				roles: ["paciente", "profissional"],
+				roles: ["patient", "professional", "admin"],
+				title: "Dashboard - @",
 			},
 		},
 		{
 			path: "/exames",
 			name: "exames",
-			component: () => import("@/pages/ExamesUsuario.vue"),
+			component: () => import("@/pages/ExamsPage.vue"),
 			meta: {
-				roles: ["paciente"],
+				roles: ["patient", "professional"],
+				title: "Exames - @",
 			},
 		},
 		{
 			path: "/historico-sintomas/:id?",
 			name: "historico-sintomas",
 			alias: ["/historico", "/sintomas"],
-			component: () => import("@/pages/HistoricoUsuario.vue"),
+			component: () => import("@/pages/SymptomHistoryPage.vue"),
 			meta: {
-				roles: ["paciente"],
+				roles: ["patient"],
+				title: "Histórico de Sintomas - @",
+			},
+		},
+		{
+			path: "/relatorios/:id?",
+			name: "relatorios",
+			component: () => import("@/pages/ReportsPage.vue"),
+			meta: {
+				roles: ["patient", "professional"],
+				title: "Relatórios - @",
+			},
+		},
+		{
+			path: "/permissoes-medicas",
+			name: "medical-permissions",
+			alias: ["/permissoes"],
+			component: () => import("@/pages/MedicalPermissionsPage.vue"),
+			meta: {
+				roles: ["patient"],
+				title: "Permissões Médicas - @",
+			},
+		},
+		{
+			path: "/pacientes/:id?",
+			name: "pacientes",
+			component: () => import("@/pages/ProfessionalPatientsPage.vue"),
+			meta: {
+				roles: ["professional"],
+				title: "Pacientes - @",
 			},
 		},
 		{
 			path: "/:catchAll(.*)",
 			name: "not-found",
-			component: () => import("@/pages/NotFound.vue"),
-		},
-		{
-			path: "/relatorios",
-			name: "relatorios",
-			component: () => import("@/pages/RelatoriosUsuario.vue"),
+			component: () => import("@/pages/NotFoundPage.vue"),
 			meta: {
-				roles: ["paciente"],
+				title: "Página Não Encontrada - @",
 			},
 		},
 	],
@@ -103,16 +124,30 @@ router.beforeEach(async (to) => {
 	const authStore = useAuthStore()
 	authStore.setUser(user)
 
-	const needsAuth = roles.length !== 0
 	const isAuthenticated = user !== null
+	const needsAuth = roles.length !== 0
 
 	if (needsAuth && !isAuthenticated) {
 		return "/login"
 	} else if (!needsAuth && isAuthenticated) {
 		return "/dashboard"
-	} else {
-		return
 	}
+
+	if (needsAuth) {
+		let userType: UserType | undefined
+		await authStore.onReady((data) => {
+			userType = data.user_type
+		})
+		if (!userType || !roles.includes(userType)) {
+			return "/dashboard"
+		}
+	}
+
+	if (to.meta.title) {
+		changeTitle(to.meta.title.toString().replace("@", "Consulta Pronta"))
+	}
+
+	return
 })
 
 export default router

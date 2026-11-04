@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import type { Exam } from "@/models/examModel"
+import Exam from "@/database/exam.model"
+import { toBrazilianLocaleDate } from "@/utils"
 import { computed } from "vue"
 
 const props = defineProps<{
@@ -14,25 +15,39 @@ const typeIcon = computed(() => {
 			return "radiology"
 		case "urina":
 			return "colorize"
-		default:
-			return "broken_image"
+		default: {
+			switch (props.exam.category) {
+				case "laboratorial":
+					return "bloodtype"
+				case "imagem":
+					return "radiology"
+				case "funcional":
+					return "monitor_heart"
+				case "preventivo":
+					return "health_and_safety"
+				default:
+					return "broken_image"
+			}
+		}
 	}
 })
 
-const date = props.exam.date.toDate().toLocaleDateString()
+const date = computed(() => {
+	return toBrazilianLocaleDate(props.exam.date?.toDate())
+})
 
 const status = computed(() => {
 	switch (props.exam.status) {
 		case "solicitado":
-			return "Agendado"
+			return "Solicitado"
 		case "triagem":
-			return "Em andamento"
+			return "Em triagem"
 		case "liberado":
 			return "Resultado liberado"
 		case "pendente":
 			return "Ação pendente"
 		default:
-			return "Desconhecio"
+			return "Desconhecido"
 	}
 })
 const statusIcon = computed(() => {
@@ -52,20 +67,24 @@ const statusIcon = computed(() => {
 </script>
 
 <template>
-	<tr>
-		<td class="flex gap-2">
-			<span class="material-symbols-rounded select-none">
-				{{ typeIcon }}
-			</span>
-			<p>{{ exam.name }}</p>
+	<tr class="*:p-3">
+		<td>
+			<div class="flex gap-2">
+				<span class="material-symbols-rounded select-none">
+					{{ typeIcon }}
+				</span>
+				<p>{{ exam.name }}</p>
+			</div>
 		</td>
 		<td>{{ exam.place }}</td>
 		<td>{{ date }}</td>
-		<td class="flex gap-2">
-			<p>{{ status }}</p>
-			<span class="material-symbols-rounded select-none">
-				{{ statusIcon }}
-			</span>
+		<td>
+			<div class="flex gap-2">
+				<p>{{ status }}</p>
+				<span class="material-symbols-rounded select-none">
+					{{ statusIcon }}
+				</span>
+			</div>
 		</td>
 	</tr>
 </template>

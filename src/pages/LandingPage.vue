@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { auth } from "@/config/firebase"
+import { auth } from "@/database/firebase"
 import { onAuthStateChanged } from "firebase/auth"
 import { useRouter } from "vue-router"
 
