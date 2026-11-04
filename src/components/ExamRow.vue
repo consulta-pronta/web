@@ -41,13 +41,13 @@ const status = computed(() => {
 		case "solicitado":
 			return "Solicitado"
 		case "triagem":
-			return "Em andamento"
+			return "Em triagem"
 		case "liberado":
 			return "Resultado liberado"
 		case "pendente":
 			return "Ação pendente"
 		default:
-			return "Desconhecio"
+			return "Desconhecido"
 	}
 })
 const statusIcon = computed(() => {

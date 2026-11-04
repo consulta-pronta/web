@@ -5,6 +5,7 @@ import BaseDocument, {
 	type QueryOptions,
 } from "./baseDocument"
 import User from "./user.model"
+import { timestampDiffDays } from "@/utils"
 
 export default class Report extends BaseDocument {
 	constructor(
@@ -55,5 +56,12 @@ export default class Report extends BaseDocument {
 
 	static async getAll(options: QueryOptions = {}) {
 		return super.getAll(options) as Promise<Report[]>
+	}
+
+	getDurationDays(): number | null{
+		if (!this.period_start || !this.period_end) {
+			return null
+		}
+		return Math.floor(timestampDiffDays(this.period_start, this.period_end))
 	}
 }

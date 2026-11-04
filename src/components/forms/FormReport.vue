@@ -2,7 +2,7 @@
 import BaseSelect from "@/components/bases/BaseSelect.vue"
 import BaseButton, { type ButtonState } from "@/components/bases/BaseButton.vue"
 import BaseInput from "@/components/bases/BaseInput.vue"
-import { computed, ref, useTemplateRef } from "vue"
+import { computed, ref, useTemplateRef, watch } from "vue"
 import Report from "@/database/report.model"
 import { Timestamp } from "firebase/firestore"
 import { inputDateToDate } from "@/utils"
@@ -21,6 +21,9 @@ const reportRef = ref(new Report())
 const periodStartInput = ref("")
 const periodEndInput = ref("")
 const symptoms = ref<Symptom[]>([])
+const symptomsLoaded = ref(false)
+const symptomsLoading = ref(false)
+const symptomsError = ref("")
 const buttonState = ref<ButtonState>("enabled")
 const professionals = ref<Professional[]>([])
 const selectedProfessionalId = ref("")
@@ -28,24 +31,67 @@ const professionalsError = ref("")
 
 const periodStart = computed(() => Timestamp.fromDate(inputDateToDate(periodStartInput.value)))
 const periodEnd = computed(() => Timestamp.fromDate(inputDateToDate(periodEndInput.value)))
+const averageIntensity = computed(() => {
+	if (!symptomsLoaded.value) return "—"
+	return Symptom.getAverageIntensity(symptoms.value)?.toFixed(1) ?? "—"
+})
+const mostAffectedPlace = computed(() => {
+	if (!symptomsLoaded.value) return "—"
+	return Symptom.getMostAffectedArea(symptoms.value)?.area ?? "—"
+})
 
 const emit = defineEmits(["handled-submit"])
 
 const loadSymptoms = async () => {
 	const id = authStore.userData?.id
+	if (symptomsLoading.value) {
+		return
+	}
 	if (id == null) {
+		symptomsError.value = "Não foi possível identificar o paciente."
 		return
 	}
 	if (periodStartInput.value.length === 0 || periodEndInput.value.length === 0) {
+		symptomsError.value = "Informe as datas inicial e final do período."
+		return
+	}
+	if (periodStartInput.value > periodEndInput.value) {
+		symptomsError.value = "A data inicial deve ser anterior à data final."
+		return
+	}
+	if (symptomsLoaded.value) {
+		dialogSymptoms.value?.show()
 		return
 	}
 
-	symptoms.value = await Symptom.getBetween(periodStart.value, periodEnd.value, id)
-
-	dialogSymptoms.value?.show()
+	symptomsLoading.value = true
+	symptomsError.value = ""
+	try {
+		symptoms.value = await Symptom.getBetween(periodStart.value, periodEnd.value, id)
+		symptomsLoaded.value = true
+		dialogSymptoms.value?.show()
+	} catch (error) {
+		console.error("Failed to load symptoms for the report.", error)
+		symptoms.value = []
+		symptomsLoaded.value = false
+		symptomsError.value = "Não foi possível carregar os sintomas do período."
+	} finally {
+		symptomsLoading.value = false
+	}
 }
 
+watch([periodStartInput, periodEndInput], () => {
+	symptoms.value = []
+	symptomsLoaded.value = false
+	symptomsError.value = ""
+})
+
 const submitForm = async () => {
+	if (periodStartInput.value > periodEndInput.value) {
+		symptomsError.value = "A data inicial deve ser anterior à data final."
+		return
+	}
+
 	reportRef.value.period_start = periodStart.value
 	reportRef.value.period_end = periodEnd.value
 	reportRef.value.professionals = selectedProfessionalId.value
@@ -145,7 +191,13 @@ authStore.onReady(async (patient) => {
 			{{ professionalsError }}
 		</p>
 
-		<BaseButton type="button" theme="accent" mode="transparent" @click="loadSymptoms">
+		<BaseButton
+			type="button"
+			theme="accent"
+			mode="transparent"
+			:state="symptomsLoading ? 'sync' : 'enabled'"
+			@click="loadSymptoms"
+		>
 			Visualizar sintomas incluídos
 		</BaseButton>
 
@@ -155,7 +207,7 @@ authStore.onReady(async (patient) => {
 			<div class="flex flex-col text-center">
 				<div class="flex flex-row justify-center gap-2">
 					<span class="material-symbols-rounded"> book_4 </span>
-					<p>{{ "TODO TODO TODO" }}</p>
+					<p>{{ symptomsLoaded ? symptoms.length : "—" }}</p>
 				</div>
 				<p class="text-sm">Registros</p>
 			</div>
@@ -163,7 +215,7 @@ authStore.onReady(async (patient) => {
 			<div class="flex flex-col text-center">
 				<div class="flex flex-row justify-center gap-2">
 					<span class="material-symbols-rounded"> vital_signs </span>
-					<p>{{ "TODO TODO TODO" }}</p>
+					<p>{{ averageIntensity }}</p>
 				</div>
 				<p class="text-sm">Intensidade Média</p>
 			</div>
@@ -174,10 +226,13 @@ authStore.onReady(async (patient) => {
 				</span>
 				<article>
 					<p class="text-sm">Área mais afetada</p>
-					<p class="font-bold">{{ "TODO TODO TODO" }}</p>
+					<p class="font-bold">{{ mostAffectedPlace }}</p>
 				</article>
 			</div>
 		</section>
+		<p v-if="symptomsError" class="text-error text-sm text-center">
+			{{ symptomsError }}
+		</p>
 
 		<br />
 

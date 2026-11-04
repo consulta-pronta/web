@@ -1,4 +1,6 @@
 import { db } from "@/database/firebase"
+import { normalizeString, toBrazilianDate, toCoolDate } from "@/utils"
+import { isObject } from "@vueuse/core"
 import {
 	collection,
 	deleteDoc,
@@ -14,6 +16,7 @@ import {
 	type QueryCompositeFilterConstraint,
 	type QueryConstraint,
 	type Query,
+	Timestamp,
 } from "firebase/firestore"
 
 export type DocumentData = Record<string, undefined>
@@ -83,6 +86,26 @@ export default abstract class BaseDocument {
 
 	toMap(): FormData {
 		throw new Error("implement this >:(")
+	}
+	
+	toString(): string {
+		return Object.entries(this).map(([key, value]) => {
+			const formattedValue = (
+				value instanceof Timestamp
+				? `${toBrazilianDate(value.toDate())} ${toCoolDate(value.toDate())}`
+				: isObject(value)
+				? Object.entries(value).map(([k, v]) => `${k}: ${v}`).join(", ")
+				: value
+			)
+			
+			return `${key}: ${formattedValue}`
+		}).join(" ")
+	}
+
+	search(query: string, alreadyNormalized?: boolean): boolean {
+		return normalizeString(this.toString()).includes(
+			alreadyNormalized? query : normalizeString(query)
+		)
 	}
 
 	static async get(id: string, options: CollectionOptions = {}) {

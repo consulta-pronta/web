@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, useTemplateRef, watch } from "vue"
 import { useRouter } from "vue-router"
-
-import AuthBackground from "@/components/AuthBackground.vue"
+import AuthPageWrapper from "@/components/wrappers/AuthPageWrapper.vue"
 import BaseLogo from "@/components/bases/BaseLogo.vue"
 import BaseButton, { type ButtonState } from "@/components/bases/BaseButton.vue"
 import BaseInput, { type BaseInputProps } from "@/components/bases/BaseInput.vue"
@@ -101,8 +100,9 @@ const sharedAttributes: Uhh = {
 	class: "w-full",
 }
 </script>
+
 <template>
-	<AuthBackground>
+	<AuthPageWrapper>
 		<BaseLogo text complete />
 
 		<div class="lg:w-1/2 box-border items-center justify-center flex flex-col">
@@ -293,7 +293,7 @@ const sharedAttributes: Uhh = {
 				</RouterLink>
 			</form>
 		</div>
-	</AuthBackground>
+	</AuthPageWrapper>
 </template>
 
 <style scoped>

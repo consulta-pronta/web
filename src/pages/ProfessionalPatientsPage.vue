@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, watch } from "vue"
-import NavBar from "@/components/NavBar.vue"
 import BaseInput from "@/components/bases/BaseInput.vue"
 import PermissionCard from "@/components/cards/PermissionCard.vue"
 import { useAuthStore } from "@/stores/authStore"
@@ -9,6 +8,8 @@ import PatientExtended from "@/components/PatientExtended.vue"
 import { useRoute } from "vue-router"
 import router from "@/router"
 import Professional from "@/database/professional.model"
+import PageWrapper from "@/components/wrappers/PageWrapper.vue"
+import DefaultContentWrapper from "@/components/wrappers/DefaultContentWrapper.vue"
 
 const route = useRoute()
 const authStore = useAuthStore()
@@ -17,6 +18,7 @@ const medicalPermissions = ref<MedicalPermission[]>([])
 const loading = ref(true)
 const loadMessage = ref("")
 const currentPatientId = ref<string>("")
+const searchQuery = ref("")
 
 const rootPath = "/" + route.path.split("/")[1]
 
@@ -62,10 +64,7 @@ authStore.onReady(async () => {
 </script>
 
 <template>
-	<!-- Screen -->
-	<div class="flex h-screen">
-		<NavBar />
-
+	<PageWrapper custom>
 		<main
 			class="bg-background w-full h-full flex justify-center items-center gap-4 lg:gap-6 xl:gap-8 p-5 lg:p-7 xl:p-10 overflow-hidden"
 		>
@@ -77,6 +76,7 @@ authStore.onReady(async () => {
 					>
 						<!--Barra de pesquisa-->
 						<BaseInput
+							v-model="searchQuery"
 							placeholder="Pesquisar"
 							icon="search"
 							theme="light"
@@ -95,8 +95,8 @@ authStore.onReady(async () => {
 				<br />
 
 				<!-- Content -->
-				<section
-					class="max-h-full overflow-hidden flex gap-8 scrollbar-track-transparent scrollbar-thumb-accent"
+				<DefaultContentWrapper
+					class="max-h-full overflow-hidden scrollbar-track-transparent scrollbar-thumb-accent"
 				>
 					<!-- List -->
 					<ul
@@ -110,6 +110,7 @@ authStore.onReady(async () => {
 						>
 							<PermissionCard
 								:medical-permission="permission"
+								:search-query="searchQuery"
 								class="w-full"
 							/>
 						</template>
@@ -147,8 +148,8 @@ authStore.onReady(async () => {
 							class="w-full"
 						/>
 					</section>
-				</section>
+				</DefaultContentWrapper>
 			</div>
 		</main>
-	</div>
+	</PageWrapper>
 </template>
