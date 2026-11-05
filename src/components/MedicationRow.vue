@@ -1,10 +1,19 @@
 <script setup lang="ts">
 defineProps<{
-	nome: string
-	quantidade: string
-	periodo: string
-	consumo: string
+    nome: string
+    quantidade: string
+    periodo: string
+    consumo: string
+    tomado: boolean
 }>()
+
+const emit = defineEmits<{
+    (e: "update:tomado", value: boolean): void
+}>()
+
+function onChange(event: Event) {
+    emit("update:tomado", (event.target as HTMLInputElement).checked)
+}
 </script>
 
 <template>
@@ -32,6 +41,8 @@ defineProps<{
 		<td class="px-4 py-3">
 			<input
 				type="checkbox"
+    			:checked="tomado"
+    			@change="onChange"
 				class="h-4 w-4 appearance-none rounded border border-background bg-transparent checked:bg-background checked:border-background"
 			/>
 		</td>

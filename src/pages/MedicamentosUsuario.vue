@@ -1,29 +1,99 @@
 <script setup lang="ts">
-
-import NavBar from "@/components/NavBar.vue"
 import BaseInput from "@/components/bases/BaseInput.vue"
+import NavBar from "@/components/NavBar.vue"
+import { ref, onMounted, onUnmounted, computed } from "vue"
+import {
+    collection,
+    onSnapshot,
+    updateDoc,
+    doc,
+} from "firebase/firestore"
+
+import { db } from "@/config/firebase"
+import { useAuthStore } from "@/stores/authStore"
+import Medication, {
+    getMedicationSchedule,
+} from "@/models/medication.model"
+
 import MedicationRow from "@/components/MedicationRow.vue"
 
-const Medicamentos = [
-	{
-		nome: "Dipirona",
-		quantidade: "500mg",
-		periodo: "De 8 em 8 horas",
-		consumo: "Oral"
-	},
-	{
-		nome: "Paracetamol",
-		quantidade: "750mg",
-		periodo: "De 6 em 6 horas",
-		consumo: "Oral"
-	},
-	{
-		nome: "Ibuprofeno",
-		quantidade: "600mg",
-		periodo: "De 12 em 12 horas",
-		consumo: "Oral"
-	}
-]
+const authStore = useAuthStore()
+
+const medications = ref<Medication[]>([])
+
+const selectedDate = ref(getTodayDate())
+
+let unsubscribe: (() => void) | null = null
+
+function getTodayDate() {
+    const date = new Date()
+
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, "0")
+    const day = String(date.getDate()).padStart(2, "0")
+
+    return `${year}-${month}-${day}`
+}
+
+onMounted(() => {
+    const userId = authStore.user?.uid
+
+    if (!userId) return
+
+    const medicationsRef = collection(
+        db,
+        "Users",
+        userId,
+        Medication.collectionName
+    )
+
+    unsubscribe = onSnapshot(medicationsRef, (snapshot) => {
+        medications.value = snapshot.docs.map((document) => {
+            return Object.assign(
+                new Medication(document.id),
+                document.data()
+            )
+        })
+    })
+})
+
+onUnmounted(() => {
+    unsubscribe?.()
+})
+async function updateDose(
+    medicationId: string,
+    doseKey: string,
+    taken: boolean
+) {
+    const userId = authStore.user?.uid
+
+    if (!userId) return
+
+    const medicationRef = doc(
+        db,
+        "Users",
+        userId,
+        Medication.collectionName,
+        medicationId
+    )
+
+    await updateDoc(medicationRef, {
+        [`taken_dates.${doseKey}`]: taken,
+    })
+}
+const medicationDoses = computed(() => {
+    return medications.value.flatMap((medication) => {
+        const doses = getMedicationSchedule(
+            medication,
+            selectedDate.value
+        )
+
+        return doses.map((dose) => ({
+            medication,
+            dose,
+        }))
+    })
+})
 </script>
 
 <template>
@@ -71,14 +141,20 @@ const Medicamentos = [
 							</tr>
 						</thead>
 
-						<tbody class="text-[10px] md:text-sm text-primarydark font-light">
+						<tbody>
 							<MedicationRow
-								v-for="med in Medicamentos"
-								:key="med.nome"
-								:nome="med.nome"
-								:quantidade="med.quantidade"
-								:periodo="med.periodo"
-								:consumo="med.consumo"
+								v-for="item in medicationDoses"
+								:key="item.medication.id + item.dose.key"
+								:nome="item.medication.title"
+								:quantidade="`${item.medication.dose_value} ${item.medication.dose_unit}`"
+								:periodo="`A cada ${item.medication.frequency_value} ${item.medication.frequency_unit}`"
+								:consumo="item.dose.time"
+								:tomado="item.dose.taken"
+								@update:tomado="updateDose(
+									item.medication.id,
+									item.dose.key,
+									$event
+								)"
 							/>
 						</tbody>
 					</table>
