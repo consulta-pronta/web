@@ -64,10 +64,6 @@ authStore.onReady((data) => {
 			/>
 
 			<nav>
-				<BaseButton v-bind="sharedAttributes" icon="home" goto="/dashboard">
-					<p>Início</p>
-				</BaseButton>
-
 				<BaseButton
 					v-if="userType === 'patient'"
 					v-bind="sharedAttributes"

@@ -18,7 +18,7 @@ const login = async () => {
 
 	try {
 		await signInStore.signIn()
-		router.push("dashboard")
+		router.push("/")
 	} catch (error) {
 		console.error(error)
 	} finally {

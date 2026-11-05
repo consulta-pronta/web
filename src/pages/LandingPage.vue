@@ -1,11 +1,18 @@
 <script setup lang="ts">
-import { auth } from "@/database/firebase"
-import { onAuthStateChanged } from "firebase/auth"
+import { useAuthStore } from "@/stores/authStore"
 import { useRouter } from "vue-router"
 
 const router = useRouter()
-onAuthStateChanged(auth, (user) => {
-	router.push(user ? "/dashboard" : "/cadastro")
+useAuthStore().onReady((user) => {
+	if (!user) router.replace("/login")
+	
+	router.replace((() => {
+		switch (user.user_type) {
+			case "patient": return "/historico-sintomas"
+			case "professional": return "/pacientes"
+			case "admin": return "/dashboard"
+		}
+	})())
 })
 </script>
 
