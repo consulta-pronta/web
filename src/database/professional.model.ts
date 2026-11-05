@@ -76,7 +76,7 @@ export default class Professional extends User {
 			<ProfessionalData>{
 				crm: data.data_profissional.crm,
 				uf: data.data_profissional.uf,
-				operation_area: data.data_profissional.local_atuacao,
+				operation_area: data.data_profissional.operation_area,
 				specialty: data.data_profissional.specialty,
 			}
 		)

@@ -16,7 +16,7 @@ const dialogForm = useTemplateRef("dialogForm")
 const formProfile = useTemplateRef("formProfile")
 
 const user = ref<Patient | Professional>(new Patient())
-const formType = ref<"personal" | "contacts" | "health" | "professional">()
+const formType = ref<"personal" | "contacts" | "health" | "professional" | "name">()
 
 const formTitle = computed(() => {
 	switch (formType.value) {
@@ -28,6 +28,8 @@ const formTitle = computed(() => {
 			return "Atualizar informações de saúde"
 		case "professional":
 			return "Atualizar informações profissionais"
+		case "name":
+			return "Atualizar nome"
 		default:
 			return ""
 	}
@@ -37,7 +39,7 @@ authStore.onReady(async (data) => {
 	user.value = data as Patient | Professional
 })
 
-const openForm = (type: "personal" | "contacts" | "health" | "professional") => {
+const openForm = (type: "personal" | "contacts" | "health" | "professional" | "name") => {
 	formType.value = type
 	formProfile.value?.reset()
 	dialogForm.value?.toggle()
@@ -68,7 +70,10 @@ const handleSubmit = async () => {
 					<div class="flex gap-2">
 						<!-- <UserPhoto /> -->
 						<div class="flex flex-col justify-center">
-							<p class="text-2xl text-textLight font-bold">{{ user.name }}</p>
+							<div class="flex items-center">
+								<p class="text-2xl text-textLight font-bold">{{ user.name }}</p>
+								<BaseButton type="button" theme="textLight" mode="transparent" icon="edit_square" @click="openForm('name')" />
+							</div>
 							<p class="text-xl text-textLight font-medium opacity-80">{{ user.email }}</p>
 						</div>
 					</div>
