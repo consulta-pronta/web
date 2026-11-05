@@ -1,5 +1,5 @@
 import { formatDate } from "@vueuse/core"
-import type { Timestamp } from "firebase/firestore"
+import { Timestamp } from "firebase/firestore"
 
 export const federalUnits = [
 	"AC",
@@ -75,4 +75,9 @@ export const timestampDiffSeconds = (start: Timestamp, end: Timestamp) =>
 export const timestampDiffDays = (start: Timestamp, end: Timestamp) =>
 	timestampDiffSeconds(start, end) / (60 * 60 * 24)
 
+export const timestampDiffYears = (start: Timestamp, end: Timestamp) =>
+	timestampDiffSeconds(start, end) / (60 * 60 * 24 * 365) //Tem que negoçar para ano bissexual
+
 export const formatCRM = (raw: string): string => raw.replace(/\D/g, "")
+
+export const stringToTimestamp = (date: string) => Timestamp.fromDate(new Date(date))

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import NavBar from '@/components/NavBar.vue'
-import UserPhoto from '@/components/UserPhoto.vue'
 import BaseButton from '@/components/bases/BaseButton.vue'
 import BaseDialog from '@/components/bases/BaseDialog.vue'
 import FormProfile from '@/components/forms/FormProfile.vue'
@@ -10,7 +9,7 @@ import { useAuthStore } from "@/stores/authStore"
 import Patient from '@/database/patient.model'
 import Professional from '@/database/professional.model'
 import { formatToCPF, formatToNumber, formatToPhone } from 'brazilian-values'
-import { formatCRM } from '@/utils'
+import { formatCRM, toBrazilianLocaleDate, timestampDiffYears, stringToTimestamp } from '@/utils'
 
 const authStore = useAuthStore()
 const dialogForm = useTemplateRef("dialogForm")
@@ -67,7 +66,7 @@ const handleSubmit = async () => {
 			<article class="flex justify-center">
 				<div class="flex flex-col w-full 2xl:w-300 gap-10">
 					<div class="flex gap-2">
-						<UserPhoto />
+						<!-- <UserPhoto /> -->
 						<div class="flex flex-col justify-center">
 							<p class="text-2xl text-textLight font-bold">{{ user.name }}</p>
 							<p class="text-xl text-textLight font-medium opacity-80">{{ user.email }}</p>
@@ -86,11 +85,11 @@ const handleSubmit = async () => {
 
 								<div class="grid grid-cols-2 gap-5">
 									<div class="grid col-span-1">
-										<p>{{ user.age }} anos</p>
+										<p>{{ Math.floor(timestampDiffYears(stringToTimestamp(user.birth_date), stringToTimestamp(new Date().toISOString()))) }} anos</p>
 										<p class="font-normal opacity-70">Idade</p>
 									</div>
 									<div class="grid col-span-1">
-										<p>{{ user.birth_date }}</p>
+										<p>{{ toBrazilianLocaleDate(new Date(user.birth_date)) }}</p>
 										<p class="font-normal opacity-70">Data de nascimento</p>
 									</div>
 									<div class="grid col-span-1">

@@ -20,6 +20,8 @@ const props = withDefaults(defineProps<Props>(), {
 
 const authStore = useAuthStore()
 
+const birth_date = ref('')
+const address = ref('')
 const email = ref('')
 const phone = ref('')
 const height = ref('')
@@ -37,6 +39,8 @@ const submitForm = async () => {
 			await User.update(user.id, { email: email.value, phone: (phone.value.replace(/[\(\)\-\s]/g, "")) })
 		} else if (props.type === 'health') {
 			await Patient.update(user.id, { patient_data: { blood_type: blood_type.value, height: height.value, weight: weight.value } })
+		} else if (props.type === 'personal') {
+			await User.update(user.id, { birth_date: birth_date.value, address: address.value })
 		}
 	})
 
@@ -47,6 +51,8 @@ const submitForm = async () => {
 const reset = async () => {
 	await authStore.onReady(async (user) => {
 		if (user instanceof User) {
+			birth_date.value = user.birth_date
+			address.value = user.address
 			email.value = user.email
 			phone.value = formatToPhone(user.phone)
 		}
@@ -64,12 +70,13 @@ reset()
 </script>
 
 <template>
-	<form v-if="type === 'personal'" @submit.prevent class="flex flex-col gap-4 z-48">
+	<form v-if="type === 'personal'" @submit.prevent="submitForm()" class="flex flex-col gap-4 z-48">
 		<label>
 			<p>Data de nascimento</p>
 			<BaseInput
 				type="date"
 				theme="light"
+				v-model="birth_date"
 				required
 			/>
 		</label>
@@ -80,16 +87,12 @@ reset()
 				type="text"
 				placeholder="Digite seu endereço"
 				theme="light"
+				v-model="address"
 				required
 			/>
 		</label>
 
-		<label>
-			<p>Gênero</p>
-			<BaseSelect>
 
-			</BaseSelect>
-		</label>
 
 		<BaseButton type="submit" theme="accent" class="m-auto px-10" :state="buttonState">
 			Confirmar
