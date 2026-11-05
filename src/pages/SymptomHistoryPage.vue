@@ -5,21 +5,14 @@ import BaseInput from "@/components/bases/BaseInput.vue"
 import FormSymptom from "@/components/forms/FormSymptom.vue"
 import SymptomCard from "@/components/cards/SymptomCard.vue"
 import BaseFilter, { type FilterOption } from "@/components/bases/BaseFilter.vue"
-import BaseSort, {
-	type SortOption,
-} from "@/components/bases/BaseSort.vue"
+import BaseSort, { type SortOption } from "@/components/bases/BaseSort.vue"
 import { useAuthStore } from "@/stores/authStore"
 import Symptom from "@/database/symptom.model"
 import SymptomExtended from "@/components/SymptomExtended.vue"
 import BaseDialog from "@/components/bases/BaseDialog.vue"
 import { useRoute } from "vue-router"
 import router from "@/router"
-import {
-	searchDocuments,
-	symptomPlaces,
-	timestampDiffSeconds,
-	type SortDirection,
-} from "@/utils"
+import { searchDocuments, symptomPlaces, timestampDiffSeconds, type SortDirection } from "@/utils"
 import PageWrapper from "@/components/wrappers/PageWrapper.vue"
 import DefaultContentWrapper from "@/components/wrappers/DefaultContentWrapper.vue"
 import HeaderWrapper from "@/components/wrappers/HeaderWrapper.vue"
@@ -33,16 +26,14 @@ const symptomsLoaded = ref(false)
 const loadError = ref("")
 const selectedPlace = ref<string | null>(null)
 const sortField = ref<(typeof sortOptions)[number]["value"]>("date_time")
-const sortDirection = ref<SortDirection	>("desc")
+const sortDirection = ref<SortDirection>("desc")
 const currentSymptomId = ref<string>("")
 const formRegister = useTemplateRef("formRegister")
 const formUpdate = useTemplateRef("formUpdate")
 
 let userId = ""
 
-const filterOptions = symptomPlaces.map<FilterOption>(
-	(place) => ({value: place, label: place})
-)
+const filterOptions = symptomPlaces.map<FilterOption>((place) => ({ value: place, label: place }))
 const sortOptions = [
 	{ value: "date_time", label: "Data de início" },
 	{ value: "intensity", label: "Intensidade" },
@@ -50,33 +41,22 @@ const sortOptions = [
 
 const filteredSymptoms = computed(() => {
 	const filtered = searchDocuments(
-		symptoms.value.filter(
-			(i) => !selectedPlace.value || i.place === selectedPlace.value
-		),
+		symptoms.value.filter((i) => !selectedPlace.value || i.place === selectedPlace.value),
 		searchQuery.value,
 	) as Symptom[]
 
-	
 	const shouldReverse = sortDirection.value === "desc"
 	switch (sortField.value) {
 		case "date_time":
-			filtered.sort((a, b) =>
-				timestampDiffSeconds(
-					a.date_time!,
-					b.date_time!,
-					shouldReverse
-				)
-			)
+			filtered.sort((a, b) => timestampDiffSeconds(a.date_time!, b.date_time!, shouldReverse))
 			break
 		case "intensity":
-			filtered.sort((a, b) => 
-				shouldReverse
-				? a.intensity - b.intensity
-				: b.intensity - a.intensity
+			filtered.sort((a, b) =>
+				shouldReverse ? a.intensity - b.intensity : b.intensity - a.intensity,
 			)
 			break
 	}
-	
+
 	return filtered
 })
 
@@ -107,7 +87,7 @@ watch(currentSymptomId, (value) => {
 	if (value) {
 		router.replace({
 			name: route.name,
-			params: {id: value},
+			params: { id: value },
 		})
 	} else {
 		router.replace({ name: route.name })
@@ -125,9 +105,7 @@ authStore.onReady(async (data) => {
 <template>
 	<PageWrapper>
 		<HeaderWrapper title="Histórico de Sintomas">
-			<div
-				class="flex flex-col md:flex-row justify-center place-items-center relative gap-6"
-			>
+			<div class="flex flex-col md:flex-row justify-center place-items-center relative gap-6">
 				<BaseInput
 					v-model="searchQuery"
 					placeholder="Pesquisar"
@@ -141,13 +119,12 @@ authStore.onReady(async (data) => {
 					type="button"
 					icon="add"
 					iconPosition="right"
-					class=" min-w-52"
+					class="min-w-52"
 					@click="formRegister?.toggle()"
 				>
 					Registrar Sintoma
 				</BaseButton>
 			</div>
-
 		</HeaderWrapper>
 
 		<DefaultContentWrapper class="flex-col">
@@ -163,7 +140,7 @@ authStore.onReady(async (data) => {
 					:options="sortOptions"
 				/>
 			</div>
-	
+
 			<div class="flex flex-row gap-4">
 				<ul
 					v-if="filteredSymptoms.length"
@@ -187,9 +164,7 @@ authStore.onReady(async (data) => {
 					</template>
 				</ul>
 				<p v-else-if="!symptomsLoaded" class="text-textLight m-auto">
-					<span
-						class="material-symbols-rounded animate-spin text-accent w-fit m-auto"
-					>
+					<span class="material-symbols-rounded animate-spin text-accent w-fit m-auto">
 						sync
 					</span>
 				</p>
@@ -197,14 +172,15 @@ authStore.onReady(async (data) => {
 					{{ loadError }}
 				</p>
 				<p v-else class="text-textLight m-auto">
-					{{ symptoms.length ? "Nenhum sintoma encontrado." : "Nenhum sintoma registrado." }}
+					{{
+						symptoms.length
+							? "Nenhum sintoma encontrado."
+							: "Nenhum sintoma registrado."
+					}}
 				</p>
 
 				<!-- Details -->
-				<section
-					class="grow h-full flex flex-col items-start"
-					v-show="currentSymptomId"
-				>
+				<section class="grow h-full flex flex-col items-start" v-show="currentSymptomId">
 					<header class="w-full flex flex-row justify-between">
 						<button
 							type="button"

@@ -35,9 +35,7 @@ const filteredProfessionalData = computed(() => {
 			searchQuery.value,
 		).map((patient) => patient.id),
 	)
-	return forProfessionalData.value.filter(({ patient }) =>
-		matchingPatientIds.has(patient.id),
-	)
+	return forProfessionalData.value.filter(({ patient }) => matchingPatientIds.has(patient.id))
 })
 const filteredExams = computed(() => searchDocuments(exames.value, searchQuery.value) as Exam[])
 const pageTitle = computed(() =>
@@ -47,9 +45,8 @@ const pageTitle = computed(() =>
 			? "Exames dos Pacientes"
 			: "Exames",
 )
-const canRequestExam = computed(() =>
-	currentPermission.value !== null
-	&& currentPermission.value.permissions.request_exam
+const canRequestExam = computed(
+	() => currentPermission.value !== null && currentPermission.value.permissions.request_exam,
 )
 
 const handleSubmit = async () => {
@@ -57,7 +54,7 @@ const handleSubmit = async () => {
 	if (currentPatient.value && currentPermission.value) {
 		await selectPatient({
 			patient: currentPatient.value,
-			permissions: currentPermission.value
+			permissions: currentPermission.value,
 		})
 	}
 }
@@ -107,27 +104,17 @@ authStore.onReady(async (user) => {
 				:class="[currentPatient ? 'hidden lg:flex' : '']"
 			>
 				<article class="flex text-textLight items-center">
-					<span class="material-symbols-rounded text-3xl!">
-						person
-					</span>
+					<span class="material-symbols-rounded text-3xl!"> person </span>
 
-					<p class="text-2xl pl-2">
-						Pacientes
-					</p>
+					<p class="text-2xl pl-2">Pacientes</p>
 				</article>
 
-				<p
-					v-if="loadError"
-					class="text-error text-center"
-				>
+				<p v-if="loadError" class="text-error text-center">
 					{{ loadError }}
 				</p>
 
 				<ul class="w-full flex flex-col gap-2">
-					<li
-						v-for="item in filteredProfessionalData"
-						:key="item.patient.id"
-					>
+					<li v-for="item in filteredProfessionalData" :key="item.patient.id">
 						<PatientCard
 							:class="currentPatient === item.patient ? 'bg-accent!' : ''"
 							:patient="item.patient"
@@ -161,11 +148,7 @@ authStore.onReady(async (user) => {
 							</tr>
 						</thead>
 						<tbody>
-							<ExamRow
-								v-for="exam in filteredExams"
-								:key="exam.id"
-								:exam="exam"
-							/>
+							<ExamRow v-for="exam in filteredExams" :key="exam.id" :exam="exam" />
 							<tr v-if="exames.length && filteredExams.length === 0">
 								<td colspan="4" class="p-3 text-center">
 									Nenhum exame encontrado.
@@ -182,10 +165,7 @@ authStore.onReady(async (user) => {
 			:title="'Solicitar exame de ' + currentPatient.name"
 			ref="formRegister"
 		>
-			<FormExamRequest
-				:patient="currentPatient"
-				@handled-submit="handleSubmit"
-			/>
+			<FormExamRequest :patient="currentPatient" @handled-submit="handleSubmit" />
 		</BaseDialog>
 	</PageWrapper>
 </template>

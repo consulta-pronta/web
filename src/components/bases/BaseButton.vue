@@ -71,7 +71,7 @@ const borderColor = computed(() => {
 			return "border-textDark"
 	}
 })
-const backgroundColor = computed(() => props.mode === "fill" ? props.theme : "transparent")
+const backgroundColor = computed(() => (props.mode === "fill" ? props.theme : "transparent"))
 
 const dynamicStyle = computed(() => [
 	`bg-${backgroundColor.value} ${textColor.value}`,
@@ -86,11 +86,15 @@ const redirect = () => {
 	}
 }
 
-watch(() => props.goto, (value) => {
-	if (value === "#") {
-		stateModel.value = "disabled"
-	}
-}, { immediate: true })
+watch(
+	() => props.goto,
+	(value) => {
+		if (value === "#") {
+			stateModel.value = "disabled"
+		}
+	},
+	{ immediate: true },
+)
 </script>
 
 <template>

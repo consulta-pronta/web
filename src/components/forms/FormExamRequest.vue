@@ -68,8 +68,10 @@ const submitForm = async () => {
 			<label
 				v-for="option in categories"
 				:key="option.value"
-				class="flex items-center gap-2 rounded-md  p-3 cursor-pointer"
-				:class="option.value === exam.category ? 'bg-accent text-textDark' : 'bg-primaryDark'"
+				class="flex items-center gap-2 rounded-md p-3 cursor-pointer"
+				:class="
+					option.value === exam.category ? 'bg-accent text-textDark' : 'bg-primaryDark'
+				"
 			>
 				<input
 					v-model="exam.category"

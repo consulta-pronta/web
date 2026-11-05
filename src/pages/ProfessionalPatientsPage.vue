@@ -143,10 +143,7 @@ authStore.onReady(async () => {
 
 						<br />
 
-						<PatientExtended
-							ref="areaDescription"
-							class="w-full"
-						/>
+						<PatientExtended ref="areaDescription" class="w-full" />
 					</section>
 				</DefaultContentWrapper>
 			</div>

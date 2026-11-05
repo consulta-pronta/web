@@ -15,7 +15,6 @@ const props = defineProps<{
 
 const dialog = useTemplateRef("dialog")
 
-
 const user = ref<User>()
 const symptoms = ref<Symptom[]>([])
 
@@ -28,7 +27,7 @@ const averageIntensity = computed(() => Symptom.getAverageIntensity(symptoms.val
 
 authStore.onReady(async (data) => {
 	user.value = data as User
-	
+
 	const { period_start, period_end } = props.report
 	if (!(period_start && period_end)) return 0
 
@@ -78,7 +77,9 @@ defineExpose({ show, toggle })
 					<article>
 						<small>Área mais afetada</small>
 						<h3>{{ mostAffectedArea?.area ?? "—" }}</h3>
-						<h6 class="text-sm font-medium">{{ mostAffectedArea?.amount ?? 0 }} registros</h6>
+						<h6 class="text-sm font-medium">
+							{{ mostAffectedArea?.amount ?? 0 }} registros
+						</h6>
 						<IntensityChip
 							:intensity="averageIntensity ?? 0"
 							custom-message="Média:"

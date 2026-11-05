@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import type Patient from "@/database/patient.model";
-
+import type Patient from "@/database/patient.model"
 
 defineProps<{
 	patient: Patient
@@ -22,9 +21,7 @@ const emit = defineEmits<{
 				{{ patient.name }}
 			</p>
 
-			<p class="oneliner text-base">
-				CPF: {{ patient.cpf }}
-			</p>
+			<p class="oneliner text-base">CPF: {{ patient.cpf }}</p>
 		</section>
 	</button>
 </template>

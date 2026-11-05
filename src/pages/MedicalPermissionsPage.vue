@@ -33,10 +33,9 @@ const loadPermissions = async () => {
 				return
 			}
 			medicalPermissions.value = await patient.getMedicalPermissions()
-			
-			loadMessage.value = medicalPermissions.value.length === 0
-				? "Não há nenhum médico registrado."
-				: ""
+
+			loadMessage.value =
+				medicalPermissions.value.length === 0 ? "Não há nenhum médico registrado." : ""
 		})
 	} catch (error) {
 		console.error("Failed to load medical permissions.", error)
@@ -80,7 +79,9 @@ authStore.onReady(async () => {
 				</section>
 			</HeaderWrapper>
 
-			<section class="flex flex-col items-center gap-4 flex-1 min-h-0 overflow-y-auto scrollbar-hide">
+			<section
+				class="flex flex-col items-center gap-4 flex-1 min-h-0 overflow-y-auto scrollbar-hide"
+			>
 				<!-- <article class="w-full flex justify-center">
 					<section
 						class="relative flex w-[85%] md:w-[70%] lg:w-[45%] min-h-11 items-center border border-textLight text-sm text-textLight rounded-[15px]"
@@ -96,7 +97,7 @@ authStore.onReady(async () => {
 						</div>
 					</section>
 				</article> -->
-				
+
 				<div class="w-full grid gap-4 grid-cols-[repeat(auto-fill,minmax(25em,1fr))]">
 					<PermissionCard
 						v-for="permission in medicalPermissions"

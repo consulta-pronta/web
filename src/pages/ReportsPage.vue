@@ -33,11 +33,13 @@ const userType = computed(() => currentUser.value?.user_type)
 const filteredPatients = computed(() => {
 	const query = normalizeString(searchQuery.value)
 	return patients.value.filter((patient) =>
-		normalizeString(`${patient.name} ${patient.cpf} ${patient.email} ${patient.phone}`).includes(query),
+		normalizeString(
+			`${patient.name} ${patient.cpf} ${patient.email} ${patient.phone}`,
+		).includes(query),
 	)
 })
-const filteredReports = computed(() =>
-	searchDocuments(reports.value, searchQuery.value) as Report[]
+const filteredReports = computed(
+	() => searchDocuments(reports.value, searchQuery.value) as Report[],
 )
 const pageTitle = computed(() =>
 	userType.value === "patient"
@@ -67,7 +69,7 @@ watch(currentPatient, (value) => {
 	if (value) {
 		router.replace({
 			name: route.name,
-			params: {id: value.id},
+			params: { id: value.id },
 		})
 	} else {
 		router.replace({ name: route.name })
@@ -79,16 +81,14 @@ authStore.onReady(async (user) => {
 		return
 	}
 	currentUser.value = user
-	
+
 	if (user instanceof Patient) {
 		reports.value = await Report.getAll({ scope: { userId: user.id } })
 	} else if (user instanceof Professional) {
 		try {
 			patients.value = await user.getPatients()
 			if (route.params.id) {
-				const patient = patients.value.find(
-					(item) => item.id === route.params.id,
-				)
+				const patient = patients.value.find((item) => item.id === route.params.id)
 				if (patient) {
 					await selectPatient(patient)
 				} else {
@@ -107,23 +107,23 @@ authStore.onReady(async (user) => {
 	<PageWrapper>
 		<HeaderWrapper :title="pageTitle">
 			<div class="flex flex-row gap-2 justify-center *:h-[stretch]">
-					<BaseButton
-						v-if="userType === 'patient'"
-						type="button"
-						theme="accent"
-						icon="add_notes"
-						@click="formRegister?.toggle()"
-						class="col-span-3 rounded-2xl"
-					>
-						<p class="hidden lg:block">Adicionar Relatórios</p>
-					</BaseButton>
+				<BaseButton
+					v-if="userType === 'patient'"
+					type="button"
+					theme="accent"
+					icon="add_notes"
+					@click="formRegister?.toggle()"
+					class="col-span-3 rounded-2xl"
+				>
+					<p class="hidden lg:block">Adicionar Relatórios</p>
+				</BaseButton>
 
-					<BaseInput
-						v-model="searchQuery"
-						placeholder="Pesquisar"
-						icon="search"
-						class="place-self-center w-full md:w-120"
-					/>
+				<BaseInput
+					v-model="searchQuery"
+					placeholder="Pesquisar"
+					icon="search"
+					class="place-self-center w-full md:w-120"
+				/>
 			</div>
 		</HeaderWrapper>
 
@@ -134,27 +134,17 @@ authStore.onReady(async (user) => {
 				:class="[currentPatient ? 'hidden lg:flex' : '']"
 			>
 				<article class="flex text-textLight items-center">
-					<span class="material-symbols-rounded text-3xl!">
-						person
-					</span>
+					<span class="material-symbols-rounded text-3xl!"> person </span>
 
-					<p class="text-2xl pl-2">
-						Pacientes
-					</p>
+					<p class="text-2xl pl-2">Pacientes</p>
 				</article>
 
-				<p
-					v-if="loadError"
-					class="text-error text-center"
-				>
+				<p v-if="loadError" class="text-error text-center">
 					{{ loadError }}
 				</p>
 
 				<ul class="w-full flex flex-col gap-2">
-					<li
-						v-for="patient in filteredPatients"
-						:key="patient.cpf"
-					>
+					<li v-for="patient in filteredPatients" :key="patient.cpf">
 						<PatientCard
 							:class="currentPatient === patient ? 'bg-accent!' : ''"
 							:patient="patient"
@@ -182,7 +172,11 @@ authStore.onReady(async (user) => {
 						/>
 						<tr v-if="reports && filteredReports.length === 0">
 							<td colspan="4" class="p-3 text-center">
-								{{ reports.length ? "Nenhum relatório encontrado." : "Nenhum relatório disponível." }}
+								{{
+									reports.length
+										? "Nenhum relatório encontrado."
+										: "Nenhum relatório disponível."
+								}}
 							</td>
 						</tr>
 					</tbody>

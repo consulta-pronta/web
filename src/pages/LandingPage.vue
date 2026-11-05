@@ -5,14 +5,19 @@ import { useRouter } from "vue-router"
 const router = useRouter()
 useAuthStore().onReady((user) => {
 	if (!user) router.replace("/login")
-	
-	router.replace((() => {
-		switch (user.user_type) {
-			case "patient": return "/historico-sintomas"
-			case "professional": return "/pacientes"
-			case "admin": return "/dashboard"
-		}
-	})())
+
+	router.replace(
+		(() => {
+			switch (user.user_type) {
+				case "patient":
+					return "/historico-sintomas"
+				case "professional":
+					return "/pacientes"
+				case "admin":
+					return "/dashboard"
+			}
+		})(),
+	)
 })
 </script>
 

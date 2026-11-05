@@ -119,16 +119,9 @@ onClickOutside(popup, () => {
 		<BaseDialog title="Definir senha" ref="definePassword">
 			<form class="flex flex-col place-items-center relative gap-1">
 				<BaseInput placeholder="Senha" icon="lock" class="w-full" required />
-				<BaseInput
-					placeholder="Confirmar senha"
-					icon="lock"
-					class="w-full"
-					required
-				/>
+				<BaseInput placeholder="Confirmar senha" icon="lock" class="w-full" required />
 
-				<BaseButton type="submit" theme="accent" class="mt-1">
-					Mudar Senha
-				</BaseButton>
+				<BaseButton type="submit" theme="accent" class="mt-1"> Mudar Senha </BaseButton>
 			</form>
 		</BaseDialog>
 

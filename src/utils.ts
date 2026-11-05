@@ -79,14 +79,14 @@ export const normalizeString = (value: string) =>
 		.trim()
 
 export const timestampDiffSeconds = (start: Timestamp, end: Timestamp, reversed = false) =>
-	(end.toMillis() - start.toMillis()) / 1000 * (reversed ? -1 : 1)
+	((end.toMillis() - start.toMillis()) / 1000) * (reversed ? -1 : 1)
 
 export const timestampDiffDays = (start: Timestamp, end: Timestamp) =>
 	timestampDiffSeconds(start, end) / (60 * 60 * 24)
 
 export const formatCRM = (crm: string, uf: string) => `${crm}/${uf}`
 
-export const changeTitle = (title: string) => document.title = title
+export const changeTitle = (title: string) => (document.title = title)
 
 export const searchDocuments = (docs: BaseDocument[], query: string) => {
 	const normalizedQuery = normalizeString(query)
