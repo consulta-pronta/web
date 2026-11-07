@@ -256,10 +256,12 @@ authStore.onReady(async (data) => {
 
 		<BaseDialog title="Excluir sintoma" ref="confirmDelete">
 			<div class="flex flex-col gap-4">
-				<p class="text-center mb-2">Tem certeza de que deseja excluir este sintoma? Esta ação não pode ser desfeita.</p>
+				<p class="text-center mb-2">
+					Tem certeza de que deseja excluir este sintoma? Esta ação não pode ser desfeita.
+				</p>
 
 				<p v-if="deleteError" class="text-error">{{ deleteError }}</p>
-				
+
 				<div class="flex justify-end gap-3">
 					<BaseButton
 						theme="accent"

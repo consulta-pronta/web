@@ -4,34 +4,40 @@ import BaseDialog from "@/components/bases/BaseDialog.vue"
 import BaseButton from "@/components/bases/BaseButton.vue"
 import BaseInput from "@/components/bases/BaseInput.vue"
 import type Report from "@/database/report.model"
-import { onClickOutside } from "@vueuse/core"
 import ReportExtended from "@/components/ReportExtended.vue"
+import { ContextMenu, ContextMenuItem, type MenuOptions } from "@imengyu/vue3-context-menu"
 
 const props = defineProps<{
 	report: Report
 }>()
 
-const focused = ref(false)
+const menuShow = ref(false)
+const menuOptions = ref<MenuOptions>({
+	theme: "cp-light",
+	minWidth: 230,
+	x: 0,
+	y: 0,
+})
 
-const popup = useTemplateRef("popup")
 const allowedProfessionals = useTemplateRef("allowedProfessionals")
 const formRename = useTemplateRef("formRename")
-const definePassword = useTemplateRef("definePassword")
 const viewReport = useTemplateRef("viewReport")
 
 const reportDateTime = computed(() => props.report.created_at?.toDate())
 
-const toggle = () => {
-	focused.value = !focused.value
+const openMenu = (e: MouseEvent) => {
+	menuShow.value = true
+	menuOptions.value.x = e.x
+	menuOptions.value.y = e.y
 }
-
-onClickOutside(popup, () => {
-	focused.value = false
-})
 </script>
 
 <template>
-	<tr class="border-t border-primaryDark">
+	<tr
+		class="border-t border-primaryDark cursor-pointer hover:backdrop-brightness-90"
+		@click="viewReport?.toggle()"
+		@contextmenu.prevent="openMenu($event)"
+	>
 		<td class="font-medium flex justify-center items-center relative m-1.5">
 			<span
 				class="material-symbols-rounded text-base! md:text-2xl! text-primarydark absolute left-1 md:left-3"
@@ -50,59 +56,35 @@ onClickOutside(popup, () => {
 		<td class="relative">
 			<div class="flex justify-center items-center">
 				{{ reportDateTime?.toLocaleTimeString() }}
-				<button
-					type="button"
-					@click="toggle()"
-					class="absolute right-1 md:right-2 cursor-pointer anchor-name-[--botoeira]"
-				>
+
+				<div class="cursor-pointer" @click.prevent.stop="openMenu($event)">
 					<span class="material-symbols-rounded text-primaryDark">
 						{{ "more_horiz" }}
 					</span>
-				</button>
+				</div>
 			</div>
 		</td>
 
-		<div
-			v-if="focused"
-			ref="popup"
-			class="flex flex-col text-primaryDark absolute right-0 top-[anchor(top)] bg-surface z-10 outline-1 outline-primary rounded-lg p-1 position-anchor-[--botoeira]"
-		>
-			<BaseButton
+		<ContextMenu v-model:show="menuShow" :options="menuOptions">
+			<ContextMenuItem
+				label="Profissionais permitidos"
 				@click="allowedProfessionals?.toggle()"
-				icon="shield_toggle"
-				theme="primaryDark"
-				mode="transparent"
-				class="text-sm! p-2! justify-start"
 			>
-				Profissionais permitidos
-			</BaseButton>
-			<BaseButton
-				@click="formRename?.toggle()"
-				icon="edit_square"
-				theme="primaryDark"
-				mode="transparent"
-				class="text-sm! p-2! justify-start"
-			>
-				Renomear relatório
-			</BaseButton>
-			<BaseButton
-				icon="delete"
-				theme="primaryDark"
-				mode="transparent"
-				class="text-sm! p-2! justify-start"
-			>
-				Apagar relatório
-			</BaseButton>
-			<BaseButton
-				@click="viewReport?.toggle()"
-				icon="visibility"
-				theme="primaryDark"
-				mode="transparent"
-				class="text-sm! p-2! justify-start"
-			>
-				Visualizar relatório
-			</BaseButton>
-		</div>
+				<template #icon>
+					<span class="material-symbols-rounded"> shield_toggle </span>
+				</template>
+			</ContextMenuItem>
+			<ContextMenuItem label="Renomear relatório" @click="formRename?.toggle()">
+				<template #icon>
+					<span class="material-symbols-rounded"> edit_square </span>
+				</template>
+			</ContextMenuItem>
+			<ContextMenuItem label="Apagar relatório" @click="console.log('da')">
+				<template #icon>
+					<span class="material-symbols-rounded"> delete </span>
+				</template>
+			</ContextMenuItem>
+		</ContextMenu>
 	</tr>
 
 	<Teleport to="body">
