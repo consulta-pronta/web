@@ -24,12 +24,15 @@ const symptoms = ref<Symptom[]>([])
 const searchQuery = ref("")
 const symptomsLoaded = ref(false)
 const loadError = ref("")
+const deleteError = ref("")
+const isDeleting = ref(false)
 const selectedPlace = ref<string | null>(null)
 const sortField = ref<(typeof sortOptions)[number]["value"]>("date_time")
 const sortDirection = ref<SortDirection>("desc")
 const currentSymptomId = ref<string>("")
 const formRegister = useTemplateRef("formRegister")
 const formUpdate = useTemplateRef("formUpdate")
+const confirmDelete = useTemplateRef("confirmDelete")
 
 let userId = ""
 
@@ -81,6 +84,29 @@ const handleSubmit = () => {
 	formRegister.value!.hide()
 	formUpdate.value!.hide()
 	updateSymptoms()
+}
+
+const openDeleteConfirmation = () => {
+	deleteError.value = ""
+	confirmDelete.value?.show()
+}
+
+const deleteSymptom = async () => {
+	if (!currentSymptomId.value || isDeleting.value) return
+
+	isDeleting.value = true
+	deleteError.value = ""
+	try {
+		await Symptom.delete(currentSymptomId.value, { scope: { userId } })
+		confirmDelete.value?.hide()
+		currentSymptomId.value = ""
+		await updateSymptoms()
+	} catch (error) {
+		console.error("Failed to delete symptom.", error)
+		deleteError.value = "Não foi possível excluir o sintoma. Tente novamente."
+	} finally {
+		isDeleting.value = false
+	}
 }
 
 watch(currentSymptomId, (value) => {
@@ -157,7 +183,6 @@ authStore.onReady(async (data) => {
 					<template v-for="symptom in filteredSymptoms" :key="symptom.id">
 						<SymptomCard
 							:symptom="symptom"
-							theme="light"
 							class="w-full cursor-pointer"
 							@click="viewSymptom(symptom.id)"
 						/>
@@ -190,14 +215,23 @@ authStore.onReady(async (data) => {
 							<span class="material-symbols-rounded text-3xl!"> arrow_back </span>
 						</button>
 
-						<BaseButton
-							theme="accent"
-							icon="edit_document"
-							class="gap-3"
-							@click.prevent="formUpdate!.show()"
-						>
-							<p>Atualizar sintoma</p>
-						</BaseButton>
+						<div class="flex flex-row gap-4">
+							<BaseButton
+								theme="accent"
+								icon="edit_document"
+								class="gap-3"
+								@click.prevent="formUpdate!.show()"
+							>
+								<p>Atualizar sintoma</p>
+							</BaseButton>
+							<BaseButton
+								theme="accent"
+								mode="transparent"
+								icon="delete"
+								class="px-0!"
+								@click.prevent="openDeleteConfirmation"
+							/>
+						</div>
 					</header>
 
 					<br />
@@ -218,6 +252,34 @@ authStore.onReady(async (data) => {
 
 		<BaseDialog title="Atualizar Sintoma" ref="formUpdate">
 			<FormSymptom @handled-submit="handleSubmit" :symptomId="currentSymptomId" />
+		</BaseDialog>
+
+		<BaseDialog title="Excluir sintoma" ref="confirmDelete">
+			<div class="flex flex-col gap-4">
+				<p class="text-center mb-2">Tem certeza de que deseja excluir este sintoma? Esta ação não pode ser desfeita.</p>
+
+				<p v-if="deleteError" class="text-error">{{ deleteError }}</p>
+				
+				<div class="flex justify-end gap-3">
+					<BaseButton
+						theme="accent"
+						mode="transparent"
+						:state="isDeleting ? 'disabled' : 'enabled'"
+						@click="confirmDelete?.hide()"
+					>
+						Cancelar
+					</BaseButton>
+					<BaseButton
+						theme="accent"
+						icon="delete"
+						class="gap-2"
+						:state="isDeleting ? 'sync' : 'enabled'"
+						@click="deleteSymptom"
+					>
+						Excluir
+					</BaseButton>
+				</div>
+			</div>
 		</BaseDialog>
 	</PageWrapper>
 </template>
