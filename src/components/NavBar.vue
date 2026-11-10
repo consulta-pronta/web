@@ -3,6 +3,7 @@ import { ref } from "vue"
 import { useNavbarStore } from "@/stores/navbarStore"
 import { useAuthStore } from "@/stores/authStore"
 import BaseLogo from "@/components/bases/BaseLogo.vue"
+import BaseLink from "@/components/bases/BaseLink.vue"
 import BaseButton, { type BaseButtonProps } from "@/components/bases/BaseButton.vue"
 import { auth } from "@/database/firebase"
 import { signOut } from "firebase/auth"
@@ -64,22 +65,24 @@ authStore.onReady((data) => {
 			/>
 
 			<nav>
-				<BaseButton
+				<BaseLink
 					v-if="userType === 'patient'"
-					v-bind="sharedAttributes"
-					icon="browse_activity"
-					goto="/historico-sintomas"
+					to="/historico-sintomas"
+					class="nav-link"
 				>
+					<span class="material-symbols-rounded select-none text-3xl!">
+						browse_activity
+					</span>
 					<p>Histórico</p>
-				</BaseButton>
-				<BaseButton
+				</BaseLink>
+				<BaseLink
 					v-else-if="userType === 'professional'"
-					v-bind="sharedAttributes"
-					icon="group"
-					goto="/pacientes"
+					to="/pacientes"
+					class="nav-link"
 				>
+					<span class="material-symbols-rounded select-none text-3xl!">group</span>
 					<p>Pacientes</p>
-				</BaseButton>
+				</BaseLink>
 
 				<BaseButton
 					v-if="userType === 'patient'"
@@ -98,34 +101,34 @@ authStore.onReady((data) => {
 					<p>Farmácia</p>
 				</BaseButton>
 
-				<BaseButton
+				<BaseLink
 					v-if="userType !== 'admin'"
-					v-bind="sharedAttributes"
-					icon="assignment"
-					goto="/relatorios"
+					to="/relatorios"
+					class="nav-link"
 				>
+					<span class="material-symbols-rounded select-none text-3xl!">assignment</span>
 					<p>Relatórios</p>
-				</BaseButton>
+				</BaseLink>
 
 				<hr class="h-1 border-0 bg-primaryDark w-1/4 m-auto rounded-full opacity-70" />
 
-				<BaseButton
+				<BaseLink
 					v-if="userType !== 'admin'"
-					v-bind="sharedAttributes"
-					icon="stethoscope"
-					goto="/exames"
+					to="/exames"
+					class="nav-link"
 				>
+					<span class="material-symbols-rounded select-none text-3xl!">stethoscope</span>
 					<p>Exames</p>
-				</BaseButton>
+				</BaseLink>
 
-				<BaseButton
+				<BaseLink
 					v-if="userType === 'patient'"
-					v-bind="sharedAttributes"
-					icon="how_to_reg"
-					goto="permissoes"
+					to="permissoes"
+					class="nav-link"
 				>
+					<span class="material-symbols-rounded select-none text-3xl!">how_to_reg</span>
 					<p>Permissões</p>
-				</BaseButton>
+				</BaseLink>
 
 				<BaseButton
 					v-if="userType !== 'admin'"
@@ -202,7 +205,15 @@ p {
 	@apply text-xl ml-8;
 }
 
+.nav-link {
+	@apply px-5 rounded-md h-11 flex flex-row items-center justify-start text-textLight cursor-pointer hover:brightness-90;
+}
+
+.nav-link.router-link-active {
+	@apply text-accent;
+}
+
 nav {
-	@apply w-full flex flex-col gap-2 [button]:w-full overflow-clip;
+	@apply w-full flex flex-col gap-2 [button]:w-full [&>a]:w-full overflow-clip;
 }
 </style>

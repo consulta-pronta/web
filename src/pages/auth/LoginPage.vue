@@ -3,6 +3,7 @@ import { ref, type Ref } from "vue"
 import { useRouter } from "vue-router"
 
 import BaseButton, { type ButtonState } from "@/components/bases/BaseButton.vue"
+import BaseLink from "@/components/bases/BaseLink.vue"
 import BaseInput from "@/components/bases/BaseInput.vue"
 import BaseLogo from "@/components/bases/BaseLogo.vue"
 
@@ -72,16 +73,16 @@ const login = async () => {
 					Entrar
 				</BaseButton>
 
-				<RouterLink to="cadastro">
+				<BaseLink to="cadastro">
 					<p class="text-textLight">
 						Nâo possui conta?
-						<a href="" class="text-accent">Criar conta</a>
+						<span class="text-accent">Criar conta</span>
 					</p>
-				</RouterLink>
+				</BaseLink>
 
-				<RouterLink to="recuperar-senha">
+				<BaseLink to="recuperar-senha">
 					<p class="text-accent">Esqueceu a senha?</p>
-				</RouterLink>
+				</BaseLink>
 			</form>
 		</div>
 	</AuthPageWrapper>
