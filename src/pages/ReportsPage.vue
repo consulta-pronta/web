@@ -16,6 +16,7 @@ import DefaultContentWrapper from "@/components/wrappers/DefaultContentWrapper.v
 import router from "@/router"
 import { useRoute } from "vue-router"
 import { normalizeString, searchDocuments } from "@/utils"
+import BaseTable from "@/components/bases/BaseTable.vue"
 
 const route = useRoute()
 const authStore = useAuthStore()
@@ -154,34 +155,25 @@ authStore.onReady(async (user) => {
 				</ul>
 			</div>
 
-			<div class="w-full max-h-[55vh] overflow-y-auto rounded-xl scrollbar-hide">
-				<table class="w-full text-textDark bg-surface">
-					<thead class="font-bold sticky top-0 z-1">
-						<tr class="bg-surface shadow-[inset_0_-2px_0_var(--color-primaryDark)]">
-							<th>Relatório</th>
-							<th>ID</th>
-							<th>Data</th>
-							<th>Horário</th>
-						</tr>
-					</thead>
-					<tbody>
-						<ReportRow
-							v-for="report in filteredReports"
-							:key="report.id"
-							:report="report"
-						/>
-						<tr v-if="reports && filteredReports.length === 0">
-							<td colspan="4" class="p-3 text-center">
-								{{
-									reports.length
-										? "Nenhum relatório encontrado."
-										: "Nenhum relatório disponível."
-								}}
-							</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
+			<BaseTable
+				:show-message="filteredReports.length === 0"
+				:message="`Nenhum relatório ${reports.length ? 'encontrado' : 'disponível'}`"
+			>
+				<template #header>
+					<th>Relatório</th>
+					<th>Duração</th>
+					<th>Criado em</th>
+					<th></th>
+				</template>
+
+				<template #default>
+					<ReportRow
+						v-for="report in filteredReports"
+						:key="report.id"
+						:report="report"
+					/>
+				</template>
+			</BaseTable>
 		</DefaultContentWrapper>
 
 		<BaseDialog title="Gerar Relatório" ref="formRegister">
@@ -195,6 +187,10 @@ authStore.onReady(async (user) => {
 
 td,
 th {
-	@apply p-3 text-center;
+	@apply px-4 py-3;
+}
+
+th {
+	@apply font-semibold uppercase tracking-wide;
 }
 </style>

@@ -67,7 +67,7 @@ const statusIcon = computed(() => {
 </script>
 
 <template>
-	<tr class="*:p-3">
+	<tr class="*:p-3 *:text-center">
 		<td>
 			<div class="flex gap-2">
 				<span class="material-symbols-rounded select-none">

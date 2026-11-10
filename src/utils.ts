@@ -63,13 +63,13 @@ export type SortDirection = "asc" | "desc"
 export const inputDateToDate = (date: string) => new Date(`${date}T00:00`)
 
 export const toCoolDate = (date: Date | null | undefined) =>
-	date ? formatDate(date, "DD MMM YYYY") : DATE_NOT_PROVIDED
+	date ? formatDate(date, "DD MMM YYYY", { locales: "pt-BR" }) : DATE_NOT_PROVIDED
 
 export const toBrazilianDate = (date: Date | null | undefined) =>
 	date ? date.toLocaleString("pt-BR") : DATE_NOT_PROVIDED
 
 export const toBrazilianLocaleDate = (date: Date | null | undefined) =>
-	date ? formatDate(date, "D [de] MMM [de] YYYY") : DATE_NOT_PROVIDED
+	date ? formatDate(date, "D [de] MMM [de] YYYY", { locales: "pt-BR" }) : DATE_NOT_PROVIDED
 
 export const normalizeString = (value: string) =>
 	value

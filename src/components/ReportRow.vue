@@ -6,6 +6,7 @@ import BaseInput from "@/components/bases/BaseInput.vue"
 import type Report from "@/database/report.model"
 import ReportExtended from "@/components/ReportExtended.vue"
 import { ContextMenu, ContextMenuItem, type MenuOptions } from "@imengyu/vue3-context-menu"
+import { toCoolDate } from "@/utils"
 
 const props = defineProps<{
 	report: Report
@@ -24,6 +25,7 @@ const formRename = useTemplateRef("formRename")
 const viewReport = useTemplateRef("viewReport")
 
 const reportDateTime = computed(() => props.report.created_at?.toDate())
+const durationDays = computed(() => props.report.getDurationDays())
 
 const openMenu = (e: MouseEvent) => {
 	menuShow.value = true
@@ -34,35 +36,48 @@ const openMenu = (e: MouseEvent) => {
 
 <template>
 	<tr
-		class="border-t border-primaryDark cursor-pointer hover:backdrop-brightness-90"
+		class="border-t border-primaryDark/10 cursor-pointer transition-colors hover:bg-primaryLight/50 px-2"
 		@click="viewReport?.toggle()"
 		@contextmenu.prevent="openMenu($event)"
 	>
-		<td class="font-medium flex justify-center items-center relative m-1.5">
-			<span
-				class="material-symbols-rounded text-base! md:text-2xl! text-primarydark absolute left-1 md:left-3"
-			>
-				description
-			</span>
-			<p>
-				{{ report.title }}
-			</p>
+		<td class="w-100 font-medium">
+			<span class="truncate pl-3">{{ report.title }}</span>
 		</td>
 
-		<td class="text-center">{{ report.id }}</td>
+		<td class="w-20 text-center">
+			{{
+				durationDays === null
+					? "—"
+					: `${durationDays} ${durationDays === 1 ? "dia" : "dias"}`
+			}}
+		</td>
 
-		<td class="text-center">{{ reportDateTime?.toLocaleDateString() }}</td>
+		<td class="w-30 text-center text-sm">
+			<time v-if="reportDateTime" :datetime="reportDateTime.toISOString()">
+				{{ toCoolDate(reportDateTime) }}
+				
+				<span class="block text-xs text-textDark/60">
+					{{
+						reportDateTime.toLocaleTimeString("pt-BR", {
+							hour: "2-digit",
+							minute: "2-digit",
+						})
+					}}
+				</span>
+			</time>
+			<span v-else>—</span>
+		</td>
 
-		<td class="relative">
-			<div class="flex justify-center items-center">
-				{{ reportDateTime?.toLocaleTimeString() }}
-
-				<div class="cursor-pointer" @click.prevent.stop="openMenu($event)">
-					<span class="material-symbols-rounded text-primaryDark">
-						{{ "more_horiz" }}
-					</span>
-				</div>
-			</div>
+		<td class="w-12 text-center">
+			<button
+				type="button"
+				class="cursor-pointer flex justify-center items-center size-full text-primaryDark"
+				@click.prevent.stop="openMenu($event)"
+			>
+				<span class="material-symbols-rounded rounded-full p-1 hover:bg-primaryDark/10">
+					more_horiz
+				</span>
+			</button>
 		</td>
 
 		<ContextMenu v-model:show="menuShow" :options="menuOptions">

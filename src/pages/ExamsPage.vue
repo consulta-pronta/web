@@ -15,6 +15,7 @@ import PageWrapper from "@/components/wrappers/PageWrapper.vue"
 import HeaderWrapper from "@/components/wrappers/HeaderWrapper.vue"
 import DefaultContentWrapper from "@/components/wrappers/DefaultContentWrapper.vue"
 import { searchDocuments } from "@/utils"
+import BaseTable from "@/components/bases/BaseTable.vue"
 
 const authStore = useAuthStore()
 
@@ -137,26 +138,22 @@ authStore.onReady(async (user) => {
 					Solicitar exame
 				</BaseButton>
 
-				<div class="w-full max-h-[55vh] overflow-y-auto rounded-xl scrollbar-hide h-fit">
-					<table class="w-full text-textDark bg-surface">
-						<thead class="font-bold sticky top-0 z-1">
-							<tr class="bg-surface shadow-[inset_0_-2px_0_var(--color-primaryDark)]">
-								<th>Exame</th>
-								<th>Local</th>
-								<th>Data</th>
-								<th>Status</th>
-							</tr>
-						</thead>
-						<tbody>
-							<ExamRow v-for="exam in filteredExams" :key="exam.id" :exam="exam" />
-							<tr v-if="exames.length && filteredExams.length === 0">
-								<td colspan="4" class="p-3 text-center">
-									Nenhum exame encontrado.
-								</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
+				<BaseTable
+					:show-message="filteredExams.length === 0"
+					message="Nenhum exame encontrado"
+				>
+					<template #header>
+						<th>Exame</th>
+						<th>Local</th>
+						<th>Data</th>
+						<th>Status</th>
+						<!-- <th></th> -->
+					</template>
+
+					<template #default>
+						<ExamRow v-for="exam in filteredExams" :key="exam.id" :exam="exam" />
+					</template>
+				</BaseTable>
 			</div>
 		</DefaultContentWrapper>
 
@@ -175,6 +172,6 @@ authStore.onReady(async (user) => {
 
 td,
 th {
-	@apply p-3 text-center;
+	@apply p-3;
 }
 </style>
