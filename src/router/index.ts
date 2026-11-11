@@ -1,4 +1,4 @@
-import type { UserType } from "@/utils"
+import { changeTitle, type UserType } from "@/utils"
 import { auth } from "@/database/firebase"
 import { useAuthStore } from "@/stores/authStore"
 import { createRouter, createWebHistory } from "vue-router"
@@ -8,6 +8,7 @@ meta.roles values explained:
 	- undefined: doesn't need auth
 	- null: must not be authenticated
 	- UserType[]: must be authenticated as one of the values of the list
+meta.title @ means the app name
 */
 const router = createRouter({
 	history: createWebHistory(import.meta.env.BASE_URL),
@@ -23,6 +24,7 @@ const router = createRouter({
 			component: () => import("@/pages/auth/SignUpPage.vue"),
 			meta: {
 				roles: [],
+				title: "Cadastro - @",
 			},
 		},
 		{
@@ -31,6 +33,7 @@ const router = createRouter({
 			component: () => import("@/pages/auth/LoginPage.vue"),
 			meta: {
 				roles: [],
+				title: "Login - @",
 			},
 		},
 		{
@@ -39,6 +42,7 @@ const router = createRouter({
 			component: () => import("@/pages/auth/PasswordRecoveryPage.vue"),
 			meta: {
 				roles: [],
+				title: "Recuperar Senha - @",
 			},
 		},
 		{
@@ -46,7 +50,8 @@ const router = createRouter({
 			name: "dashboard",
 			component: () => import("@/pages/DashboardPage.vue"),
 			meta: {
-				roles: ["patient", "professional"],
+				roles: ["patient", "professional", "admin"],
+				title: "Dashboard - @",
 			},
 		},
 		{
@@ -54,7 +59,8 @@ const router = createRouter({
 			name: "exames",
 			component: () => import("@/pages/ExamsPage.vue"),
 			meta: {
-				roles: ["patient"],
+				roles: ["patient", "professional"],
+				title: "Exames - @",
 			},
 		},
 		{
@@ -64,20 +70,44 @@ const router = createRouter({
 			component: () => import("@/pages/SymptomHistoryPage.vue"),
 			meta: {
 				roles: ["patient"],
+				title: "Histórico de Sintomas - @",
 			},
 		},
 		{
-			path: "/relatorios",
+			path: "/relatorios/:id?",
 			name: "relatorios",
 			component: () => import("@/pages/ReportsPage.vue"),
 			meta: {
+				roles: ["patient", "professional"],
+				title: "Relatórios - @",
+			},
+		},
+		{
+			path: "/permissoes-medicas",
+			name: "medical-permissions",
+			alias: ["/permissoes"],
+			component: () => import("@/pages/MedicalPermissionsPage.vue"),
+			meta: {
 				roles: ["patient"],
+				title: "Permissões Médicas - @",
+			},
+		},
+		{
+			path: "/pacientes/:id?",
+			name: "pacientes",
+			component: () => import("@/pages/ProfessionalPatientsPage.vue"),
+			meta: {
+				roles: ["professional"],
+				title: "Pacientes - @",
 			},
 		},
 		{
 			path: "/:catchAll(.*)",
 			name: "not-found",
 			component: () => import("@/pages/NotFoundPage.vue"),
+			meta: {
+				title: "Página Não Encontrada - @",
+			},
 		},
 		{
 			path: "/perfil",
@@ -102,16 +132,30 @@ router.beforeEach(async (to) => {
 	const authStore = useAuthStore()
 	authStore.setUser(user)
 
-	const needsAuth = roles.length !== 0
 	const isAuthenticated = user !== null
+	const needsAuth = roles.length !== 0
 
 	if (needsAuth && !isAuthenticated) {
 		return "/login"
 	} else if (!needsAuth && isAuthenticated) {
 		return "/dashboard"
-	} else {
-		return
 	}
+
+	if (needsAuth) {
+		let userType: UserType | undefined
+		await authStore.onReady((data) => {
+			userType = data.user_type
+		})
+		if (!userType || !roles.includes(userType)) {
+			return "/dashboard"
+		}
+	}
+
+	if (to.meta.title) {
+		changeTitle(to.meta.title.toString().replace("@", "Consulta Pronta"))
+	}
+
+	return
 })
 
 export default router

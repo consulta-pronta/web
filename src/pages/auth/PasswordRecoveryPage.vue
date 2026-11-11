@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from "vue"
 import { useRouter } from "vue-router"
-import AuthBackground from "@/components/AuthBackground.vue"
+import AuthPageWrapper from "@/components/wrappers/AuthPageWrapper.vue"
 import BaseButton, { type ButtonState } from "@/components/bases/BaseButton.vue"
 import BaseInput from "@/components/bases/BaseInput.vue"
 import BaseLogo from "@/components/bases/BaseLogo.vue"
@@ -36,7 +36,7 @@ const stopWatcing = watch(email, (value) => {
 </script>
 
 <template>
-	<AuthBackground>
+	<AuthPageWrapper>
 		<BaseLogo text complete />
 
 		<main
@@ -94,5 +94,5 @@ const stopWatcing = watch(email, (value) => {
 				</BaseButton>
 			</form>
 		</main>
-	</AuthBackground>
+	</AuthPageWrapper>
 </template>

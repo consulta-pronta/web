@@ -26,7 +26,6 @@ const openMobile = () => {
 
 const logout = async () => {
 	try {
-		console.log(auth)
 		await signOut(auth)
 		router.push("/login")
 	} catch (error) {
@@ -81,7 +80,7 @@ authStore.onReady((data) => {
 					v-else-if="userType === 'professional'"
 					v-bind="sharedAttributes"
 					icon="group"
-					goto="#"
+					goto="/pacientes"
 				>
 					<p>Pacientes</p>
 				</BaseButton>
@@ -121,6 +120,15 @@ authStore.onReady((data) => {
 					goto="/exames"
 				>
 					<p>Exames</p>
+				</BaseButton>
+
+				<BaseButton
+					v-if="userType === 'patient'"
+					v-bind="sharedAttributes"
+					icon="how_to_reg"
+					goto="permissoes"
+				>
+					<p>Permissões</p>
 				</BaseButton>
 
 				<BaseButton

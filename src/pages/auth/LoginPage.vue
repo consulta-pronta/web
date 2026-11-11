@@ -2,12 +2,12 @@
 import { ref, type Ref } from "vue"
 import { useRouter } from "vue-router"
 
-import AuthBackground from "@/components/AuthBackground.vue"
 import BaseButton, { type ButtonState } from "@/components/bases/BaseButton.vue"
 import BaseInput from "@/components/bases/BaseInput.vue"
 import BaseLogo from "@/components/bases/BaseLogo.vue"
 
 import { useSignInStore } from "@/stores/signInStore"
+import AuthPageWrapper from "@/components/wrappers/AuthPageWrapper.vue"
 
 const signInStore = useSignInStore()
 const buttonState: Ref<ButtonState> = ref("enabled")
@@ -28,7 +28,7 @@ const login = async () => {
 </script>
 
 <template>
-	<AuthBackground>
+	<AuthPageWrapper>
 		<BaseLogo text complete />
 		<div class="lg:w-1/2 box-border items-center justify-center flex flex-col">
 			<div class="text-4xl sm:text-5xl xl:text-6xl text-surface font-bold mb-1">
@@ -84,5 +84,5 @@ const login = async () => {
 				</RouterLink>
 			</form>
 		</div>
-	</AuthBackground>
+	</AuthPageWrapper>
 </template>

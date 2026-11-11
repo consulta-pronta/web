@@ -1,15 +1,22 @@
 import { db } from "@/database/firebase"
+import { normalizeString, toBrazilianDate, toCoolDate } from "@/utils"
+import { isObject } from "@vueuse/core"
 import {
 	collection,
 	deleteDoc,
 	doc,
 	getDoc,
 	getDocs,
+	and,
+	collectionGroup,
 	query,
 	setDoc,
 	updateDoc,
 	type DocumentSnapshot,
+	type QueryCompositeFilterConstraint,
 	type QueryConstraint,
+	type Query,
+	Timestamp,
 } from "firebase/firestore"
 
 export type DocumentData = Record<string, undefined>
@@ -22,6 +29,7 @@ export type CollectionOptions = {
 
 export type QueryOptions = CollectionOptions & {
 	constraints?: QueryConstraint[]
+	compositeConstraints?: QueryCompositeFilterConstraint[]
 }
 
 export default abstract class BaseDocument {
@@ -47,6 +55,10 @@ export default abstract class BaseDocument {
 		return collection(db, this.getCollectionPath(options.scope))
 	}
 
+	static collectionGroup() {
+		return collectionGroup(db, this.collectionName)
+	}
+
 	static emptyRef(options: CollectionOptions = {}) {
 		return doc(this.collection(options))
 	}
@@ -55,19 +67,45 @@ export default abstract class BaseDocument {
 		return doc(this.collection(options), id)
 	}
 
-	static fromDocument<T extends BaseDocument>(doc: DocumentSnapshot) {
-		if (!doc.exists()) {
+	static fromDocument<T extends BaseDocument>(snapshot: DocumentSnapshot) {
+		if (!snapshot.exists()) {
 			return null
 		}
-		return this.documentConverter(doc.id, doc.data()) as T
+		return this.documentConverter(snapshot.id, snapshot.data(), snapshot) as T
 	}
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	protected static documentConverter(id: string, data: DocumentData): BaseDocument {
+	
+	protected static documentConverter(
+		id: string,
+		data: DocumentData,
+		snapshot?: DocumentSnapshot,
+	): BaseDocument {
+		// apenas para sumir o erro
+		console.log(id, data, snapshot)
 		throw new Error("implement this >:(")
 	}
 
 	toMap(): FormData {
 		throw new Error("implement this >:(")
+	}
+	
+	toString(): string {
+		return Object.entries(this).map(([key, value]) => {
+			const formattedValue = (
+				value instanceof Timestamp
+				? `${toBrazilianDate(value.toDate())} ${toCoolDate(value.toDate())}`
+				: isObject(value)
+				? Object.entries(value).map(([k, v]) => `${k}: ${v}`).join(", ")
+				: value
+			)
+			
+			return `${key}: ${formattedValue}`
+		}).join(" ")
+	}
+
+	search(query: string, alreadyNormalized?: boolean): boolean {
+		return normalizeString(this.toString()).includes(
+			alreadyNormalized? query : normalizeString(query)
+		)
 	}
 
 	static async get(id: string, options: CollectionOptions = {}) {
@@ -76,9 +114,21 @@ export default abstract class BaseDocument {
 	}
 
 	static async getAll(options: QueryOptions = {}) {
-		const collectionQuery = query(this.collection(options), ...(options.constraints ?? []))
-		const snapshot = await getDocs(collectionQuery)
+		return this.getAllFromQuery(this.collection(options), options)
+	}
 
+	static async getAllFromCollectionGroup(options: QueryOptions = {}) {
+		return this.getAllFromQuery(this.collectionGroup(), options)
+	}
+
+	private static async getAllFromQuery(target: Query, options: QueryOptions) {
+		const collectionQuery = query(target, ...(options.constraints ?? []))
+		const compositeConstraints = options.compositeConstraints ?? []
+		const constrainedQuery =
+			compositeConstraints.length > 0
+				? query(collectionQuery, and(...compositeConstraints))
+				: collectionQuery
+		const snapshot = await getDocs(constrainedQuery)
 		const documents = snapshot.docs
 			.map((doc) => this.fromDocument(doc))
 			.filter((item) => item !== null)
@@ -86,7 +136,10 @@ export default abstract class BaseDocument {
 	}
 
 	static async set(data: FormData, options: CollectionOptions = {}) {
-		const doc = this.emptyRef(options)
+		const existingId = options.scope?.id
+		const doc = (existingId)
+			? this.ref(existingId, options)
+			: this.emptyRef(options)
 		await setDoc(doc, data)
 		return doc.id
 	}

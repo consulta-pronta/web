@@ -1,4 +1,4 @@
-import type { FederalUnit, UserType } from "@/utils"
+import { formatCRM, type FederalUnit, type UserType } from "@/utils"
 import User from "./user.model"
 import {
 	collection,
@@ -6,19 +6,28 @@ import {
 	doc,
 	getDoc,
 	getDocs,
+	or,
 	serverTimestamp,
 	setDoc,
+	where,
 	type DocumentData,
 	type Timestamp,
 } from "firebase/firestore"
 import type { FormData } from "./baseDocument"
 import { db } from "@/database/firebase"
+import MedicalPermission from "./medicalPermission.model"
+import Patient from "./patient.model"
 
 export type ProfessionalData = {
 	crm: string
 	uf: FederalUnit
 	operation_area: string
 	specialty: string
+}
+
+export type PatientWithProfessionalPermission = {
+	patient: Patient,
+	permissions: MedicalPermission
 }
 
 export default class Professional extends User {
@@ -41,6 +50,22 @@ export default class Professional extends User {
 	}
 
 	static readonly requestsCollectionName = "signupRequests"
+
+	static async getByEmail(email: string) {
+		const snapshot = await Professional.getAll({
+			constraints: [
+				where("email", "==", email.trim()),
+			],
+			compositeConstraints: [
+				or(
+					where("user_type", "==", "professional"),
+					where("user_type", "==", "profissional"),
+				),
+			],
+		})
+
+		return (snapshot.length === 0) ? null : snapshot[0] as Professional
+	}
 
 	static get requestCollection() {
 		return collection(db, this.requestsCollectionName)
@@ -101,6 +126,10 @@ export default class Professional extends User {
 		}
 	}
 
+	static async get(id: string) {
+		return super.get(id) as Promise<Professional | null>
+	}
+
 	static async createRequest(id: string, data: FormData) {
 		await setDoc(this.requestRef(id), data)
 		return id
@@ -120,5 +149,43 @@ export default class Professional extends User {
 
 	static async deleteRequest(id: string) {
 		await deleteDoc(this.requestRef(id))
+	}
+
+	getFormattedCRM() {
+		if (!this.professional_data) {
+			return ""
+		}
+	
+		return formatCRM(this.professional_data.crm, this.professional_data.uf)
+	}
+
+	async getMedicalPermissions() {
+		return await MedicalPermission.getAllForProfessional(this.id)
+	}
+
+	async getPatients(onlyActive = true) {
+		return (await Promise.all(
+			(await this.getMedicalPermissions())
+				.filter((item) => !onlyActive || item.status === "active")
+				.map(async (item) => await item.getPatient())
+		)).filter((item) => item != null)
+	}
+	
+
+	async getPatientsWithPermissions() {
+		const permissions = await this.getMedicalPermissions()
+		
+		return (await Promise.all(
+			(permissions)
+				.filter((item) => item.status === "active")
+				.map(async (item) =>
+					({
+						patient: await item.getPatient(),
+						permissions: item,
+					}) as PatientWithProfessionalPermission
+				)
+		)).filter((item) =>
+			item != null && item.patient != null && item.permissions != null
+		)
 	}
 }
