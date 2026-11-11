@@ -114,7 +114,8 @@ const router = createRouter({
 			name: "perfil",
 			component: () => import("@/pages/ProfileView.vue"),
 			meta: {
-				roles: ["paciente", "profissional"],
+				roles: ["patient", "professional"],
+				title: "Perfil - @"
 			},
 		},
 	],

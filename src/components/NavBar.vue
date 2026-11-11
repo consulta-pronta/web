@@ -7,7 +7,7 @@ import BaseButton, { type BaseButtonProps } from "@/components/bases/BaseButton.
 import { auth } from "@/database/firebase"
 import { signOut } from "firebase/auth"
 import type { UserType } from "@/utils"
-import router from "@/router/index.ts"
+import router from "@/router/index"
 
 const navbarStore = useNavbarStore()
 const authStore = useAuthStore()
@@ -158,7 +158,11 @@ authStore.onReady((data) => {
 					<p>Recursos</p>
 				</BaseButton>
 
-				<BaseButton v-bind="sharedAttributes" goto="/perfil" icon="person">
+				<BaseButton
+					v-if="userType !== 'admin'"
+					v-bind="sharedAttributes"
+					goto="/perfil"
+					icon="person">
 					<p>Perfil</p>
 				</BaseButton>
 			</nav>

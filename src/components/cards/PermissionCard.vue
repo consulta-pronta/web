@@ -112,9 +112,9 @@ authStore.onReady(async (data) => {
 <template>
 	<article
 		v-if="matchesSearch"
-		class="bg-surface min-w-fit rounded-lg overflow-clip text-textDark flex flex-col"
+		class="bg-surface min-w-fit h-fit rounded-lg overflow-clip text-textDark flex flex-col"
 	>
-		
+
 		<header
 			class="w-full flex justify-between items-center p-3 mb-2"
 			:class="headHeaderStyle"
@@ -180,7 +180,7 @@ authStore.onReady(async (data) => {
 				</BaseButton>
 			</footer>
 		</section>
-	
+
 		<Teleport to="body">
 			<BaseDialog ref="managePermissionsDialog" :title="'Permissões de ' + user?.name">
 				<FormMedicalPermission

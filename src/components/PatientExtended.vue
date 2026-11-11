@@ -1,37 +1,26 @@
 <script setup lang="ts">
-// import type { Patient } from "@/models/symptomModel"
-// import { getPatient } from "@/services/symptomService"
-import { useAuthStore } from "@/stores/authStore"
+import Patient from "@/database/patient.model"
 import { ref, watch } from "vue"
+import { formatToCPF, formatToNumber, formatToPhone } from 'brazilian-values'
+import { formatCRM, toBrazilianLocaleDate, timestampDiffYears, stringToTimestamp } from '@/utils'
 
 const patientId = defineModel<string>()
-const isFetching = defineModel<boolean>("isFetching")
+	const patient = ref<Patient | null>(null)
 
-const authStore = useAuthStore()
+watch(patientId, async (value) => {
+	if (!value) {
+		return
+	}
 
-const list = ref<unknown[]>()
-
-// watch(patientId, async (value) => {
-// 	list.value = []
-
-// 	if (!value) {
-// 		return
-// 	}
-
-// 	isFetching.value = true
-
-// 	const patient = await getPatient(authStore.user!.uid, value)
-// 	list.value = [patient]
-// 	if (patient.historic) {
-// 		list.value = list.value.concat(patient.historic)
-// 	}
-
-// 	isFetching.value = false
-// })
+	if (patientId.value) {
+		patient.value = await Patient.get(patientId.value)
+	}
+})
 </script>
 
 <template>
 	<ul
+		v-if="patient"
 		class="flex flex-col gap-4"
 		:class="false ? 'h-full justify-center items-center' : ''"
 	>
@@ -40,7 +29,7 @@ const list = ref<unknown[]>()
 		</span>
 		<article class="bg-surface text-textDark p-3 rounded-xl">
 			<section>
-				<h2 class="text-xl font-bold">Cláudio Silva</h2>
+				<h2 class="text-xl font-bold">{{ patient.name }}</h2>
 			</section>
 		</article>
 		<div class="flex flex-col gap-5 w-full">
@@ -51,27 +40,27 @@ const list = ref<unknown[]>()
 
 					<div class="grid grid-cols-2 gap-5">
 						<div>
-							<p>45 anos</p>
+							<p>{{ Math.floor(timestampDiffYears(stringToTimestamp(patient.birth_date), stringToTimestamp(new Date().toISOString()))) }} anos</p>
 							<p class="font-normal opacity-70">Idade</p>
 						</div>
 						<div>
-							<p>12/03/1981</p>
+							<p>{{ toBrazilianLocaleDate(new Date(patient.birth_date)) }}</p>
 							<p class="font-normal opacity-70">Data de nascimento</p>
 						</div>
 						<div>
-							<p>Masculino</p>
+							<p>{{ patient.gender }}</p>
 							<p class="font-normal opacity-70">Gênero</p>
 						</div>
 						<div>
-							<p>Masculino</p>
+							<p>{{ patient.biological_sex }}</p>
 							<p class="font-normal opacity-70">Sexo biológico</p>
 						</div>
 						<div>
-							<p>321.654.987-01</p>
+							<p>{{ formatToCPF(patient.cpf) }}</p>
 							<p class="font-normal opacity-70">CPF</p>
 						</div>
 						<div>
-							<p>Rua das Flores, 123 - Serra, ES</p>
+							<p>{{ patient.address }}</p>
 							<p class="font-normal opacity-70">Endereço</p>
 						</div>
 					</div>
@@ -83,20 +72,12 @@ const list = ref<unknown[]>()
 
 					<div class="flex flex-col gap-5">
 						<div>
-							<p>(27) 99999-9999</p>
+							<p>{{ formatToPhone(patient.phone) }}</p>
 							<p class="font-normal opacity-70">Telefone</p>
 						</div>
 						<div>
-							<p>claudio.silva@email.com</p>
+							<p>{{ patient.email }}</p>
 							<p class="font-normal opacity-70">Email</p>
-						</div>
-
-						<hr class="h-0.5 border-0 bg-textDark w-full rounded-full opacity-70" />
-
-						<p>Aplicativos conectados</p>
-						<div>
-							<p>(27) 99999-9999</p>
-							<p class="font-normal opacity-70">Whatsapp</p>
 						</div>
 					</div>
 				</section>

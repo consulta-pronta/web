@@ -112,6 +112,7 @@ authStore.onReady(async () => {
 								:medical-permission="permission"
 								:search-query="searchQuery"
 								class="w-full"
+								@click="viewPatient(permission.patient_id)"
 							/>
 						</template>
 					</ul>
@@ -144,6 +145,7 @@ authStore.onReady(async () => {
 						<br />
 
 						<PatientExtended
+							v-model="currentPatientId"
 							ref="areaDescription"
 							class="w-full"
 						/>
