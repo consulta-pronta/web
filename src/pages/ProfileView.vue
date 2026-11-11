@@ -71,7 +71,7 @@ const handleSubmit = async () => {
 						<!-- <UserPhoto /> -->
 						<div class="flex flex-col justify-center">
 							<div class="flex items-center">
-								<p class="text-2xl text-textLight font-bold">{{ user.name }}</p>
+								<p class="text-2xl text-textLight font-bold">{{ user.social_name === "" ? user.name : user.social_name }}</p>
 								<BaseButton type="button" theme="textLight" mode="transparent" icon="edit_square" @click="openForm('name')" />
 							</div>
 							<p class="text-xl text-textLight font-medium opacity-80">{{ user.email }}</p>

@@ -230,10 +230,10 @@ reset()
 		</label>
 
 		<label>
-			<p>Pediatria</p>
+			<p>Especialidade</p>
 			<BaseInput
 				type="text"
-				placeholder="Digite sua pediatria"
+				placeholder="Digite sua especialidade"
 				v-model="specialty"
 				theme="light"
 				required

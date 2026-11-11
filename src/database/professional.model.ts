@@ -26,6 +26,7 @@ export default class Professional extends User {
 		public readonly id: string = "",
 		public email: string = "",
 		public name: string = "",
+		public social_name: string = "",
 		public phone: string = "",
 		public cpf: string = "",
 		public user_type: UserType = "professional",
@@ -58,6 +59,7 @@ export default class Professional extends User {
 			id,
 			data.email,
 			data.name,
+			data.social_name,
 			data.phone,
 			data.cpf,
 			"professional",
@@ -86,6 +88,7 @@ export default class Professional extends User {
 		return {
 			email: this.email,
 			name: this.name,
+			social_name: this.social_name,
 			phone: this.phone,
 			cpf: this.cpf,
 			user_type: this.user_type,
