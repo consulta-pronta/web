@@ -35,11 +35,17 @@ export const useAuthStore = defineStore("auth", () => {
 		await until(appUser).toBeTruthy()
 
 		if (callback.length === 1 && appUser.value) {
-			;(callback as userCallback)(appUser.value)
+			(callback as userCallback)(appUser.value)
 		} else {
-			;(callback as arglessCallback)()
+			(callback as arglessCallback)()
 		}
 	}
 
-	return { user: authUser, userData: appUser, setUser, onReady }
+	const reloadUser = async () => {
+		if (authUser.value) {
+			appUser.value = await User.get(authUser.value.uid)
+		}
+	}
+
+	return { user: authUser, userData: appUser, setUser, onReady, reloadUser }
 })

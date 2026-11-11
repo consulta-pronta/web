@@ -1,5 +1,5 @@
 import { formatDate } from "@vueuse/core"
-import type { Timestamp } from "firebase/firestore"
+import { Timestamp } from "firebase/firestore"
 import type BaseDocument from "./database/baseDocument"
 
 export const federalUnits = [
@@ -50,6 +50,8 @@ export const symptomPlaces = [
 	"Vagina",
 	"Pênis",
 ] as const
+export const sexTypes = ["Masculino", "Feminino", "Intersexo", "Prefiro não informar"] as const
+export const genderTypes = ["Homem cisgênero", "Mulher cisgênero", "Homem transexual", "Mulher transexual", "Pessoa não binária", "Prefiro não informar"]
 export const bloodTypes = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"] as const
 export const userTypes = ["patient", "professional", "admin"] as const
 export const DATE_NOT_PROVIDED = "Data não informada"
@@ -83,6 +85,11 @@ export const timestampDiffSeconds = (start: Timestamp, end: Timestamp, reversed 
 
 export const timestampDiffDays = (start: Timestamp, end: Timestamp) =>
 	timestampDiffSeconds(start, end) / (60 * 60 * 24)
+
+export const timestampDiffYears = (start: Timestamp, end: Timestamp) =>
+	timestampDiffSeconds(start, end) / (60 * 60 * 24 * 365) //Tem que negoçar para ano bissexual
+
+export const stringToTimestamp = (date: string) => Timestamp.fromDate(new Date(date))
 
 export const formatCRM = (crm: string, uf: string) => `${crm}/${uf}`
 

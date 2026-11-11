@@ -158,7 +158,7 @@ authStore.onReady((data) => {
 					<p>Recursos</p>
 				</BaseButton>
 
-				<BaseButton v-bind="sharedAttributes" goto="#" icon="person">
+				<BaseButton v-bind="sharedAttributes" goto="/perfil" icon="person">
 					<p>Perfil</p>
 				</BaseButton>
 			</nav>

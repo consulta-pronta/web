@@ -109,6 +109,14 @@ const router = createRouter({
 				title: "Página Não Encontrada - @",
 			},
 		},
+		{
+			path: "/perfil",
+			name: "perfil",
+			component: () => import("@/pages/ProfileView.vue"),
+			meta: {
+				roles: ["paciente", "profissional"],
+			},
+		},
 	],
 })
 
