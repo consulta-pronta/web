@@ -67,7 +67,7 @@ const statusIcon = computed(() => {
 </script>
 
 <template>
-	<tr class="*:p-3 *:text-center">
+	<tr class="*:py-2 *:px-3 *:text-center">
 		<td>
 			<div class="flex gap-2">
 				<span class="material-symbols-rounded select-none">
@@ -79,12 +79,13 @@ const statusIcon = computed(() => {
 		<td>{{ exam.place }}</td>
 		<td>{{ date }}</td>
 		<td>
-			<div class="flex gap-2">
+			<div class="flex gap-1 justify-center">
 				<p>{{ status }}</p>
 				<span class="material-symbols-rounded select-none">
 					{{ statusIcon }}
 				</span>
 			</div>
 		</td>
+		<td></td>
 	</tr>
 </template>

@@ -16,6 +16,7 @@ import { searchDocuments, symptomPlaces, timestampDiffSeconds, type SortDirectio
 import PageWrapper from "@/components/wrappers/PageWrapper.vue"
 import DefaultContentWrapper from "@/components/wrappers/DefaultContentWrapper.vue"
 import HeaderWrapper from "@/components/wrappers/HeaderWrapper.vue"
+import BaseCardList from "@/components/bases/BaseCardList.vue"
 
 const route = useRoute()
 const authStore = useAuthStore()
@@ -168,35 +169,46 @@ authStore.onReady(async (data) => {
 			</div>
 
 			<div class="flex flex-row gap-4">
-				<ul
-					v-if="filteredSymptoms.length"
-					class="w-full max-h-full overflow-hidden grid grid-cols-1 sm:grid-cols-[repeat(auto-fill,minmax(30em,1fr))] gap-2 overflow-y-auto"
-					:class="[!currentSymptomId ? '' : 'hidden lg:grid lg:grid-cols-1 lg:w-120']"
+				<div
+					class="w-full flex flex-col gap-4"
+					:class="[!currentSymptomId ? '' : 'hidden lg:grid lg:w-120']"
 				>
 					<p
 						class="text-textLight text-2xl col-span-full"
 						:class="[!currentSymptomId ? '' : 'hidden lg:flex']"
 					>
-						{{ filteredSymptoms.length }} sintomas registrados
+						<template v-if="symptomsLoaded">
+							{{ filteredSymptoms.length }} sintomas registrados
+						</template>
+						<template v-else>
+							Carregando sintomas
+						</template>
 					</p>
 
-					<template v-for="symptom in filteredSymptoms" :key="symptom.id">
+					<BaseCardList
+						v-if="filteredSymptoms.length || !symptomsLoaded"
+						:is-loading="!symptomsLoaded"
+						class="max-h-full overflow-y-auto"
+						min-width="30em"
+					>
+
 						<SymptomCard
+							v-for="symptom in filteredSymptoms" 
+							:key="symptom.id"
 							:symptom="symptom"
 							class="w-full cursor-pointer"
 							@click="viewSymptom(symptom.id)"
 						/>
-					</template>
-				</ul>
-				<p v-else-if="!symptomsLoaded" class="text-textLight m-auto">
-					<span class="material-symbols-rounded animate-spin text-accent w-fit m-auto">
-						sync
-					</span>
-				</p>
-				<p v-else-if="loadError" class="text-error m-auto">
+					</BaseCardList>
+				</div>
+				
+				<p v-if="symptomsLoaded && loadError" class="text-error m-auto">
 					{{ loadError }}
 				</p>
-				<p v-else class="text-textLight m-auto">
+				<p
+					v-else-if="symptomsLoaded && !filteredSymptoms.length"
+					class="text-textLight m-auto"
+				>
 					{{
 						symptoms.length
 							? "Nenhum sintoma encontrado."

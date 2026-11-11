@@ -7,9 +7,9 @@ import { defineStore } from "pinia"
 import { ref, watch } from "vue"
 import { until } from "@vueuse/core"
 
-type arglessCallback = () => void
+type arglessCallback = () => unknown
 type AppUser = User | Patient | Professional | Admin
-type userCallback = (data: AppUser) => void
+type userCallback = (data: AppUser) => unknown
 
 export const useAuthStore = defineStore("auth", () => {
 	const authUser = ref<AuthUser | null>(null)
@@ -35,9 +35,9 @@ export const useAuthStore = defineStore("auth", () => {
 		await until(appUser).toBeTruthy()
 
 		if (callback.length === 1 && appUser.value) {
-			;(callback as userCallback)(appUser.value)
+			await (callback as userCallback)(appUser.value)
 		} else {
-			;(callback as arglessCallback)()
+			await (callback as arglessCallback)()
 		}
 	}
 

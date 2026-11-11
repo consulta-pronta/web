@@ -16,6 +16,7 @@ import HeaderWrapper from "@/components/wrappers/HeaderWrapper.vue"
 import DefaultContentWrapper from "@/components/wrappers/DefaultContentWrapper.vue"
 import { searchDocuments } from "@/utils"
 import BaseTable from "@/components/bases/BaseTable.vue"
+import BaseCardList from "@/components/bases/BaseCardList.vue"
 
 const authStore = useAuthStore()
 
@@ -25,6 +26,7 @@ const currentPermission = ref<MedicalPermission | null>(null)
 const forProfessionalData = ref<PatientWithProfessionalPermission[]>([])
 const currentPatient = ref<Patient | null>(null)
 const loadError = ref("")
+const loading = ref(true)
 const searchQuery = ref("")
 const formRegister = useTemplateRef("formRegister")
 
@@ -64,25 +66,36 @@ const selectPatient = async (item: PatientWithProfessionalPermission) => {
 	currentPatient.value = item.patient
 	currentPermission.value = item.permissions
 	searchQuery.value = ""
-	exames.value = await Exam.getAll({ scope: { userId: item.patient.id } })
+	loading.value = true
+	loadError.value = ""
+	try {
+		exames.value = await Exam.getAll({ scope: { userId: item.patient.id } })
+	} catch (error) {
+		console.error("Failed to load patient's exams.", error)
+		loadError.value = "Não foi possível carregar os exames."
+	} finally {
+		loading.value = false
+	}
 }
 
 authStore.onReady(async (user) => {
-	if (!(user instanceof Patient || user instanceof Professional)) {
-		return
-	}
-
-	currentUser.value = user
-
-	if (user instanceof Patient) {
-		exames.value = await Exam.getAll({ scope: { userId: user.id } })
-	} else if (user instanceof Professional) {
-		try {
-			forProfessionalData.value = await user.getPatientsWithPermissions()
-		} catch (error) {
-			console.error("Failed to load professional's patients.", error)
-			loadError.value = "Não foi possível carregar os pacientes."
+	try {
+		if (!(user instanceof Patient || user instanceof Professional)) {
+			return
 		}
+
+		currentUser.value = user
+
+		if (user instanceof Patient) {
+			exames.value = await Exam.getAll({ scope: { userId: user.id } })
+		} else {
+			forProfessionalData.value = await user.getPatientsWithPermissions()
+		}
+	} catch (error) {
+		console.error("Failed to load exams page data.", error)
+		loadError.value = "Não foi possível carregar os dados."
+	} finally {
+		loading.value = false
 	}
 })
 </script>
@@ -114,7 +127,7 @@ authStore.onReady(async (user) => {
 					{{ loadError }}
 				</p>
 
-				<ul class="w-full flex flex-col gap-2">
+				<BaseCardList :is-loading="loading" class="w-full flex flex-col gap-2">
 					<li v-for="item in filteredProfessionalData" :key="item.patient.id">
 						<PatientCard
 							:class="currentPatient === item.patient ? 'bg-accent!' : ''"
@@ -122,7 +135,7 @@ authStore.onReady(async (user) => {
 							@selected="selectPatient(item)"
 						/>
 					</li>
-				</ul>
+				</BaseCardList>
 			</div>
 
 			<div class="w-full flex flex-col gap-4">
@@ -139,15 +152,16 @@ authStore.onReady(async (user) => {
 				</BaseButton>
 
 				<BaseTable
+					:is-loading="loading"
 					:show-message="filteredExams.length === 0"
-					message="Nenhum exame encontrado"
+					:message="loadError || 'Nenhum exame encontrado'"
 				>
 					<template #header>
-						<th>Exame</th>
-						<th>Local</th>
-						<th>Data</th>
-						<th>Status</th>
-						<!-- <th></th> -->
+						<th class="w-70">Exame</th>
+						<th class="w-70">Local</th>
+						<th class="w-30">Data</th>
+						<th class="w-40">Status</th>
+						<th class="w-12	"></th>
 					</template>
 
 					<template #default>

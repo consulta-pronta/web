@@ -12,6 +12,7 @@ import Patient from "@/database/patient.model"
 import router from "@/router"
 import PageWrapper from "@/components/wrappers/PageWrapper.vue"
 import HeaderWrapper from "@/components/wrappers/HeaderWrapper.vue"
+import BaseCardList from "@/components/bases/BaseCardList.vue"
 
 const authStore = useAuthStore()
 
@@ -56,62 +57,59 @@ authStore.onReady(async () => {
 </script>
 
 <template>
-	<PageWrapper custom>
-		<main class="w-full h-full overflow-hidden px-6 py-8 flex flex-col gap-4 text-textLight">
-			<HeaderWrapper title="Permissões médicas">
-				<section class="flex flex-row justify-center gap-2 *:h-[stretch]">
-					<BaseButton
-						type="button"
-						theme="accent"
-						icon="person_add"
-						class="rounded-2xl gap-2"
-						@click="addProfessionalDialog?.show()"
-					>
-						<span class="hidden lg:block">Adicionar profissional</span>
-					</BaseButton>
+	<PageWrapper>
+		<HeaderWrapper title="Permissões médicas">
+			<section class="flex flex-row justify-center gap-2 *:h-[stretch]">
+				<BaseButton
+					type="button"
+					theme="accent"
+					icon="person_add"
+					class="rounded-2xl gap-2"
+					@click="addProfessionalDialog?.show()"
+				>
+					<span class="hidden lg:block">Adicionar profissional</span>
+				</BaseButton>
 
-					<BaseInput
-						v-model="searchQuery"
-						placeholder="Pesquisar"
-						icon="search"
-						class="place-self-center w-full md:w-120"
-					/>
-				</section>
-			</HeaderWrapper>
-
-			<section
-				class="flex flex-col items-center gap-4 flex-1 min-h-0 overflow-y-auto scrollbar-hide"
-			>
-				<!-- <article class="w-full flex justify-center">
-					<section
-						class="relative flex w-[85%] md:w-[70%] lg:w-[45%] min-h-11 items-center border border-textLight text-sm text-textLight rounded-[15px]"
-					>
-						<span class="material-symbols-rounded pointer-events-none absolute left-3">
-							shield
-						</span>
-
-						<div class="w-full text-center text-sm lg:text-[13px]">
-							<p>
-								Controle quais profissionais da saúde podem acessar seu histórico.
-							</p>
-						</div>
-					</section>
-				</article> -->
-
-				<div class="w-full grid gap-4 grid-cols-[repeat(auto-fill,minmax(25em,1fr))]">
-					<PermissionCard
-						v-for="permission in medicalPermissions"
-						:key="permission.id"
-						:medical-permission="permission"
-						:search-query="searchQuery"
-					/>
-				</div>
-				<i v-if="loading" class="animate-spin">loop</i>
-				<p v-if="loadMessage">
-					{{ loadMessage }}
-				</p>
+				<BaseInput
+					v-model="searchQuery"
+					placeholder="Pesquisar"
+					icon="search"
+					class="place-self-center w-full md:w-120"
+				/>
 			</section>
-		</main>
+		</HeaderWrapper>
+
+		<section
+			class="flex flex-col gap-4 flex-1 min-h-0 overflow-y-auto scrollbar-hide w-full"
+		>
+			<!-- <article class="w-full flex justify-center">
+				<section
+					class="relative flex w-[85%] md:w-[70%] lg:w-[45%] min-h-11 items-center border border-textLight text-sm text-textLight rounded-[15px]"
+				>
+					<span class="material-symbols-rounded pointer-events-none absolute left-3">
+						shield
+					</span>
+
+					<div class="w-full text-center text-sm lg:text-[13px]">
+						<p>
+							Controle quais profissionais da saúde podem acessar seu histórico.
+						</p>
+					</div>
+				</section>
+			</article> -->
+
+			<BaseCardList :is-loading="loading" min-width="25em">
+				<PermissionCard
+					v-for="permission in medicalPermissions"
+					:key="permission.id"
+					:medical-permission="permission"
+					:search-query="searchQuery"
+				/>
+			</BaseCardList>
+			<p v-if="(!loading && loadMessage)" class="mx-auto">
+				{{ loadMessage }}
+			</p>
+		</section>
 
 		<BaseDialog title="Adicionar profissional" ref="addProfessionalDialog">
 			<FormAddProfessional @handled-submit="handleRequestSubmitted" />

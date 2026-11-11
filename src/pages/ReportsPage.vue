@@ -17,6 +17,7 @@ import router from "@/router"
 import { useRoute } from "vue-router"
 import { normalizeString, searchDocuments } from "@/utils"
 import BaseTable from "@/components/bases/BaseTable.vue"
+import BaseCardList from "@/components/bases/BaseCardList.vue"
 
 const route = useRoute()
 const authStore = useAuthStore()
@@ -26,6 +27,7 @@ const patients = ref<Patient[]>([])
 const reports = ref<Report[]>([])
 const currentPatient = ref<Patient | null>(null)
 const loadError = ref("")
+const loading = ref(true)
 const searchQuery = ref("")
 
 const formRegister = useTemplateRef("formRegister")
@@ -52,18 +54,35 @@ const pageTitle = computed(() =>
 
 const handleSubmit = async () => {
 	formRegister.value?.hide()
-	await authStore.onReady(async (user) => {
-		reports.value = await Report.getAll({ scope: { userId: user.id } })
-	})
+	loading.value = true
+	loadError.value = ""
+	try {
+		await authStore.onReady(async (user) => {
+			reports.value = await Report.getAll({ scope: { userId: user.id } })
+		})
+	} catch (error) {
+		console.error("Failed to load reports.", error)
+		loadError.value = "Não foi possível carregar os relatórios."
+	} finally {
+		loading.value = false
+	}
 }
 
 const selectPatient = async (patient: Patient) => {
 	currentPatient.value = patient
 	searchQuery.value = ""
-
-	reports.value = await Report.getAll({
-		scope: { userId: patient.id },
-	})
+	loading.value = true
+	loadError.value = ""
+	try {
+		reports.value = await Report.getAll({
+			scope: { userId: patient.id },
+		})
+	} catch (error) {
+		console.error("Failed to load patient's reports.", error)
+		loadError.value = "Não foi possível carregar os relatórios."
+	} finally {
+		loading.value = false
+	}
 }
 
 watch(currentPatient, (value) => {
@@ -78,15 +97,15 @@ watch(currentPatient, (value) => {
 })
 
 authStore.onReady(async (user) => {
-	if (!(user instanceof Patient || user instanceof Professional)) {
-		return
-	}
-	currentUser.value = user
+	try {
+		if (!(user instanceof Patient || user instanceof Professional)) {
+			return
+		}
+		currentUser.value = user
 
-	if (user instanceof Patient) {
-		reports.value = await Report.getAll({ scope: { userId: user.id } })
-	} else if (user instanceof Professional) {
-		try {
+		if (user instanceof Patient) {
+			reports.value = await Report.getAll({ scope: { userId: user.id } })
+		} else {
 			patients.value = await user.getPatients()
 			if (route.params.id) {
 				const patient = patients.value.find((item) => item.id === route.params.id)
@@ -96,10 +115,12 @@ authStore.onReady(async (user) => {
 					loadError.value = "Paciente não encontrado."
 				}
 			}
-		} catch (error) {
-			console.error("Failed to load professional's patients.", error)
-			loadError.value = "Não foi possível carregar os pacientes."
 		}
+	} catch (error) {
+		console.error("Failed to load reports page data.", error)
+		loadError.value = "Não foi possível carregar os dados."
+	} finally {
+		loading.value = false
 	}
 })
 </script>
@@ -144,7 +165,7 @@ authStore.onReady(async (user) => {
 					{{ loadError }}
 				</p>
 
-				<ul class="w-full flex flex-col gap-2">
+				<BaseCardList :is-loading="loading" class="w-full flex flex-col gap-2">
 					<li v-for="patient in filteredPatients" :key="patient.cpf">
 						<PatientCard
 							:class="currentPatient === patient ? 'bg-accent!' : ''"
@@ -152,18 +173,19 @@ authStore.onReady(async (user) => {
 							@selected="selectPatient(patient)"
 						/>
 					</li>
-				</ul>
+				</BaseCardList>
 			</div>
 
 			<BaseTable
+				:is-loading="loading"
 				:show-message="filteredReports.length === 0"
-				:message="`Nenhum relatório ${reports.length ? 'encontrado' : 'disponível'}`"
+				:message="loadError || `Nenhum relatório ${reports.length ? 'encontrado' : 'disponível'}`"
 			>
 				<template #header>
-					<th>Relatório</th>
-					<th>Duração</th>
-					<th>Criado em</th>
-					<th></th>
+					<th class="w-100">Relatório</th>
+					<th class="w-20">Duração</th>
+					<th class="w-30">Criado em</th>
+					<th class="w-12"></th>
 				</template>
 
 				<template #default>

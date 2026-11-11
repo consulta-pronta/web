@@ -36,15 +36,15 @@ const openMenu = (e: MouseEvent) => {
 
 <template>
 	<tr
-		class="border-t border-primaryDark/10 cursor-pointer transition-colors hover:bg-primaryLight/50 px-2"
+		class="cursor-pointer transition-colors hover:bg-primaryLight/50 px-2"
 		@click="viewReport?.toggle()"
 		@contextmenu.prevent="openMenu($event)"
 	>
-		<td class="w-100 font-medium">
+		<td class="font-medium">
 			<span class="truncate pl-3">{{ report.title }}</span>
 		</td>
 
-		<td class="w-20 text-center">
+		<td class="text-center">
 			{{
 				durationDays === null
 					? "—"
@@ -52,7 +52,7 @@ const openMenu = (e: MouseEvent) => {
 			}}
 		</td>
 
-		<td class="w-30 text-center text-sm">
+		<td class="text-center text-sm">
 			<time v-if="reportDateTime" :datetime="reportDateTime.toISOString()">
 				{{ toCoolDate(reportDateTime) }}
 				
@@ -68,7 +68,7 @@ const openMenu = (e: MouseEvent) => {
 			<span v-else>—</span>
 		</td>
 
-		<td class="w-12 text-center">
+		<td class="text-center">
 			<button
 				type="button"
 				class="cursor-pointer flex justify-center items-center size-full text-primaryDark"
