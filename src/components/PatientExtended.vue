@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import Patient from "@/database/patient.model"
 import { ref, watch } from "vue"
-import { formatToCPF, formatToNumber, formatToPhone } from 'brazilian-values'
-import { formatCRM, toBrazilianLocaleDate, timestampDiffYears, stringToTimestamp } from '@/utils'
+import { formatToCPF, formatToPhone } from 'brazilian-values'
+import { toBrazilianLocaleDate, timestampDiffYears, stringToTimestamp } from '@/utils'
 
 const patientId = defineModel<string>()
 	const patient = ref<Patient | null>(null)
@@ -33,9 +33,9 @@ watch(patientId, async (value) => {
 			</section>
 		</article>
 		<div class="flex flex-col gap-5 w-full">
-			<div class="flex flex-col md:flex-row gap-5">
+			<div class="grid grid-cols-2 md:flex-row gap-5">
 				<!-- Dados pessoais -->
-				<section class="bg-surface text-textDark w-full rounded-2xl p-5 flex flex-col gap-4 font-bold">
+				<section class="bg-surface text-textDark w-full rounded-2xl p-5 col-span-2 2xl:col-span-1 flex flex-col gap-4 font-bold">
 					<p class="text-xl">Dados pessoais</p>
 
 					<div class="grid grid-cols-2 gap-5">
@@ -67,10 +67,10 @@ watch(patientId, async (value) => {
 				</section>
 
 				<!-- Meios de contato -->
-				<section class="bg-surface text-textDark w-full rounded-2xl p-5 flex flex-col gap-4 font-bold">
+				<section class="bg-surface text-textDark w-full rounded-2xl p-5 col-span-2 2xl:col-span-1 flex flex-col gap-4 font-bold">
 					<p class="text-xl">Meios de contato</p>
 
-					<div class="flex flex-col gap-5">
+					<div class="grid grid-cols-1 gap-5">
 						<div>
 							<p>{{ formatToPhone(patient.phone) }}</p>
 							<p class="font-normal opacity-70">Telefone</p>
@@ -89,33 +89,16 @@ watch(patientId, async (value) => {
 
 				<div class="grid grid-cols-3 gap-5 font-bold">
 					<div>
-						<p>O+</p>
+						<p>{{ patient.patient_data?.blood_type }}</p>
 						<p class="font-normal opacity-70">Tipo sanguíneo</p>
 					</div>
 					<div>
-						<p>1,78 m</p>
+						<p>{{ patient.patient_data?.height }} cm</p>
 						<p class="font-normal opacity-70">Altura</p>
 					</div>
 					<div>
-						<p>82 kg</p>
+						<p>{{ patient.patient_data?.weight }} kg</p>
 						<p class="font-normal opacity-70">Peso</p>
-					</div>
-				</div>
-
-				<hr class="h-0.5 border-0 bg-textDark w-full rounded-full opacity-70" />
-
-				<div class="grid grid-cols-2 gap-5 font-bold">
-					<div>
-						<p>Penicilina</p>
-						<p>Látex</p>
-						<p>Poeira</p>
-						<p class="font-normal opacity-70">Alergias</p>
-					</div>
-					<div>
-						<p>Pai: Hipertensão</p>
-						<p>Mãe: Diabetes</p>
-						<p>Avó: Colesterol alto</p>
-						<p class="font-normal opacity-70">Histórico familiar</p>
 					</div>
 				</div>
 			</section>

@@ -111,7 +111,7 @@ authStore.onReady(async () => {
 							<PermissionCard
 								:medical-permission="permission"
 								:search-query="searchQuery"
-								class="w-full"
+								class="w-full cursor-pointer"
 								@click="viewPatient(permission.patient_id)"
 							/>
 						</template>
@@ -129,7 +129,7 @@ authStore.onReady(async () => {
 
 					<!-- Details -->
 					<section
-						class="grow h-full flex flex-col items-start"
+						class="grow h-full flex flex-col items-start overflow-y-auto"
 						v-show="currentPatientId"
 					>
 						<header class="w-full flex flex-row justify-between">
