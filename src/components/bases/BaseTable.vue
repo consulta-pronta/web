@@ -21,7 +21,7 @@ withDefaults(
 		class="w-full max-h-[55vh] overflow-auto rounded-lg shadow-sm scrollbar-hide"
 		:aria-busy="isLoading"
 	>
-		<table class="w-full min-w-xl text-textDark bg-surface">
+		<table class="w-full min-w-xl text-textDark bg-surface *:*:*:px-4 *:*:*:py-3">
 			<thead class="sticky top-0 z-1 bg-primary text-textLight">
 				<tr class="*:first:text-start">
 					<slot name="header"></slot>
@@ -39,9 +39,7 @@ withDefaults(
 					</td>
 				</tr>
 				
-				<slot
-					v-else-if="!showMessage"
-				></slot>
+				<slot v-else-if="!showMessage"></slot>
 
 				<tr v-else>
 					<td

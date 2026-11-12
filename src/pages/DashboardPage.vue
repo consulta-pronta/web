@@ -11,11 +11,14 @@ import HeaderWrapper from "@/components/wrappers/HeaderWrapper.vue"
 import DefaultContentWrapper from "@/components/wrappers/DefaultContentWrapper.vue"
 import { searchDocuments } from "@/utils"
 import BaseInput from "@/components/bases/BaseInput.vue"
+import BaseTable from "@/components/bases/BaseTable.vue"
 
 const authStore = useAuthStore()
 
 const signupRequests = ref<Professional[]>([])
 const searchQuery = ref("")
+const loading = ref(true)
+const loadError = ref("")
 
 const filteredRequests = computed(
 	() => searchDocuments(signupRequests.value, searchQuery.value) as Professional[],
@@ -48,8 +51,15 @@ const approveRequest = async (requestId: string) => {
 }
 
 authStore.onReady(async (data) => {
-	if (data.user_type === "admin") {
-		signupRequests.value = await Professional.getRequests()
+	try {
+		if (data.user_type === "admin") {
+			signupRequests.value = await Professional.getRequests()
+		}
+	} catch (error) {
+		console.error("Failed to load professional signup requests.", error)
+		loadError.value = "Não foi possível carregar as solicitações."
+	} finally {
+		loading.value = false
 	}
 })
 </script>
@@ -61,7 +71,7 @@ authStore.onReady(async (data) => {
 		</HeaderWrapper>
 
 		<DefaultContentWrapper class="flex-col gap-2">
-			<div class="flex flex-row justify-between">
+			<div class="flex flex-row items-center justify-between">
 				<h2 class="text-2xl font-semibold">Solicitações de registro</h2>
 
 				<BaseInput
@@ -72,31 +82,30 @@ authStore.onReady(async (data) => {
 				/>
 			</div>
 
-			<table class="w-full text-textDark *:*:*:p-3 rounded-xs overflow-clip">
-				<thead>
-					<tr class="bg-surface/80 *:text-start">
-						<th class="w-70">Nome</th>
-						<th class="w-100">Email</th>
-						<th class="w-40">CPF</th>
-						<th class="w-20">CRM</th>
-						<th class="w-100">Local de Atuação</th>
-						<th class="w-50">Ações</th>
-					</tr>
-				</thead>
-				<tbody>
+			<BaseTable
+				:is-loading="loading"
+				:show-message="loadError.length > 0 || (!loading && filteredRequests.length === 0)"
+				:message="loadError || 'Nenhuma solicitação encontrada'"
+				:column-count="6"
+			>
+				<template #header>
+					<th class="w-70">Nome</th>
+					<th class="w-100">Email</th>
+					<th class="w-40">CPF</th>
+					<th class="w-20">CRM</th>
+					<th class="w-100">Local de Atuação</th>
+					<th class="w-50">Ações</th>
+				</template>
+
+				<template #default>
 					<ProfessionalSignupRequestRow
 						v-for="request in filteredRequests"
 						:key="request.id"
 						:request="request"
 						@approve="approveRequest"
 					/>
-					<tr v-if="signupRequests.length === 0" class="bg-surface">
-						<td colspan="6" class="text-center">
-							Nenhuma solicitação de registro encontrada.
-						</td>
-					</tr>
-				</tbody>
-			</table>
+				</template>
+			</BaseTable>
 		</DefaultContentWrapper>
 	</PageWrapper>
 </template>
