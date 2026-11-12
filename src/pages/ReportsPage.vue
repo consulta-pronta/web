@@ -18,6 +18,7 @@ import { useRoute } from "vue-router"
 import { normalizeString, searchDocuments } from "@/utils"
 import BaseTable from "@/components/bases/BaseTable.vue"
 import BaseCardList from "@/components/bases/BaseCardList.vue"
+import BaseSideSheet from "@/components/bases/BaseSideSheet.vue"
 
 const route = useRoute()
 const authStore = useAuthStore()
@@ -123,6 +124,11 @@ authStore.onReady(async (user) => {
 		loading.value = false
 	}
 })
+
+const headerOptions = ref([
+	{ icon: "more_horiz", onclick: () => {} },
+	{ icon: "close", onclick: () => {} },
+])
 </script>
 
 <template>
@@ -201,6 +207,31 @@ authStore.onReady(async (user) => {
 		<BaseDialog title="Gerar Relatório" ref="formRegister">
 			<FormReport @handled-submit="handleSubmit" />
 		</BaseDialog>
+
+		<BaseSideSheet title="Test" visible>
+			<template #header-options>
+				<div class="flex flex-row gap-1 text-sm text-primaryLight">
+					<button
+						v-for="option in headerOptions"
+						:key="option.icon"
+						@click="option.onclick"
+						class="cursor-pointer h-fit"
+					>
+						<span class="material-symbols-rounded">
+							{{ option.icon }}
+						</span>
+					</button>
+				</div>
+			</template>
+
+			<template #default>
+				das
+				das
+				das
+				das
+				das
+			</template>
+		</BaseSideSheet>
 	</PageWrapper>
 </template>
 
