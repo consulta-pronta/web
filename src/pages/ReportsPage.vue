@@ -30,7 +30,8 @@ const reports = ref<Report[]>([])
 const currentPatient = ref<Patient | null>(null)
 const selectedReport = ref<Report | null>(null)
 const loadError = ref("")
-const loading = ref(true)
+const loadingPatients = ref(true)
+const loadingReports = ref(false)
 const searchQuery = ref("")
 
 const formRegister = useTemplateRef("formRegister")
@@ -72,9 +73,9 @@ const handleSubmit = async () => {
 }
 
 const selectPatient = async (patient: Patient) => {
+	if (currentPatient.value === patient) return
 	currentPatient.value = patient
-	searchQuery.value = ""
-	loading.value = true
+	loadingReports.value = true
 	loadError.value = ""
 	try {
 		reports.value = await Report.getAll({
@@ -84,8 +85,15 @@ const selectPatient = async (patient: Patient) => {
 		console.error("Failed to load patient's reports.", error)
 		loadError.value = "Não foi possível carregar os relatórios."
 	} finally {
-		loading.value = false
+		loadingReports.value = false
 	}
+}
+
+const unselectPatient = () => {
+	currentPatient.value = null
+	loadingPatients.value = false
+	loadingReports.value = false
+	loadError.value = ""
 }
 
 watch(currentPatient, (value) => {
@@ -123,7 +131,7 @@ authStore.onReady(async (user) => {
 		console.error("Failed to load reports page data.", error)
 		loadError.value = "Não foi possível carregar os dados."
 	} finally {
-		loading.value = false
+		loadingPatients.value = false
 	}
 })
 
@@ -169,7 +177,7 @@ authStore.onReady(async (user) => {
 					{{ loadError }}
 				</p>
 
-				<BaseCardList :is-loading="loading" class="w-full flex flex-col gap-2">
+				<BaseCardList :is-loading="loadingPatients" class="w-full flex flex-col gap-2">
 					<li v-for="patient in filteredPatients" :key="patient.cpf">
 						<PatientCard
 							:class="currentPatient === patient ? 'bg-accent!' : ''"
@@ -180,27 +188,44 @@ authStore.onReady(async (user) => {
 				</BaseCardList>
 			</div>
 
-			<BaseTable
-				:is-loading="loading"
-				:show-message="filteredReports.length === 0"
-				:message="loadError || `Nenhum relatório ${reports.length ? 'encontrado' : 'disponível'}`"
-			>
-				<template #header>
-					<th class="w-100">Relatório</th>
-					<th class="w-20">Duração</th>
-					<th class="w-30">Criado em</th>
-					<th class="w-12"></th>
-				</template>
-
-				<template #default>
-					<ReportRow
-						v-for="report in filteredReports"
-						:key="report.id"
-						:report="report"
-						@selected="selectedReport = $event"
-					/>
-				</template>
-			</BaseTable>
+			<div class="size-full">
+				<div
+					v-if="userType === 'professional'" 
+					class="text-textLight"
+				>
+					<button
+						type="button"
+						class="cursor-pointer flex justify-center items-center size-11"
+						:class="!currentPatient ? 'invisible' : ''"
+						@click.prevent="unselectPatient"
+					>
+						<span class="material-symbols-rounded rounded-full p-1 hover:bg-primaryLight/10">
+							arrow_back
+						</span>
+					</button>
+				</div>
+				<BaseTable
+					:is-loading="loadingReports"
+					:show-message="filteredReports.length === 0"
+					:message="loadError || `Nenhum relatório ${reports.length ? 'encontrado' : 'disponível'}`"
+				>
+					<template #header>
+						<th class="w-100">Relatório</th>
+						<th class="w-20">Duração</th>
+						<th class="w-30">Criado em</th>
+						<th class="w-12"></th>
+					</template>
+	
+					<template #default>
+						<ReportRow
+							v-for="report in filteredReports"
+							:key="report.id"
+							:report="report"
+							@selected="selectedReport = $event"
+						/>
+					</template>
+				</BaseTable>
+			</div>
 		</DefaultContentWrapper>
 
 		<BaseDialog title="Gerar Relatório" ref="formRegister">

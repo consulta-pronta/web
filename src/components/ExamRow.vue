@@ -67,7 +67,7 @@ const statusIcon = computed(() => {
 </script>
 
 <template>
-	<tr class="*:py-2 *:px-3 *:text-center">
+	<tr class="*:py-2 *:px-3 *:text-center hover:bg-primaryLight/50">
 		<td>
 			<div class="flex gap-2">
 				<span class="material-symbols-rounded select-none">

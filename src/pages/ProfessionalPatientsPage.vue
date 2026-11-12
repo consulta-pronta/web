@@ -92,13 +92,14 @@ authStore.onReady(async () => {
 			<BaseCardList
 				v-if="medicalPermissions.length || loading"
 				:is-loading="loading"
+				min-width="25em"
+				class="w-full"
 			>
 				<PermissionCard
 					v-for="permission in medicalPermissions" 
 					:key="permission.patient_id"
 					:medical-permission="permission"
 					:search-query="searchQuery"
-					class="w-full"
 				/>
 			</BaseCardList>
 

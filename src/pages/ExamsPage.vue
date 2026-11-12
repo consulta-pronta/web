@@ -26,7 +26,8 @@ const currentPermission = ref<MedicalPermission | null>(null)
 const forProfessionalData = ref<PatientWithProfessionalPermission[]>([])
 const currentPatient = ref<Patient | null>(null)
 const loadError = ref("")
-const loading = ref(true)
+const loadingPatients = ref(true)
+const loadingReports = ref(true)
 const searchQuery = ref("")
 const formRegister = useTemplateRef("formRegister")
 
@@ -63,10 +64,10 @@ const handleSubmit = async () => {
 }
 
 const selectPatient = async (item: PatientWithProfessionalPermission) => {
+	if (currentPatient.value === item) return
 	currentPatient.value = item.patient
 	currentPermission.value = item.permissions
-	searchQuery.value = ""
-	loading.value = true
+	loadingReports.value = true
 	loadError.value = ""
 	try {
 		exames.value = await Exam.getAll({ scope: { userId: item.patient.id } })
@@ -74,8 +75,15 @@ const selectPatient = async (item: PatientWithProfessionalPermission) => {
 		console.error("Failed to load patient's exams.", error)
 		loadError.value = "Não foi possível carregar os exames."
 	} finally {
-		loading.value = false
+		loadingReports.value = false
 	}
+}
+
+const unselectPatient = () => {
+	currentPatient.value = null
+	loadingPatients.value = false
+	loadingReports.value = false
+	loadError.value = ""
 }
 
 authStore.onReady(async (user) => {
@@ -95,7 +103,7 @@ authStore.onReady(async (user) => {
 		console.error("Failed to load exams page data.", error)
 		loadError.value = "Não foi possível carregar os dados."
 	} finally {
-		loading.value = false
+		loadingPatients.value = false
 	}
 })
 </script>
@@ -127,7 +135,7 @@ authStore.onReady(async (user) => {
 					{{ loadError }}
 				</p>
 
-				<BaseCardList :is-loading="loading" class="w-full flex flex-col gap-2">
+				<BaseCardList :is-loading="loadingPatients" class="w-full flex flex-col gap-2">
 					<li v-for="item in filteredProfessionalData" :key="item.patient.id">
 						<PatientCard
 							:class="currentPatient === item.patient ? 'bg-accent!' : ''"
@@ -139,20 +147,34 @@ authStore.onReady(async (user) => {
 			</div>
 
 			<div class="w-full flex flex-col gap-4">
-				<BaseButton
-					v-if="userType === 'professional'"
-					type="button"
-					theme="accent"
-					icon="add"
-					:state="canRequestExam ? 'enabled' : 'disabled'"
-					@click="formRegister?.show()"
-					class="self-end"
-				>
-					Solicitar exame
-				</BaseButton>
+				<div class="flex flex-row justify-between">
+					<button
+						v-if="userType === 'professional'" 
+						type="button"
+						class="cursor-pointer flex justify-center items-center size-11 text-textLight"
+						:class="!currentPatient ? 'invisible' : ''"
+						@click.prevent="unselectPatient"
+					>
+						<span class="material-symbols-rounded rounded-full p-1 hover:bg-primaryLight/10">
+							arrow_back
+						</span>
+					</button>
+
+					<BaseButton
+						v-if="userType === 'professional'"
+						type="button"
+						theme="accent"
+						icon="add"
+						:state="canRequestExam ? 'enabled' : 'disabled'"
+						@click="formRegister?.show()"
+						class="self-end"
+					>
+						Solicitar exame
+					</BaseButton>
+				</div>
 
 				<BaseTable
-					:is-loading="loading"
+					:is-loading="loadingReports"
 					:show-message="filteredExams.length === 0"
 					:message="loadError || 'Nenhum exame encontrado'"
 				>

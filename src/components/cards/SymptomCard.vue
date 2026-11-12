@@ -7,7 +7,7 @@ defineProps<{ symptom: Symptom }>()
 </script>
 
 <template>
-	<article class="rounded-md p-3 bg-surface text-textDark">
+	<article class="rounded-md p-3 bg-surface text-textDark hover:brightness-95">
 		<p>
 			<span class="material-symbols-rounded text-sm!"> calendar_month </span>
 			{{ toCoolDate(symptom.date_time?.toDate()) }}
