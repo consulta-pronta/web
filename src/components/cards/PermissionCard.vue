@@ -24,7 +24,10 @@ const status = ref(props.medicalPermission.status)
 const permissions = ref(props.medicalPermission.permissions)
 
 const user = ref<Patient | Professional | null>(null)
-const matchesSearch = computed(() => props.medicalPermission.search(props.searchQuery ?? ""))
+const matchesSearch = computed(() =>
+	props.medicalPermission.search(props.searchQuery ?? "") ||
+	user.value?.search(props.searchQuery ?? "")
+)
 
 const updatePermissions = async (updatedPermission: {
 	status: MedicalAccessStatus
