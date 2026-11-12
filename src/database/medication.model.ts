@@ -1,5 +1,5 @@
-import { onSnapshot, serverTimestamp, type Timestamp } from "firebase/firestore"
-import BaseDocument, { type CollectionScope } from "./baseDocument"
+import { onSnapshot, serverTimestamp, Timestamp } from "firebase/firestore"
+import BaseDocument, { type CollectionScope, type DocumentData, } from "./baseDocument"
 import User from "./user.model"
 
 export type MedicationRoute =
@@ -42,11 +42,12 @@ export default class Medication extends BaseDocument {
         public notes: string = "",
         public taken_dates: Record<string, boolean> = {},
         public registered_in: Timestamp | null = null,
+       	public last_taken_at: Timestamp | null = null,
     ) {
         super()
     }
 
-    static readonly collectionName = "Medication"
+    static readonly collectionName = "medication"
 
     protected static getCollectionPath(scope?: CollectionScope): string {
         const userId = scope?.userId
@@ -59,9 +60,9 @@ export default class Medication extends BaseDocument {
     }
 
     protected static documentConverter(
-        id: string,
-        data: Record<string, any>,
-    ): Medication {
+    	id: string,
+    	data: DocumentData,
+	): Medication {
         return new Medication(
             id,
             data.title,
@@ -74,9 +75,9 @@ export default class Medication extends BaseDocument {
             data.start_at,
             data.custom_instructions,
             data.notes,
-            // Documentos sem o campo não podem sobrescrever o padrão com undefined
             data.taken_dates ?? {},
             data.registered_in,
+            data.last_taken_at ?? null,
         )
     }
 
@@ -94,6 +95,8 @@ export default class Medication extends BaseDocument {
             notes: this.notes,
             taken_dates: this.taken_dates,
             registered_in: this.registered_in ?? serverTimestamp(),
+            last_taken_at: this.last_taken_at,
+
         }
     }
 
@@ -126,6 +129,19 @@ export default class Medication extends BaseDocument {
             {
                 [`taken_dates.${doseKey}`]: taken,
             },
+            { scope: { userId } },
+        )
+    }
+
+	    // Marca (ou desmarca) o medicamento como tomado agora
+    static async markTaken(
+        userId: string,
+        medicationId: string,
+        taken: boolean,
+    ) {
+        await this.update(
+            medicationId,
+            { last_taken_at: taken ? Timestamp.now() : null },
             { scope: { userId } },
         )
     }
@@ -212,4 +228,28 @@ export function getMedicationSchedule(
     }
 
     return doses
+}
+
+// Momento em que o medicamento pode ser tomado de novo
+export function getNextDoseTime(medication: Medication): Date | null {
+    if (!medication.last_taken_at) return null
+
+    return addFrequency(medication.last_taken_at.toDate(), medication)
+}
+
+// A caixa fica marcada enquanto não passou o intervalo desde a última dose
+export function isMedicationTaken(medication: Medication, now: number): boolean {
+    const next = getNextDoseTime(medication)
+
+    return next !== null && now < next.getTime()
+}
+
+// O tratamento acabou depois de start_at + duration_days
+export function isTreatmentOver(medication: Medication, now: number): boolean {
+    if (!medication.start_at) return false
+
+    const end = new Date(medication.start_at.toDate())
+    end.setDate(end.getDate() + medication.duration_days)
+
+    return now >= end.getTime()
 }

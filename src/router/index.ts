@@ -99,10 +99,9 @@ const router = createRouter({
 		{
 			path: "/medicamentos",
 			name: "medicamentos",
-			alias: "/medicamentos",
 			component: () => import("@/pages/MedicamentosUsuario.vue"),
 			meta: {
-				roles: ["paciente"],
+				roles: ["patient"],
 			},
 		},
 		{

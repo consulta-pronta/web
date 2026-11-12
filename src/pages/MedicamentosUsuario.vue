@@ -1,98 +1,72 @@
 <script setup lang="ts">
 import BaseInput from "@/components/bases/BaseInput.vue"
+import BaseButton from "@/components/bases/BaseButton.vue"
 import NavBar from "@/components/NavBar.vue"
-import { ref, onMounted, onUnmounted, computed } from "vue"
-import {
-    collection,
-    onSnapshot,
-    updateDoc,
-    doc,
-} from "firebase/firestore"
+import MedicationRow from "@/components/MedicationRow.vue"
+import FormAddMedical from "@/components/forms/FormAddMedical.vue"
+import { ref, watch, onMounted, onUnmounted, computed } from "vue"
 
-import { db } from "@/config/firebase"
 import { useAuthStore } from "@/stores/authStore"
 import Medication, {
-    getMedicationSchedule,
-} from "@/models/medication.model"
-
-import MedicationRow from "@/components/MedicationRow.vue"
+	isMedicationTaken,
+	isTreatmentOver,
+} from "@/database/medication.model"
 
 const authStore = useAuthStore()
 
+const showAddModal = ref(false)
 const medications = ref<Medication[]>([])
 
-const selectedDate = ref(getTodayDate())
+// Relógio que faz a caixa desmarcar sozinha quando o intervalo acaba
+const now = ref(Date.now())
+let timer: number | undefined
 
 let unsubscribe: (() => void) | null = null
 
-function getTodayDate() {
-    const date = new Date()
+watch(
+	() => authStore.user?.uid,
+	(userId) => {
+		unsubscribe?.()
+		unsubscribe = null
 
-    const year = date.getFullYear()
-    const month = String(date.getMonth() + 1).padStart(2, "0")
-    const day = String(date.getDate()).padStart(2, "0")
+		if (!userId) {
+			medications.value = []
+			return
+		}
 
-    return `${year}-${month}-${day}`
-}
+		unsubscribe = Medication.listen(userId, (list) => {
+			medications.value = list
+		})
+	},
+	{ immediate: true },
+)
 
 onMounted(() => {
-    const userId = authStore.user?.uid
-
-    if (!userId) return
-
-    const medicationsRef = collection(
-        db,
-        "Users",
-        userId,
-        Medication.collectionName
-    )
-
-    unsubscribe = onSnapshot(medicationsRef, (snapshot) => {
-        medications.value = snapshot.docs.map((document) => {
-            return Object.assign(
-                new Medication(document.id),
-                document.data()
-            )
-        })
-    })
+	timer = window.setInterval(() => {
+		now.value = Date.now()
+	}, 1000)
 })
 
 onUnmounted(() => {
-    unsubscribe?.()
+	clearInterval(timer)
+	unsubscribe?.()
 })
-async function updateDose(
-    medicationId: string,
-    doseKey: string,
-    taken: boolean
-) {
-    const userId = authStore.user?.uid
 
-    if (!userId) return
+async function toggleTaken(medicationId: string, taken: boolean) {
+	const userId = authStore.user?.uid
 
-    const medicationRef = doc(
-        db,
-        "Users",
-        userId,
-        Medication.collectionName,
-        medicationId
-    )
+	if (!userId) return
 
-    await updateDoc(medicationRef, {
-        [`taken_dates.${doseKey}`]: taken,
-    })
+	await Medication.markTaken(userId, medicationId, taken)
 }
-const medicationDoses = computed(() => {
-    return medications.value.flatMap((medication) => {
-        const doses = getMedicationSchedule(
-            medication,
-            selectedDate.value
-        )
 
-        return doses.map((dose) => ({
-            medication,
-            dose,
-        }))
-    })
+const medicationRows = computed(() => {
+	return medications.value
+		.filter((medication) => !isTreatmentOver(medication, now.value))
+		.map((medication) => ({
+			medication,
+			taken: isMedicationTaken(medication, now.value),
+		}))
 })
 </script>
 
@@ -112,22 +86,29 @@ const medicationDoses = computed(() => {
 					class="place-self-center w-full md:w-120"
 				/>
 
-				<article class="w-full flex justify-center">
+				<article
+					class="relative w-full lg:w-[85%] mx-auto flex flex-col items-center gap-4"
+				>
 					<section
-						class="relative grid grid-cols-[1fr_10fr] w-[85%] md:w-[60%] lg:w-[40%] min-h-11 items-center border border-textLight text-sm text-textLight rounded-[15px]"
+						class="flex items-center gap-2 px-4 min-h-11 border border-textLight text-sm text-textLight rounded-[15px]"
 					>
-						<span class="material-symbols-rounded text-[10px] pl-5">
-							shield
-						</span>
-
-						<div class="w-full text-center text-sm lg:text-sm">
-							<p>
-								Marque a caixa após o uso do medicamento.
-							</p>
-						</div>
+						<span class="material-symbols-rounded text-base">shield</span>
+						<p>Marque a caixa após o uso do medicamento.</p>
 					</section>
+
+					<BaseButton
+						mode="transparent"
+						theme="textLight"
+						icon="add_circle"
+						icon-position="right"
+						class="font-bold gap-2 lg:absolute lg:right-0 lg:top-1/2 lg:-translate-y-1/2"
+						@click="showAddModal = true"
+					>
+						Adicionar Medicamento
+					</BaseButton>
 				</article>
 			</header>
+
 			<section class="w-full flex justify-center place-items-center text-center min-h-0">
 				<div class="w-full lg:w-[85%] max-h-[55vh] overflow-y-auto rounded-[20px] scrollbar-hide">
 					<table class="bg-surface w-full">
@@ -143,24 +124,21 @@ const medicationDoses = computed(() => {
 
 						<tbody>
 							<MedicationRow
-								v-for="item in medicationDoses"
-								:key="item.medication.id + item.dose.key"
+								v-for="item in medicationRows"
+								:key="item.medication.id"
 								:nome="item.medication.title"
 								:quantidade="`${item.medication.dose_value} ${item.medication.dose_unit}`"
 								:periodo="`A cada ${item.medication.frequency_value} ${item.medication.frequency_unit}`"
-								:consumo="item.dose.time"
-								:tomado="item.dose.taken"
-								@update:tomado="updateDose(
-									item.medication.id,
-									item.dose.key,
-									$event
-								)"
+								:consumo="item.medication.route"
+								:tomado="item.taken"
+								@update:tomado="toggleTaken(item.medication.id, $event)"
 							/>
 						</tbody>
 					</table>
 				</div>
 			</section>
-
 		</main>
+
+		<FormAddMedical v-if="showAddModal" @close="showAddModal = false" />
 	</div>
 </template>
