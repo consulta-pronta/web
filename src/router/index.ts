@@ -109,6 +109,22 @@ const router = createRouter({
 				title: "Página Não Encontrada - @",
 			},
 		},
+		{
+			path: "/medicamentos",
+			name: "medicamentos",
+			component: () => import("@/pages/MedicamentosUsuario.vue"),
+			meta: {
+				roles: ["patient"],
+			},
+		},
+		{
+			path: "/farmacia",
+			name: "farmacia",
+			component: () => import("@/pages/FarmaciaProfissional.vue"),
+			meta: {
+				roles: ["profissional"],
+			},
+		},
 	],
 })
 

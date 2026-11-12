@@ -89,7 +89,7 @@ authStore.onReady((data) => {
 					v-if="userType === 'patient'"
 					v-bind="sharedAttributes"
 					icon="pill"
-					goto="#"
+					goto="/medicamentos"
 				>
 					<p>Medicamentos</p>
 				</BaseButton>
@@ -97,7 +97,7 @@ authStore.onReady((data) => {
 					v-else-if="userType === 'professional'"
 					v-bind="sharedAttributes"
 					icon="pill"
-					goto="#"
+					goto="/farmacia"
 				>
 					<p>Farmácia</p>
 				</BaseButton>
