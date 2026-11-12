@@ -4,12 +4,14 @@ import BaseDialog from "@/components/bases/BaseDialog.vue"
 import BaseButton from "@/components/bases/BaseButton.vue"
 import BaseInput from "@/components/bases/BaseInput.vue"
 import type Report from "@/database/report.model"
-import ReportExtended from "@/components/ReportExtended.vue"
 import { ContextMenu, ContextMenuItem, type MenuOptions } from "@imengyu/vue3-context-menu"
 import { toCoolDate } from "@/utils"
 
 const props = defineProps<{
 	report: Report
+}>()
+const emit = defineEmits<{
+	selected: [report: Report]
 }>()
 
 const menuShow = ref(false)
@@ -22,7 +24,6 @@ const menuOptions = ref<MenuOptions>({
 
 const allowedProfessionals = useTemplateRef("allowedProfessionals")
 const formRename = useTemplateRef("formRename")
-const viewReport = useTemplateRef("viewReport")
 
 const reportDateTime = computed(() => props.report.created_at?.toDate())
 const durationDays = computed(() => props.report.getDurationDays())
@@ -37,7 +38,7 @@ const openMenu = (e: MouseEvent) => {
 <template>
 	<tr
 		class="cursor-pointer transition-colors hover:bg-primaryLight/50 px-2"
-		@click="viewReport?.toggle()"
+		@click="emit('selected', report)"
 		@contextmenu.prevent="openMenu($event)"
 	>
 		<td class="font-medium">
@@ -103,8 +104,6 @@ const openMenu = (e: MouseEvent) => {
 	</tr>
 
 	<Teleport to="body">
-		<ReportExtended :report="report" ref="viewReport" />
-
 		<BaseDialog title="Renomear relatório" ref="formRename">
 			<form class="flex flex-col place-items-center relative gap-1">
 				<BaseInput placeholder="Novo nome" icon="edit_square" class="w-full" required />

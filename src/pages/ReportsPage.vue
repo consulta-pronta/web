@@ -19,6 +19,7 @@ import { normalizeString, searchDocuments } from "@/utils"
 import BaseTable from "@/components/bases/BaseTable.vue"
 import BaseCardList from "@/components/bases/BaseCardList.vue"
 import BaseSideSheet from "@/components/bases/BaseSideSheet.vue"
+import ReportExtended from "@/components/ReportExtended.vue"
 
 const route = useRoute()
 const authStore = useAuthStore()
@@ -27,6 +28,7 @@ const currentUser = ref<Patient | Professional | null>(null)
 const patients = ref<Patient[]>([])
 const reports = ref<Report[]>([])
 const currentPatient = ref<Patient | null>(null)
+const selectedReport = ref<Report | null>(null)
 const loadError = ref("")
 const loading = ref(true)
 const searchQuery = ref("")
@@ -125,10 +127,6 @@ authStore.onReady(async (user) => {
 	}
 })
 
-const headerOptions = ref([
-	{ icon: "more_horiz", onclick: () => {} },
-	{ icon: "close", onclick: () => {} },
-])
 </script>
 
 <template>
@@ -199,6 +197,7 @@ const headerOptions = ref([
 						v-for="report in filteredReports"
 						:key="report.id"
 						:report="report"
+						@selected="selectedReport = $event"
 					/>
 				</template>
 			</BaseTable>
@@ -208,28 +207,27 @@ const headerOptions = ref([
 			<FormReport @handled-submit="handleSubmit" />
 		</BaseDialog>
 
-		<BaseSideSheet title="Test" visible>
+		<BaseSideSheet
+			:title="selectedReport?.title"
+			:visible="selectedReport !== null"
+			class="w-200"
+		>
 			<template #header-options>
-				<div class="flex flex-row gap-1 text-sm text-primaryLight">
-					<button
-						v-for="option in headerOptions"
-						:key="option.icon"
-						@click="option.onclick"
-						class="cursor-pointer h-fit"
-					>
-						<span class="material-symbols-rounded">
-							{{ option.icon }}
-						</span>
-					</button>
-				</div>
+				<button
+					type="button"
+					class="cursor-pointer h-fit text-primaryLight"
+					@click="selectedReport = null"
+				>
+					<span class="material-symbols-rounded"> close </span>
+				</button>
 			</template>
 
 			<template #default>
-				das
-				das
-				das
-				das
-				das
+				<ReportExtended
+					v-if="selectedReport"
+					:key="selectedReport.id"
+					:report="selectedReport"
+				/>
 			</template>
 		</BaseSideSheet>
 	</PageWrapper>
