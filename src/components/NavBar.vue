@@ -167,10 +167,13 @@ authStore.onReady((data) => {
 					<p>Notificações</p>
 				</BaseButton>
 
-
-				<BaseButton v-bind="sharedAttributes" goto="#" icon="person">
-					<p>Perfil</p>
-				</BaseButton>
+				<BaseLink
+					to="perfil"
+					class="nav-link"
+				>
+					<span class="material-symbols-rounded select-none text-3xl!">logout</span>
+					<p>Sair</p>
+				</BaseLink>
 
 				<BaseLink
 					to="logout"

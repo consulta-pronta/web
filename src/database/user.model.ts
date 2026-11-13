@@ -12,10 +12,15 @@ export default class User extends BaseDocument {
 		public readonly id: string = "",
 		public email: string = "",
 		public name: string = "",
+		public social_name: string = "",
 		public phone: string = "",
 		public cpf: string = "",
 		public user_type: UserType = "patient",
 		public created_at: Timestamp | null = null,
+		public birth_date: string = "",
+		public gender: string = "",
+		public biological_sex: string = "",
+		public address: string = "",
 	) {
 		super()
 	}
@@ -27,10 +32,15 @@ export default class User extends BaseDocument {
 			id,
 			data.email,
 			data.name,
+			data.social_name,
 			data.phone,
 			data.cpf,
 			data.user_type,
 			data.created_at,
+			data.birth_date,
+			data.gender,
+			data.biological_sex,
+			data.address,
 		)
 	}
 
@@ -72,10 +82,15 @@ export default class User extends BaseDocument {
 		return {
 			email: this.email,
 			name: this.name,
+			social_name: this.social_name,
 			phone: this.phone,
 			cpf: this.cpf,
 			user_type: this.user_type,
 			created_at: serverTimestamp(),
+			birth_date: this.birth_date,
+			gender: this.gender,
+			biological_sex: this.biological_sex,
+			address: this.address,
 		}
 	}
 }

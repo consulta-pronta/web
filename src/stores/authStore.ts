@@ -41,5 +41,11 @@ export const useAuthStore = defineStore("auth", () => {
 		}
 	}
 
-	return { user: authUser, userData: appUser, setUser, onReady }
+	const reloadUser = async () => {
+		if (authUser.value) {
+			appUser.value = await User.get(authUser.value.uid)
+		}
+	}
+
+	return { user: authUser, userData: appUser, setUser, onReady, reloadUser }
 })

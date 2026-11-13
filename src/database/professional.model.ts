@@ -22,6 +22,7 @@ export type ProfessionalData = {
 	crm: string
 	uf: FederalUnit
 	operation_area: string
+	specialty: string
 }
 
 export type PatientWithProfessionalPermission = {
@@ -34,11 +35,16 @@ export default class Professional extends User {
 		public readonly id: string = "",
 		public email: string = "",
 		public name: string = "",
+		public social_name: string = "",
 		public phone: string = "",
 		public cpf: string = "",
 		public user_type: UserType = "professional",
 		public professional_data: ProfessionalData | null = null,
 		public created_at: Timestamp | null = null,
+		public birth_date: string = "",
+		public gender: string = "",
+		public biological_sex: string = "",
+		public address: string = "",
 	) {
 		super()
 	}
@@ -76,11 +82,16 @@ export default class Professional extends User {
 			id,
 			data.email,
 			data.name,
+			data.social_name,
 			data.phone,
 			data.cpf,
 			"professional",
 			this.getProfessionalData(data),
 			data.created_at,
+			data.birth_date,
+			data.gender,
+			data.biological_sex,
+			data.address,
 		)
 	}
 
@@ -90,7 +101,8 @@ export default class Professional extends User {
 			<ProfessionalData>{
 				crm: data.data_profissional.crm,
 				uf: data.data_profissional.uf,
-				operation_area: data.data_profissional.local_atuacao,
+				operation_area: data.data_profissional.operation_area,
+				specialty: data.data_profissional.specialty,
 			}
 		)
 	}
@@ -99,11 +111,16 @@ export default class Professional extends User {
 		return {
 			email: this.email,
 			name: this.name,
+			social_name: this.social_name,
 			phone: this.phone,
 			cpf: this.cpf,
 			user_type: this.user_type,
 			professional_data: this.professional_data,
 			created_at: serverTimestamp(),
+			birth_date: this.birth_date,
+			gender: this.gender,
+			biological_sex: this.biological_sex,
+			address: this.address,
 		}
 	}
 
