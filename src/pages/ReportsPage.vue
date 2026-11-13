@@ -58,7 +58,7 @@ const pageTitle = computed(() =>
 
 const handleSubmit = async () => {
 	formRegister.value?.hide()
-	loading.value = true
+	loadingReports.value = true
 	loadError.value = ""
 	try {
 		await authStore.onReady(async (user) => {
@@ -68,7 +68,7 @@ const handleSubmit = async () => {
 		console.error("Failed to load reports.", error)
 		loadError.value = "Não foi possível carregar os relatórios."
 	} finally {
-		loading.value = false
+		loadingReports.value = false
 	}
 }
 
@@ -94,6 +94,7 @@ const unselectPatient = () => {
 	loadingPatients.value = false
 	loadingReports.value = false
 	loadError.value = ""
+	reports.value = []
 }
 
 watch(currentPatient, (value) => {

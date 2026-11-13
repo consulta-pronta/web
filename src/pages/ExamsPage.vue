@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, useTemplateRef } from "vue"
+import { computed, ref, useTemplateRef, watch } from "vue"
 import BaseInput from "@/components/bases/BaseInput.vue"
 import Exam from "@/database/exam.model"
 import ExamRow from "@/components/ExamRow.vue"
@@ -17,7 +17,10 @@ import DefaultContentWrapper from "@/components/wrappers/DefaultContentWrapper.v
 import { searchDocuments } from "@/utils"
 import BaseTable from "@/components/bases/BaseTable.vue"
 import BaseCardList from "@/components/bases/BaseCardList.vue"
+import router from "@/router"
+import { useRoute } from "vue-router"
 
+const route = useRoute()
 const authStore = useAuthStore()
 
 const exames = ref<Exam[]>([])
@@ -27,7 +30,7 @@ const forProfessionalData = ref<PatientWithProfessionalPermission[]>([])
 const currentPatient = ref<Patient | null>(null)
 const loadError = ref("")
 const loadingPatients = ref(true)
-const loadingReports = ref(true)
+const loadingExams = ref(false)
 const searchQuery = ref("")
 const formRegister = useTemplateRef("formRegister")
 
@@ -64,10 +67,10 @@ const handleSubmit = async () => {
 }
 
 const selectPatient = async (item: PatientWithProfessionalPermission) => {
-	if (currentPatient.value === item) return
+	if (currentPatient.value === item.patient) return
 	currentPatient.value = item.patient
 	currentPermission.value = item.permissions
-	loadingReports.value = true
+	loadingExams.value = true
 	loadError.value = ""
 	try {
 		exames.value = await Exam.getAll({ scope: { userId: item.patient.id } })
@@ -75,16 +78,28 @@ const selectPatient = async (item: PatientWithProfessionalPermission) => {
 		console.error("Failed to load patient's exams.", error)
 		loadError.value = "Não foi possível carregar os exames."
 	} finally {
-		loadingReports.value = false
+		loadingExams.value = false
 	}
 }
 
 const unselectPatient = () => {
 	currentPatient.value = null
 	loadingPatients.value = false
-	loadingReports.value = false
+	loadingExams.value = false
 	loadError.value = ""
+	exames.value = []
 }
+
+watch(currentPatient, (value) => {
+	if (value) {
+		router.replace({
+			name: route.name,
+			params: { id: value.id },
+		})
+	} else {
+		router.replace({ name: route.name })
+	}
+})
 
 authStore.onReady(async (user) => {
 	try {
@@ -174,7 +189,7 @@ authStore.onReady(async (user) => {
 				</div>
 
 				<BaseTable
-					:is-loading="loadingReports"
+					:is-loading="loadingExams"
 					:show-message="filteredExams.length === 0"
 					:message="loadError || 'Nenhum exame encontrado'"
 				>
