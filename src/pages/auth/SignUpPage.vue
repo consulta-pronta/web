@@ -3,6 +3,7 @@ import { computed, ref, useTemplateRef, watch } from "vue"
 import { useRouter } from "vue-router"
 import AuthPageWrapper from "@/components/wrappers/AuthPageWrapper.vue"
 import BaseLogo from "@/components/bases/BaseLogo.vue"
+import BaseLink from "@/components/bases/BaseLink.vue"
 import BaseButton, { type ButtonState } from "@/components/bases/BaseButton.vue"
 import BaseInput, { type BaseInputProps } from "@/components/bases/BaseInput.vue"
 import BaseSelect from "@/components/bases/BaseSelect.vue"
@@ -328,11 +329,11 @@ const sharedAttributes: Uhh = {
 					</BaseButton>
 				</div>
 
-				<RouterLink to="login">
+				<BaseLink to="login">
 					<p v-if="currentStep === 1" class="text-textLight text-center">
-						Já possui conta? <a href="" class="text-accent">Fazer login</a>
+						Já possui conta? <span class="text-accent">Fazer login</span>
 					</p>
-				</RouterLink>
+				</BaseLink>
 			</form>
 		</div>
 	</AuthPageWrapper>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { SortDirection } from "@/utils";
+import type { SortDirection } from "@/utils"
 import { ref } from "vue"
 
 export interface SortOption {
@@ -12,10 +12,7 @@ interface BaseSortProps {
 	label?: string
 }
 
-const props = withDefaults(
-	defineProps<BaseSortProps>(),
-	{ label: "Ordenar" },
-)
+const props = withDefaults(defineProps<BaseSortProps>(), { label: "Ordenar" })
 
 const selectedValue = defineModel<string>({ required: true })
 const direction = defineModel<SortDirection>("direction", { default: "desc" })

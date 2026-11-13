@@ -10,6 +10,8 @@ import router from "@/router"
 import Professional from "@/database/professional.model"
 import PageWrapper from "@/components/wrappers/PageWrapper.vue"
 import DefaultContentWrapper from "@/components/wrappers/DefaultContentWrapper.vue"
+import BaseCardList from "@/components/bases/BaseCardList.vue"
+import HeaderWrapper from "@/components/wrappers/HeaderWrapper.vue"
 
 const route = useRoute()
 const authStore = useAuthStore()
@@ -64,92 +66,68 @@ authStore.onReady(async () => {
 </script>
 
 <template>
-	<PageWrapper custom>
-		<main
-			class="bg-background w-full h-full flex justify-center items-center gap-4 lg:gap-6 xl:gap-8 p-5 lg:p-7 xl:p-10 overflow-hidden"
+	<PageWrapper>
+		<HeaderWrapper title="Seus Pacientes">
+			<section
+				class="flex flex-col md:flex-row justify-center place-items-center relative gap-6 mb-3"
+			>
+				<BaseInput
+					v-model="searchQuery"
+					placeholder="Pesquisar"
+					icon="search"
+					theme="light"
+					class="w-full md:w-2xl"
+				></BaseInput>
+			</section>
+		</HeaderWrapper>
+
+		<p class="text-textLight text-2xl mb-4">
+			{{ medicalPermissions.length }} Pacientes
+		</p>
+
+		<DefaultContentWrapper
+			class="max-h-full overflow-hidden scrollbar-track-transparent scrollbar-thumb-accent"
 		>
-			<!-- Fernando Wrapper -->
-			<div class="size-full bg-primary rounded-3xl py-8 px-5 flex flex-col min-h-0">
-				<header>
-					<section
-						class="flex flex-col md:flex-row justify-center place-items-center relative gap-6 mb-3"
+		
+			<BaseCardList
+				v-if="medicalPermissions.length || loading"
+				:is-loading="loading"
+				min-width="25em"
+				class="w-full"
+			>
+				<PermissionCard
+					v-for="permission in medicalPermissions" 
+					:key="permission.patient_id"
+					:medical-permission="permission"
+					:search-query="searchQuery"
+				/>
+			</BaseCardList>
+
+			<p
+				v-if="!loading && !medicalPermissions.length && loadMessage" 
+				class="text-textLight m-auto"
+			>
+				{{ loadMessage }}
+			</p>
+
+			<section
+				class="grow h-full flex flex-col items-start"
+				v-show="currentPatientId"
+			>
+				<header class="w-full flex flex-row justify-between">
+					<button
+						type="button"
+						class="cursor-pointer text-textLight"
+						@click="viewPatient('')"
 					>
-						<!--Barra de pesquisa-->
-						<BaseInput
-							v-model="searchQuery"
-							placeholder="Pesquisar"
-							icon="search"
-							theme="light"
-							class="w-full md:w-2xl"
-						></BaseInput>
-					</section>
+						<span class="material-symbols-rounded text-3xl!"> arrow_back </span>
+					</button>
 				</header>
 
 				<br />
-				<p
-					class="text-textLight text-2xl"
-					:class="[!currentPatientId ? '' : 'hidden lg:flex']"
-				>
-					{{ medicalPermissions.length }} Pacientes
-				</p>
-				<br />
 
-				<!-- Content -->
-				<DefaultContentWrapper
-					class="max-h-full overflow-hidden scrollbar-track-transparent scrollbar-thumb-accent"
-				>
-					<!-- List -->
-					<ul
-						v-if="medicalPermissions.length"
-						class="w-full md:flex-1 max-h-full overflow-hidden grid grid-cols-[repeat(auto-fill,minmax(25em,1fr))] gap-4 overflow-y-auto"
-						:class="[!currentPatientId ? '' : 'hidden md:flex md:flex-col md:min-w-80']"
-					>
-						<template
-							v-for="permission in medicalPermissions"
-							:key="permission.patient_id"
-						>
-							<PermissionCard
-								:medical-permission="permission"
-								:search-query="searchQuery"
-								class="w-full"
-							/>
-						</template>
-					</ul>
-					<p v-else-if="loading" class="text-textLight m-auto">
-						<span
-							class="material-symbols-rounded animate-spin text-accent w-fit m-auto"
-						>
-							sync
-						</span>
-					</p>
-					<p v-else-if="loadMessage" class="text-textLight m-auto">
-						{{ loadMessage }}
-					</p>
-
-					<!-- Details -->
-					<section
-						class="grow h-full flex flex-col items-start"
-						v-show="currentPatientId"
-					>
-						<header class="w-full flex flex-row justify-between">
-							<button
-								type="button"
-								class="cursor-pointer text-textLight"
-								@click="viewPatient('')"
-							>
-								<span class="material-symbols-rounded text-3xl!"> arrow_back </span>
-							</button>
-						</header>
-
-						<br />
-
-						<PatientExtended
-							ref="areaDescription"
-							class="w-full"
-						/>
-					</section>
-				</DefaultContentWrapper>
-			</div>
-		</main>
+				<PatientExtended ref="areaDescription" class="w-full" />
+			</section>
+		</DefaultContentWrapper>
 	</PageWrapper>
 </template>

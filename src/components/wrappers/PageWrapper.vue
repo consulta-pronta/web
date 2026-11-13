@@ -3,7 +3,6 @@ import NavBar from "../NavBar.vue"
 
 defineProps<{
 	custom?: boolean
-	title?: string
 }>()
 </script>
 

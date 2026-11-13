@@ -45,3 +45,15 @@
 	scrollbar-width: none;
 	-ms-overflow-style: none;
 }
+
+.mx-context-menu.cp-light {
+	& {
+		--mx-menu-backgroud: var(--color-surface);
+		--mx-menu-hover-backgroud: var(--color-accent);
+		--mx-menu-text: var(--color-textDark);
+	}
+
+	.mx-context-menu-item .mx-item-row:first-child {
+		gap: 1rem;
+	}
+}

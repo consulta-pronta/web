@@ -6,10 +6,7 @@ import { formatToCPF, formatToPhone } from "brazilian-values"
 import BaseDialog from "@/components/bases/BaseDialog.vue"
 import { computed, ref, useTemplateRef } from "vue"
 import MedicalPermission from "@/database/medicalPermission.model"
-import type {
-	MedicalAccessStatus,
-	MedicalPermissions,
-} from "@/database/medicalPermission.model"
+import type { MedicalAccessStatus, MedicalPermissions } from "@/database/medicalPermission.model"
 import FormMedicalPermission from "@/components/forms/FormMedicalPermission.vue"
 import { useAuthStore } from "@/stores/authStore"
 import ProfessionalPermissionExtended from "../ProfessionalPermissionExtended.vue"
@@ -27,7 +24,10 @@ const status = ref(props.medicalPermission.status)
 const permissions = ref(props.medicalPermission.permissions)
 
 const user = ref<Patient | Professional | null>(null)
-const matchesSearch = computed(() => props.medicalPermission.search(props.searchQuery ?? ""))
+const matchesSearch = computed(() =>
+	props.medicalPermission.search(props.searchQuery ?? "") ||
+	user.value?.search(props.searchQuery ?? "")
+)
 
 const updatePermissions = async (updatedPermission: {
 	status: MedicalAccessStatus
@@ -36,15 +36,14 @@ const updatePermissions = async (updatedPermission: {
 	status.value = updatedPermission.status
 	permissions.value = updatedPermission.permissions
 
-	const data = props.medicalPermission.status === "pending"
-		? { permissions: permissions.value }
-		: { status: status.value, permissions: permissions.value }
+	const data =
+		props.medicalPermission.status === "pending"
+			? { permissions: permissions.value }
+			: { status: status.value, permissions: permissions.value }
 	await authStore.onReady(async (user) => {
-		await MedicalPermission.update(
-			props.medicalPermission.id,
-			data,
-			{ scope: { patientId: props.medicalPermission.patient_id || user.id } },
-		)
+		await MedicalPermission.update(props.medicalPermission.id, data, {
+			scope: { patientId: props.medicalPermission.patient_id || user.id },
+		})
 	})
 	managePermissionsVisible.value?.hide()
 }
@@ -95,17 +94,15 @@ const statusLabel = computed(() => {
 const amountOfPermissionsLabel = computed(() => {
 	const omgSoTrue = Object.values(permissions.value).filter((item) => item)
 	// not harcoding would be cool
-	return (omgSoTrue.length === 3)
+	return omgSoTrue.length === 3
 		? "Todas as permissões ativas"
 		: `${omgSoTrue.length} permissões ativas`
 })
 
 authStore.onReady(async (data) => {
-	user.value = await (
-		data.user_type === "patient"
+	user.value = await (data.user_type === "patient"
 		? Professional.get(props.medicalPermission.id)
-		: Patient.get(props.medicalPermission.patient_id)
-	)
+		: Patient.get(props.medicalPermission.patient_id))
 })
 </script>
 
@@ -114,11 +111,7 @@ authStore.onReady(async (data) => {
 		v-if="matchesSearch"
 		class="bg-surface min-w-fit rounded-lg overflow-clip text-textDark flex flex-col"
 	>
-		
-		<header
-			class="w-full flex justify-between items-center p-3 mb-2"
-			:class="headHeaderStyle"
-		>
+		<header class="w-full flex justify-between items-center p-3 mb-2" :class="headHeaderStyle">
 			{{ statusLabel }}
 			<BaseButton
 				v-if="user instanceof Patient && status === 'pending'"
@@ -150,10 +143,7 @@ authStore.onReady(async (data) => {
 						Email:
 					</p>
 					<p>
-						<a
-							:href="'mailto:' + user?.email"
-							class="wrap-anywhere"
-						>
+						<a :href="'mailto:' + user?.email" class="wrap-anywhere">
 							{{ user?.email }}
 						</a>
 					</p>
@@ -168,11 +158,8 @@ authStore.onReady(async (data) => {
 			</div>
 
 			<footer class="flex flex-col gap-2">
-				<p>{{ amountOfPermissionsLabel }} </p>
-				<BaseButton
-					mode="outline"
-					@click="managePermissionsVisible?.toggle()"
-				>
+				<p>{{ amountOfPermissionsLabel }}</p>
+				<BaseButton mode="outline" @click="managePermissionsVisible?.toggle()">
 					<i class="material-symbols-rounded text-primary text!">
 						{{ user instanceof Patient ? "visibility" : "lock_open" }}
 					</i>
@@ -180,7 +167,7 @@ authStore.onReady(async (data) => {
 				</BaseButton>
 			</footer>
 		</section>
-	
+
 		<Teleport to="body">
 			<BaseDialog ref="managePermissionsDialog" :title="'Permissões de ' + user?.name">
 				<FormMedicalPermission
@@ -188,10 +175,7 @@ authStore.onReady(async (data) => {
 					:medical-permission="medicalPermission"
 					@handled-submit="updatePermissions"
 				/>
-				<ProfessionalPermissionExtended
-					v-else
-					:permission="medicalPermission"
-				/>
+				<ProfessionalPermissionExtended v-else :permission="medicalPermission" />
 			</BaseDialog>
 		</Teleport>
 	</article>

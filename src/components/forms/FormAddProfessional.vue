@@ -121,12 +121,7 @@ const resetState = () => {
 			{{ message }}
 		</p>
 
-		<BaseButton
-			type="submit"
-			theme="accent"
-			icon="send"
-			:state="submitState"
-		>
+		<BaseButton type="submit" theme="accent" icon="send" :state="submitState">
 			Enviar solicitação
 		</BaseButton>
 	</form>

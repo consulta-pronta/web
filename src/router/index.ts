@@ -50,7 +50,7 @@ const router = createRouter({
 			name: "dashboard",
 			component: () => import("@/pages/DashboardPage.vue"),
 			meta: {
-				roles: ["patient", "professional", "admin"],
+				roles: ["admin"],
 				title: "Dashboard - @",
 			},
 		},
@@ -102,6 +102,15 @@ const router = createRouter({
 			},
 		},
 		{
+			path: "/logout",
+			name: "logout",
+			component: () => import("@/pages/ProcedureLogout.vue"),
+			meta: {
+				roles: ["admin", "patient", "professional"],
+				title: "Hora do Logout - @",
+			},
+		},
+		{
 			path: "/:catchAll(.*)",
 			name: "not-found",
 			component: () => import("@/pages/NotFoundPage.vue"),
@@ -138,7 +147,7 @@ router.beforeEach(async (to) => {
 	if (needsAuth && !isAuthenticated) {
 		return "/login"
 	} else if (!needsAuth && isAuthenticated) {
-		return "/dashboard"
+		return "/"
 	}
 
 	if (needsAuth) {
@@ -147,7 +156,7 @@ router.beforeEach(async (to) => {
 			userType = data.user_type
 		})
 		if (!userType || !roles.includes(userType)) {
-			return "/dashboard"
+			return "/"
 		}
 	}
 

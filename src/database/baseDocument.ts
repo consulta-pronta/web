@@ -73,7 +73,7 @@ export default abstract class BaseDocument {
 		}
 		return this.documentConverter(snapshot.id, snapshot.data(), snapshot) as T
 	}
-	
+
 	protected static documentConverter(
 		id: string,
 		data: DocumentData,
@@ -87,24 +87,27 @@ export default abstract class BaseDocument {
 	toMap(): FormData {
 		throw new Error("implement this >:(")
 	}
-	
+
 	toString(): string {
-		return Object.entries(this).map(([key, value]) => {
-			const formattedValue = (
-				value instanceof Timestamp
-				? `${toBrazilianDate(value.toDate())} ${toCoolDate(value.toDate())}`
-				: isObject(value)
-				? Object.entries(value).map(([k, v]) => `${k}: ${v}`).join(", ")
-				: value
-			)
-			
-			return `${key}: ${formattedValue}`
-		}).join(" ")
+		return Object.entries(this)
+			.map(([key, value]) => {
+				const formattedValue =
+					value instanceof Timestamp
+						? `${toBrazilianDate(value.toDate())} ${toCoolDate(value.toDate())}`
+						: isObject(value)
+							? Object.entries(value)
+									.map(([k, v]) => `${k}: ${v}`)
+									.join(", ")
+							: value
+
+				return `${key}: ${formattedValue}`
+			})
+			.join(" ")
 	}
 
 	search(query: string, alreadyNormalized?: boolean): boolean {
 		return normalizeString(this.toString()).includes(
-			alreadyNormalized? query : normalizeString(query)
+			alreadyNormalized ? query : normalizeString(query),
 		)
 	}
 
@@ -137,9 +140,7 @@ export default abstract class BaseDocument {
 
 	static async set(data: FormData, options: CollectionOptions = {}) {
 		const existingId = options.scope?.id
-		const doc = (existingId)
-			? this.ref(existingId, options)
-			: this.emptyRef(options)
+		const doc = existingId ? this.ref(existingId, options) : this.emptyRef(options)
 		await setDoc(doc, data)
 		return doc.id
 	}

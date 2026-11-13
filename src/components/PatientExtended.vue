@@ -31,10 +31,7 @@ const list = ref<unknown[]>()
 </script>
 
 <template>
-	<ul
-		class="flex flex-col gap-4"
-		:class="false ? 'h-full justify-center items-center' : ''"
-	>
+	<ul class="flex flex-col gap-4" :class="false ? 'h-full justify-center items-center' : ''">
 		<span v-if="false" class="material-symbols-rounded animate-spin text-accent w-fit">
 			sync
 		</span>
@@ -46,7 +43,9 @@ const list = ref<unknown[]>()
 		<div class="flex flex-col gap-5 w-full">
 			<div class="flex flex-col md:flex-row gap-5">
 				<!-- Dados pessoais -->
-				<section class="bg-surface text-textDark w-full rounded-2xl p-5 flex flex-col gap-4 font-bold">
+				<section
+					class="bg-surface text-textDark w-full rounded-2xl p-5 flex flex-col gap-4 font-bold"
+				>
 					<p class="text-xl">Dados pessoais</p>
 
 					<div class="grid grid-cols-2 gap-5">
@@ -78,7 +77,9 @@ const list = ref<unknown[]>()
 				</section>
 
 				<!-- Meios de contato -->
-				<section class="bg-surface text-textDark w-full rounded-2xl p-5 flex flex-col gap-4 font-bold">
+				<section
+					class="bg-surface text-textDark w-full rounded-2xl p-5 flex flex-col gap-4 font-bold"
+				>
 					<p class="text-xl">Meios de contato</p>
 
 					<div class="flex flex-col gap-5">

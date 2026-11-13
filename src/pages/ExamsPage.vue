@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, useTemplateRef } from "vue"
+import { computed, ref, useTemplateRef, watch } from "vue"
 import BaseInput from "@/components/bases/BaseInput.vue"
 import Exam from "@/database/exam.model"
 import ExamRow from "@/components/ExamRow.vue"
@@ -15,7 +15,12 @@ import PageWrapper from "@/components/wrappers/PageWrapper.vue"
 import HeaderWrapper from "@/components/wrappers/HeaderWrapper.vue"
 import DefaultContentWrapper from "@/components/wrappers/DefaultContentWrapper.vue"
 import { searchDocuments } from "@/utils"
+import BaseTable from "@/components/bases/BaseTable.vue"
+import BaseCardList from "@/components/bases/BaseCardList.vue"
+import router from "@/router"
+import { useRoute } from "vue-router"
 
+const route = useRoute()
 const authStore = useAuthStore()
 
 const exames = ref<Exam[]>([])
@@ -24,10 +29,15 @@ const currentPermission = ref<MedicalPermission | null>(null)
 const forProfessionalData = ref<PatientWithProfessionalPermission[]>([])
 const currentPatient = ref<Patient | null>(null)
 const loadError = ref("")
+const loadingPatients = ref(true)
+const loadingExams = ref(true)
 const searchQuery = ref("")
 const formRegister = useTemplateRef("formRegister")
 
 const userType = computed(() => currentUser.value?.user_type)
+const examPatient = computed(() =>
+	currentUser.value instanceof Patient ? currentUser.value : currentPatient.value,
+)
 const filteredProfessionalData = computed(() => {
 	const matchingPatientIds = new Set(
 		searchDocuments(
@@ -35,9 +45,7 @@ const filteredProfessionalData = computed(() => {
 			searchQuery.value,
 		).map((patient) => patient.id),
 	)
-	return forProfessionalData.value.filter(({ patient }) =>
-		matchingPatientIds.has(patient.id),
-	)
+	return forProfessionalData.value.filter(({ patient }) => matchingPatientIds.has(patient.id))
 })
 const filteredExams = computed(() => searchDocuments(exames.value, searchQuery.value) as Exam[])
 const pageTitle = computed(() =>
@@ -47,44 +55,75 @@ const pageTitle = computed(() =>
 			? "Exames dos Pacientes"
 			: "Exames",
 )
-const canRequestExam = computed(() =>
-	currentPermission.value !== null
-	&& currentPermission.value.permissions.request_exam
+const canRequestExam = computed(
+	() => currentPermission.value !== null && currentPermission.value.permissions.request_exam,
 )
 
 const handleSubmit = async () => {
 	formRegister.value?.hide()
-	if (currentPatient.value && currentPermission.value) {
-		await selectPatient({
-			patient: currentPatient.value,
-			permissions: currentPermission.value
-		})
+	if (examPatient.value) {
+		await loadPatientExams(examPatient.value)
+	}
+}
+
+const loadPatientExams = async (patient: Patient) => {
+	loadingExams.value = true
+	loadError.value = ""
+	try {
+		exames.value = await Exam.getAll({ scope: { userId: patient.id } })
+	} catch (error) {
+		console.error("Failed to load patient's exams.", error)
+		loadError.value = "Não foi possível carregar os exames."
+	} finally {
+		loadingExams.value = false
 	}
 }
 
 const selectPatient = async (item: PatientWithProfessionalPermission) => {
+	if (currentPatient.value === item.patient) return
 	currentPatient.value = item.patient
 	currentPermission.value = item.permissions
-	searchQuery.value = ""
-	exames.value = await Exam.getAll({ scope: { userId: item.patient.id } })
+	await loadPatientExams(item.patient)
 }
 
-authStore.onReady(async (user) => {
-	if (!(user instanceof Patient || user instanceof Professional)) {
-		return
+const unselectPatient = () => {
+	currentPatient.value = null
+	loadingPatients.value = false
+	loadingExams.value = false
+	loadError.value = ""
+	exames.value = []
+}
+
+watch(currentPatient, (value) => {
+	if (value) {
+		router.replace({
+			name: route.name,
+			params: { id: value.id },
+		})
+	} else {
+		router.replace({ name: route.name })
 	}
+})
 
-	currentUser.value = user
-
-	if (user instanceof Patient) {
-		exames.value = await Exam.getAll({ scope: { userId: user.id } })
-	} else if (user instanceof Professional) {
-		try {
-			forProfessionalData.value = await user.getPatientsWithPermissions()
-		} catch (error) {
-			console.error("Failed to load professional's patients.", error)
-			loadError.value = "Não foi possível carregar os pacientes."
+authStore.onReady(async (user) => {
+	try {
+		if (!(user instanceof Patient || user instanceof Professional)) {
+			return
 		}
+
+		currentUser.value = user
+
+		if (user instanceof Patient) {
+			exames.value = await Exam.getAll({ scope: { userId: user.id } })
+		} else {
+			forProfessionalData.value = await user.getPatientsWithPermissions()
+		}
+	} catch (error) {
+		console.error("Failed to load exams page data.", error)
+		loadError.value = "Não foi possível carregar os dados."
+	} finally {
+		loadingPatients.value = false
+		loadingExams.value = false
 	}
 })
 </script>
@@ -92,12 +131,25 @@ authStore.onReady(async (user) => {
 <template>
 	<PageWrapper>
 		<HeaderWrapper :title="pageTitle">
-			<BaseInput
-				v-model="searchQuery"
-				placeholder="Pesquisar"
-				icon="search"
-				class="place-self-center w-full md:w-120"
-			/>
+			<div class="flex flex-row gap-2 justify-center *:h-[stretch]">
+				<BaseButton
+					v-if="userType === 'patient'"
+					type="button"
+					theme="accent"
+					icon="note_add"
+					@click="formRegister?.toggle()"
+					class="col-span-3 rounded-2xl"
+				>
+					<p class="hidden lg:block">Adicionar Exame</p>
+				</BaseButton>
+
+				<BaseInput
+					v-model="searchQuery"
+					placeholder="Pesquisar"
+					icon="search"
+					class="place-self-center w-full md:w-120"
+				/>
+			</div>
 		</HeaderWrapper>
 
 		<DefaultContentWrapper>
@@ -107,83 +159,85 @@ authStore.onReady(async (user) => {
 				:class="[currentPatient ? 'hidden lg:flex' : '']"
 			>
 				<article class="flex text-textLight items-center">
-					<span class="material-symbols-rounded text-3xl!">
-						person
-					</span>
+					<span class="material-symbols-rounded text-3xl!"> person </span>
 
-					<p class="text-2xl pl-2">
-						Pacientes
-					</p>
+					<p class="text-2xl pl-2">Pacientes</p>
 				</article>
 
-				<p
-					v-if="loadError"
-					class="text-error text-center"
-				>
+				<p v-if="loadError" class="text-error text-center">
 					{{ loadError }}
 				</p>
 
-				<ul class="w-full flex flex-col gap-2">
-					<li
-						v-for="item in filteredProfessionalData"
-						:key="item.patient.id"
-					>
+				<BaseCardList :is-loading="loadingPatients" class="w-full flex flex-col gap-2">
+					<li v-for="item in filteredProfessionalData" :key="item.patient.id">
 						<PatientCard
 							:class="currentPatient === item.patient ? 'bg-accent!' : ''"
 							:patient="item.patient"
 							@selected="selectPatient(item)"
 						/>
 					</li>
-				</ul>
+				</BaseCardList>
 			</div>
 
 			<div class="w-full flex flex-col gap-4">
-				<BaseButton
-					v-if="userType === 'professional'"
-					type="button"
-					theme="accent"
-					icon="add"
-					:state="canRequestExam ? 'enabled' : 'disabled'"
-					@click="formRegister?.show()"
-					class="self-end"
-				>
-					Solicitar exame
-				</BaseButton>
+				<div class="flex flex-row justify-between">
+					<button
+						v-if="userType === 'professional'" 
+						type="button"
+						class="cursor-pointer flex justify-center items-center size-11 text-textLight"
+						:class="!currentPatient ? 'invisible' : ''"
+						@click.prevent="unselectPatient"
+					>
+						<span class="material-symbols-rounded rounded-full p-1 hover:bg-primaryLight/10">
+							arrow_back
+						</span>
+					</button>
 
-				<div class="w-full max-h-[55vh] overflow-y-auto rounded-xl scrollbar-hide h-fit">
-					<table class="w-full text-textDark bg-surface">
-						<thead class="font-bold sticky top-0 z-1">
-							<tr class="bg-surface shadow-[inset_0_-2px_0_var(--color-primaryDark)]">
-								<th>Exame</th>
-								<th>Local</th>
-								<th>Data</th>
-								<th>Status</th>
-							</tr>
-						</thead>
-						<tbody>
-							<ExamRow
-								v-for="exam in filteredExams"
-								:key="exam.id"
-								:exam="exam"
-							/>
-							<tr v-if="exames.length && filteredExams.length === 0">
-								<td colspan="4" class="p-3 text-center">
-									Nenhum exame encontrado.
-								</td>
-							</tr>
-						</tbody>
-					</table>
+					<BaseButton
+						v-if="userType === 'professional'"
+						type="button"
+						theme="accent"
+						icon="add"
+						:state="canRequestExam ? 'enabled' : 'disabled'"
+						@click="formRegister?.show()"
+						class="self-end"
+					>
+						Solicitar exame
+					</BaseButton>
 				</div>
+
+				<BaseTable
+					:is-loading="loadingExams"
+					:show-message="filteredExams.length === 0"
+					:message="loadError || 'Nenhum exame encontrado'"
+				>
+					<template #header>
+						<th class="w-70">Exame</th>
+						<th class="w-70">Local</th>
+						<th class="w-30">Data</th>
+						<th class="w-40">Status</th>
+						<th class="w-12	"></th>
+					</template>
+
+					<template #default>
+						<ExamRow v-for="exam in filteredExams" :key="exam.id" :exam="exam" />
+					</template>
+				</BaseTable>
 			</div>
 		</DefaultContentWrapper>
 
 		<BaseDialog
-			v-if="userType === 'professional' && currentPatient"
-			:title="'Solicitar exame de ' + currentPatient.name"
+			v-if="examPatient"
+			:title="
+				userType === 'patient'
+					? 'Adicionar exame'
+					: 'Solicitar exame de ' + examPatient.name
+			"
 			ref="formRegister"
 		>
 			<FormExamRequest
-				:patient="currentPatient"
+				:patient="examPatient"
+				:is-patient="userType === 'patient'"
 				@handled-submit="handleSubmit"
 			/>
 		</BaseDialog>
@@ -195,6 +249,6 @@ authStore.onReady(async (user) => {
 
 td,
 th {
-	@apply p-3 text-center;
+	@apply p-3;
 }
 </style>

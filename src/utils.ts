@@ -65,13 +65,13 @@ export type SortDirection = "asc" | "desc"
 export const inputDateToDate = (date: string) => new Date(`${date}T00:00`)
 
 export const toCoolDate = (date: Date | null | undefined) =>
-	date ? formatDate(date, "DD MMM YYYY") : DATE_NOT_PROVIDED
+	date ? formatDate(date, "DD MMM YYYY", { locales: "pt-BR" }) : DATE_NOT_PROVIDED
 
 export const toBrazilianDate = (date: Date | null | undefined) =>
 	date ? date.toLocaleString("pt-BR") : DATE_NOT_PROVIDED
 
 export const toBrazilianLocaleDate = (date: Date | null | undefined) =>
-	date ? formatDate(date, "D [de] MMM [de] YYYY") : DATE_NOT_PROVIDED
+	date ? formatDate(date, "D [de] MMM [de] YYYY", { locales: "pt-BR" }) : DATE_NOT_PROVIDED
 
 export const normalizeString = (value: string) =>
 	value
@@ -81,7 +81,7 @@ export const normalizeString = (value: string) =>
 		.trim()
 
 export const timestampDiffSeconds = (start: Timestamp, end: Timestamp, reversed = false) =>
-	(end.toMillis() - start.toMillis()) / 1000 * (reversed ? -1 : 1)
+	((end.toMillis() - start.toMillis()) / 1000) * (reversed ? -1 : 1)
 
 export const timestampDiffDays = (start: Timestamp, end: Timestamp) =>
 	timestampDiffSeconds(start, end) / (60 * 60 * 24)
@@ -93,7 +93,7 @@ export const stringToTimestamp = (date: string) => Timestamp.fromDate(new Date(d
 
 export const formatCRM = (crm: string, uf: string) => `${crm}/${uf}`
 
-export const changeTitle = (title: string) => document.title = title
+export const changeTitle = (title: string) => (document.title = title)
 
 export const searchDocuments = (docs: BaseDocument[], query: string) => {
 	const normalizedQuery = normalizeString(query)

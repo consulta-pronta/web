@@ -174,6 +174,6 @@ export default class Symptom extends BaseDocument {
 	}
 
 	static async delete(id: string, options: CollectionOptions = {}) {
-		this.delete(id, options)
+		return super.delete(id, options)
 	}
 }
