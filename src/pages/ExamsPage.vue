@@ -30,11 +30,14 @@ const forProfessionalData = ref<PatientWithProfessionalPermission[]>([])
 const currentPatient = ref<Patient | null>(null)
 const loadError = ref("")
 const loadingPatients = ref(true)
-const loadingExams = ref(false)
+const loadingExams = ref(true)
 const searchQuery = ref("")
 const formRegister = useTemplateRef("formRegister")
 
 const userType = computed(() => currentUser.value?.user_type)
+const examPatient = computed(() =>
+	currentUser.value instanceof Patient ? currentUser.value : currentPatient.value,
+)
 const filteredProfessionalData = computed(() => {
 	const matchingPatientIds = new Set(
 		searchDocuments(
@@ -58,11 +61,21 @@ const canRequestExam = computed(
 
 const handleSubmit = async () => {
 	formRegister.value?.hide()
-	if (currentPatient.value && currentPermission.value) {
-		await selectPatient({
-			patient: currentPatient.value,
-			permissions: currentPermission.value,
-		})
+	if (examPatient.value) {
+		await loadPatientExams(examPatient.value)
+	}
+}
+
+const loadPatientExams = async (patient: Patient) => {
+	loadingExams.value = true
+	loadError.value = ""
+	try {
+		exames.value = await Exam.getAll({ scope: { userId: patient.id } })
+	} catch (error) {
+		console.error("Failed to load patient's exams.", error)
+		loadError.value = "Não foi possível carregar os exames."
+	} finally {
+		loadingExams.value = false
 	}
 }
 
@@ -70,16 +83,7 @@ const selectPatient = async (item: PatientWithProfessionalPermission) => {
 	if (currentPatient.value === item.patient) return
 	currentPatient.value = item.patient
 	currentPermission.value = item.permissions
-	loadingExams.value = true
-	loadError.value = ""
-	try {
-		exames.value = await Exam.getAll({ scope: { userId: item.patient.id } })
-	} catch (error) {
-		console.error("Failed to load patient's exams.", error)
-		loadError.value = "Não foi possível carregar os exames."
-	} finally {
-		loadingExams.value = false
-	}
+	await loadPatientExams(item.patient)
 }
 
 const unselectPatient = () => {
@@ -119,6 +123,7 @@ authStore.onReady(async (user) => {
 		loadError.value = "Não foi possível carregar os dados."
 	} finally {
 		loadingPatients.value = false
+		loadingExams.value = false
 	}
 })
 </script>
@@ -222,11 +227,19 @@ authStore.onReady(async (user) => {
 		</DefaultContentWrapper>
 
 		<BaseDialog
-			v-if="userType === 'professional' && currentPatient"
-			:title="'Solicitar exame de ' + currentPatient.name"
+			v-if="examPatient"
+			:title="
+				userType === 'patient'
+					? 'Adicionar exame'
+					: 'Solicitar exame de ' + examPatient.name
+			"
 			ref="formRegister"
 		>
-			<FormExamRequest :patient="currentPatient" @handled-submit="handleSubmit" />
+			<FormExamRequest
+				:patient="examPatient"
+				:is-patient="userType === 'patient'"
+				@handled-submit="handleSubmit"
+			/>
 		</BaseDialog>
 	</PageWrapper>
 </template>

@@ -8,9 +8,15 @@ import { Timestamp } from "firebase/firestore"
 import { ref } from "vue"
 import BaseRadioList from "../bases/BaseRadioList.vue"
 
-const props = defineProps<{
-	patient: Patient
-}>()
+const props = withDefaults(
+	defineProps<{
+		patient: Patient
+		isPatient?: boolean
+	}>(),
+	{
+		isPatient: false,
+	},
+)
 
 const categories: { value: ExamCategory; label: string; icon: string }[] = [
 	{ value: "laboratorial", label: "Laboratorial", icon: "bloodtype" },
@@ -75,7 +81,7 @@ const submitForm = async () => {
 		</p>
 
 		<BaseButton type="submit" theme="accent" icon="add_circle" :state="buttonState">
-			Solicitar exame
+			{{ props.isPatient ? "Adicionar exame" : "Solicitar exame" }}
 		</BaseButton>
 	</form>
 </template>
