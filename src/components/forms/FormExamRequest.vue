@@ -6,6 +6,7 @@ import Exam, { type ExamCategory } from "@/database/exam.model"
 import { inputDateToDate } from "@/utils"
 import { Timestamp } from "firebase/firestore"
 import { ref } from "vue"
+import BaseRadioList from "../bases/BaseRadioList.vue"
 
 const props = defineProps<{
 	patient: Patient
@@ -62,29 +63,12 @@ const submitForm = async () => {
 		<BaseInput v-model="exam.place" placeholder="Local" icon="location_on" required />
 		<BaseInput v-model="date" type="date" icon="calendar_today" required />
 
-		<!-- TODO: Turn into component -->
-		<fieldset class="flex flex-col gap-2 text-textLight">
-			<legend class="mb-1">Categoria</legend>
-			<label
-				v-for="option in categories"
-				:key="option.value"
-				class="flex items-center gap-2 rounded-md p-3 cursor-pointer"
-				:class="
-					option.value === exam.category ? 'bg-accent text-textDark' : 'bg-primaryDark'
-				"
-			>
-				<input
-					v-model="exam.category"
-					type="radio"
-					name="exam-category"
-					:value="exam.category"
-					required
-					class="accent-primaryDark"
-				/>
-				<span class="material-symbols-rounded">{{ option.icon }}</span>
-				{{ option.label }}
-			</label>
-		</fieldset>
+		<BaseRadioList
+			v-model="exam.category"
+			name="exam-category"
+			legend="Categoria"
+			:options="categories"
+		/>
 
 		<p v-if="submitError" class="text-error text-center">
 			{{ submitError }}

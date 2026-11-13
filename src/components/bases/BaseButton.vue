@@ -99,7 +99,7 @@ watch(
 
 <template>
 	<button
-		class="px-5 rounded-md h-11 flex flex-row items-center"
+		class="px-5 rounded-md h-11 flex flex-row items-center gap-2"
 		:type="type"
 		:disabled="stateModel !== 'enabled'"
 		:class="[dynamicStyle, isDisabled ? 'contrast-50' : 'cursor-pointer hover:brightness-90']"

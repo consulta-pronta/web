@@ -132,25 +132,23 @@ authStore.onReady(async (data) => {
 <template>
 	<PageWrapper>
 		<HeaderWrapper title="Histórico de Sintomas">
-			<div class="flex flex-col md:flex-row justify-center place-items-center relative gap-6">
+			<div class="flex flex-row gap-2 justify-center *:h-[stretch]">
+				<BaseButton
+					type="button"
+					theme="accent"
+					icon="heart_plus"
+					@click="formRegister?.toggle()"
+					class="col-span-3 rounded-2xl"
+				>
+					<p class="hidden lg:block">Registrar Sintoma</p>
+				</BaseButton>
+
 				<BaseInput
 					v-model="searchQuery"
 					placeholder="Pesquisar"
 					icon="search"
-					theme="light"
-					class="w-full md:w-2xl"
+					class="place-self-center w-full md:w-120"
 				/>
-
-				<BaseButton
-					theme="accent"
-					type="button"
-					icon="add"
-					iconPosition="right"
-					class="min-w-52"
-					@click="formRegister?.toggle()"
-				>
-					Registrar Sintoma
-				</BaseButton>
 			</div>
 		</HeaderWrapper>
 

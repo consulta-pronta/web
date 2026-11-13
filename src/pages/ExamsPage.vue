@@ -126,12 +126,25 @@ authStore.onReady(async (user) => {
 <template>
 	<PageWrapper>
 		<HeaderWrapper :title="pageTitle">
-			<BaseInput
-				v-model="searchQuery"
-				placeholder="Pesquisar"
-				icon="search"
-				class="place-self-center w-full md:w-120"
-			/>
+			<div class="flex flex-row gap-2 justify-center *:h-[stretch]">
+				<BaseButton
+					v-if="userType === 'patient'"
+					type="button"
+					theme="accent"
+					icon="note_add"
+					@click="formRegister?.toggle()"
+					class="col-span-3 rounded-2xl"
+				>
+					<p class="hidden lg:block">Adicionar Exame</p>
+				</BaseButton>
+
+				<BaseInput
+					v-model="searchQuery"
+					placeholder="Pesquisar"
+					icon="search"
+					class="place-self-center w-full md:w-120"
+				/>
+			</div>
 		</HeaderWrapper>
 
 		<DefaultContentWrapper>
