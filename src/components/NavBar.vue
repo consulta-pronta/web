@@ -172,15 +172,13 @@ authStore.onReady((data) => {
 					<p>Perfil</p>
 				</BaseButton>
 
-				<BaseButton
-					theme="error"
-					mode="transparent"
-					icon="logout"
-					class="justify-start!"
-					@click="logout()"
+				<BaseLink
+					to="logout"
+					class="nav-link text-error!"
 				>
+					<span class="material-symbols-rounded select-none text-3xl!">logout</span>
 					<p>Sair</p>
-				</BaseButton>
+				</BaseLink>
 			</nav>
 		</section>
 	</aside>

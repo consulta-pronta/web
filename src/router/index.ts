@@ -102,6 +102,15 @@ const router = createRouter({
 			},
 		},
 		{
+			path: "/logout",
+			name: "logout",
+			component: () => import("@/pages/ProcedureLogout.vue"),
+			meta: {
+				roles: ["admin", "patient", "professional"],
+				title: "Hora do Logout - @",
+			},
+		},
+		{
 			path: "/:catchAll(.*)",
 			name: "not-found",
 			component: () => import("@/pages/NotFoundPage.vue"),

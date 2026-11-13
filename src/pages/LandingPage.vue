@@ -6,7 +6,10 @@ import { useRouter } from "vue-router"
 
 const router = useRouter()
 onAuthStateChanged(auth, (user) => {
-	if (!user) router.replace("/login")
+	if (!user) {
+		router.replace("/login")
+		return
+	}
 
 	useAuthStore().onReady((user) => {
 		router.replace(
