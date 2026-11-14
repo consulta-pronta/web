@@ -11,8 +11,6 @@ const props = withDefaults(
 	},
 )
 
-const visible = ref(false)
-
 const toggle = () => {
 	visible.value = !visible.value
 }
@@ -22,6 +20,10 @@ const hide = () => {
 const show = () => {
 	visible.value = true
 }
+
+const visible = defineModel<boolean>("visible", {
+	default: false,
+})
 
 const style = props.theme === "dark" ? "bg-primary text-textLight" : "bg-surface text-textDark"
 const cssAnimationDuration = "300ms"
@@ -37,30 +39,32 @@ defineExpose({
 	<Transition name="dialog-bg">
 		<div v-show="visible" class="size-full bg-black/50 fixed left-0 top-0 z-67"></div>
 	</Transition>
-	<Transition name="dialog">
-		<section
-		 	v-bind="$attrs"
-			v-show="visible"
-			class="fixed inset-0 w-full h-full z-67 flex justify-center place-items-center"
-			@click.self="toggle"
-		>
-			<div class="w-150 p-10 rounded-xl shadow-xl" :class="style">
-				<header class="grid grid-cols-[min-content_1fr]">
-					<button type="button" class="cursor-pointer" @click="toggle">
-						<span class="material-symbols-rounded text-3xl!"> close </span>
-					</button>
+	<Teleport to="body">
+		<Transition name="dialog">
+			<section
+				v-bind="$attrs"
+				v-show="visible"
+				class="fixed inset-0 w-full h-full z-67 flex justify-center place-items-center"
+				@click.self="hide"
+			>
+				<div class="w-150 p-10 rounded-xl shadow-xl" :class="style">
+					<header class="grid grid-cols-[min-content_1fr]">
+						<button type="button" class="cursor-pointer" @click="toggle">
+							<span class="material-symbols-rounded text-3xl!"> close </span>
+						</button>
 
-					<h2 class="text-2xl text-center font-semibold">
-						{{ title }}
-					</h2>
-				</header>
+						<h2 class="text-2xl text-center font-semibold">
+							{{ title }}
+						</h2>
+					</header>
 
-				<br />
+					<br />
 
-				<slot></slot>
-			</div>
-		</section>
-	</Transition>
+					<slot></slot>
+				</div>
+			</section>
+		</Transition>
+	</Teleport>
 </template>
 
 <style scoped>

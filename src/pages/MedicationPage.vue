@@ -1,21 +1,20 @@
 <script setup lang="ts">
 import BaseInput from "@/components/bases/BaseInput.vue"
 import BaseButton from "@/components/bases/BaseButton.vue"
-import NavBar from "@/components/NavBar.vue"
 import MedicationRow from "@/components/MedicationRow.vue"
-import FormAddMedical from "@/components/forms/FormAddMedical.vue"
 import { ref, watch, onMounted, onUnmounted, computed } from "vue"
-
 import { useAuthStore } from "@/stores/authStore"
 import Medication from "@/database/medication.model"
 import PageWrapper from "@/components/wrappers/PageWrapper.vue"
 import HeaderWrapper from "@/components/wrappers/HeaderWrapper.vue"
 import DefaultContentWrapper from "@/components/wrappers/DefaultContentWrapper.vue"
 import BaseTable from "@/components/bases/BaseTable.vue"
+import BaseDialog from "@/components/bases/BaseDialog.vue"
+import FormAddMedication from "@/components/forms/FormAddMedication.vue"
 
 const authStore = useAuthStore()
 
-const showAddModal = ref(false)
+const registerFormVisible = ref(false)
 const medications = ref<Medication[]>([])
 
 // Relógio que faz a caixa desmarcar sozinha quando o intervalo acaba
@@ -76,7 +75,7 @@ const medicationRows = computed(() => {
 					type="button"
 					theme="accent"
 					icon="prescriptions"
-					@click="showAddModal = true"
+					@click="registerFormVisible = true"
 					class="col-span-3 rounded-2xl"
 				>
 					<p class="hidden lg:block">Adicionar Medicamento</p>
@@ -111,6 +110,11 @@ const medicationRows = computed(() => {
 			</BaseTable>
 		</DefaultContentWrapper>
 
-		<FormAddMedical v-if="showAddModal" @close="showAddModal = false" />
+		<BaseDialog
+			title="Adicionar Medicamento"
+			v-model:visible="registerFormVisible"
+		>
+			<FormAddMedication @close="registerFormVisible = false" />
+		</BaseDialog>
 	</PageWrapper>
 </template>
