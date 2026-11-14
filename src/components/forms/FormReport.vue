@@ -122,7 +122,7 @@ authStore.onReady(async (patient) => {
 			scope: { patientId: patient.id },
 		})) as MedicalPermission[]
 		const readablePermissions = permissions.filter(
-			(permission) => permission.status === "active"
+			(permission) => permission.status === "active",
 		)
 		const loadedProfessionals = await Promise.all(
 			readablePermissions.map((permission) => permission.getProfessional()),

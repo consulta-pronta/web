@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import type Patient from "@/database/patient.model";
-
+import type Patient from "@/database/patient.model"
 
 defineProps<{
 	patient: Patient
@@ -15,16 +14,14 @@ const emit = defineEmits<{
 	<button
 		type="button"
 		@click="emit('selected', patient)"
-		class="flex rounded-md p-3 bg-textLight text-primaryDark items-center"
+		class="flex rounded-md p-3 bg-surface text-primaryDark items-center hover:brightness-95 cursor-pointer"
 	>
 		<section class="flex flex-col w-full text-start pl-6">
-			<p class="font-bold text-2xl oneliner">
+			<p class="font-medium text-2xl oneliner">
 				{{ patient.name }}
 			</p>
 
-			<p class="oneliner text-base">
-				CPF: {{ patient.cpf }}
-			</p>
+			<p class="oneliner text-sm">CPF: {{ patient.cpf }}</p>
 		</section>
 	</button>
 </template>

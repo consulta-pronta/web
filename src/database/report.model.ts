@@ -58,7 +58,7 @@ export default class Report extends BaseDocument {
 		return super.getAll(options) as Promise<Report[]>
 	}
 
-	getDurationDays(): number | null{
+	getDurationDays(): number | null {
 		if (!this.period_start || !this.period_end) {
 			return null
 		}

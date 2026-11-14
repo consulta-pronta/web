@@ -3,6 +3,7 @@ import { ref, type Ref } from "vue"
 import { useRouter } from "vue-router"
 
 import AuthWrapper from "@/components/wrappers/AuthPageWrapper.vue"
+import BaseLink from "@/components/bases/BaseLink.vue"
 import BaseButton, { type ButtonState } from "@/components/bases/BaseButton.vue"
 import BaseLogo from "@/components/bases/BaseLogo.vue"
 import BaseInput from "@/components/bases/BaseInput.vue"
@@ -150,11 +151,11 @@ const submitForm = async () => {
 					/>
 				</article>
 				<br />
-				<RouterLink to="login">
+				<BaseLink to="login">
 					<p class="text-textLight">
-						Já possui conta? <a href="" class="text-accent">Fazer login</a>
+						Já possui conta? <span class="text-accent">Fazer login</span>
 					</p>
-				</RouterLink>
+				</BaseLink>
 
 				<BaseButton
 					type="submit"

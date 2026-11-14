@@ -1,9 +1,4 @@
-import {
-	serverTimestamp,
-	where,
-	type DocumentSnapshot,
-	type Timestamp,
-} from "firebase/firestore"
+import { serverTimestamp, where, type DocumentSnapshot, type Timestamp } from "firebase/firestore"
 import BaseDocument, {
 	type CollectionOptions,
 	type CollectionScope,
@@ -85,42 +80,50 @@ export default class MedicalPermission extends BaseDocument {
 		const options = { scope: { patientId } }
 
 		const existingRequest = await this.get(professionalId, options)
-		if (existingRequest) { return false }
+		if (existingRequest) {
+			return false
+		}
 
-		const request = new MedicalPermission(
-			professionalId,
-			patientId,
-			professionalId,
-			"pending"
-		)
-		await this.set(request.toMap(), { scope: {
-			patientId, id: professionalId
-		}})
+		const request = new MedicalPermission(professionalId, patientId, professionalId, "pending")
+		await this.set(request.toMap(), {
+			scope: {
+				patientId,
+				id: professionalId,
+			},
+		})
 		return true
 	}
-	
+
 	static async get(id: string, options: CollectionOptions = {}) {
 		return super.get(id, options) as Promise<MedicalPermission | null>
 	}
 
 	static async getAllFromCollectionGroup(options?: QueryOptions) {
-		return await super.getAllFromCollectionGroup(options) as MedicalPermission[]
+		return (await super.getAllFromCollectionGroup(options)) as MedicalPermission[]
 	}
 
 	static async getAllForProfessional(professionalId: string) {
 		const permissions = await this.getAllFromCollectionGroup({
-			constraints: [
-				where("professional_id", "==", professionalId),
-			]
+			constraints: [where("professional_id", "==", professionalId)],
 		})
 		return permissions
 	}
-	
-	grant() { this.status = "active" }
-	revoke() { this.status = "revoked" }
-	toggleAcess() { this.status = this.canAcess() ? "revoked" : "active" }
-	canAcess() { return this.status === "active" }
-	isPending() { return this.status === "pending" }
+
+	grant() {
+		this.status = "active"
+	}
+	revoke() {
+		this.status = "revoked"
+	}
+	toggleAcess() {
+		this.status = this.canAcess() ? "revoked" : "active"
+	}
+	canAcess() {
+		return this.status === "active"
+	}
+	isPending() {
+		return this.status === "pending"
+	}
 
 	async acceptRequest() {
 		if (!this.isPending()) {
@@ -136,8 +139,12 @@ export default class MedicalPermission extends BaseDocument {
 			},
 			{ scope: { patientId: this.patient_id } },
 		)
-	}	
+	}
 
-	async getPatient() { return await Patient.get(this.patient_id) }
-	async getProfessional() { return await Professional.get(this.id) }
+	async getPatient() {
+		return await Patient.get(this.patient_id)
+	}
+	async getProfessional() {
+		return await Professional.get(this.id)
+	}
 }

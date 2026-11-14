@@ -74,22 +74,24 @@ export default class Patient extends User {
 			address: this.address,
 		}
 	}
-	
+
 	static async get(id: string) {
 		return super.get(id) as Promise<Patient | null>
 	}
 
 	async getMedicalPermissions() {
-		return await MedicalPermission.getAll({
-			scope: { patientId: this.id }
-		}) as MedicalPermission[]
+		return (await MedicalPermission.getAll({
+			scope: { patientId: this.id },
+		})) as MedicalPermission[]
 	}
 
 	async getProfessionals(onlyActive = true) {
-		return (await Promise.all(
-			(await this.getMedicalPermissions())
-				.filter((item) => !onlyActive || item.status === "active")
-				.map(async (item) => await item.getProfessional())
-		)).filter((item) => item != null)
+		return (
+			await Promise.all(
+				(await this.getMedicalPermissions())
+					.filter((item) => !onlyActive || item.status === "active")
+					.map(async (item) => await item.getProfessional()),
+			)
+		).filter((item) => item != null)
 	}
 }

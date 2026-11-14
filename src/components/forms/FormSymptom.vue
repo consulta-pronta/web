@@ -20,9 +20,7 @@ const symptomData = ref(new Symptom())
 
 const dateTimeInput = computed({
 	get: () =>
-		symptomData.value.date_time
-			? toInputValue(symptomData.value.date_time.toDate())
-			: "",
+		symptomData.value.date_time ? toInputValue(symptomData.value.date_time.toDate()) : "",
 	set: (value) => {
 		symptomData.value.date_time = value ? Timestamp.fromDate(new Date(value)) : null
 	},
@@ -33,7 +31,6 @@ const placeInput = computed({
 		symptomData.value.place = symptomPlaces.find((place) => place === value) ?? null
 	},
 })
-
 
 const registrarSintoma = async () => {
 	buttonState.value = "sync"
@@ -70,10 +67,8 @@ watch(
 		if (symptom) {
 			symptomData.value = symptom
 		}
-		
 	},
 )
-
 
 const emit = defineEmits(["handled-submit"])
 </script>

@@ -26,7 +26,7 @@ export type ProfessionalData = {
 }
 
 export type PatientWithProfessionalPermission = {
-	patient: Patient,
+	patient: Patient
 	permissions: MedicalPermission
 }
 
@@ -53,9 +53,7 @@ export default class Professional extends User {
 
 	static async getByEmail(email: string) {
 		const snapshot = await Professional.getAll({
-			constraints: [
-				where("email", "==", email.trim()),
-			],
+			constraints: [where("email", "==", email.trim())],
 			compositeConstraints: [
 				or(
 					where("user_type", "==", "professional"),
@@ -64,7 +62,7 @@ export default class Professional extends User {
 			],
 		})
 
-		return (snapshot.length === 0) ? null : snapshot[0] as Professional
+		return snapshot.length === 0 ? null : (snapshot[0] as Professional)
 	}
 
 	static get requestCollection() {
@@ -155,7 +153,7 @@ export default class Professional extends User {
 		if (!this.professional_data) {
 			return ""
 		}
-	
+
 		return formatCRM(this.professional_data.crm, this.professional_data.uf)
 	}
 
@@ -164,28 +162,30 @@ export default class Professional extends User {
 	}
 
 	async getPatients(onlyActive = true) {
-		return (await Promise.all(
-			(await this.getMedicalPermissions())
-				.filter((item) => !onlyActive || item.status === "active")
-				.map(async (item) => await item.getPatient())
-		)).filter((item) => item != null)
+		return (
+			await Promise.all(
+				(await this.getMedicalPermissions())
+					.filter((item) => !onlyActive || item.status === "active")
+					.map(async (item) => await item.getPatient()),
+			)
+		).filter((item) => item != null)
 	}
-	
 
 	async getPatientsWithPermissions() {
 		const permissions = await this.getMedicalPermissions()
-		
-		return (await Promise.all(
-			(permissions)
-				.filter((item) => item.status === "active")
-				.map(async (item) =>
-					({
-						patient: await item.getPatient(),
-						permissions: item,
-					}) as PatientWithProfessionalPermission
-				)
-		)).filter((item) =>
-			item != null && item.patient != null && item.permissions != null
-		)
+
+		return (
+			await Promise.all(
+				permissions
+					.filter((item) => item.status === "active")
+					.map(
+						async (item) =>
+							({
+								patient: await item.getPatient(),
+								permissions: item,
+							}) as PatientWithProfessionalPermission,
+					),
+			)
+		).filter((item) => item != null && item.patient != null && item.permissions != null)
 	}
 }
