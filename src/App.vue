@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted } from "vue"
+import { useRoute } from "vue-router"
+
+const route = useRoute()
 
 const notifyOffline = () => {
 	window.alert("Você está offline. Algumas funcionalidades podem não funcionar.")
@@ -18,5 +21,5 @@ onUnmounted(() => {
 </script>
 
 <template>
-	<RouterView :key="$route.name" />
+	<RouterView :key="route.name" />
 </template>

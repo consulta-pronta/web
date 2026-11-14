@@ -7,7 +7,7 @@ import { onMounted } from "vue"
 const logout = async () => {
 	try {
 		await signOut(auth)
-		router.replace("/login")
+		router.replace({ name: "login" })
 	} catch (error) {
 		console.error(error)
 	}

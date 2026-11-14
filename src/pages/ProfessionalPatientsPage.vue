@@ -94,7 +94,6 @@ authStore.onReady(async () => {
 					{{ medicalPermissions.length }} Pacientes
 				</p>
 
-				<!-- TODO patient selected stop w-full -->
 				<BaseCardList
 					v-if="medicalPermissions.length || loadingPatients"
 					:is-loading="loadingPatients"

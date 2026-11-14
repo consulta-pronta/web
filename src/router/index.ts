@@ -127,6 +127,24 @@ const router = createRouter({
 				title: "Perfil - @"
 			},
 		},
+		{
+			path: "/medicamentos",
+			name: "medicamentos",
+			component: () => import("@/pages/MedicationPage.vue"),
+			meta: {
+				roles: ["patient"],
+				title: "Medicamentos - @",
+			},
+		},
+		{
+			path: "/farmacia",
+			name: "farmacia",
+			component: () => import("@/pages/PharmacyPage.vue"),
+			meta: {
+				roles: ["professional"],
+				title: "Farmácia - @",
+			},
+		},
 	],
 })
 
@@ -163,6 +181,8 @@ router.beforeEach(async (to) => {
 
 	if (to.meta.title) {
 		changeTitle(to.meta.title.toString().replace("@", "Consulta Pronta"))
+	} else {
+		changeTitle("Consulta Pronta")
 	}
 
 	return
