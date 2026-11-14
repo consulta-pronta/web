@@ -11,6 +11,7 @@ import DefaultContentWrapper from "@/components/wrappers/DefaultContentWrapper.v
 import BaseTable from "@/components/bases/BaseTable.vue"
 import BaseDialog from "@/components/bases/BaseDialog.vue"
 import FormAddMedication from "@/components/forms/FormAddMedication.vue"
+import { searchDocuments } from "@/utils"
 
 const authStore = useAuthStore()
 
@@ -18,6 +19,11 @@ const registerFormVisible = ref(false)
 const medications = ref<Medication[]>([])
 const loading = ref(true)
 const loadError = ref("")
+const searchQuery = ref("")
+
+const filteredMedications = computed(() =>
+	searchDocuments(medications.value, searchQuery.value) as Medication[]
+)
 
 // Relógio que faz a caixa desmarcar sozinha quando o intervalo acaba
 const now = ref(Date.now())
@@ -92,8 +98,8 @@ const medicationRows = computed(() => {
 					<p class="hidden lg:block">Adicionar Medicamento</p>
 				</BaseButton>
 
-				<!-- v-model="searchQuery" -->
 				<BaseInput
+					v-model="searchQuery"
 					placeholder="Pesquisar"
 					icon="search"
 					class="place-self-center w-full md:w-120"
@@ -119,7 +125,7 @@ const medicationRows = computed(() => {
 				</template>
 
 				<MedicationRow
-					v-for="medication in medicationRows"
+					v-for="medication in filteredMedications"
 					:key="medication.id"
 					:medication="medication"
 					@update:tomado="toggleTaken(medication, $event)"
