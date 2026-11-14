@@ -16,6 +16,8 @@ const authStore = useAuthStore()
 
 const registerFormVisible = ref(false)
 const medications = ref<Medication[]>([])
+const loading = ref(true)
+const loadError = ref("")
 
 // Relógio que faz a caixa desmarcar sozinha quando o intervalo acaba
 const now = ref(Date.now())
@@ -28,17 +30,26 @@ watch(
 	(userId) => {
 		unsubscribe?.()
 		unsubscribe = null
+		loading.value = true
+		loadError.value = ""
 
 		if (!userId) {
 			medications.value = []
+			loading.value = false
 			return
 		}
 
 		unsubscribe = Medication.listen(
 			(list) => {
 				medications.value = list
+				loading.value = false
 			},
 			{ scope: { userId } },
+			(error) => {
+				console.error("Failed to load medications:", error)
+				loadError.value = "Não foi possível carregar os medicamentos."
+				loading.value = false
+			},
 		)
 	},
 	{ immediate: true },
@@ -91,13 +102,19 @@ const medicationRows = computed(() => {
 		</HeaderWrapper>
 
 		<DefaultContentWrapper>
-			<BaseTable>
+			<BaseTable
+				:is-loading="loading"
+				:skeleton-rows="5"
+				:column-count="6"
+				:show-message="!loading && loadError.length > 0"
+				:message="loadError"
+			>
 				<template #header>
-					<th class="w-">Medicamento</th>
-					<th class="w-">Quantidade</th>
-					<th class="w-">Período</th>
-					<th class="w-">Consumo</th>
-					<th class="w-12">Consumido</th>
+					<th class="w-100">Medicamento</th>
+					<th class="w-55">Quantidade</th>
+					<th class="w-50">Período</th>
+					<th class="w-24">Consumo</th>
+					<th class="w-24">Consumido</th>
 					<th class="w-12"></th>
 				</template>
 

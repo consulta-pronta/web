@@ -64,6 +64,7 @@ export default abstract class BaseDocument {
 		this: typeof BaseDocument & { prototype: T },
 		callback: (documents: T[]) => void,
 		options: CollectionOptions = {},
+		onError?: (error: Error) => void,
 	) {
 		return onSnapshot(this.collection(options), (snapshot) => {
 			const documents = snapshot.docs
@@ -71,7 +72,7 @@ export default abstract class BaseDocument {
 				.filter((document): document is T => document !== null)
 
 			callback(documents)
-		})
+		}, onError)
 	}
 
 	static emptyRef(options: CollectionOptions = {}) {
