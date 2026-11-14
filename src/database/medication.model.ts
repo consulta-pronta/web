@@ -125,11 +125,17 @@ export default class Medication extends BaseDocument {
 	}
 
 	getDoseString() {
-		return `${this.dose_value} ${this.dose_unit}`
+		const doseUnit = this.dose_value > 1
+			? this.dose_unit === "unidade_internacional" ? "unidades_internacionais" : this.dose_unit + "s"
+			: this.dose_unit
+		return `${this.dose_value} ${doseUnit.replace("_", " ")}`
 	}
 
 	getFrequencyString() {
-		return `${this.frequency_value} ${this.frequency_unit}`
+		const frequencyUnit = this.frequency_value > 1
+			? this.frequency_unit === "mes" ? "meses" : this.frequency_unit + "s"
+			: this.frequency_unit
+		return `${this.frequency_value} ${frequencyUnit}`
 	}
 
 	private static addFrequency(

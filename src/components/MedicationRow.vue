@@ -26,7 +26,7 @@ function onChange(event: Event) {
 
 		<td>{{ medication.getDoseString() }}</td>
 
-		<td>{{ medication.getFrequencyString() }}</td>
+		<td>A cada {{ medication.getFrequencyString() }}</td>
 
 		<td>{{ capitalize(medication.route) }}</td>
 

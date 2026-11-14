@@ -1,20 +1,19 @@
 <script setup lang="ts">
-import { ref } from "vue"
+import { ref, useTemplateRef } from "vue"
 import { useNavbarStore } from "@/stores/navbarStore"
 import { useAuthStore } from "@/stores/authStore"
 import BaseLogo from "@/components/bases/BaseLogo.vue"
 import BaseLink from "@/components/bases/BaseLink.vue"
 import BaseButton, { type BaseButtonProps } from "@/components/bases/BaseButton.vue"
-import { auth } from "@/database/firebase"
-import { signOut } from "firebase/auth"
+import BaseDialog from "@/components/bases/BaseDialog.vue"
 import type { UserType } from "@/utils"
-import router from "@/router/index"
 
 const navbarStore = useNavbarStore()
 const authStore = useAuthStore()
 
 const userType = ref<UserType | null>(null)
 const openedMobile = ref(false)
+const logoutDialog = useTemplateRef("logoutDialog")
 
 const sharedAttributes = <BaseButtonProps>{
 	theme: "textLight",
@@ -23,15 +22,6 @@ const sharedAttributes = <BaseButtonProps>{
 
 const openMobile = () => {
 	openedMobile.value = !openedMobile.value
-}
-
-const logout = async () => {
-	try {
-		await signOut(auth)
-		router.push("/login")
-	} catch (error) {
-		console.error(error)
-	}
 }
 
 authStore.onReady((data) => {
@@ -177,8 +167,9 @@ authStore.onReady((data) => {
 				</BaseLink>
 
 				<BaseLink
-					to="logout"
+					to="/logout"
 					class="nav-link text-error!"
+					@click.capture.prevent="logoutDialog?.show()"
 				>
 					<span class="material-symbols-rounded select-none text-3xl!">logout</span>
 					<p>Sair</p>
@@ -186,6 +177,29 @@ authStore.onReady((data) => {
 			</nav>
 		</section>
 	</aside>
+
+	<Teleport to="body">
+		<BaseDialog title="Confirmar saída" ref="logoutDialog">
+			<p class="text-center">Tem certeza de que deseja sair da sua conta?</p>
+			<div class="flex justify-end gap-3 mt-6">
+				<BaseLink to="/logout">
+					<BaseButton
+						theme="textLight"
+						mode="transparent"
+						icon="logout"
+					>
+						Sair
+					</BaseButton>
+				</BaseLink>
+				<BaseButton
+					theme="accent"
+					@click="logoutDialog?.hide()"
+				>
+					Cancelar
+				</BaseButton>
+			</div>
+		</BaseDialog>
+	</Teleport>
 </template>
 
 <style scoped>
