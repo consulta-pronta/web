@@ -18,5 +18,5 @@ onUnmounted(() => {
 </script>
 
 <template>
-	<RouterView :key="$route.path" />
+	<RouterView :key="$route.name" />
 </template>

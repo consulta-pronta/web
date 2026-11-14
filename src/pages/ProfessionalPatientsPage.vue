@@ -17,7 +17,8 @@ const route = useRoute()
 const authStore = useAuthStore()
 
 const medicalPermissions = ref<MedicalPermission[]>([])
-const loading = ref(true)
+const loadingPatients = ref(true)
+const loadingCurrentPatient = ref(false)
 const loadMessage = ref("")
 const currentPatientId = ref<string>("")
 const searchQuery = ref("")
@@ -25,7 +26,7 @@ const searchQuery = ref("")
 const rootPath = "/" + route.path.split("/")[1]
 
 const updatePatients = async () => {
-	loading.value = true
+	loadingPatients.value = true
 	loadMessage.value = ""
 
 	try {
@@ -42,7 +43,7 @@ const updatePatients = async () => {
 		console.error("Failed to load professional's medical permissions.", error)
 		loadMessage.value = "Não foi possível carregar os pacientes."
 	} finally {
-		loading.value = false
+		loadingPatients.value = false
 	}
 }
 
@@ -81,30 +82,37 @@ authStore.onReady(async () => {
 			</section>
 		</HeaderWrapper>
 
-		<p class="text-textLight text-2xl mb-4">
-			{{ medicalPermissions.length }} Pacientes
-		</p>
-
 		<DefaultContentWrapper
 			class="max-h-full overflow-hidden scrollbar-track-transparent scrollbar-thumb-accent"
 		>
 		
-			<BaseCardList
-				v-if="medicalPermissions.length || loading"
-				:is-loading="loading"
-				min-width="25em"
-				class="w-full"
+			<div
+				class="w-full flex flex-col gap-4"
+				:class="[!currentPatientId ? '' : 'hidden lg:flex lg:w-120']"
 			>
-				<PermissionCard
-					v-for="permission in medicalPermissions" 
-					:key="permission.patient_id"
-					:medical-permission="permission"
-					:search-query="searchQuery"
-				/>
-			</BaseCardList>
+				<p class="text-textLight text-2xl mb-4">
+					{{ medicalPermissions.length }} Pacientes
+				</p>
+
+				<!-- TODO patient selected stop w-full -->
+				<BaseCardList
+					v-if="medicalPermissions.length || loadingPatients"
+					:is-loading="loadingPatients"
+					min-width="25em"
+					class="w-full max-h-full overflow-y-auto"
+				>
+					<PermissionCard
+						v-for="permission in medicalPermissions" 
+						:key="permission.patient_id"
+						:medical-permission="permission"
+						:search-query="searchQuery"
+						@click="viewPatient(permission.patient_id)"
+					/>
+				</BaseCardList>
+			</div>
 
 			<p
-				v-if="!loading && !medicalPermissions.length && loadMessage" 
+				v-if="!loadingPatients && !medicalPermissions.length && loadMessage" 
 				class="text-textLight m-auto"
 			>
 				{{ loadMessage }}
@@ -126,7 +134,11 @@ authStore.onReady(async () => {
 
 				<br />
 
-				<PatientExtended ref="areaDescription" class="w-full" />
+				<PatientExtended
+					v-model="currentPatientId"
+					ref="areaDescription"
+					class="w-full"
+				/>
 			</section>
 		</DefaultContentWrapper>
 	</PageWrapper>

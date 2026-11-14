@@ -14,7 +14,7 @@ const emit = defineEmits<{
 	<button
 		type="button"
 		@click="emit('selected', patient)"
-		class="w-full flex rounded-md p-3 bg-surface text-primaryDark items-center hover:brightness-95 cursor-pointer"
+		class="flex rounded-md p-3 bg-surface text-primaryDark items-center hover:brightness-95 cursor-pointer"
 	>
 		<section class="flex flex-col w-full text-start pl-6">
 			<p class="font-medium text-2xl oneliner">

@@ -8,7 +8,7 @@ import BaseButton, { type BaseButtonProps } from "@/components/bases/BaseButton.
 import { auth } from "@/database/firebase"
 import { signOut } from "firebase/auth"
 import type { UserType } from "@/utils"
-import router from "@/router/index.ts"
+import router from "@/router/index"
 
 const navbarStore = useNavbarStore()
 const authStore = useAuthStore()
@@ -168,11 +168,12 @@ authStore.onReady((data) => {
 				</BaseButton>
 
 				<BaseLink
+					v-if="userType != 'admin'"
 					to="perfil"
 					class="nav-link"
 				>
-					<span class="material-symbols-rounded select-none text-3xl!">logout</span>
-					<p>Sair</p>
+					<span class="material-symbols-rounded select-none text-3xl!">person</span>
+					<p>Perfil</p>
 				</BaseLink>
 
 				<BaseLink

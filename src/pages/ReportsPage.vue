@@ -178,14 +178,17 @@ authStore.onReady(async (user) => {
 					{{ loadError }}
 				</p>
 
-				<BaseCardList :is-loading="loadingPatients" class="w-full flex flex-col gap-2">
-					<li v-for="patient in filteredPatients" :key="patient.cpf">
-						<PatientCard
-							:class="currentPatient === patient ? 'bg-accent!' : ''"
-							:patient="patient"
-							@selected="selectPatient(patient)"
-						/>
-					</li>
+				<BaseCardList
+					:is-loading="loadingPatients"
+					class="w-full flex flex-col gap-2"
+				>
+					<PatientCard
+						v-for="patient in filteredPatients" 
+						:key="patient.cpf"
+						:class="currentPatient === patient ? 'bg-accent!' : ''"
+						:patient="patient"
+						@selected="selectPatient(patient)"
+					/>
 				</BaseCardList>
 			</div>
 

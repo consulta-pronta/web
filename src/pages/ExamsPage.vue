@@ -169,13 +169,13 @@ authStore.onReady(async (user) => {
 				</p>
 
 				<BaseCardList :is-loading="loadingPatients" class="w-full flex flex-col gap-2">
-					<li v-for="item in filteredProfessionalData" :key="item.patient.id">
-						<PatientCard
-							:class="currentPatient === item.patient ? 'bg-accent!' : ''"
-							:patient="item.patient"
-							@selected="selectPatient(item)"
-						/>
-					</li>
+					<PatientCard
+						v-for="item in filteredProfessionalData" 
+						:key="item.patient.id"
+						:class="currentPatient === item.patient ? 'bg-accent!' : ''"
+						:patient="item.patient"
+						@selected="selectPatient(item)"
+					/>
 				</BaseCardList>
 			</div>
 
