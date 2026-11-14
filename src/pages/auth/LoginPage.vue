@@ -2,12 +2,13 @@
 import { ref, type Ref } from "vue"
 import { useRouter } from "vue-router"
 
-import AuthBackground from "@/components/AuthBackground.vue"
 import BaseButton, { type ButtonState } from "@/components/bases/BaseButton.vue"
+import BaseLink from "@/components/bases/BaseLink.vue"
 import BaseInput from "@/components/bases/BaseInput.vue"
 import BaseLogo from "@/components/bases/BaseLogo.vue"
 
 import { useSignInStore } from "@/stores/signInStore"
+import AuthPageWrapper from "@/components/wrappers/AuthPageWrapper.vue"
 
 const signInStore = useSignInStore()
 const buttonState: Ref<ButtonState> = ref("enabled")
@@ -18,7 +19,7 @@ const login = async () => {
 
 	try {
 		await signInStore.signIn()
-		router.push("dashboard")
+		router.push("/")
 	} catch (error) {
 		console.error(error)
 	} finally {
@@ -28,7 +29,7 @@ const login = async () => {
 </script>
 
 <template>
-	<AuthBackground>
+	<AuthPageWrapper>
 		<BaseLogo text complete />
 		<div class="lg:w-1/2 box-border items-center justify-center flex flex-col">
 			<div class="text-4xl sm:text-5xl xl:text-6xl text-surface font-bold mb-1">
@@ -72,17 +73,17 @@ const login = async () => {
 					Entrar
 				</BaseButton>
 
-				<RouterLink to="cadastro">
+				<BaseLink to="cadastro">
 					<p class="text-textLight">
 						Nâo possui conta?
-						<a href="" class="text-accent">Criar conta</a>
+						<span class="text-accent">Criar conta</span>
 					</p>
-				</RouterLink>
+				</BaseLink>
 
-				<RouterLink to="recuperar-senha">
+				<BaseLink to="recuperar-senha">
 					<p class="text-accent">Esqueceu a senha?</p>
-				</RouterLink>
+				</BaseLink>
 			</form>
 		</div>
-	</AuthBackground>
+	</AuthPageWrapper>
 </template>

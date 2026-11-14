@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Exam from "@/database/exam.model"
-import { DATE_NOT_PROVIDED, toBrazilianLocaleDate } from "@/utils"
+import { toBrazilianLocaleDate } from "@/utils"
 import { computed } from "vue"
 
 const props = defineProps<{
@@ -15,30 +15,39 @@ const typeIcon = computed(() => {
 			return "radiology"
 		case "urina":
 			return "colorize"
-		default:
-			return "broken_image"
+		default: {
+			switch (props.exam.category) {
+				case "laboratorial":
+					return "bloodtype"
+				case "imagem":
+					return "radiology"
+				case "funcional":
+					return "monitor_heart"
+				case "preventivo":
+					return "health_and_safety"
+				default:
+					return "broken_image"
+			}
+		}
 	}
 })
 
 const date = computed(() => {
-	const date = props.exam.date?.toDate()
-	if (!date) return DATE_NOT_PROVIDED
-
-	return toBrazilianLocaleDate(date)
+	return toBrazilianLocaleDate(props.exam.date?.toDate())
 })
 
 const status = computed(() => {
 	switch (props.exam.status) {
 		case "solicitado":
-			return "Agendado"
+			return "Solicitado"
 		case "triagem":
-			return "Em andamento"
+			return "Em triagem"
 		case "liberado":
 			return "Resultado liberado"
 		case "pendente":
 			return "Ação pendente"
 		default:
-			return "Desconhecio"
+			return "Desconhecido"
 	}
 })
 const statusIcon = computed(() => {
@@ -58,7 +67,7 @@ const statusIcon = computed(() => {
 </script>
 
 <template>
-	<tr>
+	<tr class="*:py-2 *:px-3 *:text-center hover:bg-primaryLight/50">
 		<td>
 			<div class="flex gap-2">
 				<span class="material-symbols-rounded select-none">
@@ -70,12 +79,13 @@ const statusIcon = computed(() => {
 		<td>{{ exam.place }}</td>
 		<td>{{ date }}</td>
 		<td>
-			<div class="flex gap-2">
+			<div class="flex gap-1 justify-center">
 				<p>{{ status }}</p>
 				<span class="material-symbols-rounded select-none">
 					{{ statusIcon }}
 				</span>
 			</div>
 		</td>
+		<td></td>
 	</tr>
 </template>

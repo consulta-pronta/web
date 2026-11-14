@@ -119,6 +119,38 @@ export default class Symptom extends BaseDocument {
 			.sort((a, b) => b.date_time!.toMillis() - a.date_time!.toMillis())
 	}
 
+	static getMostAffectedArea(symptoms: Symptom[]): { area: string; amount: number } | null {
+		const areas = new Map<string, Symptom[]>()
+		for (const symptom of symptoms) {
+			if (!symptom.place) continue
+			const areaSymptoms = areas.get(symptom.place) ?? []
+			areaSymptoms.push(symptom)
+			areas.set(symptom.place, areaSymptoms)
+		}
+
+		let mostAffectedArea: { area: string; symptoms: Symptom[] } | null = null
+		for (const [area, areaSymptoms] of areas) {
+			if (!mostAffectedArea || areaSymptoms.length > mostAffectedArea.symptoms.length) {
+				mostAffectedArea = { area, symptoms: areaSymptoms }
+			}
+		}
+
+		if (!mostAffectedArea) return null
+
+		const { area, symptoms: areaSymptoms } = mostAffectedArea
+		return {
+			area,
+			amount: areaSymptoms.length,
+		}
+	}
+
+	static getAverageIntensity(symptoms: Symptom[]): number | null {
+		if (symptoms.length === 0) return null
+
+		const total = symptoms.reduce((total, symptom) => total + symptom.intensity, 0)
+		return total / symptoms.length
+	}
+
 	static async set(data: FormData, options: CollectionOptions = {}) {
 		return super.set(data, options)
 	}
@@ -142,6 +174,6 @@ export default class Symptom extends BaseDocument {
 	}
 
 	static async delete(id: string, options: CollectionOptions = {}) {
-		this.delete(id, options)
+		return super.delete(id, options)
 	}
 }

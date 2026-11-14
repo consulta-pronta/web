@@ -2,12 +2,9 @@
 import BaseButton from "@/components/bases/BaseButton.vue"
 import { computed, ref } from "vue"
 import type MedicalPermission from "@/database/medicalPermission.model"
-import type {
-	MedicalAccessStatus,
-	MedicalPermissions,
-} from "@/database/medicalPermission.model"
-import BaseSwitch from "../bases/BaseSwitch.vue";
-import BaseCardCheck from "../bases/BaseCardCheck.vue";
+import type { MedicalAccessStatus, MedicalPermissions } from "@/database/medicalPermission.model"
+import BaseSwitch from "../bases/BaseSwitch.vue"
+import BaseCardCheck from "../bases/BaseCardCheck.vue"
 
 const props = defineProps<{
 	medicalPermission: MedicalPermission
@@ -29,7 +26,7 @@ const submitForm = () => {
 	const thing = props.medicalPermission.isPending()
 		? { status: <MedicalAccessStatus>"pending", permissions }
 		: { status: permission.value.status, permissions }
-	
+
 	emit("handled-submit", thing)
 	permission.value = thing
 }

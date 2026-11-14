@@ -11,10 +11,7 @@ interface BaseFilterProps {
 	label?: string
 }
 
-const props = withDefaults(
-	defineProps<BaseFilterProps>(),
-	{ label: "Filtrar" },
-)
+const props = withDefaults(defineProps<BaseFilterProps>(), { label: "Filtrar" })
 
 const isOpen = ref(false)
 
@@ -42,7 +39,9 @@ const selectedValue = defineModel<string | null>({ default: null })
 				:aria-pressed="selectedValue === null"
 				:class="[
 					'rounded-4xl px-3 py-1',
-					selectedValue === null ? 'bg-accent text-textDark' : 'bg-primary text-textLight',
+					selectedValue === null
+						? 'bg-accent text-textDark'
+						: 'bg-primary text-textLight',
 				]"
 				@click="selectedValue = null"
 			>

@@ -1,10 +1,9 @@
 <script setup lang="ts">
-
 const props = defineProps<{
-	value1: unknown,
-	label1: string,
-	value2: unknown,
-	label2: string,
+	value1: unknown
+	label1: string
+	value2: unknown
+	label2: string
 	disabled?: boolean
 }>()
 
@@ -12,7 +11,9 @@ const status = defineModel<unknown>()
 
 const isFirst = () => status.value === props.value1
 const toggle = () => {
-	if (props.disabled) { return }
+	if (props.disabled) {
+		return
+	}
 	status.value = isFirst() ? props.value2 : props.value1
 }
 </script>
@@ -27,21 +28,11 @@ const toggle = () => {
 			:class="isFirst() ? 'left-1' : 'left-[calc(100%-0.25rem-10rem)]'"
 		></div>
 
-		<button
-			type="button"
-			@click="toggle"
-			class="boogieman"
-			:class="isFirst() ? 'active' : ''"
-		>
+		<button type="button" @click="toggle" class="boogieman" :class="isFirst() ? 'active' : ''">
 			{{ label1 }}
 		</button>
 
-		<button
-			type="button"
-			@click="toggle"
-			class="boogieman"
-			:class="!isFirst() ? 'active' : ''"
-		>
+		<button type="button" @click="toggle" class="boogieman" :class="!isFirst() ? 'active' : ''">
 			{{ label2 }}
 		</button>
 	</div>

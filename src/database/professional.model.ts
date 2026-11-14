@@ -15,11 +15,19 @@ import {
 } from "firebase/firestore"
 import type { FormData } from "./baseDocument"
 import { db } from "@/database/firebase"
+import MedicalPermission from "./medicalPermission.model"
+import Patient from "./patient.model"
 
 export type ProfessionalData = {
 	crm: string
 	uf: FederalUnit
 	operation_area: string
+	specialty: string
+}
+
+export type PatientWithProfessionalPermission = {
+	patient: Patient
+	permissions: MedicalPermission
 }
 
 export default class Professional extends User {
@@ -27,11 +35,16 @@ export default class Professional extends User {
 		public readonly id: string = "",
 		public email: string = "",
 		public name: string = "",
+		public social_name: string = "",
 		public phone: string = "",
 		public cpf: string = "",
 		public user_type: UserType = "professional",
 		public professional_data: ProfessionalData | null = null,
 		public created_at: Timestamp | null = null,
+		public birth_date: string = "",
+		public gender: string = "",
+		public biological_sex: string = "",
+		public address: string = "",
 	) {
 		super()
 	}
@@ -40,9 +53,7 @@ export default class Professional extends User {
 
 	static async getByEmail(email: string) {
 		const snapshot = await Professional.getAll({
-			constraints: [
-				where("email", "==", email.trim()),
-			],
+			constraints: [where("email", "==", email.trim())],
 			compositeConstraints: [
 				or(
 					where("user_type", "==", "professional"),
@@ -51,7 +62,7 @@ export default class Professional extends User {
 			],
 		})
 
-		return (snapshot.length === 0) ? null : snapshot[0] as Professional
+		return snapshot.length === 0 ? null : (snapshot[0] as Professional)
 	}
 
 	static get requestCollection() {
@@ -71,11 +82,16 @@ export default class Professional extends User {
 			id,
 			data.email,
 			data.name,
+			data.social_name,
 			data.phone,
 			data.cpf,
 			"professional",
 			this.getProfessionalData(data),
 			data.created_at,
+			data.birth_date,
+			data.gender,
+			data.biological_sex,
+			data.address,
 		)
 	}
 
@@ -85,7 +101,8 @@ export default class Professional extends User {
 			<ProfessionalData>{
 				crm: data.data_profissional.crm,
 				uf: data.data_profissional.uf,
-				operation_area: data.data_profissional.local_atuacao,
+				operation_area: data.data_profissional.operation_area,
+				specialty: data.data_profissional.specialty,
 			}
 		)
 	}
@@ -94,11 +111,16 @@ export default class Professional extends User {
 		return {
 			email: this.email,
 			name: this.name,
+			social_name: this.social_name,
 			phone: this.phone,
 			cpf: this.cpf,
 			user_type: this.user_type,
 			professional_data: this.professional_data,
 			created_at: serverTimestamp(),
+			birth_date: this.birth_date,
+			gender: this.gender,
+			biological_sex: this.biological_sex,
+			address: this.address,
 		}
 	}
 
@@ -131,7 +153,39 @@ export default class Professional extends User {
 		if (!this.professional_data) {
 			return ""
 		}
-	
+
 		return formatCRM(this.professional_data.crm, this.professional_data.uf)
+	}
+
+	async getMedicalPermissions() {
+		return await MedicalPermission.getAllForProfessional(this.id)
+	}
+
+	async getPatients(onlyActive = true) {
+		return (
+			await Promise.all(
+				(await this.getMedicalPermissions())
+					.filter((item) => !onlyActive || item.status === "active")
+					.map(async (item) => await item.getPatient()),
+			)
+		).filter((item) => item != null)
+	}
+
+	async getPatientsWithPermissions() {
+		const permissions = await this.getMedicalPermissions()
+
+		return (
+			await Promise.all(
+				permissions
+					.filter((item) => item.status === "active")
+					.map(
+						async (item) =>
+							({
+								patient: await item.getPatient(),
+								permissions: item,
+							}) as PatientWithProfessionalPermission,
+					),
+			)
+		).filter((item) => item != null && item.patient != null && item.permissions != null)
 	}
 }

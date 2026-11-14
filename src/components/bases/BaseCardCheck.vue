@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted } from "vue";
+import { computed, onMounted } from "vue"
 
 interface BaseCardCheckProps {
 	type?: "checkbox" | "radio"
@@ -9,20 +9,15 @@ interface BaseCardCheckProps {
 	default?: boolean
 }
 
-const props = withDefaults(
-	defineProps<BaseCardCheckProps>(),
-	{
-		type: "checkbox",
-		onfocus: "light",
-	},
-)
+const props = withDefaults(defineProps<BaseCardCheckProps>(), {
+	type: "checkbox",
+	onfocus: "light",
+})
 
 const value = defineModel<boolean>()
 
 const checkedStyle = computed(() =>
-	props.onfocus === "light"
-		? "bg-accent! text-primaryDark!"
-		: "bg-primary! text-primaryLight!"
+	props.onfocus === "light" ? "bg-accent! text-primaryDark!" : "bg-primary! text-primaryLight!",
 )
 
 onMounted(() => {

@@ -1,5 +1,6 @@
 import { formatDate } from "@vueuse/core"
-import type { Timestamp } from "firebase/firestore"
+import { Timestamp } from "firebase/firestore"
+import type BaseDocument from "./database/baseDocument"
 
 export const federalUnits = [
 	"AC",
@@ -49,6 +50,8 @@ export const symptomPlaces = [
 	"Vagina",
 	"Pênis",
 ] as const
+export const sexTypes = ["Masculino", "Feminino", "Intersexo", "Prefiro não informar"] as const
+export const genderTypes = ["Homem cisgênero", "Mulher cisgênero", "Homem transexual", "Mulher transexual", "Pessoa não binária", "Prefiro não informar"]
 export const bloodTypes = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"] as const
 export const userTypes = ["patient", "professional", "admin"] as const
 export const DATE_NOT_PROVIDED = "Data não informada"
@@ -62,15 +65,37 @@ export type SortDirection = "asc" | "desc"
 export const inputDateToDate = (date: string) => new Date(`${date}T00:00`)
 
 export const toCoolDate = (date: Date | null | undefined) =>
-	date ? formatDate(date, "DD MMM YYYY") : DATE_NOT_PROVIDED
+	date ? formatDate(date, "DD MMM YYYY", { locales: "pt-BR" }) : DATE_NOT_PROVIDED
+
+export const toBrazilianDate = (date: Date | null | undefined) =>
+	date ? date.toLocaleString("pt-BR") : DATE_NOT_PROVIDED
 
 export const toBrazilianLocaleDate = (date: Date | null | undefined) =>
-	date ? formatDate(date, "d 'de' MMM 'de' yyyy") : DATE_NOT_PROVIDED
+	date ? formatDate(date, "D [de] MMM [de] YYYY", { locales: "pt-BR" }) : DATE_NOT_PROVIDED
 
-export const timestampDiffSeconds = (start: Timestamp, end: Timestamp) =>
-	(end.toMillis() - start.toMillis()) / 1000
+export const normalizeString = (value: string) =>
+	value
+		.normalize()
+		.replace(/\p{Diacritic}/gu, "")
+		.toLocaleLowerCase()
+		.trim()
+
+export const timestampDiffSeconds = (start: Timestamp, end: Timestamp, reversed = false) =>
+	((end.toMillis() - start.toMillis()) / 1000) * (reversed ? -1 : 1)
 
 export const timestampDiffDays = (start: Timestamp, end: Timestamp) =>
 	timestampDiffSeconds(start, end) / (60 * 60 * 24)
 
+export const timestampDiffYears = (start: Timestamp, end: Timestamp) =>
+	timestampDiffSeconds(start, end) / (60 * 60 * 24 * 365) //Tem que negoçar para ano bissexual
+
+export const stringToTimestamp = (date: string) => Timestamp.fromDate(new Date(date))
+
 export const formatCRM = (crm: string, uf: string) => `${crm}/${uf}`
+
+export const changeTitle = (title: string) => (document.title = title)
+
+export const searchDocuments = (docs: BaseDocument[], query: string) => {
+	const normalizedQuery = normalizeString(query)
+	return docs.filter((doc) => doc.search(normalizedQuery, true))
+}

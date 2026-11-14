@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { computed, ref, useTemplateRef, watch } from "vue"
 import { useRouter } from "vue-router"
-
-import AuthBackground from "@/components/AuthBackground.vue"
+import AuthPageWrapper from "@/components/wrappers/AuthPageWrapper.vue"
 import BaseLogo from "@/components/bases/BaseLogo.vue"
+import BaseLink from "@/components/bases/BaseLink.vue"
 import BaseButton, { type ButtonState } from "@/components/bases/BaseButton.vue"
 import BaseInput, { type BaseInputProps } from "@/components/bases/BaseInput.vue"
 import BaseSelect from "@/components/bases/BaseSelect.vue"
 import { useSignUpStore } from "@/stores/signUpStore"
-import { bloodTypes, federalUnits, type UserType } from "@/utils"
+import { bloodTypes, federalUnits, genderTypes, sexTypes } from "@/utils"
 import PasswordRules from "@/components/cards/PasswordRules.vue"
 import BaseSwitch from "@/components/bases/BaseSwitch.vue"
 
@@ -101,8 +101,9 @@ const sharedAttributes: Uhh = {
 	class: "w-full",
 }
 </script>
+
 <template>
-	<AuthBackground>
+	<AuthPageWrapper>
 		<BaseLogo text complete />
 
 		<div class="lg:w-1/2 box-border items-center justify-center flex flex-col">
@@ -181,6 +182,20 @@ const sharedAttributes: Uhh = {
 						icon="phone"
 						v-model="signUpStore.phone"
 					/>
+					<BaseInput
+						v-bind="sharedAttributes"
+						type="text"
+						placeholder="Endereço"
+						icon="location_on"
+						v-model="signUpStore.address"
+					/>
+					<BaseInput
+						v-bind="sharedAttributes"
+						type="date"
+						placeholder="Data de nascimento"
+						icon="calendar_today"
+						v-model="signUpStore.birth_date"
+					/>
 				</template>
 
 				<template v-else>
@@ -192,6 +207,27 @@ const sharedAttributes: Uhh = {
 						v-model="signUpStore.userType"
 					/>
 					<ToggleUser v-model="signUpStore.userType" class="mb-4" />
+					<BaseSelect
+						v-bind="sharedAttributes"
+						default-value="Sexo biológico"
+						icon="wc"
+						v-model="signUpStore.biological_sex"
+					>
+						<template v-for="tipo in sexTypes" :key="tipo">
+							<option :value="tipo">{{ tipo }}</option>
+						</template>
+					</BaseSelect>
+					<BaseSelect
+						v-bind="sharedAttributes"
+						default-value="Identidade de gênero"
+						icon="transgender"
+						v-model="signUpStore.gender"
+					>
+						<template v-for="tipo in genderTypes" :key="tipo">
+							<option :value="tipo">{{ tipo }}</option>
+						</template>
+					</BaseSelect>
+
 					<template v-if="signUpStore.userType === 'professional'">
 						<fieldset class="w-full flex flex-row gap-3">
 							<BaseInput
@@ -216,6 +252,13 @@ const sharedAttributes: Uhh = {
 								</template>
 							</BaseSelect>
 						</fieldset>
+						<BaseInput
+							v-bind="sharedAttributes"
+							placeholder="Especialidade"
+							icon="stethoscope"
+							required
+							v-model="signUpStore.professionalData.specialty"
+						/>
 						<BaseInput
 							v-bind="sharedAttributes"
 							placeholder="Local de atuação"
@@ -286,14 +329,14 @@ const sharedAttributes: Uhh = {
 					</BaseButton>
 				</div>
 
-				<RouterLink to="login">
+				<BaseLink to="login">
 					<p v-if="currentStep === 1" class="text-textLight text-center">
-						Já possui conta? <a href="" class="text-accent">Fazer login</a>
+						Já possui conta? <span class="text-accent">Fazer login</span>
 					</p>
-				</RouterLink>
+				</BaseLink>
 			</form>
 		</div>
-	</AuthBackground>
+	</AuthPageWrapper>
 </template>
 
 <style scoped>

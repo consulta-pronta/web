@@ -71,7 +71,7 @@ const borderColor = computed(() => {
 			return "border-textDark"
 	}
 })
-const backgroundColor = computed(() => props.mode === "fill" ? props.theme : "transparent")
+const backgroundColor = computed(() => (props.mode === "fill" ? props.theme : "transparent"))
 
 const dynamicStyle = computed(() => [
 	`bg-${backgroundColor.value} ${textColor.value}`,
@@ -86,16 +86,20 @@ const redirect = () => {
 	}
 }
 
-watch(() => props.goto, (value) => {
-	if (value === "#") {
-		stateModel.value = "disabled"
-	}
-}, { immediate: true })
+watch(
+	() => props.goto,
+	(value) => {
+		if (value === "#") {
+			stateModel.value = "disabled"
+		}
+	},
+	{ immediate: true },
+)
 </script>
 
 <template>
 	<button
-		class="px-5 rounded-md h-11 flex flex-row items-center"
+		class="px-5 rounded-md h-11 flex flex-row items-center gap-2"
 		:type="type"
 		:disabled="stateModel !== 'enabled'"
 		:class="[dynamicStyle, isDisabled ? 'contrast-50' : 'cursor-pointer hover:brightness-90']"

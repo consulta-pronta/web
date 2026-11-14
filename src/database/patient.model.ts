@@ -2,6 +2,7 @@ import type { BloodType, UserType } from "@/utils"
 import User from "./user.model"
 import { serverTimestamp, type DocumentData, type Timestamp } from "firebase/firestore"
 import type { FormData } from "./baseDocument"
+import MedicalPermission from "./medicalPermission.model"
 
 export type PatientData = {
 	weight: number
@@ -14,11 +15,16 @@ export default class Patient extends User {
 		public readonly id: string = "",
 		public email: string = "",
 		public name: string = "",
+		public social_name: string = "",
 		public phone: string = "",
 		public cpf: string = "",
 		public user_type: UserType = "patient",
 		public patient_data: PatientData | null = null,
 		public created_at: Timestamp | null = null,
+		public birth_date: string = "",
+		public gender: string = "",
+		public biological_sex: string = "",
+		public address: string = "",
 	) {
 		super()
 	}
@@ -28,11 +34,16 @@ export default class Patient extends User {
 			id,
 			data.email,
 			data.name,
+			data.social_name,
 			data.phone,
 			data.cpf,
 			"patient",
 			this.getPatientData(data),
 			data.created_at,
+			data.birth_date,
+			data.gender,
+			data.biological_sex,
+			data.address,
 		)
 	}
 
@@ -51,15 +62,36 @@ export default class Patient extends User {
 		return {
 			email: this.email,
 			name: this.name,
+			social_name: this.social_name,
 			phone: this.phone,
 			cpf: this.cpf,
 			user_type: this.user_type,
 			patient_data: this.patient_data,
 			created_at: serverTimestamp(),
+			birth_date: this.birth_date,
+			gender: this.gender,
+			biological_sex: this.biological_sex,
+			address: this.address,
 		}
 	}
-	
+
 	static async get(id: string) {
 		return super.get(id) as Promise<Patient | null>
+	}
+
+	async getMedicalPermissions() {
+		return (await MedicalPermission.getAll({
+			scope: { patientId: this.id },
+		})) as MedicalPermission[]
+	}
+
+	async getProfessionals(onlyActive = true) {
+		return (
+			await Promise.all(
+				(await this.getMedicalPermissions())
+					.filter((item) => !onlyActive || item.status === "active")
+					.map(async (item) => await item.getProfessional()),
+			)
+		).filter((item) => item != null)
 	}
 }

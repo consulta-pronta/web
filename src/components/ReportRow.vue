@@ -4,110 +4,106 @@ import BaseDialog from "@/components/bases/BaseDialog.vue"
 import BaseButton from "@/components/bases/BaseButton.vue"
 import BaseInput from "@/components/bases/BaseInput.vue"
 import type Report from "@/database/report.model"
-import { onClickOutside } from "@vueuse/core"
-import ReportExtended from "@/components/ReportExtended.vue"
+import { ContextMenu, ContextMenuItem, type MenuOptions } from "@imengyu/vue3-context-menu"
+import { toCoolDate } from "@/utils"
 
 const props = defineProps<{
 	report: Report
 }>()
+const emit = defineEmits<{
+	selected: [report: Report]
+}>()
 
-const focused = ref(false)
+const menuShow = ref(false)
+const menuOptions = ref<MenuOptions>({
+	theme: "cp-light",
+	minWidth: 230,
+	x: 0,
+	y: 0,
+})
 
-const popup = useTemplateRef("popup")
 const allowedProfessionals = useTemplateRef("allowedProfessionals")
 const formRename = useTemplateRef("formRename")
-const definePassword = useTemplateRef("definePassword")
-const viewReport = useTemplateRef("viewReport")
 
 const reportDateTime = computed(() => props.report.created_at?.toDate())
+const durationDays = computed(() => props.report.getDurationDays())
 
-const toggle = () => {
-	focused.value = !focused.value
+const openMenu = (e: MouseEvent) => {
+	menuShow.value = true
+	menuOptions.value.x = e.x
+	menuOptions.value.y = e.y
 }
-
-onClickOutside(popup, () => {
-	focused.value = false
-})
 </script>
 
 <template>
-	<tr class="border-t border-primaryDark">
-		<td class="font-medium flex justify-center items-center relative m-1.5">
-			<span
-				class="material-symbols-rounded text-base! md:text-2xl! text-primarydark absolute left-1 md:left-3"
+	<tr
+		class="cursor-pointer transition-colors hover:bg-primaryLight/50 px-2"
+		@click="emit('selected', report)"
+		@contextmenu.prevent="openMenu($event)"
+	>
+		<td class="font-medium">
+			<span class="truncate pl-3">{{ report.title }}</span>
+		</td>
+
+		<td class="text-center">
+			{{
+				durationDays === null
+					? "—"
+					: `${durationDays} ${durationDays === 1 ? "dia" : "dias"}`
+			}}
+		</td>
+
+		<td class="text-center text-sm">
+			<time v-if="reportDateTime" :datetime="reportDateTime.toISOString()">
+				{{ toCoolDate(reportDateTime) }}
+				
+				<span class="block text-xs text-textDark/60">
+					{{
+						reportDateTime.toLocaleTimeString("pt-BR", {
+							hour: "2-digit",
+							minute: "2-digit",
+						})
+					}}
+				</span>
+			</time>
+			<span v-else>—</span>
+		</td>
+
+		<td class="text-center">
+			<button
+				type="button"
+				class="cursor-pointer flex justify-center items-center size-full text-primaryDark"
+				@click.prevent.stop="openMenu($event)"
 			>
-				description
-			</span>
-			<p>
-				{{ report.title }}
-			</p>
+				<span class="material-symbols-rounded rounded-full p-1 hover:bg-primaryDark/10">
+					more_horiz
+				</span>
+			</button>
 		</td>
 
-		<td class="text-center">{{ report.id }}</td>
-
-		<td class="text-center">{{ reportDateTime?.toLocaleDateString() }}</td>
-
-		<td class="relative">
-			<div class="flex justify-center items-center">
-				{{ reportDateTime?.toLocaleTimeString() }}
-				<button
-					type="button"
-					@click="toggle()"
-					class="absolute right-1 md:right-2 cursor-pointer anchor-name-[--botoeira]"
-				>
-					<span class="material-symbols-rounded text-primaryDark">
-						{{ "more_horiz" }}
-					</span>
-				</button>
-			</div>
-		</td>
-
-		<div
-			v-if="focused"
-			ref="popup"
-			class="flex flex-col text-primaryDark absolute right-0 top-[anchor(top)] bg-surface z-10 outline-1 outline-primary rounded-lg p-1 position-anchor-[--botoeira]"
-		>
-			<BaseButton
+		<ContextMenu v-model:show="menuShow" :options="menuOptions">
+			<ContextMenuItem
+				label="Profissionais permitidos"
 				@click="allowedProfessionals?.toggle()"
-				icon="shield_toggle"
-				theme="primaryDark"
-				mode="transparent"
-				class="text-sm! p-2! justify-start"
 			>
-				Profissionais permitidos
-			</BaseButton>
-			<BaseButton
-				@click="formRename?.toggle()"
-				icon="edit_square"
-				theme="primaryDark"
-				mode="transparent"
-				class="text-sm! p-2! justify-start"
-			>
-				Renomear relatório
-			</BaseButton>
-			<BaseButton
-				icon="delete"
-				theme="primaryDark"
-				mode="transparent"
-				class="text-sm! p-2! justify-start"
-			>
-				Apagar relatório
-			</BaseButton>
-			<BaseButton
-				@click="viewReport?.toggle()"
-				icon="visibility"
-				theme="primaryDark"
-				mode="transparent"
-				class="text-sm! p-2! justify-start"
-			>
-				Visualizar relatório
-			</BaseButton>
-		</div>
+				<template #icon>
+					<span class="material-symbols-rounded"> shield_toggle </span>
+				</template>
+			</ContextMenuItem>
+			<ContextMenuItem label="Renomear relatório" @click="formRename?.toggle()">
+				<template #icon>
+					<span class="material-symbols-rounded"> edit_square </span>
+				</template>
+			</ContextMenuItem>
+			<ContextMenuItem label="Apagar relatório" @click="console.log('da')">
+				<template #icon>
+					<span class="material-symbols-rounded"> delete </span>
+				</template>
+			</ContextMenuItem>
+		</ContextMenu>
 	</tr>
 
 	<Teleport to="body">
-		<ReportExtended :report="report" ref="viewReport" />
-
 		<BaseDialog title="Renomear relatório" ref="formRename">
 			<form class="flex flex-col place-items-center relative gap-1">
 				<BaseInput placeholder="Novo nome" icon="edit_square" class="w-full" required />
@@ -119,16 +115,9 @@ onClickOutside(popup, () => {
 		<BaseDialog title="Definir senha" ref="definePassword">
 			<form class="flex flex-col place-items-center relative gap-1">
 				<BaseInput placeholder="Senha" icon="lock" class="w-full" required />
-				<BaseInput
-					placeholder="Confirmar senha"
-					icon="lock"
-					class="w-full"
-					required
-				/>
+				<BaseInput placeholder="Confirmar senha" icon="lock" class="w-full" required />
 
-				<BaseButton type="submit" theme="accent" class="mt-1">
-					Mudar Senha
-				</BaseButton>
+				<BaseButton type="submit" theme="accent" class="mt-1"> Mudar Senha </BaseButton>
 			</form>
 		</BaseDialog>
 
