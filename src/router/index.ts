@@ -1,6 +1,7 @@
 import { changeTitle, type UserType } from "@/utils"
 import { auth } from "@/database/firebase"
 import { useAuthStore } from "@/stores/authStore"
+import { signOut } from "firebase/auth"
 import { createRouter, createWebHistory } from "vue-router"
 
 /*
@@ -105,6 +106,15 @@ const router = createRouter({
 			path: "/logout",
 			name: "logout",
 			component: () => import("@/pages/ProcedureLogout.vue"),
+			beforeEnter: async () => {
+				try {
+					await signOut(auth)
+					return { name: "login" }
+				} catch (error) {
+					console.error("Failed to sign out:", error)
+					return false
+				}
+			},
 			meta: {
 				roles: ["admin", "patient", "professional"],
 				title: "Hora do Logout - @",

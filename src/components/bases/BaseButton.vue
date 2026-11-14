@@ -105,7 +105,10 @@ watch(
 		:class="[dynamicStyle, isDisabled ? 'contrast-50' : 'cursor-pointer hover:brightness-90']"
 		@click="redirect()"
 	>
-		<span class="material-symbols-rounded select-none">
+		<span
+			v-if="icon || state === 'sync'"
+			class="material-symbols-rounded select-none"
+		>
 			<div v-if="state === 'sync'" class="animate-spin">loop</div>
 			<span v-else class="text-3xl!">
 				{{ icon }}
