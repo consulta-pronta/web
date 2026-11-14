@@ -9,6 +9,7 @@ import {
 	getDocs,
 	and,
 	collectionGroup,
+	onSnapshot,
 	query,
 	setDoc,
 	updateDoc,
@@ -57,6 +58,20 @@ export default abstract class BaseDocument {
 
 	static collectionGroup() {
 		return collectionGroup(db, this.collectionName)
+	}
+
+	static listen<T extends BaseDocument>(
+		this: typeof BaseDocument & { prototype: T },
+		callback: (documents: T[]) => void,
+		options: CollectionOptions = {},
+	) {
+		return onSnapshot(this.collection(options), (snapshot) => {
+			const documents = snapshot.docs
+				.map((document) => this.fromDocument<T>(document))
+				.filter((document): document is T => document !== null)
+
+			callback(documents)
+		})
 	}
 
 	static emptyRef(options: CollectionOptions = {}) {

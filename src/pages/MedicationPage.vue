@@ -7,10 +7,7 @@ import FormAddMedical from "@/components/forms/FormAddMedical.vue"
 import { ref, watch, onMounted, onUnmounted, computed } from "vue"
 
 import { useAuthStore } from "@/stores/authStore"
-import Medication, {
-	isMedicationTaken,
-	isTreatmentOver,
-} from "@/database/medication.model"
+import Medication from "@/database/medication.model"
 import PageWrapper from "@/components/wrappers/PageWrapper.vue"
 import HeaderWrapper from "@/components/wrappers/HeaderWrapper.vue"
 import DefaultContentWrapper from "@/components/wrappers/DefaultContentWrapper.vue"
@@ -38,9 +35,12 @@ watch(
 			return
 		}
 
-		unsubscribe = Medication.listen(userId, (list) => {
-			medications.value = list
-		})
+		unsubscribe = Medication.listen(
+			(list) => {
+				medications.value = list
+			},
+			{ scope: { userId } },
+		)
 	},
 	{ immediate: true },
 )
@@ -56,21 +56,15 @@ onUnmounted(() => {
 	unsubscribe?.()
 })
 
-async function toggleTaken(medicationId: string, taken: boolean) {
-	const userId = authStore.user?.uid
-
-	if (!userId) return
-
-	await Medication.markTaken(userId, medicationId, taken)
+const toggleTaken = async (medication: Medication, taken: boolean) => {
+	authStore.onReady(async (guy) => {
+		await medication.markTaken(taken, { scope: { userId: guy.id } })
+	})
 }
 
 const medicationRows = computed(() => {
 	return medications.value
-		.filter((medication) => !isTreatmentOver(medication, now.value))
-		.map((medication) => ({
-			medication,
-			taken: isMedicationTaken(medication, now.value),
-		}))
+		.filter((medication) => !medication.isTreatmentOver(now.value))
 })
 </script>
 
@@ -109,10 +103,10 @@ const medicationRows = computed(() => {
 				</template>
 
 				<MedicationRow
-					v-for="item in medicationRows"
-					:key="item.medication.id"
-					:medication="item.medication"
-					@update:tomado="toggleTaken(item.medication.id, $event)"
+					v-for="medication in medicationRows"
+					:key="medication.id"
+					:medication="medication"
+					@update:tomado="toggleTaken(medication, $event)"
 				/>
 			</BaseTable>
 		</DefaultContentWrapper>

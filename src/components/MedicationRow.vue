@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import type Medication from "@/database/medication.model";
-import { isMedicationTaken } from "@/database/medication.model";
-import { ref } from "vue";
+import { capitalize, ref } from "vue";
 
 const props = defineProps<{
 	medication: Medication
 }>()
 
-const taken = ref(isMedicationTaken(props.medication, Date.now()))
+const taken = ref(props.medication.isTaken(Date.now()))
 
 const emit = defineEmits<{
     (e: "update:tomado", value: boolean): void
@@ -22,14 +21,14 @@ function onChange(event: Event) {
 	<tr class="border-t border-primarydark *:not-first:text-center">
 		<td class="font-medium flex items-center gap-2">
 			<span class="material-symbols-rounded">medication</span>
-			{{ medication.title }}
+			{{ medication.name }}
 		</td>
 
 		<td>{{ medication.getDoseString() }}</td>
 
 		<td>{{ medication.getFrequencyString() }}</td>
 
-		<td>{{ medication.route }}</td>
+		<td>{{ capitalize(medication.route) }}</td>
 
 		<!-- TODO: fix this shit -->
 		<td>

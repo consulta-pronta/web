@@ -23,29 +23,29 @@ const buttonState = ref<ButtonState>("enabled")
 const errorMessage = ref("")
 
 const routes: { value: MedicationRoute; label: string }[] = [
-	{ value: "Oral", label: "Oral" },
-	{ value: "Sublingual", label: "Sublingual" },
-	{ value: "Externo", label: "Externo" },
-	{ value: "Inalatorio", label: "Inalatório" },
-	{ value: "Retal", label: "Retal" },
-	{ value: "Oftalmico", label: "Oftálmico" },
+	{ value: "oral", label: "Oral" },
+	{ value: "sublingual", label: "Sublingual" },
+	{ value: "externo", label: "Externo" },
+	{ value: "inalatorio", label: "Inalatório" },
+	{ value: "retal", label: "Retal" },
+	{ value: "oftalmico", label: "Oftálmico" },
 ]
 
 const doseUnits: { value: MedicationDoseUnit; label: string }[] = [
-	{ value: "Miligrama", label: "mg" },
-	{ value: "Grama", label: "g" },
-	{ value: "Micrograma", label: "mcg" },
-	{ value: "Mililitro", label: "ml" },
-	{ value: "Unidade_Internacional", label: "UI" },
-	{ value: "Tablete", label: "Tablete(s)" },
+	{ value: "miligrama", label: "mg" },
+	{ value: "grama", label: "g" },
+	{ value: "micrograma", label: "mcg" },
+	{ value: "mililitro", label: "ml" },
+	{ value: "unidade_internacional", label: "UI" },
+	{ value: "tablete", label: "Tablete(s)" },
 ]
 
 const frequencyUnits: { value: MedicationFrequencyUnit; label: string }[] = [
-	{ value: "Minuto", label: "minutos" },
-	{ value: "Hora", label: "horas" },
-	{ value: "Dia", label: "dias" },
-	{ value: "Semana", label: "semanas" },
-	{ value: "Mes", label: "meses" },
+	{ value: "minuto", label: "minutos" },
+	{ value: "hora", label: "horas" },
+	{ value: "dia", label: "dias" },
+	{ value: "semana", label: "semanas" },
+	{ value: "mes", label: "meses" },
 ]
 
 const title = ref("")
@@ -53,7 +53,7 @@ const route = ref("")
 const doseValue = ref("")
 const doseUnit = ref("")
 const frequencyValue = ref("")
-const frequencyUnit = ref("Hora")
+const frequencyUnit = ref("hora")
 const durationDays = ref("")
 const startAt = ref<Timestamp | null>(null)
 
@@ -117,7 +117,7 @@ async function submit() {
 <template>
 	<Teleport to="body">
 		<div
-			class="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-4"
+			class="fixed inset-0 z-100 flex items-center justify-center bg-black/60 p-4"
 			@click.self="emit('close')"
 		>
 			<form

@@ -1,53 +1,56 @@
-import { onSnapshot, serverTimestamp, Timestamp } from "firebase/firestore"
-import BaseDocument, { type CollectionScope, type DocumentData, } from "./baseDocument"
+import { serverTimestamp, Timestamp } from "firebase/firestore"
+import BaseDocument, {
+	type CollectionOptions,
+	type CollectionScope,
+	type DocumentData,
+} from "./baseDocument"
 import User from "./user.model"
 
 export type MedicationRoute =
-	| "Oral"
-	| "Sublingual"
-	| "Externo"
-	| "Inalatorio"
-	| "Retal"
-	| "Oftalmico"
-	| "Oftologico"
+	| "oral"
+	| "sublingual"
+	| "externo"
+	| "inalatorio"
+	| "retal"
+	| "oftalmico"
+	| "oftologico"
 
 export type MedicationDoseUnit =
-	| "Miligrama"
-	| "Grama"
-	| "Micrograma"
-	| "Mililitro"
-	| "Unidade_Internacional"
-	| "Tablete"
+	| "miligrama"
+	| "grama"
+	| "micrograma"
+	| "mililitro"
+	| "unidade_internacional"
+	| "tablete"
 
-// Corrigido: "Frenquency" -> "Frequency"
 export type MedicationFrequencyUnit =
-	| "Minuto"
-	| "Hora"
-	| "Dia"
-	| "Semana"
-	| "Mes"
+	| "minuto"
+	| "hora"
+	| "dia"
+	| "semana"
+	| "mes"
 
 export default class Medication extends BaseDocument {
 	constructor(
 		public readonly id: string = "",
-		public title: string = "",
-		public route: MedicationRoute = "Oral",
+		public name: string = "",
+		public route: MedicationRoute = "oral",
 		public dose_value: number = 0,
-		public dose_unit: MedicationDoseUnit = "Miligrama",
+		public dose_unit: MedicationDoseUnit = "miligrama",
 		public frequency_value: number = 0,
-		public frequency_unit: MedicationFrequencyUnit = "Hora",
+		public frequency_unit: MedicationFrequencyUnit = "hora",
 		public duration_days: number = 0,
 		public start_at: Timestamp | null = null,
 		public custom_instructions: string = "",
 		public notes: string = "",
 		public taken_dates: Record<string, boolean> = {},
 		public registered_in: Timestamp | null = null,
-	   	public last_taken_at: Timestamp | null = null,
+		public last_taken_at: Timestamp | null = null,
 	) {
 		super()
 	}
 
-	static readonly collectionName = "medication"
+	static readonly collectionName = "medications"
 
 	protected static getCollectionPath(scope?: CollectionScope): string {
 		const userId = scope?.userId
@@ -65,7 +68,7 @@ export default class Medication extends BaseDocument {
 	): Medication {
 		return new Medication(
 			id,
-			data.title,
+			data.name,
 			data.route,
 			data.dose_value,
 			data.dose_unit,
@@ -83,7 +86,7 @@ export default class Medication extends BaseDocument {
 
 	toMap(): Record<string, unknown> {
 		return {
-			title: this.title,
+			name: this.name,
 			route: this.route,
 			dose_value: this.dose_value,
 			dose_unit: this.dose_unit,
@@ -96,163 +99,135 @@ export default class Medication extends BaseDocument {
 			taken_dates: this.taken_dates,
 			registered_in: this.registered_in ?? serverTimestamp(),
 			last_taken_at: this.last_taken_at,
-
 		}
 	}
 
-	// Escuta alterações na coleção de medicamentos em tempo real
-	static listen(
-		userId: string,
-		callback: (medications: Medication[]) => void,
-	) {
-		return onSnapshot(
-			this.collection({ scope: { userId } }),
-			(snapshot) => {
-				const medications = snapshot.docs.map(
-					(document) => this.fromDocument<Medication>(document)!
-				)
-
-				callback(medications)
-			},
-		)
-	}
-
-	// Atualiza o estado de uma dose específica
-	static async updateDose(
-		userId: string,
-		medicationId: string,
+	async updateDose(
 		doseKey: string,
 		taken: boolean,
+		options: CollectionOptions = {},
 	) {
-		await this.update(
-			medicationId,
+		await Medication.update(
+			this.id,
 			{
 				[`taken_dates.${doseKey}`]: taken,
 			},
-			{ scope: { userId } },
+			options,
 		)
 	}
 
-		// Marca (ou desmarca) o medicamento como tomado agora
-	static async markTaken(
-		userId: string,
-		medicationId: string,
-		taken: boolean,
-	) {
-		await this.update(
-			medicationId,
+	async markTaken(taken: boolean, options: CollectionOptions = {}) {
+		await Medication.update(
+			this.id,
 			{ last_taken_at: taken ? Timestamp.now() : null },
-			{ scope: { userId } },
+			options,
 		)
 	}
 
-	getDoseString = () => `${this.dose_value} ${this.dose_unit}`
-	getFrequencyString = () => `${this.frequency_value} ${this.frequency_unit}`
-}
-
-// Adiciona a frequência ao horário informado
-function addFrequency(date: Date, medication: Medication): Date {
-	const next = new Date(date)
-
-	switch (medication.frequency_unit) {
-		case "Minuto":
-			next.setMinutes(next.getMinutes() + medication.frequency_value)
-			break
-
-		case "Hora":
-			next.setHours(next.getHours() + medication.frequency_value)
-			break
-
-		case "Dia":
-			next.setDate(next.getDate() + medication.frequency_value)
-			break
-
-		case "Semana":
-			next.setDate(next.getDate() + medication.frequency_value * 7)
-			break
-
-		case "Mes":
-			next.setMonth(next.getMonth() + medication.frequency_value)
-			break
+	getDoseString() {
+		return `${this.dose_value} ${this.dose_unit}`
 	}
 
-	return next
-}
-
-// Formata a data para identificar individualmente cada dose
-function formatDateKey(date: Date): string {
-	const year = date.getFullYear()
-	const month = String(date.getMonth() + 1).padStart(2, "0")
-	const day = String(date.getDate()).padStart(2, "0")
-	const hours = String(date.getHours()).padStart(2, "0")
-	const minutes = String(date.getMinutes()).padStart(2, "0")
-
-	return `${year}-${month}-${day}T${hours}:${minutes}`
-}
-
-// Retorna os horários das doses de um medicamento em uma data específica
-export function getMedicationSchedule(
-	medication: Medication,
-	selectedDate: string,
-) {
-	if (!medication.start_at || medication.frequency_value <= 0) {
-		return []
+	getFrequencyString() {
+		return `${this.frequency_value} ${this.frequency_unit}`
 	}
 
-	const start = medication.start_at.toDate()
-	const end = new Date(start)
+	private static addFrequency(
+		date: Date,
+		frequencyUnit: MedicationFrequencyUnit,
+		frequencyValue: number,
+	): Date {
+		const next = new Date(date)
 
-	end.setDate(end.getDate() + medication.duration_days)
-
-	const doses: {
-		key: string
-		time: string
-		taken: boolean
-	}[] = []
-
-	let current = new Date(start)
-
-	while (current < end) {
-		const key = formatDateKey(current)
-
-		if (key.startsWith(selectedDate)) {
-			doses.push({
-				key,
-				time: current.toLocaleTimeString("pt-BR", {
-					hour: "2-digit",
-					minute: "2-digit",
-				}),
-				// Proteção extra caso taken_dates venha undefined
-				taken: medication.taken_dates?.[key] ?? false,
-			})
+		switch (frequencyUnit) {
+			case "minuto":
+				next.setMinutes(next.getMinutes() + frequencyValue)
+				break
+			case "hora":
+				next.setHours(next.getHours() + frequencyValue)
+				break
+			case "dia":
+				next.setDate(next.getDate() + frequencyValue)
+				break
+			case "semana":
+				next.setDate(next.getDate() + frequencyValue * 7)
+				break
+			case "mes":
+				next.setMonth(next.getMonth() + frequencyValue)
+				break
 		}
 
-		current = addFrequency(current, medication)
+		return next
 	}
 
-	return doses
-}
+	private static formatDateKey(date: Date): string {
+		const year = date.getFullYear()
+		const month = String(date.getMonth() + 1).padStart(2, "0")
+		const day = String(date.getDate()).padStart(2, "0")
+		const hours = String(date.getHours()).padStart(2, "0")
+		const minutes = String(date.getMinutes()).padStart(2, "0")
 
-// Momento em que o medicamento pode ser tomado de novo
-export function getNextDoseTime(medication: Medication): Date | null {
-	if (!medication.last_taken_at) return null
+		return `${year}-${month}-${day}T${hours}:${minutes}`
+	}
 
-	return addFrequency(medication.last_taken_at.toDate(), medication)
-}
+	getSchedule(selectedDate: string) {
+		if (!this.start_at || this.frequency_value <= 0) {
+			return []
+		}
 
-// A caixa fica marcada enquanto não passou o intervalo desde a última dose
-export function isMedicationTaken(medication: Medication, now: number): boolean {
-	const next = getNextDoseTime(medication)
+		const start = this.start_at.toDate()
+		const end = new Date(start)
+		end.setDate(end.getDate() + this.duration_days)
 
-	return next !== null && now < next.getTime()
-}
+		const doses: { key: string; time: string; taken: boolean }[] = []
+		let current = new Date(start)
 
-// O tratamento acabou depois de start_at + duration_days
-export function isTreatmentOver(medication: Medication, now: number): boolean {
-	if (!medication.start_at) return false
+		while (current < end) {
+			const key = Medication.formatDateKey(current)
 
-	const end = new Date(medication.start_at.toDate())
-	end.setDate(end.getDate() + medication.duration_days)
+			if (key.startsWith(selectedDate)) {
+				doses.push({
+					key,
+					time: current.toLocaleTimeString("pt-BR", {
+						hour: "2-digit",
+						minute: "2-digit",
+					}),
+					taken: this.taken_dates?.[key] ?? false,
+				})
+			}
 
-	return now >= end.getTime()
+			current = Medication.addFrequency(
+				current,
+				this.frequency_unit,
+				this.frequency_value,
+			)
+		}
+
+		return doses
+	}
+
+	getNextDoseTime(): Date | null {
+		if (!this.last_taken_at) return null
+
+		return Medication.addFrequency(
+			this.last_taken_at.toDate(),
+			this.frequency_unit,
+			this.frequency_value,
+		)
+	}
+
+	isTaken(now: number): boolean {
+		const next = this.getNextDoseTime()
+
+		return next !== null && now < next.getTime()
+	}
+
+	isTreatmentOver(now: number): boolean {
+		if (!this.start_at) return false
+
+		const end = new Date(this.start_at.toDate())
+		end.setDate(end.getDate() + this.duration_days)
+
+		return now >= end.getTime()
+	}
 }
