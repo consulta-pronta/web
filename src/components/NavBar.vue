@@ -93,22 +93,22 @@ authStore.onReady((data) => {
 					<p>Relatórios</p>
 				</BaseLink>
 
-				<BaseButton
+				<BaseLink
 					v-if="userType === 'patient'"
-					v-bind="sharedAttributes"
-					icon="pill"
-					goto="/medicamentos"
+					to="/medicamentos"
+					class="nav-link"
 				>
+					<span class="material-symbols-rounded select-none text-3xl!">pill</span>
 					<p>Medicamentos</p>
-				</BaseButton>
-				<BaseButton
+				</BaseLink>
+				<BaseLink
 					v-else-if="userType === 'professional'"
-					v-bind="sharedAttributes"
-					icon="pill"
-					goto="/farmacia"
+					to="/farmacia"
+					class="nav-link"
 				>
+					<span class="material-symbols-rounded select-none text-3xl!">pill</span>
 					<p>Farmácia</p>
-				</BaseButton>
+				</BaseLink>
 
 				<!-- <hr class="h-1 border-0 bg-primaryDark w-1/4 m-auto rounded-full opacity-70" /> -->
 

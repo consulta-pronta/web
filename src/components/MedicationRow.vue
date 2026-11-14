@@ -1,11 +1,13 @@
 <script setup lang="ts">
-defineProps<{
-    nome: string
-    quantidade: string
-    periodo: string
-    consumo: string
-    tomado: boolean
+import type Medication from "@/database/medication.model";
+import { isMedicationTaken } from "@/database/medication.model";
+import { ref } from "vue";
+
+const props = defineProps<{
+	medication: Medication
 }>()
+
+const taken = ref(isMedicationTaken(props.medication, Date.now()))
 
 const emit = defineEmits<{
     (e: "update:tomado", value: boolean): void
@@ -17,34 +19,29 @@ function onChange(event: Event) {
 </script>
 
 <template>
-	<tr class="border-t border-primarydark">
-		<td class="px-4 py-3 font-bold flex justify-center items-center relative m-1.5">
-			<span class="material-symbols-rounded text-primarydark absolute left-3 text-base!">
-				medication
-			</span>
-
-			{{ nome }}
+	<tr class="border-t border-primarydark *:not-first:text-center">
+		<td class="font-medium flex items-center gap-2">
+			<span class="material-symbols-rounded">medication</span>
+			{{ medication.title }}
 		</td>
 
-		<td class="px-4 py-3">
-			{{ quantidade }}
-		</td>
+		<td>{{ medication.getDoseString() }}</td>
 
-		<td class="px-4 py-3">
-			{{ periodo }}
-		</td>
+		<td>{{ medication.getFrequencyString() }}</td>
 
-		<td class="px-4 py-3">
-			{{ consumo }}
-		</td>
+		<td>{{ medication.route }}</td>
 
-		<td class="px-4 py-3">
+		<!-- TODO: fix this shit -->
+		<td>
 			<input
 				type="checkbox"
-    			:checked="tomado"
-    			@change="onChange"
+    				:checked="taken"
+    				@change="onChange"
 				class="h-4 w-4 appearance-none rounded border border-background bg-transparent checked:bg-background checked:border-background"
 			/>
 		</td>
+
+		<!-- TODO: more_horiz functionality -->
+		<td></td>
 	</tr>
 </template>
