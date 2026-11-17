@@ -101,6 +101,7 @@ const deleteSymptom = async () => {
 		await Symptom.delete(currentSymptomId.value, { scope: { userId } })
 		confirmDelete.value?.hide()
 		currentSymptomId.value = ""
+		toast.success("Sintoma excluído com sucesso.")
 		await updateSymptoms()
 	} catch (error) {
 		toast.error("Não foi possível excluir o sintoma.")

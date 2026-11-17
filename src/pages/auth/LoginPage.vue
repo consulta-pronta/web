@@ -21,6 +21,7 @@ const login = async () => {
 
 	try {
 		await signInStore.signIn()
+		toast.success("Login realizado com sucesso.")
 		router.push("/")
 	} catch (error) {
 		console.error(error)
