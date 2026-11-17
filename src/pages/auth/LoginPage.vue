@@ -9,10 +9,12 @@ import BaseLogo from "@/components/bases/BaseLogo.vue"
 
 import { useSignInStore } from "@/stores/signInStore"
 import AuthPageWrapper from "@/components/wrappers/AuthPageWrapper.vue"
+import { useToast } from "vue-toastification"
 
 const signInStore = useSignInStore()
 const buttonState: Ref<ButtonState> = ref("enabled")
 const router = useRouter()
+const toast = useToast()
 
 const login = async () => {
 	buttonState.value = "sync"
@@ -22,6 +24,7 @@ const login = async () => {
 		router.push("/")
 	} catch (error) {
 		console.error(error)
+		toast.error("Não foi possível entrar. Verifique seus dados.")
 	} finally {
 		buttonState.value = "enabled"
 	}

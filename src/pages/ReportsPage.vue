@@ -20,18 +20,19 @@ import BaseTable from "@/components/bases/BaseTable.vue"
 import BaseCardList from "@/components/bases/BaseCardList.vue"
 import BaseSideSheet from "@/components/bases/BaseSideSheet.vue"
 import ReportExtended from "@/components/ReportExtended.vue"
+import { useToast } from "vue-toastification"
 
 const route = useRoute()
 const authStore = useAuthStore()
+const toast = useToast()
 
 const currentUser = ref<Patient | Professional | null>(null)
 const patients = ref<Patient[]>([])
 const reports = ref<Report[]>([])
 const currentPatient = ref<Patient | null>(null)
 const selectedReport = ref<Report | null>(null)
-const loadError = ref("")
 const loadingPatients = ref(true)
-const loadingReports = ref(false)
+const loadingReports = ref(true)
 const searchQuery = ref("")
 
 const formRegister = useTemplateRef("formRegister")
@@ -59,14 +60,13 @@ const pageTitle = computed(() =>
 const handleSubmit = async () => {
 	formRegister.value?.hide()
 	loadingReports.value = true
-	loadError.value = ""
 	try {
 		await authStore.onReady(async (user) => {
 			reports.value = await Report.getAll({ scope: { userId: user.id } })
 		})
 	} catch (error) {
 		console.error("Failed to load reports.", error)
-		loadError.value = "Não foi possível carregar os relatórios."
+		toast.error("Não foi possível carregar os relatórios.")
 	} finally {
 		loadingReports.value = false
 	}
@@ -76,14 +76,13 @@ const selectPatient = async (patient: Patient) => {
 	if (currentPatient.value === patient) return
 	currentPatient.value = patient
 	loadingReports.value = true
-	loadError.value = ""
 	try {
 		reports.value = await Report.getAll({
 			scope: { userId: patient.id },
 		})
 	} catch (error) {
 		console.error("Failed to load patient's reports.", error)
-		loadError.value = "Não foi possível carregar os relatórios."
+		toast.error("Não foi possível carregar os relatórios.")
 	} finally {
 		loadingReports.value = false
 	}
@@ -93,7 +92,6 @@ const unselectPatient = () => {
 	currentPatient.value = null
 	loadingPatients.value = false
 	loadingReports.value = false
-	loadError.value = ""
 	reports.value = []
 }
 
@@ -118,21 +116,23 @@ authStore.onReady(async (user) => {
 		if (user instanceof Patient) {
 			reports.value = await Report.getAll({ scope: { userId: user.id } })
 		} else {
+			loadingReports.value = false
 			patients.value = await user.getPatients()
 			if (route.params.id) {
 				const patient = patients.value.find((item) => item.id === route.params.id)
 				if (patient) {
 					await selectPatient(patient)
 				} else {
-					loadError.value = "Paciente não encontrado."
+					toast.error("Paciente não encontrado.")
 				}
 			}
 		}
 	} catch (error) {
 		console.error("Failed to load reports page data.", error)
-		loadError.value = "Não foi possível carregar os dados."
+		toast.error("Não foi possível carregar os dados.")
 	} finally {
 		loadingPatients.value = false
+		loadingReports.value = false
 	}
 })
 
@@ -174,10 +174,6 @@ authStore.onReady(async (user) => {
 					<p class="text-2xl pl-2">Pacientes</p>
 				</article>
 
-				<p v-if="loadError" class="text-error text-center">
-					{{ loadError }}
-				</p>
-
 				<BaseCardList
 					:is-loading="loadingPatients"
 					class="w-full flex flex-col gap-2"
@@ -211,7 +207,7 @@ authStore.onReady(async (user) => {
 				<BaseTable
 					:is-loading="loadingReports"
 					:show-message="filteredReports.length === 0"
-					:message="loadError || `Nenhum relatório ${reports.length ? 'encontrado' : 'disponível'}`"
+					:message="`Nenhum relatório ${reports.length ? 'encontrado' : 'disponível'}`"
 				>
 					<template #header>
 						<th class="w-100">Relatório</th>

@@ -7,6 +7,9 @@ import { inputDateToDate } from "@/utils"
 import { Timestamp } from "firebase/firestore"
 import { ref } from "vue"
 import BaseRadioList from "../bases/BaseRadioList.vue"
+import { useToast } from "vue-toastification"
+
+const toast = useToast()
 
 const props = withDefaults(
 	defineProps<{
@@ -33,11 +36,9 @@ const exam = ref<Exam>(new Exam())
 const date = ref("")
 
 const buttonState = ref<ButtonState>("enabled")
-const submitError = ref("")
 
 const submitForm = async () => {
 	buttonState.value = "sync"
-	submitError.value = ""
 
 	try {
 		exam.value.date = Timestamp.fromDate(inputDateToDate(date.value))
@@ -47,10 +48,11 @@ const submitForm = async () => {
 
 		exam.value = new Exam()
 		date.value = ""
+		toast.success("Solicitação de exame enviada com sucesso.")
 		emit("handled-submit")
 	} catch (error) {
 		console.error("Failed to request exam.", error)
-		submitError.value = "Não foi possível solicitar o exame. Tente novamente."
+		toast.error("Não foi possível solicitar o exame. Tente novamente.")
 	} finally {
 		buttonState.value = "enabled"
 	}
@@ -75,10 +77,6 @@ const submitForm = async () => {
 			legend="Categoria"
 			:options="categories"
 		/>
-
-		<p v-if="submitError" class="text-error text-center">
-			{{ submitError }}
-		</p>
 
 		<BaseButton type="submit" theme="accent" icon="add_circle" :state="buttonState">
 			{{ props.isPatient ? "Adicionar exame" : "Solicitar exame" }}

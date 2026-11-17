@@ -12,14 +12,15 @@ import Medication, {
 	type MedicationDoseUnit,
 	type MedicationFrequencyUnit,
 } from "@/database/medication.model"
+import { useToast } from "vue-toastification"
 
 const emit = defineEmits<{
 	close: []
 }>()
 
 const authStore = useAuthStore()
+const toast = useToast()
 const buttonState = ref<ButtonState>("enabled")
-const errorMessage = ref("")
 
 const routes: { value: MedicationRoute; label: string }[] = [
 	{ value: "oral", label: "Oral" },
@@ -64,16 +65,14 @@ const startAtInput = computed({
 })
 
 async function submit() {
-	errorMessage.value = ""
-
 	const userId = authStore.user?.uid
 	if (!userId) {
-		errorMessage.value = "Você precisa estar logado para adicionar um medicamento."
+		toast.error("Você precisa estar logado para adicionar um medicamento.")
 		return
 	}
 
 	if (!startAt.value) {
-		errorMessage.value = "Informe a data e a hora da primeira dose."
+		toast.error("Informe a data e a hora da primeira dose.")
 		return
 	}
 
@@ -82,7 +81,7 @@ async function submit() {
 	const duration = Number(durationDays.value)
 
 	if (!(dose > 0) || !(frequency > 0) || !(duration > 0)) {
-		errorMessage.value = "Quantidade, frequência e duração precisam ser maiores que zero."
+		toast.error("Quantidade, frequência e duração precisam ser maiores que zero.")
 		return
 	}
 
@@ -101,12 +100,12 @@ async function submit() {
 			startAt.value,
 		)
 
-		Medication.set(medication.toMap(), { scope: { userId } })
-
+		await Medication.set(medication.toMap(), { scope: { userId } })
+		toast.success("Medicamento registrado com sucesso.")
 		emit("close")
 	} catch (error) {
 		console.error("Erro ao salvar medicamento:", error)
-		errorMessage.value = "Não foi possível salvar. Tente novamente."
+		toast.error("Não foi possível salvar. Tente novamente.")
 	} finally {
 		buttonState.value = "enabled"
 	}
@@ -219,10 +218,6 @@ async function submit() {
 				required
 			/>
 		</label>
-
-		<p v-if="errorMessage" class="text-center text-sm text-error">
-			{{ errorMessage }}
-		</p>
 
 		<BaseButton
 			type="submit"

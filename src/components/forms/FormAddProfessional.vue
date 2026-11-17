@@ -5,14 +5,15 @@ import BaseInput from "@/components/bases/BaseInput.vue"
 import MedicalPermission from "@/database/medicalPermission.model"
 import Professional from "@/database/professional.model"
 import { useAuthStore } from "@/stores/authStore"
+import { useToast } from "vue-toastification"
 
 const emit = defineEmits<{
 	"handled-submit": []
 }>()
 
 const authStore = useAuthStore()
+const toast = useToast()
 const email = ref("")
-const message = ref("")
 const professional = ref<Professional | null>(null)
 const searchState = ref<ButtonState>("enabled")
 const submitState = ref<ButtonState>("disabled")
@@ -22,7 +23,7 @@ const searchProfessional = async () => {
 
 	const searchEmail = email.value
 	if (!searchEmail) {
-		message.value = "Informe o e-mail do profissional."
+		toast.error("Informe o e-mail do profissional.")
 		return
 	}
 
@@ -30,14 +31,14 @@ const searchProfessional = async () => {
 	try {
 		professional.value = await Professional.getByEmail(searchEmail)
 		if (!professional.value) {
-			message.value = "Nenhum profissional encontrado com esse e-mail."
+			toast.error("Nenhum profissional encontrado com esse e-mail.")
 			return
 		}
 
 		submitState.value = "enabled"
 	} catch (error) {
 		console.error("Failed to search professional by email.", error)
-		message.value = "Não foi possível pesquisar agora. Tente novamente."
+		toast.error("Não foi possível pesquisar agora. Tente novamente.")
 	} finally {
 		searchState.value = "enabled"
 	}
@@ -49,7 +50,6 @@ const sendRequest = async () => {
 	}
 
 	submitState.value = "sync"
-	message.value = ""
 	try {
 		authStore.onReady(async (data) => {
 			const worked = await MedicalPermission.createRequest(
@@ -59,13 +59,15 @@ const sendRequest = async () => {
 			)
 			if (!worked) {
 				console.error("Professional access request already exists.")
-				message.value = "Solicitação de acesso já existe."
+				toast.error("Solicitação de acesso já existe.")
+				return
 			}
+			toast.success("Solicitação enviada com sucesso.")
 			emit("handled-submit")
 		})
 	} catch (error) {
 		console.error("Failed to send professional access request.", error)
-		message.value = "Não foi possível enviar a solicitação. Tente novamente mais tarde."
+		toast.error("Não foi possível enviar a solicitação. Tente novamente mais tarde.")
 	} finally {
 		submitState.value = "enabled"
 	}
@@ -74,7 +76,6 @@ const sendRequest = async () => {
 const resetState = () => {
 	professional.value = null
 	submitState.value = "disabled"
-	message.value = ""
 }
 </script>
 
@@ -116,10 +117,6 @@ const resetState = () => {
 				{{ `${professional.professional_data?.crm}/${professional.professional_data?.uf}` }}
 			</p>
 		</section>
-
-		<p v-if="message" class="text-sm text-accent" role="status">
-			{{ message }}
-		</p>
 
 		<BaseButton type="submit" theme="accent" icon="send" :state="submitState">
 			Enviar solicitação

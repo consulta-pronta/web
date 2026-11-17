@@ -8,12 +8,14 @@ import BaseButton, { type ButtonState } from "@/components/bases/BaseButton.vue"
 import BaseInput, { type BaseInputProps } from "@/components/bases/BaseInput.vue"
 import BaseSelect from "@/components/bases/BaseSelect.vue"
 import { useSignUpStore } from "@/stores/signUpStore"
-import { bloodTypes, federalUnits, genderTypes, sexTypes } from "@/utils"
+import { bloodTypes, federalUnits, genderTypes, sexTypes, type UserType } from "@/utils"
 import PasswordRules from "@/components/cards/PasswordRules.vue"
 import BaseSwitch from "@/components/bases/BaseSwitch.vue"
+import { useToast } from "vue-toastification"
 
 const router = useRouter()
 const signUpStore = useSignUpStore()
+const toast = useToast()
 
 const currentStep = ref(1)
 const buttonState = ref<ButtonState>("enabled")
@@ -44,16 +46,16 @@ watch(currentStep, async (value, previous) => {
 	switch (previous) {
 		case 1:
 			if (signUpStore.isPasswordInvalid) {
-				alert("Senha inválida. Por favor, verifique os requisitos de senha.")
+				toast.error("Senha inválida. Por favor, verifique os requisitos de senha.")
 				currentStep.value = previous
 			}
 			break
 		case 2:
 			if (signUpStore.isCpfInvalid) {
-				alert("CPF inválido. Por favor, verifique o CPF informado.")
+				toast.error("CPF inválido. Por favor, verifique o CPF informado.")
 				currentStep.value = previous
 			} else if (signUpStore.isPhoneInvalid) {
-				alert("Telefone inválido. Por favor, verifique o telefone informado.")
+				toast.error("Telefone inválido. Por favor, verifique o telefone informado.")
 				currentStep.value = previous
 			}
 			break
@@ -61,7 +63,7 @@ watch(currentStep, async (value, previous) => {
 			try {
 				await submitForm()
 			} catch (error) {
-				alert("Erro ao criar conta. Por favor, tente novamente.")
+				toast.error("Erro ao criar conta. Por favor, tente novamente.")
 				console.error(error)
 				currentStep.value = previous
 			}
@@ -74,6 +76,7 @@ const submitForm = async () => {
 
 	try {
 		await signUpStore.submitForm()
+		toast.success("Conta criada com sucesso.")
 		router.push("dashboard")
 	} catch (error) {
 		throw error

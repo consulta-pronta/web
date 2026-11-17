@@ -8,12 +8,14 @@ import Symptom from "@/database/symptom.model"
 import { toInputValue } from "@feelinglovelynow/datetime-local"
 import { Timestamp } from "firebase/firestore"
 import { symptomPlaces } from "@/utils"
+import { useToast } from "vue-toastification"
 
 const props = defineProps<{
 	symptomId?: string
 }>()
 
 const authStore = useAuthStore()
+const toast = useToast()
 
 const buttonState = ref<ButtonState>("enabled")
 const symptomData = ref(new Symptom())
@@ -34,23 +36,30 @@ const placeInput = computed({
 
 const registrarSintoma = async () => {
 	buttonState.value = "sync"
+	try {
+		if (authStore.user) {
+			const id = authStore.user.uid
+			const data = symptomData.value.toMap()
 
-	if (authStore.user) {
-		const id = authStore.user.uid
-		const data = symptomData.value.toMap()
-
-		const options = { scope: { userId: id } }
-		if (props.symptomId) {
-			await Symptom.update(props.symptomId, data, options)
+			const options = { scope: { userId: id } }
+			if (props.symptomId) {
+				await Symptom.update(props.symptomId, data, options)
+				toast.success("Sintoma atualizado com sucesso.")
+			} else {
+				await Symptom.set(data, options)
+				toast.success("Sintoma registrado com sucesso.")
+			}
+			emit("handled-submit", true)
 		} else {
-			await Symptom.set(data, options)
+			emit("handled-submit", false)
+			toast.error("Não foi possível identificar o usuário.")
 		}
-		emit("handled-submit", true)
-	} else {
-		emit("handled-submit", false)
+	} catch (error) {
+		console.error("Failed to save symptom.", error)
+		toast.error("Não foi possível salvar o sintoma.")
+	} finally {
+		buttonState.value = "enabled"
 	}
-
-	buttonState.value = "enabled"
 }
 
 watch(

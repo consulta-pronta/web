@@ -12,13 +12,14 @@ import BaseTable from "@/components/bases/BaseTable.vue"
 import BaseDialog from "@/components/bases/BaseDialog.vue"
 import FormAddMedication from "@/components/forms/FormAddMedication.vue"
 import { searchDocuments } from "@/utils"
+import { useToast } from "vue-toastification"
 
 const authStore = useAuthStore()
+const toast = useToast()
 
 const registerFormVisible = ref(false)
 const medications = ref<Medication[]>([])
 const loading = ref(true)
-const loadError = ref("")
 const searchQuery = ref("")
 
 const filteredMedications = computed(() =>
@@ -37,7 +38,6 @@ watch(
 		unsubscribe?.()
 		unsubscribe = null
 		loading.value = true
-		loadError.value = ""
 
 		if (!userId) {
 			medications.value = []
@@ -53,7 +53,7 @@ watch(
 			{ scope: { userId } },
 			(error) => {
 				console.error("Failed to load medications:", error)
-				loadError.value = "Não foi possível carregar os medicamentos."
+				toast.error("Não foi possível carregar os medicamentos.")
 				loading.value = false
 			},
 		)
@@ -74,7 +74,13 @@ onUnmounted(() => {
 
 const toggleTaken = async (medication: Medication, taken: boolean) => {
 	authStore.onReady(async (guy) => {
-		await medication.markTaken(taken, { scope: { userId: guy.id } })
+		try {
+			await medication.markTaken(taken, { scope: { userId: guy.id } })
+			toast.success(taken ? "Medicamento marcado como tomado." : "Marcação removida.")
+		} catch (error) {
+			console.error("Failed to update medication status.", error)
+			toast.error("Não foi possível atualizar o medicamento.")
+		}
 	})
 }
 
@@ -112,8 +118,8 @@ const medicationRows = computed(() => {
 				:is-loading="loading"
 				:skeleton-rows="5"
 				:column-count="6"
-				:show-message="!loading && loadError.length > 0"
-				:message="loadError"
+				:show-message="!loading && filteredMedications.length === 0"
+				message="Nenhum medicamento encontrado"
 			>
 				<template #header>
 					<th class="w-100">Medicamento</th>

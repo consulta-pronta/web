@@ -13,8 +13,10 @@ import router from "@/router"
 import PageWrapper from "@/components/wrappers/PageWrapper.vue"
 import HeaderWrapper from "@/components/wrappers/HeaderWrapper.vue"
 import BaseCardList from "@/components/bases/BaseCardList.vue"
+import { useToast } from "vue-toastification"
 
 const authStore = useAuthStore()
+const toast = useToast()
 
 const addProfessionalDialog = useTemplateRef("addProfessionalDialog")
 
@@ -40,7 +42,8 @@ const loadPermissions = async () => {
 		})
 	} catch (error) {
 		console.error("Failed to load medical permissions.", error)
-		loadMessage.value = "Não foi possível carregar as permissões médicas."
+		loadMessage.value = ""
+		toast.error("Não foi possível carregar as permissões médicas.")
 	} finally {
 		loading.value = false
 	}

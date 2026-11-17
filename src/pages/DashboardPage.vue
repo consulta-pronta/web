@@ -12,13 +12,14 @@ import DefaultContentWrapper from "@/components/wrappers/DefaultContentWrapper.v
 import { searchDocuments } from "@/utils"
 import BaseInput from "@/components/bases/BaseInput.vue"
 import BaseTable from "@/components/bases/BaseTable.vue"
+import { useToast } from "vue-toastification"
 
 const authStore = useAuthStore()
+const toast = useToast()
 
 const signupRequests = ref<Professional[]>([])
 const searchQuery = ref("")
 const loading = ref(true)
-const loadError = ref("")
 
 const filteredRequests = computed(
 	() => searchDocuments(signupRequests.value, searchQuery.value) as Professional[],
@@ -27,7 +28,7 @@ const filteredRequests = computed(
 const approveRequest = async (requestId: string) => {
 	const ogRequest = signupRequests.value?.find((req) => req.id === requestId)
 	if (!ogRequest) {
-		alert("Solicitação não encontrada")
+		toast.error("Solicitação não encontrada.")
 		return
 	}
 
@@ -41,11 +42,10 @@ const approveRequest = async (requestId: string) => {
 			transaction.delete(requestRef)
 			transaction.set(User.ref(ogRequest.id), newUserData)
 		})
-		const msg = `Successfuly approved professional of id ${requestId}`
-		console.log(msg)
-		alert(msg)
+		signupRequests.value = signupRequests.value.filter((request) => request.id !== requestId)
+		toast.success("Solicitação aprovada com sucesso.")
 	} catch (error) {
-		alert("Ocorreu um erro ao aprovar a solicitação.")
+		toast.error("Ocorreu um erro ao aprovar a solicitação.")
 		console.error(error)
 	}
 }
@@ -57,7 +57,7 @@ authStore.onReady(async (data) => {
 		}
 	} catch (error) {
 		console.error("Failed to load professional signup requests.", error)
-		loadError.value = "Não foi possível carregar as solicitações."
+		toast.error("Não foi possível carregar as solicitações.")
 	} finally {
 		loading.value = false
 	}
@@ -84,8 +84,8 @@ authStore.onReady(async (data) => {
 
 			<BaseTable
 				:is-loading="loading"
-				:show-message="loadError.length > 0 || (!loading && filteredRequests.length === 0)"
-				:message="loadError || 'Nenhuma solicitação encontrada'"
+				:show-message="!loading && filteredRequests.length === 0"
+				message="Nenhuma solicitação encontrada"
 				:column-count="6"
 			>
 				<template #header>

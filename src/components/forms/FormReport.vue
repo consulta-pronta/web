@@ -83,7 +83,6 @@ const loadSymptoms = async () => {
 watch([periodStartInput, periodEndInput], () => {
 	symptoms.value = []
 	symptomsLoaded.value = false
-	toast.error("")
 })
 
 const submitForm = async () => {
@@ -101,13 +100,19 @@ const submitForm = async () => {
 
 	buttonState.value = "sync"
 
-	const data = reportRef.value.toMap()
-	await authStore.onReady(async (user) => {
-		await Report.set(data, { scope: { userId: user.id } })
-	})
-
-	emit("handled-submit")
-	buttonState.value = "enabled"
+	try {
+		const data = reportRef.value.toMap()
+		await authStore.onReady(async (user) => {
+			await Report.set(data, { scope: { userId: user.id } })
+		})
+		toast.success("Relatório gerado com sucesso.")
+		emit("handled-submit")
+	} catch (error) {
+		console.error("Failed to create report.", error)
+		toast.error("Não foi possível gerar o relatório.")
+	} finally {
+		buttonState.value = "enabled"
+	}
 }
 
 authStore.onReady(async (patient) => {
