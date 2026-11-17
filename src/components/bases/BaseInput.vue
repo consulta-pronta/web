@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { maxPasswordLength } from "@/stores/signUpStore"
+import { formatCRM } from "@/utils"
 import { formatToCPF, formatToPhone } from "brazilian-values"
 import { onMounted, ref } from "vue"
 
@@ -25,7 +26,7 @@ interface Props {
 	required?: boolean
 	numberMode?: "positive-integer" | "positive-decimal" | "signed-integer" | "signed-decimal"
 }
-export type {Props as BaseInputProps}
+export type { Props as BaseInputProps }
 
 const props = withDefaults(defineProps<Props>(), {
 	type: "text",
@@ -71,7 +72,6 @@ switch (props.type) {
 		break
 }
 
-const formatCRM = (raw: string): string => raw.replace(/\D/g, "")
 
 const formatCustomNumber = (raw: string): string => {
 	const numberMode = props.numberMode ?? "positive-decimal"
@@ -91,7 +91,7 @@ const formatCustomNumber = (raw: string): string => {
 	} else {
 		formattedNumber += raw
 	}
-	
+
 	return formattedNumber
 }
 
@@ -118,18 +118,19 @@ const maxLengths = {
 	cpf: 14,
 	tel: 15,
 	crm: 6,
-	password: maxPasswordLength
+	password: maxPasswordLength,
 }
 
 const passwordToggleIcon = ref<string>("visibility")
 
 const togglePassword = () => {
-	if (props.type !== "password") { return }
+	if (props.type !== "password") {
+		return
+	}
 	const isVisible = realType.value === "password"
 
 	realType.value = isVisible ? "text" : "password"
 	passwordToggleIcon.value = isVisible ? "visibility_off" : "visibility"
-
 }
 
 onMounted(() => {
@@ -147,12 +148,7 @@ onMounted(() => {
 			{{ icon }}
 		</span>
 
-		<img
-			v-if="iconImage"
-			:src="iconImage"
-			class="w-6 h-7 object-contain"
-			alt=""
-		/>
+		<img v-if="iconImage" :src="iconImage" class="w-6 h-7 object-contain" alt="" />
 		<input
 			class="py-3 outline-0 grow"
 			:type="realType"
@@ -163,8 +159,12 @@ onMounted(() => {
 			:inputmode="type === 'custom-number' ? 'decimal' : undefined"
 			ref="inputTag"
 		/>
-		
-		<span class="material-symbols-rounded text-xl! cursor-pointer" v-if="type === 'password'" @click="togglePassword">
+
+		<span
+			class="material-symbols-rounded text-xl! cursor-pointer"
+			v-if="type === 'password'"
+			@click="togglePassword"
+		>
 			{{ passwordToggleIcon }}
 		</span>
 		<span class="text-sm opacity-80" v-if="hint">

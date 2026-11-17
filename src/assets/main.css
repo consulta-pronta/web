@@ -25,9 +25,13 @@
 
 /* Jeito normal (que nem o do progress_unfiled não funcionou */
 @custom-variant progress-filled {
-	&::-webkit-progress-value { @slot; }
-	&::-moz-progress-bar { @slot; }
-};
+	&::-webkit-progress-value {
+		@slot;
+	}
+	&::-moz-progress-bar {
+		@slot;
+	}
+}
 @custom-variant progress-unfilled (&::-webkit-progress-bar, &);
 
 .material-symbols-rounded {
@@ -40,4 +44,16 @@
 .scrollbar-hide {
 	scrollbar-width: none;
 	-ms-overflow-style: none;
+}
+
+.mx-context-menu.cp-light {
+	& {
+		--mx-menu-backgroud: var(--color-surface);
+		--mx-menu-hover-backgroud: var(--color-accent);
+		--mx-menu-text: var(--color-textDark);
+	}
+
+	.mx-context-menu-item .mx-item-row:first-child {
+		gap: 1rem;
+	}
 }

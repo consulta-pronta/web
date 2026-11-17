@@ -1,7 +1,7 @@
 import { defineStore } from "pinia"
 import { ref } from "vue"
 import { signInWithEmailAndPassword } from "firebase/auth"
-import { auth } from "@/config/firebase"
+import { auth } from "@/database/firebase"
 
 export const useSignInStore = defineStore("sign_in", () => {
 	const email = ref("")

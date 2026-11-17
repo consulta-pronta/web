@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { formatToNumber } from "brazilian-values";
-import { computed } from "vue";
+import { formatToNumber } from "brazilian-values"
+import { computed } from "vue"
 
 interface IntensityChipProps {
-	intensity: number,
+	intensity: number
 	customMessage?: string
 }
 
@@ -14,12 +14,13 @@ const ranges = [
 	{ min: 5, max: 7, bgColor: "warning", color: "Dark" },
 	{ min: 8, max: 10, bgColor: "error", color: "Light" },
 ]
-const current = computed(() => ranges.find((r) => {
-	return props.intensity >= r.min && props.intensity <= r.max
-}))
+const current = computed(() =>
+	ranges.find((r) => {
+		return props.intensity >= r.min && props.intensity <= r.max
+	}),
+)
 const backgroundColor = computed(() => "var(--color-" + current.value?.bgColor + ")")
 const textColor = computed(() => "var(--color-text" + current.value?.color + ")")
-
 </script>
 
 <template>
@@ -35,7 +36,7 @@ const textColor = computed(() => "var(--color-text" + current.value?.color + ")"
 <style scoped>
 @reference "@/assets/main.css";
 
-article	{
+article {
 	background-color: v-bind(backgroundColor);
 	color: v-bind(textColor);
 }

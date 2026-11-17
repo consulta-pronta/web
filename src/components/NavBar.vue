@@ -1,19 +1,19 @@
 <script setup lang="ts">
-import { ref } from "vue"
+import { ref, useTemplateRef } from "vue"
 import { useNavbarStore } from "@/stores/navbarStore"
 import { useAuthStore } from "@/stores/authStore"
 import BaseLogo from "@/components/bases/BaseLogo.vue"
+import BaseLink from "@/components/bases/BaseLink.vue"
 import BaseButton, { type BaseButtonProps } from "@/components/bases/BaseButton.vue"
-import { auth } from "@/config/firebase"
-import { signOut } from "firebase/auth"
-import type { UserType } from "./ToggleUser.vue"
-import router from "@/router/index.ts"
+import BaseDialog from "@/components/bases/BaseDialog.vue"
+import type { UserType } from "@/utils"
 
 const navbarStore = useNavbarStore()
 const authStore = useAuthStore()
 
 const userType = ref<UserType | null>(null)
 const openedMobile = ref(false)
+const logoutDialog = useTemplateRef("logoutDialog")
 
 const sharedAttributes = <BaseButtonProps>{
 	theme: "textLight",
@@ -22,16 +22,6 @@ const sharedAttributes = <BaseButtonProps>{
 
 const openMobile = () => {
 	openedMobile.value = !openedMobile.value
-}
-
-const logout = async () => {
-	try {
-		console.log(auth)
-		await signOut(auth)
-		router.push("/login")
-	} catch (error) {
-		console.error(error)
-	}
 }
 
 authStore.onReady((data) => {
@@ -65,64 +55,62 @@ authStore.onReady((data) => {
 			/>
 
 			<nav>
-				<BaseButton v-bind="sharedAttributes" icon="home" goto="/dashboard">
-					<p>Início</p>
-				</BaseButton>
-
-				<BaseButton
-					v-if="userType === 'paciente'"
-					v-bind="sharedAttributes"
-					icon="browse_activity"
-					goto="/historico-sintomas"
+				<BaseLink
+					v-if="userType === 'patient'"
+					to="/historico-sintomas"
+					class="nav-link"
 				>
+					<span class="material-symbols-rounded select-none text-3xl!">
+						browse_activity
+					</span>
 					<p>Histórico</p>
-				</BaseButton>
-				<BaseButton
-					v-else-if="userType === 'profissional'"
-					v-bind="sharedAttributes"
-					icon="group"
-					goto="#"
+				</BaseLink>
+				<BaseLink
+					v-else-if="userType === 'professional'"
+					to="/pacientes"
+					class="nav-link"
 				>
+					<span class="material-symbols-rounded select-none text-3xl!">group</span>
 					<p>Pacientes</p>
-				</BaseButton>
-				
-				<BaseButton
-					v-if="userType === 'paciente'"
-					v-bind="sharedAttributes"
-					icon="pill"
-					goto="#"
-				>
-					<p>Medicamentos</p>
-				</BaseButton>
-				<BaseButton
-					v-else-if="userType === 'profissional'"
-					v-bind="sharedAttributes"
-					icon="pill"
-					goto="#"
-				>
-					<p>Farmácia</p>
-				</BaseButton>
+				</BaseLink>
 
-				<BaseButton
+				<BaseLink
 					v-if="userType !== 'admin'"
-					v-bind="sharedAttributes"
-					icon="assignment"
-					goto="/relatorios"
+					to="/relatorios"
+					class="nav-link"
 				>
+					<span class="material-symbols-rounded select-none text-3xl!">assignment</span>
 					<p>Relatórios</p>
-				</BaseButton>
+				</BaseLink>
 
-				<hr class="h-1 border-0 bg-primaryDark w-1/4 m-auto rounded-full opacity-70" />
-
-				<BaseButton
-					v-if="userType !== 'admin'"
-					v-bind="sharedAttributes"
-					icon="stethoscope"
-					goto="/exames"
+				<BaseLink
+					v-if="userType === 'patient'"
+					to="/medicamentos"
+					class="nav-link"
 				>
+					<span class="material-symbols-rounded select-none text-3xl!">pill</span>
+					<p>Medicamentos</p>
+				</BaseLink>
+				<BaseLink
+					v-else-if="userType === 'professional'"
+					to="/farmacia"
+					class="nav-link"
+				>
+					<span class="material-symbols-rounded select-none text-3xl!">pill</span>
+					<p>Farmácia</p>
+				</BaseLink>
+
+				<!-- <hr class="h-1 border-0 bg-primaryDark w-1/4 m-auto rounded-full opacity-70" /> -->
+
+				<BaseLink
+					v-if="userType !== 'admin'"
+					to="/exames"
+					class="nav-link"
+				>
+					<span class="material-symbols-rounded select-none text-3xl!">stethoscope</span>
 					<p>Exames</p>
-				</BaseButton>
-				
+				</BaseLink>
+
 				<BaseButton
 					v-if="userType !== 'admin'"
 					v-bind="sharedAttributes"
@@ -132,30 +120,22 @@ authStore.onReady((data) => {
 					<p>Consultas</p>
 				</BaseButton>
 
-				<BaseButton
-					v-if="userType === 'paciente'"
-					v-bind="sharedAttributes"
-					icon="home_health"
-					goto="#"
+				<BaseLink
+					v-if="userType === 'patient'"
+					to="permissoes"
+					class="nav-link"
 				>
-					<p>Hospitais</p>
-				</BaseButton>
-				
+					<span class="material-symbols-rounded select-none text-3xl!">how_to_reg</span>
+					<p>Permissões</p>
+				</BaseLink>
+
 				<BaseButton
-					v-else-if="userType === 'profissional'"
+					v-else-if="userType === 'professional'"
 					v-bind="sharedAttributes"
 					goto="#"
 					icon="shelves"
 				>
 					<p>Recursos</p>
-				</BaseButton>
-
-				<BaseButton
-					v-bind="sharedAttributes"
-					goto="#"
-					icon="person"
-				>
-					<p>Perfil</p>
 				</BaseButton>
 			</nav>
 		</section>
@@ -176,23 +156,50 @@ authStore.onReady((data) => {
 				<BaseButton v-bind="sharedAttributes" goto="#" icon="notifications">
 					<p>Notificações</p>
 				</BaseButton>
-				
-				<BaseButton v-bind="sharedAttributes" icon="settings" goto="#">
-					<p>Configurações</p>
-				</BaseButton>
 
-				<BaseButton
-					theme="error"
-					mode="transparent"
-					icon="logout"
-					class="justify-start!"
-					@click="logout()"
+				<BaseLink
+					v-if="userType != 'admin'"
+					to="perfil"
+					class="nav-link"
 				>
+					<span class="material-symbols-rounded select-none text-3xl!">person</span>
+					<p>Perfil</p>
+				</BaseLink>
+
+				<BaseLink
+					to="/logout"
+					class="nav-link text-error!"
+					@click.capture.prevent="logoutDialog?.show()"
+				>
+					<span class="material-symbols-rounded select-none text-3xl!">logout</span>
 					<p>Sair</p>
-				</BaseButton>
+				</BaseLink>
 			</nav>
 		</section>
 	</aside>
+
+	<Teleport to="body">
+		<BaseDialog title="Confirmar saída" ref="logoutDialog">
+			<p class="text-center">Tem certeza de que deseja sair da sua conta?</p>
+			<div class="flex justify-end gap-3 mt-6">
+				<BaseLink to="/logout">
+					<BaseButton
+						theme="textLight"
+						mode="transparent"
+						icon="logout"
+					>
+						Sair
+					</BaseButton>
+				</BaseLink>
+				<BaseButton
+					theme="accent"
+					@click="logoutDialog?.hide()"
+				>
+					Cancelar
+				</BaseButton>
+			</div>
+		</BaseDialog>
+	</Teleport>
 </template>
 
 <style scoped>
@@ -202,7 +209,15 @@ p {
 	@apply text-xl ml-8;
 }
 
+.nav-link {
+	@apply px-5 rounded-md h-11 flex flex-row items-center justify-start text-textLight cursor-pointer hover:brightness-90;
+}
+
+.nav-link.router-link-active {
+	@apply text-accent;
+}
+
 nav {
-	@apply w-full flex flex-col gap-2 [button]:w-full overflow-clip;
+	@apply w-full flex flex-col gap-2 [button]:w-full [&>a]:w-full overflow-clip;
 }
 </style>
