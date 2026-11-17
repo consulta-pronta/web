@@ -12,7 +12,9 @@ import Professional from "@/database/professional.model"
 import { useAuthStore } from "@/stores/authStore"
 import BaseDialog from "../bases/BaseDialog.vue"
 import Patient from "@/database/patient.model.ts"
+import { useToast } from "vue-toastification"
 
+const toast = useToast()
 const authStore = useAuthStore()
 
 const dialogSymptoms = useTemplateRef("symptoms")
@@ -23,7 +25,6 @@ const periodEndInput = ref("")
 const symptoms = ref<Symptom[]>([])
 const symptomsLoaded = ref(false)
 const symptomsLoading = ref(false)
-const symptomsError = ref("")
 const buttonState = ref<ButtonState>("enabled")
 const professionals = ref<Professional[]>([])
 const selectedProfessionalId = ref("")
@@ -48,15 +49,15 @@ const loadSymptoms = async () => {
 		return
 	}
 	if (id == null) {
-		symptomsError.value = "Não foi possível identificar o paciente."
+		toast.error("Não foi possível identificar o paciente.")
 		return
 	}
 	if (periodStartInput.value.length === 0 || periodEndInput.value.length === 0) {
-		symptomsError.value = "Informe as datas inicial e final do período."
+		toast.error("Informe as datas inicial e final do período.")
 		return
 	}
 	if (periodStartInput.value > periodEndInput.value) {
-		symptomsError.value = "A data inicial deve ser anterior à data final."
+		toast.error("A data inicial deve ser anterior à data final.")
 		return
 	}
 	if (symptomsLoaded.value) {
@@ -65,7 +66,6 @@ const loadSymptoms = async () => {
 	}
 
 	symptomsLoading.value = true
-	symptomsError.value = ""
 	try {
 		symptoms.value = await Symptom.getBetween(periodStart.value, periodEnd.value, id)
 		symptomsLoaded.value = true
@@ -74,7 +74,7 @@ const loadSymptoms = async () => {
 		console.error("Failed to load symptoms for the report.", error)
 		symptoms.value = []
 		symptomsLoaded.value = false
-		symptomsError.value = "Não foi possível carregar os sintomas do período."
+		toast.error("Não foi possível carregar os sintomas do período.")
 	} finally {
 		symptomsLoading.value = false
 	}
@@ -83,12 +83,13 @@ const loadSymptoms = async () => {
 watch([periodStartInput, periodEndInput], () => {
 	symptoms.value = []
 	symptomsLoaded.value = false
-	symptomsError.value = ""
+	toast.error("")
 })
 
 const submitForm = async () => {
 	if (periodStartInput.value > periodEndInput.value) {
-		symptomsError.value = "A data inicial deve ser anterior à data final."
+
+		toast.error("A data inicial deve ser anterior à data final.")
 		return
 	}
 
@@ -132,7 +133,7 @@ authStore.onReady(async (patient) => {
 		)
 	} catch (error) {
 		console.error("Failed to load professionals for the report.", error)
-		professionalsError.value = "Não foi possível carregar os profissionais."
+		toast.error("Não foi possível carregar os profissionais.")
 	}
 })
 </script>
@@ -187,9 +188,6 @@ authStore.onReady(async (patient) => {
 				Nenhum profissional encontrado
 			</option>
 		</BaseSelect>
-		<p v-if="professionalsError" class="text-error text-sm">
-			{{ professionalsError }}
-		</p>
 
 		<BaseButton
 			type="button"
@@ -230,9 +228,6 @@ authStore.onReady(async (patient) => {
 				</article>
 			</div>
 		</section>
-		<p v-if="symptomsError" class="text-error text-sm text-center">
-			{{ symptomsError }}
-		</p>
 
 		<br />
 

@@ -23,7 +23,7 @@ defineProps<{ symptom: Symptom }>()
 
 		<hr class="my-2" />
 
-		<IntensityChip :intensity="symptom.intensity" class="opacity-90" />
+		<IntensityChip :intensity="Number(symptom.intensity)" class="opacity-90" />
 	</article>
 </template>
 
