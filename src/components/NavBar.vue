@@ -7,10 +7,13 @@ import BaseLink from "@/components/bases/BaseLink.vue"
 import BaseButton, { type BaseButtonProps } from "@/components/bases/BaseButton.vue"
 import BaseDialog from "@/components/bases/BaseDialog.vue"
 import type { UserType } from "@/utils"
+import NotificationsSideSheet from "@/components/NotificationsSideSheet.vue"
+import BaseSideSheet from "@/components/bases/BaseSideSheet.vue"
 
 const navbarStore = useNavbarStore()
 const authStore = useAuthStore()
 
+const notifications = ref(false)
 const userType = ref<UserType | null>(null)
 const openedMobile = ref(false)
 const logoutDialog = useTemplateRef("logoutDialog")
@@ -153,9 +156,14 @@ authStore.onReady((data) => {
 			</button>
 
 			<nav>
-				<BaseButton v-bind="sharedAttributes" goto="#" icon="notifications">
+				<button
+					type="button"
+					class="nav-link"
+					@click="notifications = !notifications"
+				>
+					<span class="material-symbols-rounded select-none text-3xl!">notifications</span>
 					<p>Notificações</p>
-				</BaseButton>
+				</button>
 
 				<BaseLink
 					v-if="userType != 'admin'"
@@ -200,6 +208,13 @@ authStore.onReady((data) => {
 			</div>
 		</BaseDialog>
 	</Teleport>
+
+	<BaseSideSheet
+		title="Notificações"
+		:visible="notifications"
+	>
+		<NotificationsSideSheet />
+	</BaseSideSheet>
 </template>
 
 <style scoped>
