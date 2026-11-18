@@ -213,7 +213,18 @@ authStore.onReady((data) => {
 		title="Notificações"
 		:visible="notifications"
 	>
-		<NotificationsSideSheet />
+		<template #header-options>
+			<button
+				type="button"
+				class="cursor-pointer h-fit text-primaryLight"
+				@click="notifications = false"
+			>
+				<span class="material-symbols-rounded"> close </span>
+			</button>
+		</template>
+		<template #default>
+			<NotificationsSideSheet />
+		</template>
 	</BaseSideSheet>
 </template>
 
