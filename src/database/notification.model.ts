@@ -69,4 +69,12 @@ export default class Notification extends BaseDocument {
 	static async set(data: Record<string, unknown>, options: CollectionOptions = {}) {
 		return super.set(data, options)
 	}
+
+	static async update(id: string, data: Record<string, unknown>, options: CollectionOptions = {}) {
+        return super.update(id, data, options)
+    }
+
+	static async delete(id: string, options: CollectionOptions = {}) {
+		return super.delete(id, options)
+	}
 }
