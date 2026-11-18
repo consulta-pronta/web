@@ -5,9 +5,11 @@ const props = withDefaults(
 	defineProps<{
 		icon: string
 		theme?: "bright" | "light" | "dark"
+		mode?: "round" | "square"
 	}>(),
 	{
 		theme: "light",
+		mode: "round"
 	}
 )
 
@@ -41,8 +43,8 @@ const iconStyle = computed(() => {
 <template>
 	<button
 		type="button"
-		class="cursor-pointer w-fit h-fit flex justify-center items-center size-full select-none rounded-full p-1"
-		:class="[buttonStyle, iconStyle]"
+		class="cursor-pointer w-fit h-fit flex justify-center items-center size-full select-none p-1"
+		:class="[buttonStyle, iconStyle, mode === 'round' ? 'rounded-full' : 'rounded']"
 	>
 		<span class="material-symbols-rounded">
 			{{ icon }}

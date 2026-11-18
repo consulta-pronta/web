@@ -15,6 +15,7 @@ import HeaderWrapper from "@/components/wrappers/HeaderWrapper.vue"
 import DefaultContentWrapper from "@/components/wrappers/DefaultContentWrapper.vue"
 import BaseIconButton from "@/components/bases/BaseIconButton.vue"
 import BaseSideSheet from "@/components/bases/BaseSideSheet.vue"
+import ConfigSheet from '@/fragments/ConfigSheet.vue'
 
 const authStore = useAuthStore()
 const dialogForm = useTemplateRef("dialogForm")
@@ -208,7 +209,7 @@ const handleSubmit = async () => {
 				<BaseIconButton icon="close" class="p-2" @click="configVisible = false"/>
 			</template>
 
-			<!--<p>das</p>-->
+			<ConfigSheet />
 		</BaseSideSheet>
 
 		<BaseDialog :title="formTitle" ref="dialogForm">
