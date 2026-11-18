@@ -12,9 +12,11 @@ import PageWrapper from "@/components/wrappers/PageWrapper.vue"
 import DefaultContentWrapper from "@/components/wrappers/DefaultContentWrapper.vue"
 import BaseCardList from "@/components/bases/BaseCardList.vue"
 import HeaderWrapper from "@/components/wrappers/HeaderWrapper.vue"
+import { useToast } from "vue-toastification"
 
 const route = useRoute()
 const authStore = useAuthStore()
+const toast = useToast()
 
 const medicalPermissions = ref<MedicalPermission[]>([])
 const loadingPatients = ref(true)
@@ -41,7 +43,8 @@ const updatePatients = async () => {
 		}
 	} catch (error) {
 		console.error("Failed to load professional's medical permissions.", error)
-		loadMessage.value = "Não foi possível carregar os pacientes."
+		loadMessage.value = ""
+		toast.error("Não foi possível carregar os pacientes.")
 	} finally {
 		loadingPatients.value = false
 	}

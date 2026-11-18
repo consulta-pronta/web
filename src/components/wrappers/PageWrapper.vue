@@ -14,7 +14,7 @@ defineProps<{
 			<slot></slot>
 		</template>
 		<template v-else>
-			<main class="size-full overflow-clip px-6 py-8">
+			<main class="size-full overflow-auto px-6 py-8">
 				<slot></slot>
 			</main>
 		</template>

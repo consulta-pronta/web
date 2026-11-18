@@ -19,16 +19,17 @@ import BaseTable from "@/components/bases/BaseTable.vue"
 import BaseCardList from "@/components/bases/BaseCardList.vue"
 import router from "@/router"
 import { useRoute } from "vue-router"
+import { useToast } from "vue-toastification"
 
 const route = useRoute()
 const authStore = useAuthStore()
+const toast = useToast()
 
 const exames = ref<Exam[]>([])
 const currentUser = ref<Patient | Professional | null>(null)
 const currentPermission = ref<MedicalPermission | null>(null)
 const forProfessionalData = ref<PatientWithProfessionalPermission[]>([])
 const currentPatient = ref<Patient | null>(null)
-const loadError = ref("")
 const loadingPatients = ref(true)
 const loadingExams = ref(true)
 const searchQuery = ref("")
@@ -68,12 +69,11 @@ const handleSubmit = async () => {
 
 const loadPatientExams = async (patient: Patient) => {
 	loadingExams.value = true
-	loadError.value = ""
 	try {
 		exames.value = await Exam.getAll({ scope: { userId: patient.id } })
 	} catch (error) {
 		console.error("Failed to load patient's exams.", error)
-		loadError.value = "Não foi possível carregar os exames."
+		toast.error("Não foi possível carregar os exames.")
 	} finally {
 		loadingExams.value = false
 	}
@@ -90,7 +90,6 @@ const unselectPatient = () => {
 	currentPatient.value = null
 	loadingPatients.value = false
 	loadingExams.value = false
-	loadError.value = ""
 	exames.value = []
 }
 
@@ -120,7 +119,7 @@ authStore.onReady(async (user) => {
 		}
 	} catch (error) {
 		console.error("Failed to load exams page data.", error)
-		loadError.value = "Não foi possível carregar os dados."
+		toast.error("Não foi possível carregar os dados.")
 	} finally {
 		loadingPatients.value = false
 		loadingExams.value = false
@@ -164,10 +163,6 @@ authStore.onReady(async (user) => {
 					<p class="text-2xl pl-2">Pacientes</p>
 				</article>
 
-				<p v-if="loadError" class="text-error text-center">
-					{{ loadError }}
-				</p>
-
 				<BaseCardList :is-loading="loadingPatients" class="w-full flex flex-col gap-2">
 					<PatientCard
 						v-for="item in filteredProfessionalData" 
@@ -209,7 +204,7 @@ authStore.onReady(async (user) => {
 				<BaseTable
 					:is-loading="loadingExams"
 					:show-message="filteredExams.length === 0"
-					:message="loadError || 'Nenhum exame encontrado'"
+					message="Nenhum exame encontrado"
 				>
 					<template #header>
 						<th class="w-70">Exame</th>

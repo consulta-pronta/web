@@ -34,6 +34,8 @@
 }
 @custom-variant progress-unfilled (&::-webkit-progress-bar, &);
 
+* { @apply scrollbar-thumb-accent; }
+
 .material-symbols-rounded {
 	font-variation-settings: "FILL" 1;
 	user-select: none;
@@ -57,3 +59,10 @@
 		gap: 1rem;
 	}
 }
+
+.Vue-Toastification__toast.custom-toast { @apply text-textLight rounded; }
+.Vue-Toastification__toast--default.custom-toast { @apply bg-primary; }
+.Vue-Toastification__toast--info.custom-toast { @apply bg-neutral; }
+.Vue-Toastification__toast--warning.custom-toast { @apply bg-warning; }
+.Vue-Toastification__toast--error.custom-toast { @apply bg-error; }
+.Vue-Toastification__toast--success.custom-toast { @apply bg-sucess; }

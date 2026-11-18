@@ -8,8 +8,10 @@ import BaseLogo from "@/components/bases/BaseLogo.vue"
 import { auth } from "@/database/firebase"
 import { sendPasswordResetEmail } from "firebase/auth"
 import validator from "validator"
+import { useToast } from "vue-toastification"
 
 const router = useRouter()
+const toast = useToast()
 
 const email = ref("")
 const submitState = ref<ButtonState>("disabled")
@@ -23,11 +25,17 @@ const submitForm = async () => {
 
 	submitState.value = "sync"
 
-	await sendPasswordResetEmail(auth, email.value)
-
-	emailSent.value = true
-	stopWatcing()
-	submitState.value = "enabled"
+	try {
+		await sendPasswordResetEmail(auth, email.value)
+		emailSent.value = true
+		stopWatcing()
+		toast.success("Enviamos o link de recuperação para seu e-mail.")
+	} catch (error) {
+		console.error("Failed to send password reset email.", error)
+		toast.error("Não foi possível enviar o link. Tente novamente.")
+	} finally {
+		submitState.value = "enabled"
+	}
 }
 
 const stopWatcing = watch(email, (value) => {

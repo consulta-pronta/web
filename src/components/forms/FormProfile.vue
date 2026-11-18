@@ -10,6 +10,7 @@ import { formatToPhone } from 'brazilian-values'
 import { bloodTypes, genderTypes, federalUnits } from '@/utils'
 import Patient from '@/database/patient.model'
 import Professional from '@/database/professional.model'
+import { useToast } from 'vue-toastification'
 
 interface Props {
 	type?: "personal" | "contacts" | "health" | "professional" | "name"
@@ -20,6 +21,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const authStore = useAuthStore()
+const toast = useToast()
 
 const name = ref('')
 const social_name = ref('')
@@ -42,22 +44,28 @@ const emit = defineEmits(["handled-submit"])
 const submitForm = async () => {
 	buttonState.value = "sync"
 
-	await authStore.onReady(async (user) => {
-		if (props.type === 'contacts') {
-			await User.update(user.id, { email: email.value, phone: (phone.value.replace(/[\(\)\-\s]/g, "")) })
-		} else if (props.type === 'health') {
-			await Patient.update(user.id, { patient_data: { blood_type: blood_type.value, height: height.value, weight: weight.value } })
-		} else if (props.type === 'personal') {
-			await User.update(user.id, { birth_date: birth_date.value, address: address.value, gender: gender.value })
-		} else if (props.type === 'name') {
-			await User.update(user.id, { name: name.value, social_name: social_name.value })
-		} else if (props.type === 'professional') {
-			await Professional.update(user.id, { professional_data: { crm: crm.value, uf: uf.value, specialty: specialty.value, operation_area: operation_area.value } })
-		}
-	})
-
-	emit("handled-submit")
-	buttonState.value = "enabled"
+	try {
+		await authStore.onReady(async (user) => {
+			if (props.type === 'contacts') {
+				await User.update(user.id, { email: email.value, phone: (phone.value.replace(/[\(\)\-\s]/g, "")) })
+			} else if (props.type === 'health') {
+				await Patient.update(user.id, { patient_data: { blood_type: blood_type.value, height: height.value, weight: weight.value } })
+			} else if (props.type === 'personal') {
+				await User.update(user.id, { birth_date: birth_date.value, address: address.value, gender: gender.value })
+			} else if (props.type === 'name') {
+				await User.update(user.id, { name: name.value, social_name: social_name.value })
+			} else if (props.type === 'professional') {
+				await Professional.update(user.id, { professional_data: { crm: crm.value, uf: uf.value, specialty: specialty.value, operation_area: operation_area.value } })
+			}
+		})
+		toast.success("Dados atualizados com sucesso.")
+		emit("handled-submit")
+	} catch (error) {
+		console.error("Failed to update profile.", error)
+		toast.error("Não foi possível atualizar os dados.")
+	} finally {
+		buttonState.value = "enabled"
+	}
 }
 
 const reset = async () => {

@@ -17,14 +17,15 @@ import PageWrapper from "@/components/wrappers/PageWrapper.vue"
 import DefaultContentWrapper from "@/components/wrappers/DefaultContentWrapper.vue"
 import HeaderWrapper from "@/components/wrappers/HeaderWrapper.vue"
 import BaseCardList from "@/components/bases/BaseCardList.vue"
+import { useToast } from "vue-toastification"
 
+const toast = useToast()
 const route = useRoute()
 const authStore = useAuthStore()
 
 const symptoms = ref<Symptom[]>([])
 const searchQuery = ref("")
 const symptomsLoaded = ref(false)
-const loadError = ref("")
 const deleteError = ref("")
 const isDeleting = ref(false)
 const selectedPlace = ref<string | null>(null)
@@ -65,13 +66,12 @@ const filteredSymptoms = computed(() => {
 })
 
 const updateSymptoms = async () => {
-	loadError.value = ""
 	symptomsLoaded.value = false
 	try {
 		symptoms.value = await Symptom.getAll({ scope: { userId } })
 	} catch (error) {
 		console.error("Failed to load symptoms.", error)
-		loadError.value = "Não foi possível carregar os sintomas."
+		toast.error("Não foi possível carregar os sintomas.")
 	} finally {
 		symptomsLoaded.value = true
 	}
@@ -101,10 +101,11 @@ const deleteSymptom = async () => {
 		await Symptom.delete(currentSymptomId.value, { scope: { userId } })
 		confirmDelete.value?.hide()
 		currentSymptomId.value = ""
+		toast.success("Sintoma excluído com sucesso.")
 		await updateSymptoms()
 	} catch (error) {
+		toast.error("Não foi possível excluir o sintoma.")
 		console.error("Failed to delete symptom.", error)
-		deleteError.value = "Não foi possível excluir o sintoma. Tente novamente."
 	} finally {
 		isDeleting.value = false
 	}
@@ -200,11 +201,8 @@ authStore.onReady(async (data) => {
 					</BaseCardList>
 				</div>
 				
-				<p v-if="symptomsLoaded && loadError" class="text-error m-auto">
-					{{ loadError }}
-				</p>
 				<p
-					v-else-if="symptomsLoaded && !filteredSymptoms.length"
+					v-if="symptomsLoaded && !filteredSymptoms.length"
 					class="text-textLight m-auto"
 				>
 					{{

@@ -10,6 +10,7 @@ import type { MedicalAccessStatus, MedicalPermissions } from "@/database/medical
 import FormMedicalPermission from "@/components/forms/FormMedicalPermission.vue"
 import { useAuthStore } from "@/stores/authStore"
 import ProfessionalPermissionExtended from "../ProfessionalPermissionExtended.vue"
+import { useToast } from "vue-toastification"
 
 const props = defineProps<{
 	medicalPermission: MedicalPermission
@@ -17,6 +18,7 @@ const props = defineProps<{
 }>()
 
 const authStore = useAuthStore()
+const toast = useToast()
 
 const managePermissionsVisible = useTemplateRef("managePermissionsDialog")
 
@@ -40,20 +42,28 @@ const updatePermissions = async (updatedPermission: {
 		props.medicalPermission.status === "pending"
 			? { permissions: permissions.value }
 			: { status: status.value, permissions: permissions.value }
-	await authStore.onReady(async (user) => {
-		await MedicalPermission.update(props.medicalPermission.id, data, {
-			scope: { patientId: props.medicalPermission.patient_id || user.id },
+	try {
+		await authStore.onReady(async (user) => {
+			await MedicalPermission.update(props.medicalPermission.id, data, {
+				scope: { patientId: props.medicalPermission.patient_id || user.id },
+			})
 		})
-	})
-	managePermissionsVisible.value?.hide()
+		managePermissionsVisible.value?.hide()
+		toast.success("Permissões atualizadas com sucesso.")
+	} catch (error) {
+		console.error("Failed to update medical permissions.", error)
+		toast.error("Não foi possível atualizar as permissões.")
+	}
 }
 
 const acceptRequest = async () => {
 	try {
 		await props.medicalPermission.acceptRequest()
 		status.value = "active"
+		toast.success("Solicitação aceita com sucesso.")
 	} catch (error) {
 		console.error("Failed to accept medical permission request.", error)
+		toast.error("Não foi possível aceitar a solicitação.")
 	}
 }
 
