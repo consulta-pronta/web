@@ -156,11 +156,12 @@ const router = createRouter({
 			},
 		},
 		{
-			path: "/ConsultasPro",
-			name: "Consultas-Profissional",
-			component: () => import("@/pages/ConsultasProfissional.vue"),
+			path: "/consultas",
+			name: "consultas",
+			component: () => import("@/pages/AppointmentPage.vue"),
 			meta: {
-				roles: ["Profissional"],
+				roles: ["patient", "professional"],
+				title: "Consultas - @",
 			},
 		}
 	],

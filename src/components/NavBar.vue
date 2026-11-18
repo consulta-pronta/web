@@ -115,7 +115,7 @@ authStore.onReady((data) => {
 					v-if="userType !== 'admin'"
 					v-bind="sharedAttributes"
 					icon="medical_services"
-					goto="#"
+					goto="/consultas"
 				>
 					<p>Consultas</p>
 				</BaseButton>
