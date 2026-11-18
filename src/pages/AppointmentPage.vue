@@ -9,7 +9,7 @@ import Professional, { type PatientWithProfessionalPermission } from "@/database
 import PatientCard from "@/components/cards/PatientCard.vue"
 import BaseDialog from "@/components/bases/BaseDialog.vue"
 import BaseButton from "@/components/bases/BaseButton.vue"
-import FormExamRequest from "@/components/forms/FormExamRequest.vue"
+import FormAppointmentRequest from "@/components/forms/FormAppointmentRequest.vue"
 import MedicalPermission from "@/database/medicalPermission.model"
 import PageWrapper from "@/components/wrappers/PageWrapper.vue"
 import HeaderWrapper from "@/components/wrappers/HeaderWrapper.vue"
@@ -235,7 +235,7 @@ authStore.onReady(async (user) => {
 			"
 			ref="formRegister"
 		>
-			<FormExamRequest
+			<FormAppointmentRequest
 				:patient="appointmentPatient"
 				:is-patient="userType === 'patient'"
 				@handled-submit="handleSubmit"
