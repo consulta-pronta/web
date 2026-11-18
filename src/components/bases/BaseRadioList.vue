@@ -10,7 +10,7 @@ defineProps<{
 	legend?: string
 }>()
 
-const value = defineModel<string>("")
+const value = defineModel<string>()
 </script>
 
 <template>
@@ -41,5 +41,5 @@ const value = defineModel<string>("")
 
 .focused {
 	@apply bg-accent text-textDark;
-} 
+}
 </style>
