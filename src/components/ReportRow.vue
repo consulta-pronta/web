@@ -6,6 +6,7 @@ import BaseInput from "@/components/bases/BaseInput.vue"
 import type Report from "@/database/report.model"
 import { ContextMenu, ContextMenuItem, type MenuOptions } from "@imengyu/vue3-context-menu"
 import { toCoolDate } from "@/utils"
+import BaseIconButton from "./bases/BaseIconButton.vue"
 
 const props = defineProps<{
 	report: Report
@@ -69,16 +70,13 @@ const openMenu = (e: MouseEvent) => {
 			<span v-else>—</span>
 		</td>
 
-		<td class="text-center">
-			<button
-				type="button"
-				class="cursor-pointer flex justify-center items-center size-full text-primaryDark"
+		<td>
+			<BaseIconButton
+				icon="more_horiz"
+				theme="dark"
+				class="m-auto"
 				@click.prevent.stop="openMenu($event)"
-			>
-				<span class="material-symbols-rounded rounded-full p-1 hover:bg-primaryDark/10">
-					more_horiz
-				</span>
-			</button>
+			/>
 		</td>
 
 		<ContextMenu v-model:show="menuShow" :options="menuOptions">
