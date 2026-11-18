@@ -213,7 +213,7 @@ authStore.onReady(async (user) => {
 				>
 					<template #header>
 						<th class="w-70">Consulta</th>
-						<th class="w-70">Local</th>
+						<th class="w-70">Hospital</th>
 						<th class="w-30">Data</th>
 						<th class="w-40">Status</th>
 						<th class="w-12	"></th>

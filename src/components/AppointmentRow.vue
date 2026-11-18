@@ -8,7 +8,7 @@ const props = defineProps<{
 }>()
 
 const typeIcon = computed(() => {
-	switch (props.appointment.type) {
+	switch (props.appointment.motivation) {
 		case "preventiva":
 			return "health_and_safety"
 		case "sintomatica":
@@ -25,7 +25,9 @@ const date = computed(() => {
 
 const status = computed(() => {
 	switch (props.appointment.status) {
-		case "solicitado":
+		case "solicitado_paciente":
+			return "Solicitado"
+		case "solicitado_profissional":
 			return "Solicitado"
 		case "confirmado":
 			return "Confirmado"
@@ -35,7 +37,9 @@ const status = computed(() => {
 })
 const statusIcon = computed(() => {
 	switch (props.appointment.status) {
-		case "solicitado":
+		case "solicitado_paciente":
+			return "pending"
+		case "solicitado_profissional":
 			return "pending"
 		case "confirmado":
 			return "check_circle"

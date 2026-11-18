@@ -7,7 +7,7 @@ import BaseDocument, {
 import User from "./user.model"
 
 export type AppointmentMotivation = "preventiva" | "sintomatica"
-export type AppointmentStatus = "solicitado" | "confirmado"
+export type AppointmentStatus = "solicitado_paciente" | "solicitado_profissional" | "confirmado"
 
 export default class Appointment extends BaseDocument {
 	constructor(
@@ -16,13 +16,13 @@ export default class Appointment extends BaseDocument {
 		public motivation: AppointmentMotivation = "preventiva",
 		public hospital: string = "",
 		public date: Timestamp | null = null,
-		public status: AppointmentStatus = "solicitado",
+		public status: AppointmentStatus = "solicitado_paciente",
 		public created_at: Timestamp | null = null,
 	) {
 		super()
 	}
 
-	static readonly collectionName = "consultations"
+	static readonly collectionName = "consultation"
 
 	protected static getCollectionPath(scope?: CollectionScope): string {
 		const userId = scope?.userId
