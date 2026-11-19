@@ -124,7 +124,7 @@ async function registrarPrescricao() {
 </script>
 
 <template>
-	<form @submit.prevent="registrarPrescricao" class="flex flex-col gap-4 z-48">
+	<form @submit.prevent="registrarPrescricao" class="flex flex-col gap-2 z-38">
 		<label>
 			<p>Para qual paciente?</p>
 
@@ -141,46 +141,54 @@ async function registrarPrescricao() {
 			</BaseSelect>
 		</label>
 
-		<label>
-			<p>Qual medicamento?</p>
-			<BaseInput
-				v-model="name"
-				type="text"
-				placeholder="Nome do medicamento"
-				theme="light"
-				required
-			/>
-		</label>
+		<div class="grid grid-cols-2 gap-4">
+			<label>
+				<p>Qual medicamento?</p>
+				<BaseInput
+					v-model="name"
+					type="text"
+					placeholder="Nome do medicamento"
+					theme="light"
+					required
+				/>
+			</label>
 
-		<label>
-			<p>Qual a via de consumo?</p>
+			<label>
+				<p>Qual a via de consumo?</p>
 
-			<BaseSelect
-				v-model="route"
-				icon="medication"
-				theme="light"
-				defaultValue="Via de consumo"
-				required
-			>
-				<template v-for="via in vias" :key="via.value">
-					<option :value="via.value">Consumo {{ via.label }}</option>
-				</template>
-			</BaseSelect>
-		</label>
+				<BaseSelect
+					v-model="route"
+					icon="medication"
+					theme="light"
+					defaultValue="Via de consumo"
+					required
+				>
+					<template v-for="via in vias" :key="via.value">
+						<option :value="via.value">Consumo {{ via.label }}</option>
+					</template>
+				</BaseSelect>
+			</label>
+		</div>
 
 		<div>
 			<p>Qual a dosagem?</p>
-			<div class="flex gap-4 w-full">
+			<div class="grid grid-cols-5 gap-4 w-full">
 				<BaseInput
 					v-model="doseValue"
 					type="custom-number"
 					number-mode="positive-decimal"
 					placeholder="Ex: 500"
 					theme="light"
-					class="grow"
+					class="col-span-4"
 					required
 				/>
-				<BaseSelect v-model="doseUnit" theme="light" defaultValue="Unidade" required>
+				<BaseSelect
+					v-model="doseUnit"
+					theme="light"
+					defaultValue="Unidade"
+					class="col-span-1"
+					required
+				>
 					<template v-for="[value, label] in doseUnits" :key="value">
 						<option :value="value">{{ label }}</option>
 					</template>
@@ -188,36 +196,32 @@ async function registrarPrescricao() {
 			</div>
 		</div>
 
-		<label>
-			<p>De quanto em quanto tempo?</p>
-			<div class="flex flex-row items-center gap-4 text-textLight w-full">
-				A cada
+		<div class="bg-surface rounded-md p-3 text-primaryDark flex flex-col gap-2">
+			<div class="flex flex-row gap-2">
+				<span class="material-symbols-rounded"> calendar_today </span>
+
+				<p>Período</p>
+			</div>
+
+			<div class="w-full grid grid-cols-2 gap-2">
+				<p>De:</p>
+				<p>Até:</p>
+
+				<BaseInput type="date" theme="dark" required v-model="startDate" />
+				<BaseInput type="date" theme="dark" required v-model="endDate" />
+			</div>
+
+			<div class="w-full flex flex-col gap-2">
+				<p>De quantas em quantas horas?</p>
 				<BaseInput
 					v-model="everyHours"
 					type="custom-number"
-					number-mode="positive-integer"
+					number-mode="positive-decimal"
 					placeholder="Ex: 8"
-					theme="light"
-					class="grow"
+					theme="dark"
 					required
 				/>
-				horas
 			</div>
-		</label>
-
-		<div>
-			<p>Durante qual período?</p>
-			<fieldset class="flex gap-4 w-full">
-				<label class="grow">
-					<span class="text-sm">Início</span>
-					<BaseInput v-model="startDate" type="date" theme="light" required />
-				</label>
-
-				<label class="grow">
-					<span class="text-sm">Fim</span>
-					<BaseInput v-model="endDate" type="date" theme="light" required />
-				</label>
-			</fieldset>
 		</div>
 
 		<label>

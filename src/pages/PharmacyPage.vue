@@ -2,9 +2,9 @@
 import { computed, onMounted, ref, useTemplateRef } from "vue"
 
 import BaseInput from "@/components/bases/BaseInput.vue"
-import FarmaciaRow, { type PrescriptionEntry } from "@/components/FarmaciaRow.vue"
+import FarmaciaRow, { type Medicamento } from "@/components/FarmaciaRow.vue"
 import BaseButton from "@/components/bases/BaseButton.vue"
-import FormMedicamento from "@/components/forms/FormMedicamento.vue"
+import FormMedication from "@/components/forms/FormMedication.vue"
 import BaseDialog from "@/components/bases/BaseDialog.vue"
 import PageWrapper from "@/components/wrappers/PageWrapper.vue"
 import HeaderWrapper from "@/components/wrappers/HeaderWrapper.vue"
@@ -17,13 +17,7 @@ import Professional from "@/database/professional.model"
 import Patient from "@/database/patient.model"
 import { normalizeString } from "@/utils"
 
-type PrescriptionGroup = {
-	key: string
-	name: string
-	dose: string
-	route: string
-	prescriptions: PrescriptionEntry[]
-}
+type MedicamentoGroup = Medicamento & { key: string }
 
 const authStore = useAuthStore()
 
@@ -110,7 +104,7 @@ const loadData = async () => {
 onMounted(loadData)
 
 const groups = computed(() => {
-	const result = new Map<string, PrescriptionGroup>()
+	const result = new Map<string, MedicamentoGroup>()
 
 	for (const item of prescriptions.value) {
 		const dose = `${item.dose_value} ${doseUnitLabels[item.dose_unit]}`
@@ -208,10 +202,7 @@ const handleSubmit = async (success: boolean) => {
 					<FarmaciaRow
 						v-for="group in filteredGroups"
 						:key="group.key"
-						:name="group.name"
-						:dose="group.dose"
-						:route="group.route"
-						:prescriptions="group.prescriptions"
+						:medicamento="group"
 						@delete="deletePrescription"
 					/>
 				</template>
@@ -219,7 +210,7 @@ const handleSubmit = async (success: boolean) => {
 		</DefaultContentWrapper>
 
 		<BaseDialog title="Prescrever Medicamento" ref="formRegister">
-			<FormMedicamento :patients="prescribablePatients" @handled-submit="handleSubmit" />
+			<FormMedication :patients="prescribablePatients" @handled-submit="handleSubmit" />
 		</BaseDialog>
 	</PageWrapper>
 </template>

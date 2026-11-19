@@ -8,11 +8,15 @@ export type PrescriptionEntry = {
 	period: string
 }
 
-defineProps<{
+export type Medicamento = {
 	name: string
 	dose: string
 	route: string
 	prescriptions: PrescriptionEntry[]
+}
+
+defineProps<{
+	medicamento: Medicamento
 }>()
 
 const emit = defineEmits<{
@@ -23,15 +27,17 @@ const expanded = ref(false)
 </script>
 
 <template>
-	<tr class="border-t border-primarydark *:not-first:text-center">
-		<td class="font-medium flex items-center gap-2">
-			<span class="material-symbols-rounded">medication</span>
-			{{ name }}
+	<tr class="border-t border-primaryDark *:not-first:text-center">
+		<td class="font-medium">
+			<div class="flex items-center gap-2">
+				<span class="material-symbols-rounded">medication</span>
+				{{ medicamento.name }}
+			</div>
 		</td>
 
-		<td>{{ dose }}</td>
+		<td>{{ medicamento.dose }}</td>
 
-		<td>{{ capitalize(route) }}</td>
+		<td>{{ capitalize(medicamento.route) }}</td>
 
 		<td>
 			<button
@@ -41,7 +47,7 @@ const expanded = ref(false)
 				@click="expanded = !expanded"
 			>
 				<span
-					class="material-symbols-rounded text-primarydark cursor-pointer transition-transform duration-200"
+					class="material-symbols-rounded text-primaryDark cursor-pointer transition-transform duration-200"
 					:class="{ 'rotate-180': expanded }"
 				>
 					expand_more
@@ -52,9 +58,9 @@ const expanded = ref(false)
 
 	<template v-if="expanded">
 		<tr
-			v-for="prescription in prescriptions"
+			v-for="prescription in medicamento.prescriptions"
 			:key="prescription.id"
-			class="border-t border-primarydark *:not-first:text-center"
+			class="border-t border-primaryDark *:not-first:text-center"
 		>
 			<td class="pl-15">{{ prescription.patientName }}</td>
 			<td>{{ prescription.frequency }}</td>
