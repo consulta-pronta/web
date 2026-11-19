@@ -1,0 +1,6 @@
+@import "tailwindcss";
+
+html.fontSmall { font-size: 87.5%; }
+html.fontBig { font-size: 112.5%; }
+
+html.reducedAnimations * { transition: all 0s !important; }
