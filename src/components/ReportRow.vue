@@ -6,12 +6,22 @@ import BaseInput from "@/components/bases/BaseInput.vue"
 import type Report from "@/database/report.model"
 import { ContextMenu, ContextMenuItem, type MenuOptions } from "@imengyu/vue3-context-menu"
 import { toCoolDate } from "@/utils"
+import Patient from "@/database/patient.model"
+import Professional from "@/database/professional.model"
+import { useAuthStore } from "@/stores/authStore"
+
+const authStore = useAuthStore()
+
+const currentUser = ref<Patient | Professional | null>(null)
+const userType = computed(() => currentUser.value?.user_type)
 
 const props = defineProps<{
 	report: Report
 }>()
 const emit = defineEmits<{
 	selected: [report: Report]
+	updated: [newName: string]
+	deleted: [report: Report]
 }>()
 
 const menuShow = ref(false)
@@ -33,6 +43,23 @@ const openMenu = (e: MouseEvent) => {
 	menuOptions.value.x = e.x
 	menuOptions.value.y = e.y
 }
+
+const newName = ref("")
+const updateName = () => {
+	formRename.value?.toggle()
+	emit("updated", newName.value)
+}
+
+const deleteReport = () => {
+	emit("deleted", props.report)
+}
+
+authStore.onReady(async (user) => {
+	if (!(user instanceof Patient || user instanceof Professional)) {
+		return
+	}
+	currentUser.value = user
+})
 </script>
 
 <template>
@@ -56,7 +83,7 @@ const openMenu = (e: MouseEvent) => {
 		<td class="text-center text-sm">
 			<time v-if="reportDateTime" :datetime="reportDateTime.toISOString()">
 				{{ toCoolDate(reportDateTime) }}
-				
+
 				<span class="block text-xs text-textDark/60">
 					{{
 						reportDateTime.toLocaleTimeString("pt-BR", {
@@ -70,7 +97,7 @@ const openMenu = (e: MouseEvent) => {
 		</td>
 
 		<td class="text-center">
-			<button
+			<button v-if="userType === 'patient'"
 				type="button"
 				class="cursor-pointer flex justify-center items-center size-full text-primaryDark"
 				@click.prevent.stop="openMenu($event)"
@@ -95,7 +122,7 @@ const openMenu = (e: MouseEvent) => {
 					<span class="material-symbols-rounded"> edit_square </span>
 				</template>
 			</ContextMenuItem>
-			<ContextMenuItem label="Apagar relatório" @click="console.log('da')">
+			<ContextMenuItem label="Apagar relatório" @click="deleteReport">
 				<template #icon>
 					<span class="material-symbols-rounded"> delete </span>
 				</template>
@@ -105,8 +132,8 @@ const openMenu = (e: MouseEvent) => {
 
 	<Teleport to="body">
 		<BaseDialog title="Renomear relatório" ref="formRename">
-			<form class="flex flex-col place-items-center relative gap-1">
-				<BaseInput placeholder="Novo nome" icon="edit_square" class="w-full" required />
+			<form @submit.prevent="updateName" class="flex flex-col place-items-center relative gap-1">
+				<BaseInput v-model="newName" placeholder="Novo nome" icon="edit_square" class="w-full" required />
 
 				<BaseButton type="submit" theme="accent" class="mt-1"> Mudar Nome </BaseButton>
 			</form>

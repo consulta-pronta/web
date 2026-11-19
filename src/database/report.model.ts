@@ -64,4 +64,12 @@ export default class Report extends BaseDocument {
 		}
 		return Math.floor(timestampDiffDays(this.period_start, this.period_end))
 	}
+
+	static async update(id: string, data: Partial<Report>, options: CollectionOptions = {}) {
+		return super.update(id, data, options)
+	}
+
+	static async delete(id: string, options: CollectionOptions = {}) {
+		return super.delete(id, options)
+	}
 }
