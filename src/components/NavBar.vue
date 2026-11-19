@@ -5,7 +5,9 @@ import { useAuthStore } from "@/stores/authStore"
 import BaseLogo from "@/components/bases/BaseLogo.vue"
 import BaseLink from "@/components/bases/BaseLink.vue"
 import BaseButton, { type BaseButtonProps } from "@/components/bases/BaseButton.vue"
-import BaseDialog from "@/components/bases/BaseDialog.vue"
+import BaseDialog from "./bases/BaseDialog.vue"
+import BaseNot from "@/components/bases/BaseNot.vue"
+import FormNotification from "./forms/FormNotification.vue"
 import type { UserType } from "@/utils"
 
 const navbarStore = useNavbarStore()
@@ -14,6 +16,7 @@ const authStore = useAuthStore()
 const userType = ref<UserType | null>(null)
 const openedMobile = ref(false)
 const logoutDialog = useTemplateRef("logoutDialog")
+const formNotification = useTemplateRef("formNotification")
 
 const sharedAttributes = <BaseButtonProps>{
 	theme: "textLight",
@@ -27,6 +30,7 @@ const openMobile = () => {
 authStore.onReady((data) => {
 	userType.value = data.user_type
 })
+
 </script>
 
 <template>
@@ -153,9 +157,14 @@ authStore.onReady((data) => {
 			</button>
 
 			<nav>
-				<BaseButton v-bind="sharedAttributes" goto="#" icon="notifications">
+				<button
+					type="button"
+					class="nav-link"
+					@click="formNotification?.show()"
+				>
+					<span class="material-symbols-rounded select-none text-3xl!">notifications</span>
 					<p>Notificações</p>
-				</BaseButton>
+				</button>
 
 				<BaseLink
 					v-if="userType != 'admin'"
@@ -177,6 +186,12 @@ authStore.onReady((data) => {
 			</nav>
 		</section>
 	</aside>
+
+	<Teleport to="body">
+		 <BaseNot ref="formNotification">
+			<FormNotification />
+		</BaseNot>
+	</Teleport>
 
 	<Teleport to="body">
 		<BaseDialog title="Confirmar saída" ref="logoutDialog">
