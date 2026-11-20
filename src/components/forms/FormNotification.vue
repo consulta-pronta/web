@@ -76,7 +76,7 @@ defineExpose({ reset })
 </script>
 
 <template>
-	<section class="flex flex-col gap-4 z-48 max-h-[75vh] min-h-0">
+	<section class="flex flex-col gap-4 z-48 h-[75vh] min-h-0">
 		<header class="flex flex-row gap-2 justify-center">
 			<BaseInput
 				v-model="searchQuery"
