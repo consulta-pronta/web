@@ -1,126 +1,106 @@
 <script setup lang="ts">
-import BaseInput from '@/components/bases/BaseInput.vue'
-import BaseSelect from '@/components/bases/BaseSelect.vue'
-import BaseButton from '@/components/bases/BaseButton.vue'
-import { useAuthStore } from '@/stores/authStore'
-import { type ButtonState } from '@/components/bases/BaseButton.vue'
-import { ref } from 'vue'
-import User from '@/database/user.model'
-import { formatToPhone } from 'brazilian-values'
-import { bloodTypes, genderTypes, federalUnits } from '@/utils'
-import Patient from '@/database/patient.model'
-import Professional from '@/database/professional.model'
+import { computed, ref } from "vue"
+import { useToast } from "vue-toastification"
+import BaseInput from "@/components/bases/BaseInput.vue"
+import BaseButton from "@/components/bases/BaseButton.vue"
 import NotificationCard from "@/components/cards/NotificationCard.vue"
-import { useToast } from 'vue-toastification'
-
-interface Props {
-	type?: "personal" | "contacts" | "health" | "professional" | "name"
-}
-
-const props = withDefaults(defineProps<Props>(), {
-	type: "personal"
-})
+import { useAuthStore } from "@/stores/authStore"
+import Notification from "@/database/notification.model"
+import { searchDocuments } from "@/utils"
 
 const authStore = useAuthStore()
 const toast = useToast()
 
-const name = ref('')
-const social_name = ref('')
-const birth_date = ref('')
-const address = ref('')
-const email = ref('')
-const phone = ref('')
-const height = ref('')
-const weight = ref('')
-const gender = ref('')
-const blood_type = ref('')
-const crm = ref('')
-const uf = ref('')
-const specialty = ref('')
-const operation_area = ref('')
-const buttonState = ref<ButtonState>("enabled")
+const notifications = ref<Notification[]>([])
+const searchQuery = ref("")
+const loading = ref(false)
 
-const emit = defineEmits(["handled-submit"])
+const filteredNotifications = computed(
+	() => searchDocuments(notifications.value, searchQuery.value) as Notification[],
+)
 
-const submitForm = async () => {
-	buttonState.value = "sync"
+const emptyMessage = computed(() => {
+	if (loading.value) {
+		return "Carregando notificações..."
+	}
+
+	return notifications.value.length === 0
+		? "Nenhuma notificação por aqui."
+		: "Nenhuma notificação encontrada."
+})
+
+const reset = async () => {
+	loading.value = true
 
 	try {
 		await authStore.onReady(async (user) => {
-			if (props.type === 'contacts') {
-				await User.update(user.id, { email: email.value, phone: (phone.value.replace(/[\(\)\-\s]/g, "")) })
-			} else if (props.type === 'health') {
-				await Patient.update(user.id, { patient_data: { blood_type: blood_type.value, height: height.value, weight: weight.value } })
-			} else if (props.type === 'personal') {
-				await User.update(user.id, { birth_date: birth_date.value, address: address.value, gender: gender.value })
-			} else if (props.type === 'name') {
-				await User.update(user.id, { name: name.value, social_name: social_name.value })
-			} else if (props.type === 'professional') {
-				await Professional.update(user.id, { professional_data: { crm: crm.value, uf: uf.value, specialty: specialty.value, operation_area: operation_area.value } })
-			}
+			notifications.value = await Notification.getAllForUser(user.id)
 		})
-		toast.success("Dados atualizados com sucesso.")
-		emit("handled-submit")
 	} catch (error) {
-		console.error("Failed to update profile.", error)
-		toast.error("Não foi possível atualizar os dados.")
+		console.error("Failed to load notifications:", error)
+		toast.error("Não foi possível carregar as notificações.")
 	} finally {
-		buttonState.value = "enabled"
+		loading.value = false
 	}
 }
 
-const reset = async () => {
-	await authStore.onReady(async (user) => {
-		if (user instanceof User) {
-			name.value = user.name
-			social_name.value = user.social_name
-			birth_date.value = user.birth_date
-			address.value = user.address
-			email.value = user.email
-			phone.value = formatToPhone(user.phone)
-			gender.value = user.gender
-		}
-		if (user instanceof Patient) {
-			blood_type.value = user.patient_data?.blood_type ? user.patient_data.blood_type : ''
-			height.value = user.patient_data?.height ? user.patient_data.height.toString() : ''
-			weight.value = user.patient_data?.weight ? user.patient_data.weight.toString() : ''
-		}
-		if (user instanceof Professional) {
-			crm.value = user.professional_data?.crm ? user.professional_data.crm : ''
-			uf.value = user.professional_data?.uf ? user.professional_data.uf : ''
-			specialty.value = user.professional_data?.specialty ? user.professional_data.specialty : ''
-			operation_area.value = user.professional_data?.operation_area ? user.professional_data.operation_area : ''
-		}
-	})
+const markAllAsRead = async () => {
+	try {
+		await Notification.markAllAsAccessed(notifications.value)
+	} catch (error) {
+		console.error("Failed to mark notifications as read:", error)
+		toast.error("Não foi possível marcar as notificações como lidas.")
+	}
+}
+
+const readNotification = async (notification: Notification) => {
+	try {
+		await notification.markAsAccessed()
+	} catch (error) {
+		console.error("Failed to mark notification as read:", error)
+		toast.error("Não foi possível marcar a notificação como lida.")
+	}
+}
+
+const deleteNotification = async (notification: Notification) => {
+	try {
+		await notification.deleteNotification()
+		notifications.value = notifications.value.filter((item) => item.id !== notification.id)
+	} catch (error) {
+		console.error("Failed to delete notification:", error)
+		toast.error("Não foi possível apagar a notificação.")
+	}
 }
 
 defineExpose({ reset })
-
-reset()
-
-
 </script>
 
 <template>
-    <form  class="flex flex-col gap-4 z-48 max-h-[75vh] min-h-0">
-        <section>
-            <div class="flex flex-row gap-2 justify-center">
-                <BaseInput
-                    placeholder="Pesquisar"
-                    icon="search"
-                    class="place-self-center w-full md:w-70"
-                />
-                <BaseButton icon="replay" />
-                <BaseButton icon="drafts" />
-            </div>
-        </section>
-        <section class="flex flex-col gap-4 flex-1 min-h-0 overflow-y-auto pr-2 scrollbar-hide">
-            <NotificationCard />
-            <NotificationCard />
-            <NotificationCard />
-            <NotificationCard />
-            <NotificationCard />
-            <NotificationCard />
-        </section>
-    </form>
+	<section class="flex flex-col gap-4 z-48 max-h-[75vh] min-h-0">
+		<header class="flex flex-row gap-2 justify-center">
+			<BaseInput
+				v-model="searchQuery"
+				placeholder="Pesquisar"
+				icon="search"
+				class="place-self-center w-full md:w-70"
+			/>
+			<BaseButton icon="replay" :state="loading ? 'sync' : 'enabled'" @click="reset()" />
+			<BaseButton icon="drafts" @click="markAllAsRead()" />
+		</header>
+
+		<ul
+			v-if="filteredNotifications.length > 0"
+			class="flex flex-col gap-4 flex-1 min-h-0 overflow-y-auto pr-2 scrollbar-hide"
+		>
+			<li v-for="notification in filteredNotifications" :key="notification.id">
+				<NotificationCard
+					:notification="notification"
+					@read="readNotification(notification)"
+					@delete="deleteNotification(notification)"
+				/>
+			</li>
+		</ul>
+
+		<p v-else class="text-center opacity-70">{{ emptyMessage }}</p>
+	</section>
 </template>
