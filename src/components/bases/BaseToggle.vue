@@ -19,16 +19,17 @@ const toggle = () => {
 
 <template>
 	<button
+		type="button"
 		class="flex flex-row *:grow p-1 rounded-full relative w-12 h-6 cursor-pointer"
 		:class="[
 			disabled ? 'opacity-80 **:cursor-no-drop!' : '',
-			status? 'bg-primaryDark' : 'bg-accent'
+			status? 'bg-accent' : 'bg-primaryDark',
 		]"
 		@click="toggle"
 	>
 		<div
 			class="boogieman absolute w-4 h-4 z-1"
-			:class="status ? 'left-1 bg-accent' : 'left-7 bg-primaryDark'"
+			:class="status ? 'left-7 bg-primaryDark' : 'left-1 bg-accent'"
 		></div>
 	</button>
 </template>

@@ -1,24 +1,27 @@
 <script setup lang="ts">
 import BaseIconButton from "@/components/bases/BaseIconButton.vue"
+import BaseSelect from "@/components/bases/BaseSelect.vue"
 import BaseToggle from "@/components/bases/BaseToggle.vue"
+import { useConfigStore, type ContrastLevel, type FontSize } from "@/stores/configStore"
+import { onMounted } from "vue"
 
-const fontSizeButtons = [
+const configStore = useConfigStore()
+
+const fontSizeButtons: { icon: string; size: FontSize }[] = [
 	{ icon: "text_decrease", size: "small" },
 	{ icon: "match_case", size: "default" },
 	{ icon: "text_increase", size: "big" },
 ]
 
-const changeFontSize = (size: "default" | "big" | "small") => {
-	document.documentElement.classList.remove("fontSmall", "fontBig")
+const contrastLevels: { value: ContrastLevel, label: string }[] = [
+	{ value: "default", label: "Padrão" },
+	{ value: "high", label: "Médio" },
+	{ value: "high++", label: "Alto" },
+]
 
-	if (size != "default") {
-		document.documentElement.classList.toggle(size === "big" ? "fontBig" : "fontSmall")
-	}
-}
-
-const toggleReduceAnimations = () => {
-	document.documentElement.classList.toggle('reducedAnimations')
-}
+onMounted(() => {
+	configStore.contrastLevel = "default"
+})
 </script>
 
 <template>
@@ -34,43 +37,55 @@ const toggleReduceAnimations = () => {
 						:icon="value.icon"
 						theme="bright"
 						mode="square"
-						@click="changeFontSize(value.size)"
+						@click="configStore.fontSize = value.size"
 					/>
 				</div>
 			</fieldset>
 
 			<fieldset>
-				<p>Tema Escuro</p>
-				<BaseToggle @click="toggleReduceAnimations" class="scale-70" />
+				<p>Tema Claro</p>
+				<BaseToggle v-model="configStore.lightTheme"  />
 			</fieldset>
 
 			<fieldset>
 				<p>Alto Contraste</p>
-				<BaseToggle @click="toggleReduceAnimations" class="scale-70" />
+				<BaseSelect
+					v-model="configStore.contrastLevel"
+					default-value="Padrão"
+					mode="outline"
+					class="w-25"
+				>
+					<option
+						v-for="item in contrastLevels"
+						:value="item.value"
+					>
+						{{  item.label }}
+					</option>
+				</BaseSelect>
 			</fieldset>
 
 			<fieldset>
 				<p>Texto em Negrito</p>
-				<BaseToggle @click="toggleReduceAnimations" class="scale-70" />
+				<BaseToggle v-model="configStore.boldText" />
 			</fieldset>
 
 			<fieldset>
 				<p>Reduzir animações</p>
-				<BaseToggle @click="toggleReduceAnimations" class="scale-70" />
+				<BaseToggle v-model="configStore.reduceAnimations" />
 			</fieldset>
 		</section>
 
-		<section>
+		<section v-if="false">
 			<h2>Segurança</h2>
 			
 			<fieldset>
 				<p>Alterar Senha</p>
-				<BaseToggle @click="toggleReduceAnimations" class="scale-70" />
+				<BaseToggle />
 			</fieldset>
 
 			<fieldset>
 				<p>Autenticação por 2 fatores</p>
-				<BaseToggle @click="toggleReduceAnimations" class="scale-70" />
+				<BaseToggle />
 			</fieldset>
 		</section>
 	</article>
@@ -84,13 +99,13 @@ article {
 }
 
 section {
-	@apply flex flex-col gap-1;
+	@apply flex flex-col gap-2;
 }
 section > h2 {
 	@apply text-primaryLight font-medium mb-1 text-lg;
 }
 
 fieldset {
-	@apply flex flex-row justify-between w-100 self-center;
+	@apply flex flex-row justify-between w-100 self-center items-center;
 }
 </style>
