@@ -145,6 +145,15 @@ const router = createRouter({
 				title: "Farmácia - @",
 			},
 		},
+		{
+			path: "/consultas",
+			name: "consultas",
+			component: () => import("@/pages/AppointmentPage.vue"),
+			meta: {
+				roles: ["patient", "professional"],
+				title: "Consultas - @",
+			},
+		}
 	],
 })
 
