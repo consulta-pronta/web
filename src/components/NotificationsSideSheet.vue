@@ -8,14 +8,20 @@ import Patient from "@/database/patient.model"
 import Professional from "@/database/professional.model"
 import NotificationCard from "@/components/cards/NotificationCard.vue"
 import { useToast } from "vue-toastification"
+import { searchDocuments } from "@/utils"
 
 const authStore = useAuthStore()
 const toast = useToast()
 const currentUser = ref<Patient | Professional | null>(null)
 const notifications = ref<Notification[]>([])
 const loadingNotifications = ref(true)
+const searchQuery = ref("")
 
 const userType = computed(() => currentUser.value?.user_type)
+
+const filteredNotifications = computed(
+	() => searchDocuments(notifications.value, searchQuery.value) as Notification[],
+)
 
 authStore.onReady(async (user) => {
 	try {
@@ -49,15 +55,24 @@ const handleUpdate = async () => {
 </script>
 
 <template>
-	<BaseCardList
-		v-if="!loadingNotifications"
-		class="w-full flex flex-col gap-2"
-	>
-		<NotificationCard
-			v-for="notification in notifications"
-			:key="notification.id"
-			:notification="notification"
-			@update="handleUpdate"
+	<div class="w-full">
+		<BaseInput
+			v-model="searchQuery"
+			placeholder="Pesquisar"
+			icon="search"
+			class="mb-4"
 		/>
-	</BaseCardList>
+
+		<BaseCardList
+			:is-loading="loadingNotifications"
+			class="w-full"
+		>
+			<NotificationCard
+				v-for="notification in filteredNotifications"
+				:key="notification.id"
+				:notification="notification"
+				@update="handleUpdate"
+			/>
+		</BaseCardList>
+	</div>
 </template>
