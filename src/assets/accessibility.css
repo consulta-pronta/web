@@ -1,0 +1,47 @@
+@import "tailwindcss";
+
+html.fontSmall { font-size: 87.5%; }
+html.fontBig { font-size: 112.5%; }
+
+html.lightTheme {
+	--color-background: #f4efe6;
+	--color-primary: #d0cee5;
+	--color-primaryLight: #2b254d;
+	--color-primaryDark: #e5d5b8;
+	--color-surface: #4d4a73;
+	--color-accent: #231c44;
+	--color-textLight: #2b254d;
+	--color-textDark: #ffffff;
+}
+
+html.highContrast {
+	--color-background: #000000;
+	--color-primary: #4f4f4f;
+	--color-primaryLight: #ffffff;
+	--color-primaryDark: #000000;
+	--color-surface: #ffffff;
+	--color-accent: #ffff00;
+	--color-textLight: #ffffff;
+	--color-textDark: #000000;
+
+	* {
+		border-color: currentColor;
+	}
+}
+html.highContrastPlusPlus {
+	--color-primary: #000000;
+}
+
+html.boldText,
+html.boldText * {
+	font-weight: 700 !important;
+}
+
+html.reducedAnimations *,
+html.reducedAnimations *::before,
+html.reducedAnimations *::after {
+	animation-duration: 0.01ms !important;
+	animation-iteration-count: 1 !important;
+	transition-duration: 0.01ms !important;
+	scroll-behavior: auto !important;
+}
