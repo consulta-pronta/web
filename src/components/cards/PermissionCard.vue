@@ -157,7 +157,7 @@ authStore.onReady(async (data) => {
 						Email:
 					</p>
 					<p>
-						<a :href="'mailto:' + user?.email" class="wrap-anywhere">
+						<a :href="'mailto:' + user?.email" class="wrap-anywhere oneliner">
 							{{ user?.email }}
 						</a>
 					</p>
@@ -166,7 +166,7 @@ authStore.onReady(async (data) => {
 							<i class="material-symbols-rounded">home_health</i>
 							Local de atuação:
 						</p>
-						<p>{{ user.professional_data?.operation_area }}</p>
+						<p class="oneliner" >{{ user.professional_data?.operation_area }}</p>
 					</template>
 				</div>
 			</div>
@@ -194,3 +194,10 @@ authStore.onReady(async (data) => {
 		</Teleport>
 	</article>
 </template>
+
+
+<style scoped>
+.oneliner {
+	@apply line-clamp-1 text-ellipsis;
+}
+</style>
