@@ -1,20 +1,60 @@
 <script setup lang="ts">
 import type Medication from "@/database/medication.model";
-import { capitalize, ref } from "vue";
+import { capitalize, ref, computed } from "vue";
+import Patient from "@/database/patient.model"
+import Professional from "@/database/professional.model"
+import { useAuthStore } from "@/stores/authStore"
+import { ContextMenu, ContextMenuItem, type MenuOptions } from "@imengyu/vue3-context-menu"
+
+const authStore = useAuthStore()
 
 const props = defineProps<{
 	medication: Medication
 }>()
 
+const currentUser = ref<Patient | Professional | null>(null)
+const userType = computed(() => currentUser.value?.user_type)
+
+const menuShow = ref(false)
+const menuOptions = ref<MenuOptions>({
+	theme: "cp-light",
+	minWidth: 230,
+	x: 0,
+	y: 0,
+})
+
+const openMenu = (e: MouseEvent) => {
+	menuShow.value = true
+	menuOptions.value.x = e.x
+	menuOptions.value.y = e.y
+}
+
 const taken = ref(props.medication.isTaken(Date.now()))
 
 const emit = defineEmits<{
     (e: "update:tomado", value: boolean): void
+	(e: "update:medication", value: Medication): void
+	(e: "delete:medication", value: Medication): void
 }>()
 
 function onChange(event: Event) {
     emit("update:tomado", (event.target as HTMLInputElement).checked)
 }
+
+const updateMedication = () => {
+	emit("update:medication", props.medication)
+}
+
+const deleteMedication = () => {
+	emit("delete:medication", props.medication)
+}
+
+authStore.onReady(async (user) => {
+	if (!(user instanceof Patient || user instanceof Professional)) {
+		return
+	}
+	currentUser.value = user
+})
 </script>
 
 <template>
@@ -40,7 +80,29 @@ function onChange(event: Event) {
 			/>
 		</td>
 
-		<!-- TODO: more_horiz functionality -->
-		<td></td>
+		<td>
+			<button v-if="userType === 'patient'"
+				type="button"
+				class="cursor-pointer flex justify-center items-center size-full text-primaryDark"
+				@click.prevent.stop="openMenu($event)"
+			>
+				<span class="material-symbols-rounded rounded-full p-1 hover:bg-primaryDark/10">
+					more_horiz
+				</span>
+			</button>
+		</td>
+
+		<ContextMenu v-model:show="menuShow" :options="menuOptions">
+			<ContextMenuItem label="Atualizar medicamento" @click="updateMedication">
+				<template #icon>
+					<span class="material-symbols-rounded"> edit_square </span>
+				</template>
+			</ContextMenuItem>
+			<ContextMenuItem label="Apagar medicamento" @click="deleteMedication">
+				<template #icon>
+					<span class="material-symbols-rounded"> delete </span>
+				</template>
+			</ContextMenuItem>
+		</ContextMenu>
 	</tr>
 </template>

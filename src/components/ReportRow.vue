@@ -112,6 +112,7 @@ authStore.onReady(async (user) => {
 			<ContextMenuItem
 				label="Profissionais permitidos"
 				@click="allowedProfessionals?.toggle()"
+				class="hidden"
 			>
 				<template #icon>
 					<span class="material-symbols-rounded"> shield_toggle </span>

@@ -125,7 +125,7 @@ authStore.onReady((data) => {
 
 				<BaseLink
 					v-if="userType === 'patient'"
-					to="permissoes"
+					to="/permissoes"
 					class="nav-link"
 				>
 					<span class="material-symbols-rounded select-none text-3xl!">how_to_reg</span>
