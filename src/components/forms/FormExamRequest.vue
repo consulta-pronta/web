@@ -1,25 +1,28 @@
 <script setup lang="ts">
 import BaseButton, { type ButtonState } from "@/components/bases/BaseButton.vue"
 import BaseInput from "@/components/bases/BaseInput.vue"
-import type Patient from "@/database/patient.model"
-import Exam, { type ExamCategory } from "@/database/exam.model"
-import { inputDateToDate } from "@/utils"
+import Patient from "@/database/patient.model"
+import Professional from "@/database/professional.model"
+import Exam, { type ExamCategory, type ExamStatus } from "@/database/exam.model"
 import { Timestamp } from "firebase/firestore"
-import { ref } from "vue"
+import { ref, watch, computed } from "vue"
 import BaseRadioList from "../bases/BaseRadioList.vue"
 import { useToast } from "vue-toastification"
+import { useAuthStore } from "@/stores/authStore"
+import { toInputValue } from "@feelinglovelynow/datetime-local"
 
+const authStore = useAuthStore()
 const toast = useToast()
+const buttonState = ref<ButtonState>("enabled")
 
-const props = withDefaults(
-	defineProps<{
-		patient: Patient
-		isPatient?: boolean
-	}>(),
-	{
-		isPatient: false,
-	},
-)
+const currentUser = ref<Patient | Professional | null>(null)
+const userType = computed(() => currentUser.value?.user_type)
+
+const props = defineProps<{
+	patient: Patient
+	exam?: Exam | null
+}>()
+
 
 const categories: { value: ExamCategory; label: string; icon: string }[] = [
 	{ value: "laboratorial", label: "Laboratorial", icon: "bloodtype" },
@@ -29,27 +32,58 @@ const categories: { value: ExamCategory; label: string; icon: string }[] = [
 ]
 
 const emit = defineEmits<{
-	"handled-submit": []
+	"close": []
 }>()
 
-const exam = ref<Exam>(new Exam())
-const date = ref("")
+const dateInput = computed({
+	get: () => (date.value ? toInputValue(date.value.toDate()) : ""),
+	set: (value) => {
+		date.value = value ? Timestamp.fromDate(new Date(value)) : null
+	},
+})
 
-const buttonState = ref<ButtonState>("enabled")
+const category = ref("")
+const name = ref("")
+const place = ref("")
+const date = ref<Timestamp | null>(null)
+const type = ref("")
+const status = ref("")
+
+watch(() => props.exam, (newExam) => {
+	if (newExam) {
+		category.value = newExam.category
+		name.value = newExam.name
+		place.value = newExam.place
+		date.value = newExam.date
+		type.value = newExam.type
+		status.value = newExam.status
+	}
+})
 
 const submitForm = async () => {
 	buttonState.value = "sync"
 
 	try {
-		exam.value.date = Timestamp.fromDate(inputDateToDate(date.value))
-		exam.value.type = exam.value.category
+		const exam = new Exam(
+			"",
+			name.value,
+			category.value as ExamCategory,
+			type.value,
+			place.value,
+			date.value,
+			status.value as ExamStatus,
+		)
 
-		await Exam.set(exam.value.toMap(), { scope: { userId: props.patient.id } })
+		if (props.exam) {
+			await Exam.update(props.exam.id, exam.toMap(), { scope: { userId: props.patient.id } })
+			toast.success("Exame atualizado com sucesso.")
+		} else {
+			exam.status = "solicitado"
+			await Exam.set(exam.toMap(), { scope: { userId: props.patient.id } })
+			toast.success("Exame adicionado com sucesso.")
+		}
 
-		exam.value = new Exam()
-		date.value = ""
-		toast.success("Solicitação de exame enviada com sucesso.")
-		emit("handled-submit")
+		emit("close")
 	} catch (error) {
 		console.error("Failed to request exam.", error)
 		toast.error("Não foi possível solicitar o exame. Tente novamente.")
@@ -62,24 +96,24 @@ const submitForm = async () => {
 <template>
 	<form @submit.prevent="submitForm" class="flex flex-col gap-4">
 		<BaseInput
-			v-model="exam.name"
+			v-model="name"
 			placeholder="Nome do exame"
 			icon="medical_services"
 			required
 		/>
 
-		<BaseInput v-model="exam.place" placeholder="Local" icon="location_on" required />
-		<BaseInput v-model="date" type="date" icon="calendar_today" required />
+		<BaseInput v-model="place" placeholder="Local" icon="location_on" required />
+		<BaseInput v-model="dateInput" type="datetime-local" icon="calendar_today" required />
 
 		<BaseRadioList
-			v-model="exam.category"
+			v-model="category"
 			name="exam-category"
 			legend="Categoria"
 			:options="categories"
 		/>
 
 		<BaseButton type="submit" theme="accent" icon="add_circle" :state="buttonState">
-			{{ props.isPatient ? "Adicionar exame" : "Solicitar exame" }}
+			{{ userType === "patient" ? (props.exam ? "Atualizar exame" : "Adicionar exame") : "Solicitar exame" }}
 		</BaseButton>
 	</form>
 </template>

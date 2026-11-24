@@ -25,6 +25,9 @@ const route = useRoute()
 const authStore = useAuthStore()
 const toast = useToast()
 
+const registerFormVisible = ref(false)
+const updateFormVisible = ref(false)
+
 const exames = ref<Exam[]>([])
 const currentUser = ref<Patient | Professional | null>(null)
 const currentPermission = ref<MedicalPermission | null>(null)
@@ -60,12 +63,36 @@ const canRequestExam = computed(
 	() => currentPermission.value !== null && currentPermission.value.permissions.request_exam,
 )
 
-const handleSubmit = async () => {
-	formRegister.value?.hide()
-	if (examPatient.value) {
-		await loadPatientExams(examPatient.value)
-	}
-}
+const loading = ref(true)
+let unsubscribe: (() => void) | null = null
+watch(
+	() => authStore.user?.uid,
+	(userId) => {
+		unsubscribe?.()
+		unsubscribe = null
+		loading.value = true
+
+		if (!userId) {
+			exames.value = []
+			loading.value = false
+			return
+		}
+
+		unsubscribe = Exam.listen(
+			(list) => {
+				exames.value = list
+				loading.value = false
+			},
+			{ scope: { userId } },
+			(error) => {
+				console.error("Failed to load exams:", error)
+				toast.error("Não foi possível carregar os exames.")
+				loading.value = false
+			},
+		)
+	},
+	{ immediate: true },
+)
 
 const loadPatientExams = async (patient: Patient) => {
 	loadingExams.value = true
@@ -125,6 +152,25 @@ authStore.onReady(async (user) => {
 		loadingExams.value = false
 	}
 })
+
+const selectedExam = ref<Exam | null>(null)
+const updateExam = async (exam: Exam) => {
+	updateFormVisible.value = true
+	selectedExam.value = exam
+}
+
+const deleteExam = async (exam: Exam) => {
+	const patient = examPatient.value
+	if (!patient) return
+
+	try {
+		await Exam.delete(exam.id, { scope: { userId: patient.id } })
+		toast.success("Exame excluído com sucesso.")
+	} catch (error) {
+		console.error("Failed to delete exam:", error)
+		toast.error("Não foi possível excluir o exame.")
+	}
+}
 </script>
 
 <template>
@@ -136,7 +182,7 @@ authStore.onReady(async (user) => {
 					type="button"
 					theme="accent"
 					icon="note_add"
-					@click="formRegister?.toggle()"
+					@click="registerFormVisible = true"
 					class="col-span-3 rounded-2xl"
 				>
 					<p class="hidden lg:block">Adicionar Exame</p>
@@ -165,7 +211,7 @@ authStore.onReady(async (user) => {
 
 				<BaseCardList :is-loading="loadingPatients" class="w-full flex flex-col gap-2">
 					<PatientCard
-						v-for="item in filteredProfessionalData" 
+						v-for="item in filteredProfessionalData"
 						:key="item.patient.id"
 						:class="currentPatient === item.patient ? 'bg-accent!' : ''"
 						:patient="item.patient"
@@ -177,7 +223,7 @@ authStore.onReady(async (user) => {
 			<div class="w-full flex flex-col gap-4">
 				<div class="flex flex-row justify-between">
 					<button
-						v-if="userType === 'professional'" 
+						v-if="userType === 'professional'"
 						type="button"
 						class="cursor-pointer flex justify-center items-center size-11 text-textLight"
 						:class="!currentPatient ? 'invisible' : ''"
@@ -215,7 +261,8 @@ authStore.onReady(async (user) => {
 					</template>
 
 					<template #default>
-						<ExamRow v-for="exam in filteredExams" :key="exam.id" :exam="exam" />
+						<ExamRow v-for="exam in filteredExams" :key="exam.id" :exam="exam"
+						@update:exam="updateExam($event)" @delete:exam="deleteExam($event)" />
 					</template>
 				</BaseTable>
 			</div>
@@ -228,12 +275,24 @@ authStore.onReady(async (user) => {
 					? 'Adicionar exame'
 					: 'Solicitar exame de ' + examPatient.name
 			"
-			ref="formRegister"
+			v-model:visible="registerFormVisible"
 		>
 			<FormExamRequest
 				:patient="examPatient"
 				:is-patient="userType === 'patient'"
-				@handled-submit="handleSubmit"
+				@close="registerFormVisible = false"
+			/>
+		</BaseDialog>
+
+		<BaseDialog
+			v-if="examPatient"
+			title="Atualizar exame"
+			v-model:visible="updateFormVisible"
+		>
+			<FormExamRequest
+				:patient="examPatient"
+				:exam="selectedExam"
+				@close="updateFormVisible = false"
 			/>
 		</BaseDialog>
 	</PageWrapper>
