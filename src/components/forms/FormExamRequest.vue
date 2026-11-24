@@ -113,7 +113,7 @@ const submitForm = async () => {
 		/>
 
 		<BaseButton type="submit" theme="accent" icon="add_circle" :state="buttonState">
-			{{ userType === "patient" ? (props.exam ? "Atualizar exame" : "Adicionar exame") : "Solicitar exame" }}
+			{{ props.exam ? "Atualizar exame" : "Adicionar exame" }}
 		</BaseButton>
 	</form>
 </template>

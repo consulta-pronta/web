@@ -6,14 +6,14 @@ import BaseDocument, {
 } from "./baseDocument"
 import User from "./user.model"
 
-export type AppointmentMotivation = "preventiva" | "sintomatica"
+export type AppointmentMotivation = "Rotina" | "Sintomas" | "Prevenção" | "Entrega de exames" | "Complicações ou condições crônicas"
 export type AppointmentStatus = "solicitado_paciente" | "solicitado_profissional" | "confirmado"
 
 export default class Appointment extends BaseDocument {
 	constructor(
 		public readonly id: string = "",
 		public details: string = "",
-		public motivation: AppointmentMotivation = "preventiva",
+		public motivation: AppointmentMotivation = "Rotina",
 		public hospital: string = "",
 		public date: Timestamp | null = null,
 		public status: AppointmentStatus = "solicitado_paciente",

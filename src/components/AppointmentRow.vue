@@ -9,10 +9,16 @@ const props = defineProps<{
 
 const typeIcon = computed(() => {
 	switch (props.appointment.motivation) {
-		case "preventiva":
-			return "health_and_safety"
-		case "sintomatica":
+		case "Rotina":
+			return "calendar_month"
+		case "Sintomas":
 			return "health_metrics"
+		case "Prevenção":
+			return "health_and_safety"
+		case "Entrega de exames":
+			return "science"
+		case "Complicações ou condições crônicas":
+			return "warning"
 		default: {
 			return "broken_image"
 		}
