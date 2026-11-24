@@ -282,4 +282,12 @@ export default class Medication extends BaseDocument {
 
 		return end !== null && now >= end.getTime()
 	}
+
+	static async update(id: string, data: Partial<Medication>, options: CollectionOptions = {}) {
+		return super.update(id, data, options)
+	}
+
+	static async delete(id: string, options: CollectionOptions = {}) {
+		return super.delete(id, options)
+	}
 }

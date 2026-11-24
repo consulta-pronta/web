@@ -1,11 +1,25 @@
 <script setup lang="ts">
 import Exam from "@/database/exam.model"
 import { toBrazilianLocaleDate } from "@/utils"
-import { computed } from "vue"
+import { computed, ref } from "vue"
+import { ContextMenu, ContextMenuItem, type MenuOptions } from "@imengyu/vue3-context-menu"
+import Patient from "@/database/patient.model"
+import Professional from "@/database/professional.model"
+import { useAuthStore } from "@/stores/authStore"
+
+const authStore = useAuthStore()
 
 const props = defineProps<{
 	exam: Exam
 }>()
+
+const emit = defineEmits<{
+	(e: "update:exam", value: Exam): void
+	(e: "delete:exam", value: Exam): void
+}>()
+
+const currentUser = ref<Patient | Professional | null>(null)
+const userType = computed(() => currentUser.value?.user_type)
 
 const typeIcon = computed(() => {
 	switch (props.exam.type) {
@@ -64,6 +78,35 @@ const statusIcon = computed(() => {
 			return "question_mark"
 	}
 })
+
+const menuShow = ref(false)
+const menuOptions = ref<MenuOptions>({
+	theme: "cp-light",
+	minWidth: 230,
+	x: 0,
+	y: 0,
+})
+
+const openMenu = (e: MouseEvent) => {
+	menuShow.value = true
+	menuOptions.value.x = e.x
+	menuOptions.value.y = e.y
+}
+
+const updateExam = () => {
+	emit("update:exam", props.exam)
+}
+
+const deleteExam = () => {
+	emit("delete:exam", props.exam)
+}
+
+authStore.onReady(async (user) => {
+	if (!(user instanceof Patient || user instanceof Professional)) {
+		return
+	}
+	currentUser.value = user
+})
 </script>
 
 <template>
@@ -86,6 +129,29 @@ const statusIcon = computed(() => {
 				</span>
 			</div>
 		</td>
-		<td></td>
+		<td>
+			<button v-if="userType === 'patient'"
+				type="button"
+				class="cursor-pointer flex justify-center items-center size-full text-primaryDark"
+				@click.prevent.stop="openMenu($event)"
+			>
+				<span class="material-symbols-rounded rounded-full p-1 hover:bg-primaryDark/10">
+					more_horiz
+				</span>
+			</button>
+		</td>
+
+		<ContextMenu v-model:show="menuShow" :options="menuOptions">
+			<ContextMenuItem label="Atualizar exame" @click="updateExam">
+				<template #icon>
+					<span class="material-symbols-rounded"> edit_square </span>
+				</template>
+			</ContextMenuItem>
+			<ContextMenuItem label="Apagar exame" @click="deleteExam">
+				<template #icon>
+					<span class="material-symbols-rounded"> delete </span>
+				</template>
+			</ContextMenuItem>
+		</ContextMenu>
 	</tr>
 </template>

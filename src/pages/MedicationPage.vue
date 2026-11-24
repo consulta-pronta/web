@@ -18,6 +18,8 @@ const authStore = useAuthStore()
 const toast = useToast()
 
 const registerFormVisible = ref(false)
+const updateFormVisible = ref(false)
+const selectedMedication = ref<Medication | null>(null)
 const medications = ref<Medication[]>([])
 const loading = ref(true)
 const searchQuery = ref("")
@@ -88,6 +90,23 @@ const medicationRows = computed(() => {
 	return medications.value
 		.filter((medication) => !medication.isTreatmentOver(now.value))
 })
+
+const updateMedication = (medication: Medication) => {
+	updateFormVisible.value = true
+	selectedMedication.value = medication
+}
+
+const deleteMedication = (medication: Medication) => {
+	authStore.onReady(async (user) => {
+		try {
+			await Medication.delete(medication.id, { scope: { userId: user.id } })
+			toast.success("Medicamento excluído com sucesso.")
+		} catch (error) {
+			console.error("Failed to delete medication.", error)
+			toast.error("Não foi possível excluir o medicamento.")
+		}
+	})
+}
 </script>
 
 <template>
@@ -135,6 +154,8 @@ const medicationRows = computed(() => {
 					:key="medication.id"
 					:medication="medication"
 					@update:tomado="toggleTaken(medication, $event)"
+					@update:medication="updateMedication($event)"
+					@delete:medication="deleteMedication($event)"
 				/>
 			</BaseTable>
 		</DefaultContentWrapper>
@@ -144,6 +165,13 @@ const medicationRows = computed(() => {
 			v-model:visible="registerFormVisible"
 		>
 			<FormAddMedication @close="registerFormVisible = false" />
+		</BaseDialog>
+
+		<BaseDialog
+			title="Atualizar Medicamento"
+			v-model:visible="updateFormVisible"
+		>
+			<FormAddMedication @close="updateFormVisible = false" :medication="selectedMedication" />
 		</BaseDialog>
 	</PageWrapper>
 </template>

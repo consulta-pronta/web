@@ -7,12 +7,19 @@ import { useAuthStore } from "@/stores/authStore"
 import { toCoolDate } from "@/utils"
 import { formatToPhone } from "brazilian-values"
 import IntensityChip from "@/components/IntensityChip.vue"
+import Patient from "@/database/patient.model"
+import Professional from "@/database/professional.model"
+import { useToast } from "vue-toastification"
 
+const toast = useToast()
 const props = defineProps<{
 	report: Report
+	patient: Patient
 }>()
 
-const user = ref<User>()
+const currentUser = ref<Patient | Professional | null>(null)
+const userType = computed(() => currentUser.value?.user_type)
+
 const symptoms = ref<Symptom[]>([])
 
 const authStore = useAuthStore()
@@ -22,13 +29,26 @@ const reportDuration = computed(() => props.report.getDurationDays() ?? "-")
 const mostAffectedArea = computed(() => Symptom.getMostAffectedArea(symptoms.value))
 const averageIntensity = computed(() => Symptom.getAverageIntensity(symptoms.value))
 
-authStore.onReady(async (data) => {
-	user.value = data as User
+authStore.onReady(async (user) => {
+	if (!(user instanceof Patient || user instanceof Professional)) {
+		return
+	}
+	currentUser.value = user
 
-	const { period_start, period_end } = props.report
+	try {
+		const { period_start, period_end } = props.report
 	if (!(period_start && period_end)) return 0
-
-	symptoms.value = await Symptom.getBetween(period_start, period_end, data.id)
+		if (user instanceof Patient) {
+			symptoms.value = await Symptom.getBetween(period_start, period_end, user.id)
+		} else if (user instanceof Professional) {
+			if (props.patient) {
+				symptoms.value = await Symptom.getBetween(period_start, period_end, props.patient.id)
+			}
+		}
+	} catch (error) {
+		console.error("Failed to get report related symptoms data.", error)
+		toast.error("Não foi possível carregar os dados.")
+	}
 })
 </script>
 
@@ -52,11 +72,11 @@ authStore.onReady(async (data) => {
 				<p>{{ reportDuration }} dias</p>
 			</span>
 
-			<section v-if="user?.user_type === 'professional'" class="flex">
+			<section v-if="userType === 'professional'" class="flex">
 				<article class="flex flex-col text-textLight text-xs justify-center">
-					<p class="text-base font-bold">{{ user.name }}</p>
-					<p>{{ user.email }}</p>
-					<p v-if="user.phone">{{ formatToPhone(user.phone) }}</p>
+					<p class="text-base font-bold">{{ props.patient.name }}</p>
+					<p>{{ props.patient.email }}</p>
+					<p v-if="props.patient.phone">{{ formatToPhone(props.patient.phone) }}</p>
 				</article>
 			</section>
 		</section>

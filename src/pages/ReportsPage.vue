@@ -95,6 +95,35 @@ const unselectPatient = () => {
 	reports.value = []
 }
 
+
+const updateName = (newNameValue: string, reportId: string) => {
+	authStore.onReady(async (user) => {
+		try {
+			if (user instanceof Patient) {
+				await Report.update(reportId, { title: newNameValue }, { scope: { userId: user.id } })
+				handleSubmit()
+			}
+		} catch (error) {
+			console.error("Failed to update report name.", error)
+			toast.error("Não foi possível atualizar o nome do relatório.")
+		}
+	})
+}
+
+const deleteReport = (reportId: string) => {
+	authStore.onReady(async (user) => {
+		try {
+			if (user instanceof Patient) {
+				await Report.delete(reportId, { scope: { userId: user.id } })
+				handleSubmit()
+			}
+		} catch (error) {
+			console.error("Failed to delete report.", error)
+			toast.error("Não foi possível excluir o relatório.")
+		}
+	})
+}
+
 watch(currentPatient, (value) => {
 	if (value) {
 		router.replace({
@@ -179,7 +208,7 @@ authStore.onReady(async (user) => {
 					class="w-full flex flex-col gap-2"
 				>
 					<PatientCard
-						v-for="patient in filteredPatients" 
+						v-for="patient in filteredPatients"
 						:key="patient.cpf"
 						:class="currentPatient === patient ? 'bg-accent!' : ''"
 						:patient="patient"
@@ -190,7 +219,7 @@ authStore.onReady(async (user) => {
 
 			<div class="size-full">
 				<div
-					v-if="userType === 'professional'" 
+					v-if="userType === 'professional'"
 					class="text-textLight"
 				>
 					<button
@@ -215,13 +244,15 @@ authStore.onReady(async (user) => {
 						<th class="w-30">Criado em</th>
 						<th class="w-12"></th>
 					</template>
-	
+
 					<template #default>
 						<ReportRow
 							v-for="report in filteredReports"
 							:key="report.id"
 							:report="report"
 							@selected="selectedReport = $event"
+							@updated="updateName($event, report.id)"
+							@deleted="deleteReport(report.id)"
 						/>
 					</template>
 				</BaseTable>
@@ -252,6 +283,7 @@ authStore.onReady(async (user) => {
 					v-if="selectedReport"
 					:key="selectedReport.id"
 					:report="selectedReport"
+					:patient="currentPatient"
 				/>
 			</template>
 		</BaseSideSheet>

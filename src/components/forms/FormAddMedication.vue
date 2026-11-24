@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from "vue"
+import { computed, ref, watch } from "vue"
 import { Timestamp } from "firebase/firestore"
 import { toInputValue } from "@feelinglovelynow/datetime-local"
 
@@ -16,6 +16,10 @@ import { useToast } from "vue-toastification"
 
 const emit = defineEmits<{
 	close: []
+}>()
+
+const props = defineProps<{
+	medication?: Medication | null
 }>()
 
 const authStore = useAuthStore()
@@ -56,6 +60,19 @@ const frequencyValue = ref("")
 const frequencyUnit = ref("hora")
 const durationDays = ref("")
 const startAt = ref<Timestamp | null>(null)
+
+watch(() => props.medication, (medication) => {
+	if (medication) {
+		title.value = medication.name
+		route.value = medication.route
+		doseValue.value = medication.dose_value.toString()
+		doseUnit.value = medication.dose_unit
+		frequencyValue.value = medication.frequency_value.toString()
+		frequencyUnit.value = medication.frequency_unit
+		durationDays.value = medication.duration_days.toString()
+		startAt.value = medication.start_at
+	}
+})
 
 const startAtInput = computed({
 	get: () => (startAt.value ? toInputValue(startAt.value.toDate()) : ""),
@@ -99,8 +116,11 @@ async function submit() {
 			duration,
 			startAt.value,
 		)
-
-		await Medication.set(medication.toMap(), { scope: { userId } })
+		if (props.medication) {
+			await Medication.update(props.medication.id, medication.toMap(), { scope: { userId } })
+		} else {
+			await Medication.set(medication.toMap(), { scope: { userId } })
+		}
 		toast.success("Medicamento registrado com sucesso.")
 		emit("close")
 	} catch (error) {
@@ -225,7 +245,7 @@ async function submit() {
 			class="m-auto px-10"
 			:state="buttonState"
 		>
-			Registrar Medicamento
+			{{ medication ? 'Atualizar' : 'Registrar' }} Medicamento
 		</BaseButton>
 	</form>
 </template>
