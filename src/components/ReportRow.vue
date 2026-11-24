@@ -14,6 +14,7 @@ const authStore = useAuthStore()
 
 const currentUser = ref<Patient | Professional | null>(null)
 const userType = computed(() => currentUser.value?.user_type)
+import BaseIconButton from "./bases/BaseIconButton.vue"
 
 const props = defineProps<{
 	report: Report
@@ -96,16 +97,13 @@ authStore.onReady(async (user) => {
 			<span v-else>—</span>
 		</td>
 
-		<td class="text-center">
-			<button v-if="userType === 'patient'"
-				type="button"
-				class="cursor-pointer flex justify-center items-center size-full text-primaryDark"
+		<td>
+			<BaseIconButton
+				icon="more_horiz"
+				theme="dark"
+				class="m-auto"
 				@click.prevent.stop="openMenu($event)"
-			>
-				<span class="material-symbols-rounded rounded-full p-1 hover:bg-primaryDark/10">
-					more_horiz
-				</span>
-			</button>
+			/>
 		</td>
 
 		<ContextMenu v-model:show="menuShow" :options="menuOptions">

@@ -114,14 +114,14 @@ authStore.onReady((data) => {
 					<p>Exames</p>
 				</BaseLink>
 
-				<BaseButton
+				<BaseLink
 					v-if="userType !== 'admin'"
-					v-bind="sharedAttributes"
-					icon="medical_services"
-					goto="#"
+					to="/consultas"
+					class="nav-link"
 				>
+					<span class="material-symbols-rounded select-none text-3xl!">medical_services</span>
 					<p>Consultas</p>
-				</BaseButton>
+				</BaseLink>
 
 				<BaseLink
 					v-if="userType === 'patient'"
