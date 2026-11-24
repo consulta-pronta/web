@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, useTemplateRef, watch } from "vue"
+import { computed, onUnmounted, ref, useTemplateRef, watch } from "vue"
 import BaseInput from "@/components/bases/BaseInput.vue"
 import Exam from "@/database/exam.model"
 import ExamRow from "@/components/ExamRow.vue"
@@ -85,6 +85,7 @@ watch(
 			},
 			{ scope: { userId } },
 			(error) => {
+				if (route.name === "logout" || !authStore.user) return
 				console.error("Failed to load exams:", error)
 				toast.error("Não foi possível carregar os exames.")
 				loading.value = false
@@ -93,6 +94,10 @@ watch(
 	},
 	{ immediate: true },
 )
+
+onUnmounted(() => {
+	unsubscribe?.()
+})
 
 const loadPatientExams = async (patient: Patient) => {
 	loadingExams.value = true
