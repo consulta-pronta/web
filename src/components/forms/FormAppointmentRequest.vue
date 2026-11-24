@@ -19,8 +19,11 @@ const props = withDefaults(
 )
 
 const motivations: { value: AppointmentMotivation; label: string; icon: string }[] = [
-	{ value: "preventiva", label: "Preventiva", icon: "health_and_safety" },
-	{ value: "sintomatica", label: "Sintomática", icon: "health_metrics" },
+	{ value: "Rotina", label: "Rotina", icon: "calendar_month" },
+	{ value: "Prevenção", label: "Prevenção", icon: "health_and_safety" },
+	{ value: "Sintomas", label: "Sintomas", icon: "health_metrics" },
+	{ value: "Entrega de exames", label: "Entrega de exames", icon: "science" },
+	{ value: "Complicações ou condições crônicas", label: "Complicações ou condições crônicas", icon: "warning" },
 ]
 
 const emit = defineEmits<{
