@@ -66,7 +66,7 @@ const canRequestExam = computed(
 const loading = ref(true)
 let unsubscribe: (() => void) | null = null
 watch(
-	() => authStore.user?.uid,
+	() => examPatient.value?.id,
 	(userId) => {
 		unsubscribe?.()
 		unsubscribe = null
@@ -240,7 +240,7 @@ const deleteExam = async (exam: Exam) => {
 						theme="accent"
 						icon="add"
 						:state="canRequestExam ? 'enabled' : 'disabled'"
-						@click="formRegister?.show()"
+						@click="registerFormVisible = true"
 						class="self-end"
 					>
 						Solicitar exame
