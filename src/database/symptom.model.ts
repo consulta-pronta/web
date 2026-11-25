@@ -45,7 +45,11 @@ export default class Symptom extends BaseDocument {
 			return User.resolvePath(userId, this.collectionName)
 		}
 
-		return this.resolvePath(symptomId, this.historicCollectionName)
+		return [
+			User.resolvePath(userId, this.collectionName),
+			symptomId,
+			this.historicCollectionName,
+		].join("/")
 	}
 
 	protected static documentConverter(id: string, data: Record<string, undefined>): Symptom {
@@ -165,7 +169,7 @@ export default class Symptom extends BaseDocument {
 		previousData.created_at = previous.created_at
 
 		const historicRef = this.ref(id, {
-			scope: { userId: id, symptomId: previous.id },
+			scope: { ...options.scope, symptomId: previous.id },
 		})
 		await runTransaction(db, async (transaction) => {
 			transaction.set(historicRef, data)
