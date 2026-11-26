@@ -180,7 +180,6 @@ authStore.onReady(async (patient) => {
 			theme="light"
 			icon="person"
 			defaultValue="Profissionais que podem visualizar"
-			required
 		>
 			<option
 				v-for="professional in professionals"

@@ -60,6 +60,10 @@ watch(currentStep, async (value, previous) => {
 			}
 			break
 		case 3:
+			if (signUpStore.isDateInvalid) {
+				toast.error("Data de nascimento inválida. Por favor, verifique a data informada.")
+				currentStep.value = previous
+			}
 			try {
 				await submitForm()
 			} catch (error) {

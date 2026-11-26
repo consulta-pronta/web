@@ -33,6 +33,8 @@ export const federalUnits = [
 ] as const
 export const symptomPlaces = [
 	"Cabeça",
+	"Coração",
+	"Seios",
 	"Rosto",
 	"Pescoço",
 	"Tórax",
@@ -70,8 +72,17 @@ export const toCoolDate = (date: Date | null | undefined) =>
 export const toBrazilianDate = (date: Date | null | undefined) =>
 	date ? date.toLocaleString("pt-BR") : DATE_NOT_PROVIDED
 
-export const toBrazilianLocaleDate = (date: Date | null | undefined) =>
-	date ? formatDate(date, "D [de] MMM [de] YYYY", { locales: "pt-BR" }) : DATE_NOT_PROVIDED
+export const toBrazilianLocaleDate = (date: Date | null | undefined) => {
+	if (!date) return DATE_NOT_PROVIDED
+
+	const utcDate = new Date(
+		date.getUTCFullYear(),
+		date.getUTCMonth(),
+		date.getUTCDate()
+	)
+
+	return formatDate(utcDate, "D [de] MMM [de] YYYY", { locales: "pt-BR" })
+}
 
 export const normalizeString = (value: string) =>
 	value

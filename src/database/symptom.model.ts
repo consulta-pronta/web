@@ -151,7 +151,7 @@ export default class Symptom extends BaseDocument {
 	static getAverageIntensity(symptoms: Symptom[]): number | null {
 		if (symptoms.length === 0) return null
 
-		const total = symptoms.reduce((total, symptom) => total + symptom.intensity, 0)
+		const total = symptoms.reduce((total, symptom) => total + Number(symptom.intensity), 0)
 		return total / symptoms.length
 	}
 

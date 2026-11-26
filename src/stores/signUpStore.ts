@@ -11,6 +11,8 @@ import Professional from "@/database/professional.model"
 import { Timestamp } from "firebase/firestore"
 import { isCPF, isPhone } from "brazilian-values"
 import type { UserType } from "@/utils"
+import { timestampDiff } from "firebase/firestore/pipelines"
+import { isDate } from "validator"
 
 export type PasswordRules = {
 	minLength: boolean
@@ -53,6 +55,10 @@ export const useSignUpStore = defineStore("sign_up", () => {
 
 	const isPasswordInvalid = computed(() => {
 		return Object.values(rules.value).includes(false)
+	})
+
+	const isDateInvalid = computed(() => {
+		return !((new Date(birth_date.value).getTime() - new Date().getTime()) < 0)
 	})
 
 	const clearForm = () => {
@@ -134,6 +140,7 @@ export const useSignUpStore = defineStore("sign_up", () => {
 		isPasswordInvalid,
 		isCpfInvalid,
 		isPhoneInvalid,
+		isDateInvalid,
 		clearForm,
 		submitForm,
 	}

@@ -4,7 +4,7 @@ import BaseSelect from '@/components/bases/BaseSelect.vue'
 import BaseButton from '@/components/bases/BaseButton.vue'
 import { useAuthStore } from '@/stores/authStore'
 import { type ButtonState } from '@/components/bases/BaseButton.vue'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import User from '@/database/user.model'
 import { formatToPhone } from 'brazilian-values'
 import { bloodTypes, genderTypes, federalUnits } from '@/utils'
@@ -41,6 +41,10 @@ const buttonState = ref<ButtonState>("enabled")
 
 const emit = defineEmits(["handled-submit"])
 
+const isDateInvalid = computed(() => {
+	return !((new Date(birth_date.value).getTime() - new Date().getTime()) < 0)
+})
+
 const submitForm = async () => {
 	buttonState.value = "sync"
 
@@ -51,6 +55,11 @@ const submitForm = async () => {
 			} else if (props.type === 'health') {
 				await Patient.update(user.id, { patient_data: { blood_type: blood_type.value, height: height.value, weight: weight.value } })
 			} else if (props.type === 'personal') {
+				if (isDateInvalid.value) {
+					toast.error("Data de nascimento inválida.")
+					return
+				}
+
 				await User.update(user.id, { birth_date: birth_date.value, address: address.value, gender: gender.value })
 			} else if (props.type === 'name') {
 				await User.update(user.id, { name: name.value, social_name: social_name.value })
@@ -58,6 +67,10 @@ const submitForm = async () => {
 				await Professional.update(user.id, { professional_data: { crm: crm.value, uf: uf.value, specialty: specialty.value, operation_area: operation_area.value } })
 			}
 		})
+		if (isDateInvalid.value) {
+			return
+		}
+
 		toast.success("Dados atualizados com sucesso.")
 		emit("handled-submit")
 	} catch (error) {
